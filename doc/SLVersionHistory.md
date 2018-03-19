@@ -8,7 +8,8 @@ output: html_document
 Version numbering seemed to not be upt to date, not it is.
 The _Let's see what breaks_-Version
 
-- database2.R was obsolote.
+- database2.R was obsolote. deleted
+- added git version control
 
 ## Version 0.98.2 -- 2018-03-19
 
