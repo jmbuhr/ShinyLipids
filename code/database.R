@@ -73,24 +73,23 @@ prepareData2 <- function (rawdata, what = "", within = "", standard = "", ID){
 
 
   Aggregated <- rawdata %>%
-    group_by_(.dots = aggreGroup) %>%
+    group_by(.dots = aggreGroup) %>%
     summarize(sum = sum(value, na.rm = T))
 
-  # Debugging line
-  cat(file = stderr(), "Aggregation was performed")
 
   Standard <- rawdata %>%
-    group_by_(.dots = stdGroup) %>%
+    group_by(.dots = stdGroup) %>%
     summarize(standardSum = sum(value, na.rm = T))
+
 
   Standardized <- left_join(Aggregated, Standard, type = "left") %>%
     mutate(standardizedSum = (sum / standardSum) * 100)
 
 
   StandardizedNrSamp <- Standardized %>%
-    group_by_(.dots = aggreGroup) %>%
+    group_by(.dots = aggreGroup) %>%
     # summarise(MeanOfTechnicalReplicates = mean(standardizedSum, na.rm = T)) %>%
-    group_by_(.dots = smasGroup) %>%
+    group_by(.dots = smasGroup) %>%
     summarise(Mean = mean(standardizedSum, na.rm = T),
               Median = median(standardizedSum, na.rm = T),
               SD = sd(standardizedSum, na.rm = T),
@@ -107,7 +106,7 @@ prepareData2 <- function (rawdata, what = "", within = "", standard = "", ID){
   StandardizedNrSamp <<- StandardizedNrSamp %>%
     rename_(.dots = list(xval = what))
 
-  print("Dataprep successful")
+  print("Dataprep successful with prepareData2")
   return(Standardized)
 }
 prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
@@ -282,30 +281,37 @@ prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
   }
 
   Aggregated <- rawdata %>%
-    group_by_(.dots = aggreGroup) %>%
+    group_by(.dots = aggreGroup) %>%
     summarize(sum = sum(value, na.rm = T))
 
+  print("group_by was used 1")
+
   Standard <- rawdata %>%
-    group_by_(.dots = stdGroup) %>%
+    group_by(.dots = stdGroup) %>%
     summarize(standardSum = sum(value, na.rm = T))
+
+  print("group_by was used 2")
 
   Standardized <- left_join(Aggregated, Standard, type = "left") %>%
     mutate(standardizedSum = (sum / standardSum) * 100)
 
 
   StandardizedNrSamp <- Standardized %>%
-    group_by_(.dots = aggreGroup) %>%
+    group_by(.dots = aggreGroup) %>%
     # summarise(MeanOfTechnicalReplicates = mean(standardizedSum, na.rm = T)) %>%
-    group_by_(.dots = smasGroup) %>%
+    group_by(.dots = smasGroup) %>%
     summarise(Mean = mean(standardizedSum, na.rm = T),
               Median = median(standardizedSum, na.rm = T),
               SD = sd(standardizedSum, na.rm = T),
               SE = se(standardizedSum, na.rm = T),
               NrSamp = n())
 
+  print("group_by was used 3")
 
 
   Standardized <- left_join(Standardized, StandardizedNrSamp)
+
+  print("standardized created")
 
   Standardized <- rename_(Standardized, .dots = list(xval = what))
   StandardizedNrSamp <<- StandardizedNrSamp %>%
@@ -317,7 +323,7 @@ prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
   names(samplenames) <- unique(rawdata$sample)
   # print(samplenames)
 
-  print("Dataprep successful")
+  print("Dataprep successful with prepareData")
   return(Standardized)
 }
 
