@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1521468725168.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "9C4E6FB4",
+    "lastKnownWriteTime" : 1521469290,
+    "last_content_update" : 1521469290716,
+    "path" : "~/projects/R/HiWi_ShinyLipids/ShinyLipids/Lipid_18 -v3_jannik/code/database.R",
+    "project_path" : "code/database.R",
+    "properties" : {
+        "cursorPosition" : "78,18",
+        "scrollLine" : "65"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

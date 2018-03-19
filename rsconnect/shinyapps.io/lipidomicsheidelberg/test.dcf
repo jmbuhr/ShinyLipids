@@ -1,0 +1,9 @@
+name: test
+account: lipidomicsheidelberg
+server: shinyapps.io
+appId: 74301
+bundleId: 334674
+url: https://lipidomicsheidelberg.shinyapps.io/test
+when: 1450441248.65406
+asMultiple: FALSE
+asStatic: FALSE
