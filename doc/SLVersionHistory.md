@@ -10,6 +10,8 @@ The _Let's see what breaks_-Version
 
 - database2.R was obsolote. deleted
 - added git version control
+- removed underscores after group_by. It still works.
+- Testet on R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
 
 ## Version 0.98.2 -- 2018-03-19
 
