@@ -1,15 +1,15 @@
-function(input, output, session) { 
-  
+function(input, output, session) {
+
   .theme<- theme(
-    axis.line = element_line(colour = 'gray', size = .75), 
-    panel.background = element_blank(),  
+    axis.line = element_line(colour = 'gray', size = .75),
+    panel.background = element_blank(),
     plot.background = element_blank()
   )
   # Ranges for zooming
   ranges <- reactiveValues(x = NULL, y = NULL)
-  
+
   observeEvent(input$plot1_dblclick, {
-    brush <- input$plot1_brush 
+    brush <- input$plot1_brush
     if (!is.null(brush)) {
       ranges$x <- c(brush$xmin, brush$xmax)
       ranges$y <- c(brush$ymin, brush$ymax)
@@ -19,18 +19,18 @@ function(input, output, session) {
     }
   })
 
-  
+
   # Load the rawdata
   rawdata <- reactive({
     print("Raw data loaded")
     collect(getraw(input$ID, "data2"))
     # getraw(input$ID, "data2")
   })
-  
+
   ### Preparation of Metadatatable
   # clean data
   observeEvent(input$refresh,{
-    # Note: The following lines are identical to the ones concerning cleandata in 
+    # Note: The following lines are identical to the ones concerning cleandata in
     #       global.R
     sql_data <- paste("SELECT * FROM id_info")
     rawmetadata <- collect(tbl(database_connection, sql(sql_data)))
@@ -41,7 +41,7 @@ function(input, output, session) {
     cleandata$date_extraction <- as.Date(cleandata$date_extraction, format = '%y%m%d')
     cleandata$date_measured <- as.Date(cleandata$date_measured, format = '%y%m%d')
     cleandata <<- cleandata[order(cleandata$id),]
-    
+
     # Update Names and Tables
     datanames <- as.list(cleandata$id)
     names(datanames) <- paste(cleandata$id, cleandata$title)
@@ -57,18 +57,21 @@ function(input, output, session) {
       } else {
         cleandata[c("id", "title", "date_upload", "status", "sample_from")]
       },
+      extensions = 'Buttons', # Needed for new ColVis buttons
       options = list(orderClasses = TRUE, pageLength = 10,
                      paging = FALSE, searching = TRUE, dom = 'C<"clear">lfrtip',
-                     colVis = list(exclude = c(0,1), activate = 'mouseover'),
+                     # ColVis is replace by button colvis - JB
+                     buttons = list(list(extend = 'colvis', exclude = c(0,1))),
+                     #colVis = list(exclude = c(0,1), activate = 'mouseover'),
                      order = list(0,'desc'),
                      deferRender = TRUE,
                      scrollY = 500,
                      scrollCollapse = TRUE
-      ), 
-      rownames = FALSE, 
+      ),
+      rownames = FALSE,
       selection = 'single'
-    ) 
-  })  
+    )
+  })
   #Updating
   observeEvent(input$refresh,{
     output$metadataTable <- DT::renderDataTable({
@@ -78,25 +81,27 @@ function(input, output, session) {
         } else {
           cleandata[c("id", "title", "date_upload", "status", "sample_from")]
         },
+        extensions = 'Buttons',
         options = list(orderClasses = TRUE, pageLength = 10,
                        paging = FALSE, searching = TRUE, dom = 'C<"clear">lfrtip',
-                       colVis = list(exclude = c(0,1), activate = 'mouseover'),
+                       # ColVis is replace by button colvis - JB
+                       buttons = list(list(extend = 'colvis', exclude = c(0,1))),
+                       #colVis = list(exclude = c(0,1), activate = 'mouseover'),
                        order = list(0,'desc')
-        ), 
-        rownames = FALSE, 
-        extensions = 'ColVis'
-      ) 
+        ),
+        rownames = FALSE
+      )
     })
   })
-  
-  
-  
+
+
+
   ### Select plotting choices (var:plotchoices)
-  # Choices: "Plot Values", "Errorbar (Mean +/- 1SD)", "Nr of Datapoints", "Mean Values", 
+  # Choices: "Plot Values", "Errorbar (Mean +/- 1SD)", "Nr of Datapoints", "Mean Values",
   #          "Show Legend", "Ttest", "Median"
   observe({
     if (input$plottype == 'barplot') {
-      updateCheckboxGroupInput(session, "checkGroup", 
+      updateCheckboxGroupInput(session, "checkGroup",
                                choices = plotchoices,
                                selected = plotchoices[c("Show Legend")])
     } else if (input$plottype == 'boxplot') {
@@ -109,7 +114,7 @@ function(input, output, session) {
                                choices = plotchoices[c("Plot Values", "Errorbar (Mean +/- 1SD)", "Nr of Datapoints",
                                                        "Show Legend", "Median", "Identify Individuals",
                                                        "Log10-Transformation")],
-                               selected = plotchoices[c("Plot Values", "Errorbar (Mean +/- 1SD)", 
+                               selected = plotchoices[c("Plot Values", "Errorbar (Mean +/- 1SD)",
                                                         "Errorbar (Mean +/- 1SE)","Show Legend",
                                                         "Log10-Transformation")])
     } else if (input$plottype == "pointrange") {
@@ -118,13 +123,13 @@ function(input, output, session) {
                                                        "Log10-Transformation")],
                                selected = plotchoices[c("Show Legend")])
     }
-  }) 
-  
-  
+  })
+
+
   ############################################################
   observeEvent(input$metadataTable_row_last_clicked,{
     #*****************************************
-    # I do no know if I need all this until the next Stars... 
+    # I do no know if I need all this until the next Stars...
     sql_data <- paste("SELECT * FROM id_info")
     rawmetadata <- collect(tbl(database_connection, sql(sql_data)))
     cleandata <- rawmetadata
@@ -134,23 +139,23 @@ function(input, output, session) {
     cleandata$date_extraction <- as.Date(cleandata$date_extraction, format = '%y%m%d')
     cleandata$date_measured <- as.Date(cleandata$date_measured, format = '%y%m%d')
     cleandata <<- cleandata[order(cleandata$id),]
-    
+
     # Update Names and Tables
     datanames <- as.list(cleandata$id)
     names(datanames) <- paste(cleandata$id, cleandata$title)
     datanames <<- datanames
     #*****************************************
-    
+
     clicked <- as.integer(input$metadataTable_row_last_clicked)
-    vectorOf_datanames <-as.vector(unlist(datanames )) 
+    vectorOf_datanames <-as.vector(unlist(datanames ))
     indexFor_datanames <- match(clicked,vectorOf_datanames)
     indexFor_datanames <- clicked # Possible Fix as of Febr 2018
     updateSelectInput(session, "ID", choices = datanames, selected=datanames[indexFor_datanames] )
   })
   ############################################################
-  
-  
-  
+
+
+
   ### Select sample subset to plot
   observe({
     input$ID
@@ -159,7 +164,7 @@ function(input, output, session) {
     updateSelectInput(session, "samplesub", choices = levels(choicesam))
     updateSelectInput(session, "samplebase", choices = levels(choicesam))
   })
-  
+
   ### Select data subset to plot
   observe({
     input$ID
@@ -171,9 +176,9 @@ function(input, output, session) {
     } else if (input$what == "func_cat") {
       choicewhat <- as.factor(choice$func_cat)
     } else if (input$what == "chains") {
-      choicewhat <- as.factor(choice$chains) 
+      choicewhat <- as.factor(choice$chains)
     } else if (input$what == "chain_sums") {
-      choicewhat <- as.factor(choice$chain_sums)    
+      choicewhat <- as.factor(choice$chain_sums)
     } else if (input$what == "length") {
       choicewhat <- as.factor(choice$length)
     } else if (input$what == "db") {
@@ -182,8 +187,8 @@ function(input, output, session) {
       choicewhat <- as.factor(choice$oh)
     }
     updateSelectInput(session, "whatsub", choices = levels(choicewhat),
-                      label = paste("Which", revwhatnames[input$what]))    
-    
+                      label = paste("Which", revwhatnames[input$what]))
+
   })
   ### Select within sub to plot
   observe({
@@ -202,10 +207,10 @@ function(input, output, session) {
                         selected = levels(choicewith)[1])
     } else {
       updateSelectInput(session, "withsub", choices = levels(choicewith))
-      
+
     }
-  })  
-  ### Select replicate sub to plot and the same for technical replicates 
+  })
+  ### Select replicate sub to plot and the same for technical replicates
   observe({
     input$ID
     choice <- rawdata()
@@ -218,7 +223,7 @@ function(input, output, session) {
   ### If Species/Sum Species selected update to summarized: Class and select one
   observe({
     if(input$what %in% c("chains", "chain_sums")) {
-      updateSelectInput(session, "within", choices = withinnames, 
+      updateSelectInput(session, "within", choices = withinnames,
                         selected = "Class")
       choice <- rawdata()
       choicewith <- as.factor(choice$class)
@@ -226,75 +231,75 @@ function(input, output, session) {
                         selected = levels(choicewith)[1])
     }
   })
-  
+
   observe({
     if(input$what %in% c("class", "category", "func_cat")) {
       updateSelectInput(session, "within", choices = withinnames,
                         selected = "Sample")
     }
   })
-  
+
   FirstData <- reactive({
-    collect(prepareData2(rawdata(), what = input$what, 
+    collect(prepareData2(rawdata(), what = input$what,
                          within = input$within,
-                         standard = input$standard, 
+                         standard = input$standard,
                          ID = input$ID))
   })
-  
-  
+
+
   ### Create Plot
   PlotData <- reactive({
     if(input$stdSub || input$add_rem) {
-      collect(prepareData(rawdata(), what = input$what, 
+      collect(prepareData(rawdata(), what = input$what,
                           within = input$within,
-                          standard = input$standard, 
+                          standard = input$standard,
                           ID = input$ID,
-                          standardSubset = input$stdSub, 
+                          standardSubset = input$stdSub,
                           add = input$add_rem,
                           samplesub = input$samplesub,
                           withsub = input$withsub,
                           whatsub = input$whatsub,
                           repsub = input$repsub,
-                          techsub = input$techsub))      
+                          techsub = input$techsub))
     } else {
       FirstData()
     }
-  
+
   })
-  
+
   SubPlotData <- reactive({
-    # Note: You need to use shiny::validate instead of just validate for those 
+    # Note: You need to use shiny::validate instead of just validate for those
     #   operations, since there is a second validate in jsonlite
     shiny::validate(
-      need(check_ttest(PlotData(), input), 
+      need(check_ttest(PlotData(), input),
            "Please ensure that you have selected exactly two samples!")
     )
-   
+
     # TODO: Clean advplotoptions
     advplot <<- c(input$symbolchoice)
     if (input$add_rem) {
       advplot <<- c(advplot, "add")
-    } 
+    }
     if (input$highlight) {
       advplot <<- c(advplot, "highlight")
     }
-    
+
     prepareSubset(PlotData(), advanced = advplot,
-                  samplesub = input$samplesub, 
-                  whatsub = input$whatsub, 
-                  withsub = input$withsub, 
+                  samplesub = input$samplesub,
+                  whatsub = input$whatsub,
+                  withsub = input$withsub,
                   within = input$within,
                   repsub = input$repsub,
 		              base = input$samplebase)
   })
 
-  
-  
+
+
   PCA.results<-reactive({
     print("started new")
       # list(data=read.csv(input$files$datapath, header=T, stringsAsFactors =T),
       # data2=rnorm(10))
-      
+
       # }
       #adapted from another devium
       pca.inputs<-list()
@@ -313,7 +318,7 @@ function(input, output, session) {
       }
       # print()
       # start.data <- as.matrix(C,row.names=1)
-      
+
       # print(dim(start.data))
       # print(dim(C[,1]))
       # print(row.names(start.data))
@@ -332,9 +337,9 @@ function(input, output, session) {
       # print(pca.inputs)
       devium.pca.calculate(pca.inputs,return="list",plot=F)
       # devium.pca.calculate(pca.inputs,return="model",plot=F)
-    
+
   })
-  
+
   plotInput <- reactive({
     # A and B are only used for debugging purposes TODO: Delete later
     print("started")
@@ -352,7 +357,7 @@ function(input, output, session) {
     # B <- ggplotly(B)
     B  + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
   })
-  
+
   prepareHeatmap <- reactive({
     library("gplots")
     A <<- SubPlotData()
@@ -378,7 +383,7 @@ function(input, output, session) {
     }
     return(out)
   })
-  
+
   plotScores <- reactive({
     if (is.null(PCA.results())) {
       return(NULL)
@@ -425,39 +430,39 @@ function(input, output, session) {
       # print(p)
     }
   })
-  
+
   plotLoadings <- reactive({
-    if (is.null(PCA.results())) { 
+    if (is.null(PCA.results())) {
       return(NULL)
     } else {
       tmp<-PCA.results()
       loadings<-data.frame(tmp$pca.loadings,names=rownames(tmp$pca.loadings))
-      
+
       #plot
-      p<-ggplot(loadings,mapping = aes_string(x = names(loadings)[1], y = names(loadings)[2], label = "names")) + 
+      p<-ggplot(loadings,mapping = aes_string(x = names(loadings)[1], y = names(loadings)[2], label = "names")) +
         geom_text(size=4,alpha=0.75) +.theme
       # print(p)
     }
   })
-  
+
   plotScree1 <- reactive({
     library(ggplot2)
     library(reshape2)
-    if (is.null(PCA.results())) { 
+    if (is.null(PCA.results())) {
       return(NULL)
     } else {
       x<-PCA.results()
       eigenvalues<-data.frame(x$pca.eigenvalues)
-      
-      # make.scree.plot(x)	
+
+      # make.scree.plot(x)
       # p <- make.scree.plot.bar(x)
       library("gridExtra")
       .theme<- theme(
-        axis.line = element_line(colour = 'gray', size = .75), 
-        panel.background = element_blank(),  
+        axis.line = element_line(colour = 'gray', size = .75),
+        panel.background = element_blank(),
         plot.background = element_blank()
-      )	
-      
+      )
+
       tmp<-data.frame(melt(eigenvalues$eigenvalue),PCs=rep(1:nrow(eigenvalues)))
       tmp$value<-tmp$value*100
       p1<-ggplot(tmp, aes(y=value, x = as.factor(PCs)))+geom_bar( fill="gray",stat="identity",position=position_dodge())+
@@ -465,26 +470,26 @@ function(input, output, session) {
     }
     return(p1)
   })
-  
+
   plotScree2 <- reactive({
     library(ggplot2)
     library(reshape2)
-    if (is.null(PCA.results())) { 
+    if (is.null(PCA.results())) {
       return(NULL)
     } else {
       x<-PCA.results()
       eigenvalues<-data.frame(x$pca.eigenvalues)
-      
-      # make.scree.plot(x)	
+
+      # make.scree.plot(x)
       # p <- make.scree.plot.bar(x)
       library("gridExtra")
       .theme<- theme(
-        axis.line = element_line(colour = 'gray', size = .75), 
-        panel.background = element_blank(),  
+        axis.line = element_line(colour = 'gray', size = .75),
+        panel.background = element_blank(),
         plot.background = element_blank()
-      )	
-      
-      #cumulative	
+      )
+
+      #cumulative
       eigenvalues$eigenvalues<-cumsum(eigenvalues$eigenvalues)
       tmp<-data.frame(melt(eigenvalues),PCs=rep(1:nrow(eigenvalues)))
       p2<-ggplot(tmp, aes(y=value, x = as.factor(PCs), fill=variable))+geom_bar( stat="identity",position=position_dodge())+
@@ -492,7 +497,7 @@ function(input, output, session) {
     }
     return(p2)
   })
-  
+
   plotPCA <- reactive({
     # A and B are only used for debugging purposes TODO: Delete later
     print("PCA started")
@@ -500,7 +505,7 @@ function(input, output, session) {
     B <- A[c('sample_replicate','xval','standardizedSum')]
     # print(B)
     C <- spread(B, key = 'xval', value = 'standardizedSum')
-    
+
     D <- data.frame(C[,-1])
     # D <- D[rowSums(D)>0, ]
     # D <- t(t(D)/colSums(D)) * 100
@@ -512,7 +517,7 @@ function(input, output, session) {
     # print(pc.data$x)
     print("prcomp complete")
     # ggbiplot(pc.data, obs.scale = 1, var.scale = 1,
-    #          groups = colnames(C[,-1]), ellipse = input$ellipse, 
+    #          groups = colnames(C[,-1]), ellipse = input$ellipse,
     #          circle = T,pc.biplot=T,var.axes = F)
     # ,labels=C$sample_replicate
     # g <- plot(pc.data,type="l")
@@ -560,12 +565,12 @@ function(input, output, session) {
     names(geneList) <- data[,1]
     geneList <- geneList[!is.na(geneList)]
     head(geneList)
-    
+
     BPterms <- ls(GOBPTerm)
     # selProbes <- genefilter(geneList, filterfun(pOverA(0.20, log2(100)), function(x) (IQR(x) > 0.25)))
     # eset <- ALL[selProbes, ]
-    
-    
+
+
     # affyLib <- paste(annotation(geneList), "db", sep = ".")
     sum(topDiffGenes(geneList))
     sampleGOdata <- new("topGOdata",description = "Simple session", ontology = "CC",allGenes = geneList, geneSel = topDiffGenes,nodeSize = 10,annot = annFUN.org, mapping="org.Hs.eg.db", ID = "symbol")
@@ -594,28 +599,28 @@ function(input, output, session) {
   output$loadings <- renderPlot({
     print(plotLoadings())
   })
-  
+
   #make screeplot
   output$screeplot1 <- renderPlot({
     print(plotScree1())
-  })	
+  })
   output$screeplot2 <- renderPlot({
     print(plotScree2())
-  })	
-  
+  })
+
   # output$plot1 <- renderPlotly({
     # plotInput()
   # })
-  
+
   output$sum_muMol <- DT::renderDataTable({
     outtab <- collect(rawdata())
     # Averaging over the technical replicates
-    outtab <- outtab %>% 
-      group_by(id, lipid, category, func_cat, class, length, 
-               db, oh, chains, chain_sums, sample, sample_replicate) %>% 
+    outtab <- outtab %>%
+      group_by(id, lipid, category, func_cat, class, length,
+               db, oh, chains, chain_sums, sample, sample_replicate) %>%
       summarize(value = mean(value, na.rm = T))
     # Summing the relevant parts
-    outtab <- outtab %>% group_by(sample, sample_replicate) %>% 
+    outtab <- outtab %>% group_by(sample, sample_replicate) %>%
       summarise(sum = sum(value, na.rm = T))
     names(outtab) <- c("Sample", "Sample Replicate", "µM")
     datatable(outtab,
@@ -626,18 +631,18 @@ function(input, output, session) {
                              deferRender = TRUE,
                              scrollY = 500,
                              scrollCollapse = TRUE
-              ), 
+              ),
               rownames = FALSE,
               selection = "none"
               # extensions = 'ColVis'
-              # selection = 'single'          
+              # selection = 'single'
     )
   })
-  
-  
-  ##################################################  
+
+
+  ##################################################
   ### Saving
-  
+
   # Saving a dataset as a .RData
   output$downdata <- downloadHandler(
     filename = function() {
@@ -648,11 +653,11 @@ function(input, output, session) {
       save(dataset, file = file)
     }
   )
-  
+
   # Saving the current plot as a pdf
   output$saveplot <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),".pdf") 
+      paste0(input$ID, "_", Sys.Date(),".pdf")
     },
     content = function(file) {
       pdf(file, height = 10, width = 20)
@@ -662,7 +667,7 @@ function(input, output, session) {
   )
   output$saveheatmap <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),"_heatmap.pdf") 
+      paste0(input$ID, "_", Sys.Date(),"_heatmap.pdf")
     },
     content = function(file) {
       out <- prepareHeatmap()
@@ -673,7 +678,7 @@ function(input, output, session) {
   )
   output$saveScores <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),"_Scores.pdf") 
+      paste0(input$ID, "_", Sys.Date(),"_Scores.pdf")
     },
     content = function(file) {
       pdf(file, height = input$heightPCA, width = input$widthPCA)
@@ -683,7 +688,7 @@ function(input, output, session) {
   )
   output$saveLoadings <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),"_Loadings.pdf") 
+      paste0(input$ID, "_", Sys.Date(),"_Loadings.pdf")
     },
     content = function(file) {
       pdf(file, height = input$heightPCA, width = input$widthPCA)
@@ -693,7 +698,7 @@ function(input, output, session) {
   )
   output$savescree1 <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),"_Scree.pdf") 
+      paste0(input$ID, "_", Sys.Date(),"_Scree.pdf")
     },
     content = function(file) {
       pdf(file, height = input$heightPCA, width = input$widthPCA)
@@ -703,7 +708,7 @@ function(input, output, session) {
   )
   output$savescree2 <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),"_Scree.pdf") 
+      paste0(input$ID, "_", Sys.Date(),"_Scree.pdf")
     },
     content = function(file) {
       pdf(file, height = input$heightPCA, width = input$widthPCA)
@@ -714,9 +719,9 @@ function(input, output, session) {
   # Save the corresponding ggplot data for further computations
   output$saveplotR <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),".RData") 
+      paste0(input$ID, "_", Sys.Date(),".RData")
     },
-    content = function(file) {    
+    content = function(file) {
       lipidplot <- plotInput()
       save(lipidplot, lipidsubset, file = file)
     }
@@ -724,15 +729,15 @@ function(input, output, session) {
   # General plot saving
   output$save <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),".pdf") 
+      paste0(input$ID, "_", Sys.Date(),".pdf")
     },
     content = function(file) {
       pdf(file, height = input$height, width = input$width)
       print(plotInput())
       dev.off()
     }
-  )  
-  
+  )
+
   ### saves the current selection of metadata columns in an csv file
   output$savemeta <- downloadHandler(
     filename = function() {
@@ -745,10 +750,10 @@ function(input, output, session) {
   # Save standardized Data as a File
   output$savestddata <- downloadHandler(
     filename = function() {
-      paste0(input$ID, "_", Sys.Date(),".csv") 
+      paste0(input$ID, "_", Sys.Date(),".csv")
     },
     content = function(file) {
-      write.csv(collect(tidySave), row.names = FALSE, 
+      write.csv(collect(tidySave), row.names = FALSE,
                 file = file)
     })
   ##################################################
@@ -762,14 +767,14 @@ function(input, output, session) {
       }
       else if (input$within == "Category")
       {
-        updateSelectInput(session, "standard", choices = c("Sample", "Category", 
+        updateSelectInput(session, "standard", choices = c("Sample", "Category",
                                                            "Functional Category"))
-      } 
+      }
       else if (input$within == "Functional Category")
       {
-        updateSelectInput(session, "standard", choices = c("Sample", "Category", 
+        updateSelectInput(session, "standard", choices = c("Sample", "Category",
                                                            "Functional Category"))
-      } 
+      }
       else if (input$within == "Class")
       {
         updateSelectInput(session, "standard", choices = c("Sample", "Category",
@@ -779,8 +784,8 @@ function(input, output, session) {
       updateSelectInput(session, "standard", choices = c("Sample", "Category",
                                                          "Functional Category"))
     }
-  })  
-  
+  })
+
   ###  ShinyJS stuff
   # advanced saving options
   observe({
@@ -791,5 +796,5 @@ function(input, output, session) {
     shinyjs::onclick("toggleAdvancedPCA",
                      shinyjs::toggle(id = "advanced", anim = TRUE))
   })
-  
+
 }
