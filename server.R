@@ -290,53 +290,53 @@ function(input, output, session) {
                   withsub = input$withsub,
                   within = input$within,
                   repsub = input$repsub,
-		              base = input$samplebase)
+                  base = input$samplebase)
   })
 
 
 
   PCA.results<-reactive({
     print("started new")
-      # list(data=read.csv(input$files$datapath, header=T, stringsAsFactors =T),
-      # data2=rnorm(10))
+    # list(data=read.csv(input$files$datapath, header=T, stringsAsFactors =T),
+    # data2=rnorm(10))
 
-      # }
-      #adapted from another devium
-      pca.inputs<-list()
-      # start.data<<-read.csv(input$files$datapath, header=T, stringsAsFactors =T)
-      A <<- SubPlotData()
-      B <- A[c('sample','sample_replicate','xval','standardizedSum')]
-      C <- spread(B, key = 'xval', value = 'standardizedSum')
-      # print(C)
-      # print(input$samplebase)
-      if (length(input$samplebase) != 0) {
-        unchanged <- data.frame(C[,-c(1)],row.names = 1)
-        print(unchanged)
-        start.data <- data.frame(C[,-c(1)],row.names = 1)
-      } else {
-        start.data <- data.frame(C[,-c(1)],row.names = 1)
-      }
-      # print()
-      # start.data <- as.matrix(C,row.names=1)
+    # }
+    #adapted from another devium
+    pca.inputs<-list()
+    # start.data<<-read.csv(input$files$datapath, header=T, stringsAsFactors =T)
+    A <<- SubPlotData()
+    B <- A[c('sample','sample_replicate','xval','standardizedSum')]
+    C <- spread(B, key = 'xval', value = 'standardizedSum')
+    # print(C)
+    # print(input$samplebase)
+    if (length(input$samplebase) != 0) {
+      unchanged <- data.frame(C[,-c(1)],row.names = 1)
+      print(unchanged)
+      start.data <- data.frame(C[,-c(1)],row.names = 1)
+    } else {
+      start.data <- data.frame(C[,-c(1)],row.names = 1)
+    }
+    # print()
+    # start.data <- as.matrix(C,row.names=1)
 
-      # print(dim(start.data))
-      # print(dim(C[,1]))
-      # print(row.names(start.data))
-      # row.names(start.data) <- C[,1]
-      # D <- D[rowSums(D)>0, ]
-      # D <- t(t(D)/colSums(D)) * 100
-      # print("start.data")
-      # print(start.data)
-      pca.inputs$pca.data<-start.data
-      pca.inputs$pca.algorithm<-input$method
-      pca.inputs$pca.components<-input$PCs
-      pca.inputs$pca.center<-input$center
-      pca.inputs$pca.scaling<-input$scaling
-      pca.inputs$pca.cv<-input$cv # currently not used
-      pca.inputs$pca.groups<-C[[1]]
-      # print(pca.inputs)
-      devium.pca.calculate(pca.inputs,return="list",plot=F)
-      # devium.pca.calculate(pca.inputs,return="model",plot=F)
+    # print(dim(start.data))
+    # print(dim(C[,1]))
+    # print(row.names(start.data))
+    # row.names(start.data) <- C[,1]
+    # D <- D[rowSums(D)>0, ]
+    # D <- t(t(D)/colSums(D)) * 100
+    # print("start.data")
+    # print(start.data)
+    pca.inputs$pca.data<-start.data
+    pca.inputs$pca.algorithm<-input$method
+    pca.inputs$pca.components<-input$PCs
+    pca.inputs$pca.center<-input$center
+    pca.inputs$pca.scaling<-input$scaling
+    pca.inputs$pca.cv<-input$cv # currently not used
+    pca.inputs$pca.groups<-C[[1]]
+    # print(pca.inputs)
+    devium.pca.calculate(pca.inputs,return="list",plot=F)
+    # devium.pca.calculate(pca.inputs,return="model",plot=F)
 
   })
 
@@ -359,7 +359,6 @@ function(input, output, session) {
   })
 
   prepareHeatmap <- reactive({
-    library("gplots")
     A <<- SubPlotData()
     B <- A[c('sample','sample_replicate','xval','standardizedSum')]
     C <- spread(B, key = 'xval', value = 'standardizedSum')
@@ -446,8 +445,6 @@ function(input, output, session) {
   })
 
   plotScree1 <- reactive({
-    library(ggplot2)
-    library(reshape2)
     if (is.null(PCA.results())) {
       return(NULL)
     } else {
@@ -456,7 +453,6 @@ function(input, output, session) {
 
       # make.scree.plot(x)
       # p <- make.scree.plot.bar(x)
-      library("gridExtra")
       .theme<- theme(
         axis.line = element_line(colour = 'gray', size = .75),
         panel.background = element_blank(),
@@ -472,8 +468,6 @@ function(input, output, session) {
   })
 
   plotScree2 <- reactive({
-    library(ggplot2)
-    library(reshape2)
     if (is.null(PCA.results())) {
       return(NULL)
     } else {
@@ -482,7 +476,6 @@ function(input, output, session) {
 
       # make.scree.plot(x)
       # p <- make.scree.plot.bar(x)
-      library("gridExtra")
       .theme<- theme(
         axis.line = element_line(colour = 'gray', size = .75),
         panel.background = element_blank(),
@@ -521,10 +514,10 @@ function(input, output, session) {
     #          circle = T,pc.biplot=T,var.axes = F)
     # ,labels=C$sample_replicate
     # g <- plot(pc.data,type="l")
-    library(ggbiplot)
+
     g <- ggbiplot(pc.data, obs.scale = 1, var.scale = 1,
-             groups = D['xval'], ellipse = TRUE,
-             circle = T, pc.biplot=F,var.axes = T,alpha=1)
+                  groups = D['xval'], ellipse = TRUE,
+                  circle = T, pc.biplot=F,var.axes = T,alpha=1)
     # print(g)
     print("PCA ended")
     # B <- ggplotly(g)
@@ -547,7 +540,6 @@ function(input, output, session) {
               ,cexCol=input$heatlabsz,cexRow = input$heatlabsz,margins=c(input$heatmarx,input$heatmary))
   })
   output$pathway <- renderPlot({
-    library("gplots")
     A <<- SubPlotData()
     print(A)
     B <- A[c('sample','sample_replicate','xval','standardizedSum')]
@@ -556,43 +548,50 @@ function(input, output, session) {
     # print(C)
     data <- as.matrix(data.frame(C[,-c(1)],row.names = 1))
     print(data)
-    library(topGO)
-    library("hgu95av2.db")
-    library(genefilter)
-    data(geneList)
-    data <- read.csv("C://Users/bbadm/Desktop/protGroups_dani_erweitert.csv",header = T, sep=",",dec=".")[,c(52,13,15)]
-    geneList <- 10^(-data[,3])
-    names(geneList) <- data[,1]
-    geneList <- geneList[!is.na(geneList)]
-    head(geneList)
-
-    BPterms <- ls(GOBPTerm)
-    # selProbes <- genefilter(geneList, filterfun(pOverA(0.20, log2(100)), function(x) (IQR(x) > 0.25)))
-    # eset <- ALL[selProbes, ]
-
-
-    # affyLib <- paste(annotation(geneList), "db", sep = ".")
-    sum(topDiffGenes(geneList))
-    sampleGOdata <- new("topGOdata",description = "Simple session", ontology = "CC",allGenes = geneList, geneSel = topDiffGenes,nodeSize = 10,annot = annFUN.org, mapping="org.Hs.eg.db", ID = "symbol")
-    resultFisher <- runTest(sampleGOdata, algorithm = "classic", statistic = "fisher")
-    resultKS <- runTest(sampleGOdata, algorithm = "classic", statistic = "ks")
-    resultKS.elim <- runTest(sampleGOdata, algorithm = "elim", statistic = "ks")
-    allRes <- GenTable(sampleGOdata, classicFisher = resultFisher,classicKS = resultKS, elimKS = resultKS.elim,orderBy = "elimKS", ranksOf = "classicFisher")
-    pValue.classic <- score(resultKS)
-    pValue.elim <- score(resultKS.elim)[names(pValue.classic)]
-    gstat <- termStat(sampleGOdata, names(pValue.classic))
-    gSize <- gstat$Annotated / max(gstat$Annotated) * 4
-    gCol <- colMap(gstat$Significant)
-    plot(pValue.classic, pValue.elim, xlab = "p-value classic", ylab = "p-value elim",pch = 19, cex = gSize, col = gCol)
-    sel.go <- names(pValue.classic)[pValue.elim < pValue.classic]
-    cbind(termStat(sampleGOdata, sel.go),elim = pValue.elim[sel.go],classic = pValue.classic[sel.go])
-    # printGraph(sampleGOdata, resultKS.elim, firstSigNodes = 5, fn.prefix = "sampleFile2", useInfo = "all", pdfSW = TRUE)
-    showSigOfNodes(sampleGOdata, score(resultKS.elim), firstSigNodes = 5, useInfo = "all")
-    # printGraph(GOdata, resultFisher, firstSigNodes = 5, fn.prefix = "sampleFile", useInfo = "all", pdfSW = TRUE)
-    # y <- as.integer(sapply(eset$BT, function(x) return(substr(x, 1, 1) =='T')))
-    # table(y)
-    write.csv(allRes,file="C://Users/bbadm/Documents/Dani_GO_CC.csv",sep=",")
   })
+
+  #------------------------------
+  # The following was in the output$pathway renderPlot, but it's highly unfinished.
+
+  # library(topGO)
+  # library("hgu95av2.db")
+  # library(genefilter)
+  # data(geneList)
+  # data <- read.csv("C://Users/bbadm/Desktop/protGroups_dani_erweitert.csv",header = T, sep=",",dec=".")[,c(52,13,15)]
+  # geneList <- 10^(-data[,3])
+  # names(geneList) <- data[,1]
+  # geneList <- geneList[!is.na(geneList)]
+  # head(geneList)
+  #
+  # BPterms <- ls(GOBPTerm)
+  # # selProbes <- genefilter(geneList, filterfun(pOverA(0.20, log2(100)), function(x) (IQR(x) > 0.25)))
+  # # eset <- ALL[selProbes, ]
+
+
+  # # affyLib <- paste(annotation(geneList), "db", sep = ".")
+  # sum(topDiffGenes(geneList))
+  # sampleGOdata <- new("topGOdata",description = "Simple session", ontology = "CC",allGenes = geneList, geneSel = topDiffGenes,nodeSize = 10,annot = annFUN.org, mapping="org.Hs.eg.db", ID = "symbol")
+  # resultFisher <- runTest(sampleGOdata, algorithm = "classic", statistic = "fisher")
+  # resultKS <- runTest(sampleGOdata, algorithm = "classic", statistic = "ks")
+  # resultKS.elim <- runTest(sampleGOdata, algorithm = "elim", statistic = "ks")
+  # allRes <- GenTable(sampleGOdata, classicFisher = resultFisher,classicKS = resultKS, elimKS = resultKS.elim,orderBy = "elimKS", ranksOf = "classicFisher")
+  # pValue.classic <- score(resultKS)
+  # pValue.elim <- score(resultKS.elim)[names(pValue.classic)]
+  # gstat <- termStat(sampleGOdata, names(pValue.classic))
+  # gSize <- gstat$Annotated / max(gstat$Annotated) * 4
+  # gCol <- colMap(gstat$Significant)
+  # plot(pValue.classic, pValue.elim, xlab = "p-value classic", ylab = "p-value elim",pch = 19, cex = gSize, col = gCol)
+  # sel.go <- names(pValue.classic)[pValue.elim < pValue.classic]
+  # cbind(termStat(sampleGOdata, sel.go),elim = pValue.elim[sel.go],classic = pValue.classic[sel.go])
+  # # printGraph(sampleGOdata, resultKS.elim, firstSigNodes = 5, fn.prefix = "sampleFile2", useInfo = "all", pdfSW = TRUE)
+  # showSigOfNodes(sampleGOdata, score(resultKS.elim), firstSigNodes = 5, useInfo = "all")
+  # # printGraph(GOdata, resultFisher, firstSigNodes = 5, fn.prefix = "sampleFile", useInfo = "all", pdfSW = TRUE)
+  # # y <- as.integer(sapply(eset$BT, function(x) return(substr(x, 1, 1) =='T')))
+  # # table(y)
+  # write.csv(allRes,file="C://Users/bbadm/Documents/Dani_GO_CC.csv",sep=",")
+
+  #------------------------------------------
+
   output$scores <- renderPlot({
     print(plotScores())
   })
@@ -609,7 +608,7 @@ function(input, output, session) {
   })
 
   # output$plot1 <- renderPlotly({
-    # plotInput()
+  # plotInput()
   # })
 
   output$sum_muMol <- DT::renderDataTable({

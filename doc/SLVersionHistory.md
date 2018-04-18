@@ -3,9 +3,15 @@ title: ' ShinyLipids Version History '
 output: html_document
 ---
 
+## Version 1.0.4 -- 2018-04-18
+
+- Replaced legacy code of DT-package
+- Now loading all packages in one place (global.R) and not several times
+
+
 ## Version 1.0.3 -- 2018-03-19
 
-Version numbering seemed to not be upt to date, not it is.
+Version numbering seemed to not be up to date, not it is.
 The _Let's see what breaks_-Version
 
 - database2.R was obsolote. deleted

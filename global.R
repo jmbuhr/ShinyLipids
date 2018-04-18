@@ -1,3 +1,4 @@
+# Packages
 library(ggplot2)
 library(jsonlite)
 library(lazyeval)
@@ -12,9 +13,21 @@ library(DT) # needs to be loaded after shiny
 library(shinythemes)
 library(tidyr)
 library(RSQLite)
-library(pcaMethods)
 library(gplots)
-# library(plotly)
+library(reshape2)
+library(gridExtra)
+library(shinydashboard)
+
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("package to install")
+
+library(ggbiplot)
+library(Biobase)
+library(BiocGenerics)
+library(pcaMethods)
+library(XLConnect)
+
+
 
 ##### Code for loading the Data
 source('code/database.R')

@@ -1,9 +1,6 @@
 ### Database.R
 # A collection of functions that prepare the data for the plotting
-# they are called by server.R via helpers.R
-
-library(dplyr)
-library(jsonlite)
+# they are called by server.R and sourced by global.R
 
 ### Some preliminary stuff
 # To reduce clutter in the code and increase maintainability here are a couple

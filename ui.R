@@ -1,5 +1,3 @@
-library(shinydashboard)
-
 ##### Specification of the Header
 header <- dashboardHeader(title = "ShinyLipids")
 
@@ -23,29 +21,29 @@ sidebar <- dashboardSidebar(
     selectInput("what", label = "What should be displayed?",
                  choices = whatnames),
     conditionalPanel("input.what == 'chains' | input.what == 'chain_sums' |
-                      input.what == 'length' | 
+                      input.what == 'length' |
                       input.what == 'db'     | input.what == 'oh'",
       selectInput("within", label = "Within which group should be summarized?",
                   choices = withinnames)
     ),
     selectInput("standard", label = "Standardized to which group?",
                   choices = standardnames),
-    selectInput('samplebase', label = 'Sample to use as base level',  
+    selectInput('samplebase', label = 'Sample to use as base level',
                   choices = list(), multiple = TRUE),
-    selectInput('samplesub', label = 'Subset Samples',  
+    selectInput('samplesub', label = 'Subset Samples',
                   choices = list(), multiple = TRUE),
-    selectInput('whatsub', label = 'Subset What',  
+    selectInput('whatsub', label = 'Subset What',
                 choices = list(), multiple = TRUE),
-    selectInput('withsub', label = 'Subset Within', 
+    selectInput('withsub', label = 'Subset Within',
                 choices = list(), multiple = TRUE),
     selectInput('repsub', label = "Select Replicate",
                 choices = list(), multiple = TRUE),
     selectInput('techsub', label = "Remove Technical Replicate",
                 choices = list(), multiple = TRUE),
-  
-  
 
-  
+
+
+
   menuItem("About ", href = "http://bzh.db-engine.de/default.asp?lfn=2241&fg=4289"),
   div(strong("ShinyLipids 2015"), "by",
       br(),
@@ -57,12 +55,12 @@ sidebar <- dashboardSidebar(
       br(),
       ("Version: 1.0"),
       ("Last Update: 23.08.2017"))
-  
+
 )
 ##### Specification of the Body
 body <- dashboardBody(
   shinyjs::useShinyjs(), # needed to load the necessary java script functions
-  
+
   tabItems(
     tabItem(tabName = "metadata",
             DT::dataTableOutput("metadataTable"),
@@ -118,7 +116,7 @@ body <- dashboardBody(
             selectInput("scaling","Scale",
                         list(none = "none", "unit variance" = "uv", pareto = "pareto")
             ),
-            
+
             selectInput("method","Method",
                         namel(listPcaMethods())
             ),
@@ -129,10 +127,10 @@ body <- dashboardBody(
             # sliderInput("prob", label="Ellipse Probability", min=0.01, max=1, value=0.68, ticks = TRUE, animate = FALSE),
             sliderInput("size", label="Point Size", min=1, max=8, value=3, ticks = TRUE, animate = FALSE)
             # selectInput("refsample","Reference Sample",samplenames)
-            
+
           ),
           # box(title = NULL, width = 3,
-          #     selectInput('samplebase', label = 'Sample to use as base level',  
+          #     selectInput('samplebase', label = 'Sample to use as base level',
           #                 choices = list(), multiple = TRUE)
           # ),
           box(title = NULL, width = 6, status = "primary",
@@ -157,7 +155,7 @@ body <- dashboardBody(
           )
         ),
         column(width = 6,
-               box(title = NULL, width = NULL, 
+               box(title = NULL, width = NULL,
                    downloadButton("savescree1", label = "Save Scree Plot as .pdf"),
                    bsTooltip(id = "savescree1",  placement = "top",
                              title = "Save the current Scree Plot as a .pdf file"),
@@ -173,11 +171,11 @@ body <- dashboardBody(
                    numericInput("widthPCA", label = "width", value = 20),
                    numericInput("heightPCA", label = "height", value = 10)
                )
-               
+
         )
       )
     ),
-    
+
 tabItem(tabName = "heatmap",
         fluidRow(
           column(12,
@@ -210,7 +208,7 @@ tabItem(tabName = "heatmap",
                  )
           ),
           column(width = 6,
-                 box(title = NULL, width = NULL, 
+                 box(title = NULL, width = NULL,
                      downloadButton("saveheatmap", label = "Save as .pdf"),
                      bsTooltip(id = "saveheatmap",  placement = "top",
                                title = "Save the current heatmap as a .pdf file"),
@@ -219,9 +217,9 @@ tabItem(tabName = "heatmap",
                      numericInput("heightheat", label = "height", value = 10),
                      numericInput("heatmarx", label = "bottom Margin", value = 10),
                      numericInput("heatmary", label = "side Margin", value = 10)
-                 ) 
+                 )
           )
-          
+
         )
 ),
 
@@ -245,7 +243,7 @@ tabItem(tabName = "heatmap",
 #                      selectInput("scaling","Scale",
 #                                  list(none = "none", "unit variance" = "uv", pareto = "pareto")
 #                      ),
-#                      
+#
 #                      selectInput("method","Method",
 #                                  namel(listPcaMethods())
 #                      ),
@@ -254,7 +252,7 @@ tabItem(tabName = "heatmap",
 #                      ),
 #                      sliderInput("PCs", label="Number of PCs", min=2, max=8, value=2, ticks = TRUE, animate = FALSE),
 #                      sliderInput("prob", label="Ellipse Probability", min=0.01, max=1, value=0.68, ticks = TRUE, animate = FALSE)
-#                      
+#
 #                  ),
 #                  box(title = NULL, width = 9, status = "primary",
 #                      conditionalPanel("input.what == 'class' && input.standard == 'Class'",
@@ -264,23 +262,23 @@ tabItem(tabName = "heatmap",
 #           )
 #         )
 # ),
-            
-      
-    tabItem(tabName = "plots", 
+
+
+    tabItem(tabName = "plots",
       # fluidRow(
       #   box(title = NULL, width = 2,
-      #     selectInput('samplesub', label = 'Subset Samples',  
+      #     selectInput('samplesub', label = 'Subset Samples',
       #               choices = list(), multiple = TRUE)
       #   ),
       #   box(title = NULL, width = 2,
-      #       selectInput('whatsub', label = 'Subset What',  
+      #       selectInput('whatsub', label = 'Subset What',
       #                   choices = list(), multiple = TRUE)
       #   ),
       #   box(title = NULL, width = 2,
       #       conditionalPanel("input.within == 'Category' | input.within == 'Functional Category' | input.within == 'Class'",
-      #           selectInput('withsub', label = 'Subset Within', 
+      #           selectInput('withsub', label = 'Subset Within',
       #                        choices = list(), multiple = TRUE)
-      #       )  
+      #       )
       #   ),
       #   box(title = NULL, width = 2,
       #     selectInput('repsub', label = "Select Replicate",
@@ -332,7 +330,7 @@ tabItem(tabName = "heatmap",
                    )
             ),
             column(width = 6,
-                   box(title = NULL, width = NULL, 
+                   box(title = NULL, width = NULL,
                        downloadButton("saveplotR", label = "Save .RData"),
                        # &#39; is needed for now to avoid a bug when using single ' in bsTooltip
                        bsTooltip(id = "saveplotR",  placement = "top",
@@ -354,14 +352,14 @@ tabItem(tabName = "heatmap",
                              downloadButton("save", label = "Save"),
                              bsTooltip(id = 'save',  placement = "top",
                                        title = "Save plot with custom width/height parameters")
-                         )              
-                       )  
-                   ) 
+                         )
+                       )
+                   )
             )
           ), fluidRow(
             column(12,
                    box(title = "Summary", width = 12, collapsible = TRUE,
-                       collapsed = TRUE, 
+                       collapsed = TRUE,
                        DT::dataTableOutput("sum_muMol"))
             )
         )
