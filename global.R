@@ -17,11 +17,10 @@ library(gplots)
 library(reshape2)
 library(gridExtra)
 library(shinydashboard)
-
 library(ggbiplot)
-library(XLConnect)
+# library(XLConnect) # Do we need this?
 
-source("http://bioconductor.org/biocLite.R")
+# source("http://bioconductor.org/biocLite.R")
 # biocLite("BiocGenerics")
 
 library(Biobase)
