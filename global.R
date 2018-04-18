@@ -18,14 +18,15 @@ library(reshape2)
 library(gridExtra)
 library(shinydashboard)
 
-# source("http://bioconductor.org/biocLite.R")
-# biocLite("package to install")
-
 library(ggbiplot)
+library(XLConnect)
+
+source("http://bioconductor.org/biocLite.R")
+# biocLite("BiocGenerics")
+
 library(Biobase)
 library(BiocGenerics)
 library(pcaMethods)
-library(XLConnect)
 
 
 
