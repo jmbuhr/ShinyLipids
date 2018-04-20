@@ -7,6 +7,7 @@
 # of global variables.
 # NOTE: These necessitate the use of different functions than the usual
 # i.e. 'group_by_' instead of 'group_by'
+# -> deprecated - JB
 # See vignette("nse") for further information
 samplecols <- list("sample", "sample_replicate")
 

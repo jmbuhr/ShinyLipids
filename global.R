@@ -1,56 +1,89 @@
+# Preamble --------------------------------------------------------------------------------------------------------
 # Packages
-library(ggplot2)
+## Data management
 library(jsonlite)
+library(RSQLite)
 library(lazyeval)
 library(dbplyr)  # newly inserted
 library(plyr)
-library(dplyr) # needs to be loaded after plyr
-library(RColorBrewer)
+library(dplyr) # dplyr needs to be loaded after plyr
+library(tidyr)
+library(reshape2)
+## Shiny
 library(shinyBS)
 library(shinyjs)
 library(shiny)
 library(DT) # needs to be loaded after shiny
 library(shinythemes)
-library(tidyr)
-library(RSQLite)
-library(gplots)
-library(reshape2)
-library(gridExtra)
 library(shinydashboard)
+## Plotting
+library(gridExtra)
+library(gplots)
+library(ggplot2)
 library(ggbiplot)
-# library(XLConnect) # Do we need this?
-
+library(RColorBrewer)
+## Bioconductor Packages
 # source("http://bioconductor.org/biocLite.R")
-# biocLite("BiocGenerics")
-
+# biocLite("pcaMethods")
 library(Biobase)
 library(BiocGenerics)
 library(pcaMethods)
 
+# Listing current packages:
+# sess <- sessionInfo()
+# other <- sess$otherPkgs
+# pkgs <- purrr::map_df(other, ~ tibble(pkg = .x$Package, version = .x$Version))
+# pkgs %>% clipr::write_clip()
 
 
-##### Code for loading the Data
+# pkg	version
+# tidyr	0.8.0
+# bindrcpp	0.2.2
+# pcaMethods	1.70.0
+# Biobase	2.38.0
+# BiocGenerics	0.24.0
+# RColorBrewer	1.1-2
+# ggbiplot	0.55
+# scales	0.5.0
+# ggplot2	2.2.1
+# gplots	3.0.1
+# gridExtra	2.3
+# shinydashboard	0.7.0
+# shinythemes	1.1.1
+# DT	0.4
+# shinyjs	1.0
+# shinyBS	0.61
+# reshape2	1.4.3
+# dplyr	0.7.4
+# plyr	1.8.4
+# lazyeval	0.2.1
+# RSQLite	2.1.0
+# jsonlite	1.5
+# shiny	1.0.5
+
+# Sourcing
+## Code for loading the Data
 source('code/database.R')
-##### Code for plotting the Data
+## Code for plotting the Data
 source('code/plotter.R')
-##### Code for PCA
+## Code for PCA
 source('code/DeviumPCA.R')
 source('code/DeviumCommon.R')
 
 
 ##### general options for the ggplot theme
 theme_set(
-  theme_bw(18)
-  + theme(
-    axis.line = element_line(colour = "black"),
-    axis.text = element_text(size = 10),
-    # axis.text.x= element_text(angle = 90,hjust = 1, vjust = 0.5),
-    axis.title.y = element_text(size = 10),
-    legend.title = element_text(size = 10, face="bold"),
-    legend.text = element_text(size = 10),
-    panel.border = element_rect(colour = "black"),
-    panel.background = element_blank()
-  )
+    theme_bw(18)
+    + theme(
+        axis.line = element_line(colour = "black"),
+        axis.text = element_text(size = 10),
+        # axis.text.x= element_text(angle = 90,hjust = 1, vjust = 0.5),
+        axis.title.y = element_text(size = 10),
+        legend.title = element_text(size = 10, face = "bold"),
+        legend.text = element_text(size = 10),
+        panel.border = element_rect(colour = "black"),
+        panel.background = element_blank()
+    )
 )
 
 
@@ -72,102 +105,130 @@ rawmetadata <- collect(tbl(database_connection, sql(sql_data)))
 cleandata <- rawmetadata
 
 # Some formatting of the columns that contain temporal information
-cleandata$date_upload <- as.Date(cleandata$date_upload, format = '%y%m%d')
-cleandata$date_sample <- as.Date(cleandata$date_sample, format = '%y%m%d')
-cleandata$date_extraction <- as.Date(cleandata$date_extraction, format = '%y%m%d')
-cleandata$date_measured <- as.Date(cleandata$date_measured, format = '%y%m%d')
-cleandata <- cleandata[order(cleandata$id),]
+cleandata$date_upload <-
+    as.Date(cleandata$date_upload, format = '%y%m%d')
+cleandata$date_sample <-
+    as.Date(cleandata$date_sample, format = '%y%m%d')
+cleandata$date_extraction <-
+    as.Date(cleandata$date_extraction, format = '%y%m%d')
+cleandata$date_measured <-
+    as.Date(cleandata$date_measured, format = '%y%m%d')
+cleandata <- cleandata[order(cleandata$id), ]
 
 
 ##### Names for the Plot informations
 datanames <- as.list(cleandata$id)
 names(datanames) <- paste(cleandata$id, cleandata$title)
 whatnames <-
-  list(
-    "Classes" = "class", "Categories" = "category",
-    "Functional Categories" = "func_cat", "Species" = "chains",
-    "Sum Species" = "chain_sums",
-    "Length" = "length", "Double bonds" = "db", "OH" = "oh"
-  )
+    list(
+        "Classes" = "class",
+        "Categories" = "category",
+        "Functional Categories" = "func_cat",
+        "Species" = "chains",
+        "Sum Species" = "chain_sums",
+        "Length" = "length",
+        "Double bonds" = "db",
+        "OH" = "oh"
+    )
 revwhatnames <-
-  list("class" = "Classes", "category" = "Categories",
-       "func_cat" = "Functional Categories", "chains" = "Species",
-       "chain_sums" = "Sum Species", "length" = "Length",
-       "db" = "Double bonds", "oh" = "OH")
+    list(
+        "class" = "Classes",
+        "category" = "Categories",
+        "func_cat" = "Functional Categories",
+        "chains" = "Species",
+        "chain_sums" = "Sum Species",
+        "length" = "Length",
+        "db" = "Double bonds",
+        "oh" = "OH"
+    )
 
 samplenames <- list()
 
 
-
-
 withinnames <-
-  c("Sample", "Category", "Functional Category", "Class")
+    c("Sample", "Category", "Functional Category", "Class")
 standardnames <-
-  c("Sample", "Category", "Functional Category", "Class")
+    c("Sample", "Category", "Functional Category", "Class")
 plotchoices <- list(
-  "Plot Values" = "values",
-  "Errorbar (Mean +/- 1SD)" = "errsd",
-  "Errorbar (Mean +/- 1SE)" = "errse",
-  "Median" = "median",
-  "Nr of Datapoints" = "nrdat",
-  "Mean Values" = "mean",
-  "Log10-Transformation" = "logtrans",
-  "Show Legend" = "legend?",
-  "Identify Individuals" = "sample_ident",
-  "Ttest" = "ttest"
+    "Plot Values" = "values",
+    "Errorbar (Mean +/- 1SD)" = "errsd",
+    "Errorbar (Mean +/- 1SE)" = "errse",
+    "Median" = "median",
+    "Nr of Datapoints" = "nrdat",
+    "Mean Values" = "mean",
+    "Log10-Transformation" = "logtrans",
+    "Show Legend" = "legend?",
+    "Identify Individuals" = "sample_ident",
+    "Ttest" = "ttest"
 )
 
 
 ##### General functions needed for plotting
-  # Verification that the ttest gets the desired two samples
+# Verification that the ttest gets the desired two samples
 check_ttest <- function(data, input) {
-  if ("ttest" %in% input$checkGroup)
-  {
-    if (length(unique(data$sample)) == 2 | length(unique(input$samplesub)) == 2) {
-      return(TRUE)
+    if ("ttest" %in% input$checkGroup)
+    {
+        if (length(unique(data$sample)) == 2 |
+            length(unique(input$samplesub)) == 2) {
+            return(TRUE)
+        }
+        else {
+            return(FALSE)
+        }
     }
-    else {
-      return(FALSE)
-    }
-  }
-  return(TRUE)
+    return(TRUE)
 }
 
-  # Some functions needed for the summary plottings
-se <- function(X, na.rm = T) sqrt(var(X, na.rm = na.rm)/length(X))
-meanplussd <- function(X) mean(X) + sd(X)
-meanminussd <- function(X)  mean(X) - sd(X)
-meanplusse <- function(X) mean(X) + se(X)
-meanminusse <- function(X) mean(X) - se(X)
+# Some functions needed for the summary plottings
+se <- function(X, na.rm = T)
+    sqrt(var(X, na.rm = na.rm) / length(X))
+meanplussd <- function(X)
+    mean(X) + sd(X)
+meanminussd <- function(X)
+    mean(X) - sd(X)
+meanplusse <- function(X)
+    mean(X) + se(X)
+meanminusse <- function(X)
+    mean(X) - se(X)
 
 mval <- function(X) {
-  return(data.frame(y = mean(X), label = paste0(round(mean(X),3))))
+    return(data.frame(y = mean(X), label = paste0(round(mean(
+        X
+    ), 3))))
 }
 mvalsd <- function(X) {
-  return(data.frame(y = meanplussd(X), label = paste0(round(mean(X),3))))
+    return(data.frame(y = meanplussd(X), label = paste0(round(mean(
+        X
+    ), 3))))
 }
 mvalse <- function(X) {
-  return(data.frame(y = meanplusse(X), label = paste0(round(mean(X),3))))
+    return(data.frame(y = meanplusse(X), label = paste0(round(mean(
+        X
+    ), 3))))
 }
 
-namel<-function (vec){
-  tmp<-as.list(vec)
-  names(tmp)<-as.character(unlist(vec))
-  tmp
+namel <- function (vec) {
+    tmp <- as.list(vec)
+    names(tmp) <- as.character(unlist(vec))
+    tmp
 }
 
 colMap <- function(x) {
-  .col <- rep(rev(heat.colors(length(unique(x)))), time = table(x))
-  return(.col[match(1:length(x), order(x))])
+    .col <- rep(rev(heat.colors(length(unique(
+        x
+    )))), time = table(x))
+    return(.col[match(1:length(x), order(x))])
 }
 
 ##### Plot the factors in the order specified
-  # by the database:
-sql_statement <- paste('SELECT class FROM lipid_class_order_complete order by class_order')
-class_order_database <- tbl(database_connection, sql(sql_statement)) %>% data.frame()
+# by the database:
+sql_statement <-
+    paste('SELECT class FROM lipid_class_order_complete order by class_order')
+class_order_database <-
+    tbl(database_connection, sql(sql_statement)) %>% data.frame()
 class_order <- class_order_database$class
 
-  # By hand
+# By hand
 # class_order <- c("PC", "PC O-", "PE", "PE O-", "PE P-", "PS", "PS O-", "PI", "PI O-",
 #                  "PG", "PG O-", "PA", "PA O-", "DAG", "CL", "MLCL", "Cer", "SM",
 #                  "HexCer", "GM3", "Sulf", "SGalCer", "diHexCer", "For", "Chol", "Desm",
