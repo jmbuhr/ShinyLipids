@@ -30,38 +30,66 @@ library(BiocGenerics)
 library(pcaMethods)
 
 # Listing current packages:
+
 # sess <- sessionInfo()
 # other <- sess$otherPkgs
-# pkgs <- purrr::map_df(other, ~ tibble(pkg = .x$Package, version = .x$Version))
-# pkgs %>% clipr::write_clip()
+# loaded <- sess$loadedOnly
+# otherpkgs <- purrr::map_df(other, ~ tibble(pkg = .x$Package, version = .x$Version)) %>% mutate(state = "other")
+# loadedpkgs <- purrr::map_df(other, ~ tibble(pkg = .x$Package, version = .x$Version)) %>% mutate(state = "loaded only")
+# rbind(otherpkgs, loadedpkgs) %>% clipr::write_clip()
+
+# pkg	version	state
+# dbplyr	1.2.1	other
+# tidyr	0.8.0	other
+# bindrcpp	0.2.2	other
+# pcaMethods	1.70.0	other
+# Biobase	2.38.0	other
+# BiocGenerics	0.24.0	other
+# RColorBrewer	1.1-2	other
+# ggbiplot	0.55	other
+# scales	0.5.0	other
+# ggplot2	2.2.1	other
+# gplots	3.0.1	other
+# gridExtra	2.3	other
+# shinydashboard	0.7.0	other
+# shinythemes	1.1.1	other
+# DT	0.4	other
+# shinyjs	1.0	other
+# shinyBS	0.61	other
+# reshape2	1.4.3	other
+# dplyr	0.7.4	other
+# plyr	1.8.4	other
+# lazyeval	0.2.1	other
+# RSQLite	2.1.0	other
+# jsonlite	1.5	other
+# shiny	1.0.5	other
+# dbplyr	1.2.1	loaded only
+# tidyr	0.8.0	loaded only
+# bindrcpp	0.2.2	loaded only
+# pcaMethods	1.70.0	loaded only
+# Biobase	2.38.0	loaded only
+# BiocGenerics	0.24.0	loaded only
+# RColorBrewer	1.1-2	loaded only
+# ggbiplot	0.55	loaded only
+# scales	0.5.0	loaded only
+# ggplot2	2.2.1	loaded only
+# gplots	3.0.1	loaded only
+# gridExtra	2.3	loaded only
+# shinydashboard	0.7.0	loaded only
+# shinythemes	1.1.1	loaded only
+# DT	0.4	loaded only
+# shinyjs	1.0	loaded only
+# shinyBS	0.61	loaded only
+# reshape2	1.4.3	loaded only
+# dplyr	0.7.4	loaded only
+# plyr	1.8.4	loaded only
+# lazyeval	0.2.1	loaded only
+# RSQLite	2.1.0	loaded only
+# jsonlite	1.5	loaded only
+# shiny	1.0.5	loaded only
 
 
-# pkg	version
-# tidyr	0.8.0
-# bindrcpp	0.2.2
-# pcaMethods	1.70.0
-# Biobase	2.38.0
-# BiocGenerics	0.24.0
-# RColorBrewer	1.1-2
-# ggbiplot	0.55
-# scales	0.5.0
-# ggplot2	2.2.1
-# gplots	3.0.1
-# gridExtra	2.3
-# shinydashboard	0.7.0
-# shinythemes	1.1.1
-# DT	0.4
-# shinyjs	1.0
-# shinyBS	0.61
-# reshape2	1.4.3
-# dplyr	0.7.4
-# plyr	1.8.4
-# lazyeval	0.2.1
-# RSQLite	2.1.0
-# jsonlite	1.5
-# shiny	1.0.5
-
-# Sourcing
+# Sourcing --------------------------------------------------------------------------------------------------------
 ## Code for loading the Data
 source('code/database.R')
 ## Code for plotting the Data
@@ -71,6 +99,8 @@ source('code/DeviumPCA.R')
 source('code/DeviumCommon.R')
 
 
+
+# ggplot options --------------------------------------------------------------------------------------------------
 ##### general options for the ggplot theme
 theme_set(
     theme_bw(18)
@@ -87,7 +117,8 @@ theme_set(
 )
 
 
-##### Database Connections
+
+# Database Connections --------------------------------------------------------------------------------------------
 # To postgres
 # database_connection <- src_postgres(dbname = "ldb", host = "129.206.154.238",
 #                                    user = "mathias")
@@ -116,7 +147,7 @@ cleandata$date_measured <-
 cleandata <- cleandata[order(cleandata$id), ]
 
 
-##### Names for the Plot informations
+# Names for plots -------------------------------------------------------------------------------------------------
 datanames <- as.list(cleandata$id)
 names(datanames) <- paste(cleandata$id, cleandata$title)
 whatnames <-
@@ -163,7 +194,8 @@ plotchoices <- list(
 )
 
 
-##### General functions needed for plotting
+
+# General functions needed for plotting ---------------------------------------------------------------------------
 # Verification that the ttest gets the desired two samples
 check_ttest <- function(data, input) {
     if ("ttest" %in% input$checkGroup)

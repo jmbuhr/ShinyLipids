@@ -551,7 +551,7 @@ function(input, output, session) {
   })
 
   #------------------------------
-  # The following was in the output$pathway renderPlot, but it's highly unfinished.
+  # The following was in the output$pathway renderPlot, but it's highly unfinished. -- JB
 
   # library(topGO)
   # library("hgu95av2.db")
