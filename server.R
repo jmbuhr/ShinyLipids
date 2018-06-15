@@ -1,6 +1,6 @@
 function(input, output, session) {
 
-  .theme<- theme(
+  .theme <- theme(
     axis.line = element_line(colour = 'gray', size = .75),
     panel.background = element_blank(),
     plot.background = element_blank()
@@ -57,12 +57,10 @@ function(input, output, session) {
       } else {
         cleandata[c("id", "title", "date_upload", "status", "sample_from")]
       },
-      extensions = 'Buttons', # Needed for new ColVis buttons
+      extensions = 'Buttons',
       options = list(orderClasses = TRUE, pageLength = 10,
                      paging = FALSE, searching = TRUE, dom = 'C<"clear">lfrtip',
-                     # ColVis is replace by button colvis - JB
                      buttons = list(list(extend = 'colvis', exclude = c(0,1))),
-                     #colVis = list(exclude = c(0,1), activate = 'mouseover'),
                      order = list(0,'desc'),
                      deferRender = TRUE,
                      scrollY = 500,
@@ -84,9 +82,7 @@ function(input, output, session) {
         extensions = 'Buttons',
         options = list(orderClasses = TRUE, pageLength = 10,
                        paging = FALSE, searching = TRUE, dom = 'C<"clear">lfrtip',
-                       # ColVis is replace by button colvis - JB
                        buttons = list(list(extend = 'colvis', exclude = c(0,1))),
-                       #colVis = list(exclude = c(0,1), activate = 'mouseover'),
                        order = list(0,'desc')
         ),
         rownames = FALSE
@@ -126,7 +122,8 @@ function(input, output, session) {
   })
 
 
-  ############################################################
+
+# weird section about metadata ---------------------------------------------------------------------------------------------------
   observeEvent(input$metadataTable_row_last_clicked,{
     #*****************************************
     # I do no know if I need all this until the next Stars...
@@ -156,6 +153,7 @@ function(input, output, session) {
 
 
 
+# selecting data to plot ------------------------------------------------------------------------------------------
   ### Select sample subset to plot
   observe({
     input$ID
@@ -247,6 +245,7 @@ function(input, output, session) {
   })
 
 
+# Creating main plot ----------------------------------------------------------------------------------------------
   ### Create Plot
   PlotData <- reactive({
     if(input$stdSub || input$add_rem) {
@@ -268,8 +267,7 @@ function(input, output, session) {
   })
 
   SubPlotData <- reactive({
-    # Note: You need to use shiny::validate instead of just validate for those
-    #   operations, since there is a second validate in jsonlite
+    # shiny::validate important, interferance with jsonlite::validate
     shiny::validate(
       need(check_ttest(PlotData(), input),
            "Please ensure that you have selected exactly two samples!")
@@ -295,6 +293,7 @@ function(input, output, session) {
 
 
 
+# PCA calculations ------------------------------------------------------------------------------------------------
   PCA.results<-reactive({
     print("started new")
     # list(data=read.csv(input$files$datapath, header=T, stringsAsFactors =T),
@@ -316,17 +315,6 @@ function(input, output, session) {
     } else {
       start.data <- data.frame(C[,-c(1)],row.names = 1)
     }
-    # print()
-    # start.data <- as.matrix(C,row.names=1)
-
-    # print(dim(start.data))
-    # print(dim(C[,1]))
-    # print(row.names(start.data))
-    # row.names(start.data) <- C[,1]
-    # D <- D[rowSums(D)>0, ]
-    # D <- t(t(D)/colSums(D)) * 100
-    # print("start.data")
-    # print(start.data)
     pca.inputs$pca.data<-start.data
     pca.inputs$pca.algorithm<-input$method
     pca.inputs$pca.components<-input$PCs
@@ -334,11 +322,10 @@ function(input, output, session) {
     pca.inputs$pca.scaling<-input$scaling
     pca.inputs$pca.cv<-input$cv # currently not used
     pca.inputs$pca.groups<-C[[1]]
-    # print(pca.inputs)
-    devium.pca.calculate(pca.inputs,return="list",plot=F)
-    # devium.pca.calculate(pca.inputs,return="model",plot=F)
 
+    devium.pca.calculate(pca.inputs,return="list",plot=F)
   })
+
 
   plotInput <- reactive({
     # A and B are only used for debugging purposes TODO: Delete later
@@ -350,22 +337,20 @@ function(input, output, session) {
                        within = input$within,
                        standard = input$standard,
                        advanced = advplot)
-    # print(B)
     print(ranges$x)
     print(ranges$y)
     print("ended")
-    # B <- ggplotly(B)
     B  + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
   })
 
+
+# Heatmap ---------------------------------------------------------------------------------------------------------
   prepareHeatmap <- reactive({
     A <<- SubPlotData()
     B <- A[c('sample','sample_replicate','xval','standardizedSum')]
     C <- spread(B, key = 'xval', value = 'standardizedSum')
-    # print(C)
     out <- list()
     out$data <- as.matrix(data.frame(C[,-c(1)],row.names = 1))
-    # print(data)
     if (input$heatcolscheme == "heatcolors") {
       out$colors <- "heat.colors"
     } else if (input$heatcolscheme == "bluewhiteviolet") {
@@ -396,37 +381,17 @@ function(input, output, session) {
       } else {
         scores<-data.frame(leverage=1, dmodx=1,scores)
       }
-      # theta <- c(seq(-pi, pi, length = 50), seq(pi, -pi, length = 50))
-      # circle <- cbind(cos(theta), sin(theta))
-      # df.u <- data.frame(xvar=scores[,1], yvar=scores[,2],groups=tmp$pca.groups,dmodx=tmp$pca.diagnostics$DmodX)
-      # ell <- ddply(df.u, "groups", function(x) {
-      #   if (nrow(x) <= 2) {
-      #     return(NULL)
-      #   }
-      #   sigma <- var(cbind(x$xvar, x$yvar))
-      #   mu <- c(mean(x$xvar), mean(x$yvar))
-      #   ed <- sqrt(qchisq(input$prob, df = 2))
-      #   data.frame(sweep(circle %*% chol(sigma) * ed, 2,
-      #                    mu, FUN = "+"), groups = x$groups[1])
-      # })
-      # # print(ell)
-      # names(ell)[1:2] <- c("PC1", "PC2")
-      # print(row.names(tmp$pca.scores))
-      p<-ggplot(scores,mapping = aes_string(x = names(scores)[3], y = names(scores)[4]
-                                            ,color="samples"
-                                            # ,color=factor(as.numeric(tmp$pca.groups))
-                                            # ,color="red"
-                                            # ,size=names(scores)[2]
+
+      p <- ggplot(scores,mapping = aes_string(x = names(scores)[3], y = names(scores)[4],
+                                              color="samples"
       ))
       p <- p + scale_size_continuous("DmodX", range = c(4, 10))
       p <- p + geom_point(alpha=0.75,aes(colour=tmp$pca.groups,group=tmp$pca.groups),size=input$size)
       if (input$labels) {
         p <- p + geom_text(aes(label = row.names(tmp$pca.scores), color = tmp$pca.groups), size = 3,nudge_y=0.3)
       }
-      # p <- p + geom_path(data = ell, aes(colour = ell$groups, group = ell$groups)) + coord_equal()
       p <- p +.theme
       p
-      # print(p)
     }
   })
 
@@ -450,15 +415,6 @@ function(input, output, session) {
     } else {
       x<-PCA.results()
       eigenvalues<-data.frame(x$pca.eigenvalues)
-
-      # make.scree.plot(x)
-      # p <- make.scree.plot.bar(x)
-      .theme<- theme(
-        axis.line = element_line(colour = 'gray', size = .75),
-        panel.background = element_blank(),
-        plot.background = element_blank()
-      )
-
       tmp<-data.frame(melt(eigenvalues$eigenvalue),PCs=rep(1:nrow(eigenvalues)))
       tmp$value<-tmp$value*100
       p1<-ggplot(tmp, aes(y=value, x = as.factor(PCs)))+geom_bar( fill="gray",stat="identity",position=position_dodge())+
@@ -473,14 +429,6 @@ function(input, output, session) {
     } else {
       x<-PCA.results()
       eigenvalues<-data.frame(x$pca.eigenvalues)
-
-      # make.scree.plot(x)
-      # p <- make.scree.plot.bar(x)
-      .theme<- theme(
-        axis.line = element_line(colour = 'gray', size = .75),
-        panel.background = element_blank(),
-        plot.background = element_blank()
-      )
 
       #cumulative
       eigenvalues$eigenvalues<-cumsum(eigenvalues$eigenvalues)
@@ -500,37 +448,17 @@ function(input, output, session) {
     C <- spread(B, key = 'xval', value = 'standardizedSum')
 
     D <- data.frame(C[,-1])
-    # D <- D[rowSums(D)>0, ]
-    # D <- t(t(D)/colSums(D)) * 100
-    # print(D)
-    # D <- t(D)
-    # print(D)
     pc.data <- prcomp(D, scale = T,center=T)
-    # print(attributes(pc.data))
-    # print(pc.data$x)
     print("prcomp complete")
-    # ggbiplot(pc.data, obs.scale = 1, var.scale = 1,
-    #          groups = colnames(C[,-1]), ellipse = input$ellipse,
-    #          circle = T,pc.biplot=T,var.axes = F)
-    # ,labels=C$sample_replicate
-    # g <- plot(pc.data,type="l")
-
     g <- ggbiplot(pc.data, obs.scale = 1, var.scale = 1,
                   groups = D['xval'], ellipse = TRUE,
                   circle = T, pc.biplot=F,var.axes = T,alpha=1)
-    # print(g)
     print("PCA ended")
-    # B <- ggplotly(g)
-    # B  + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
   })
   output$plot1 <- renderPlot({
     plotInput()
-    # plotInput()
   })
-  # output$plotPCA <- renderPlot({
-  #   plotPCA()
-  #   # plotInput()
-  # })
+
   output$heatmap <- renderPlot({
     out <- prepareHeatmap()
     heatmap.2(out$data
@@ -550,46 +478,6 @@ function(input, output, session) {
     print(data)
   })
 
-  #------------------------------
-  # The following was in the output$pathway renderPlot, but it seems highly unfinished. -- JB
-
-  # library(topGO)
-  # library("hgu95av2.db")
-  # library(genefilter)
-  # data(geneList)
-  # data <- read.csv("C://Users/bbadm/Desktop/protGroups_dani_erweitert.csv",header = T, sep=",",dec=".")[,c(52,13,15)]
-  # geneList <- 10^(-data[,3])
-  # names(geneList) <- data[,1]
-  # geneList <- geneList[!is.na(geneList)]
-  # head(geneList)
-  #
-  # BPterms <- ls(GOBPTerm)
-  # # selProbes <- genefilter(geneList, filterfun(pOverA(0.20, log2(100)), function(x) (IQR(x) > 0.25)))
-  # # eset <- ALL[selProbes, ]
-
-
-  # # affyLib <- paste(annotation(geneList), "db", sep = ".")
-  # sum(topDiffGenes(geneList))
-  # sampleGOdata <- new("topGOdata",description = "Simple session", ontology = "CC",allGenes = geneList, geneSel = topDiffGenes,nodeSize = 10,annot = annFUN.org, mapping="org.Hs.eg.db", ID = "symbol")
-  # resultFisher <- runTest(sampleGOdata, algorithm = "classic", statistic = "fisher")
-  # resultKS <- runTest(sampleGOdata, algorithm = "classic", statistic = "ks")
-  # resultKS.elim <- runTest(sampleGOdata, algorithm = "elim", statistic = "ks")
-  # allRes <- GenTable(sampleGOdata, classicFisher = resultFisher,classicKS = resultKS, elimKS = resultKS.elim,orderBy = "elimKS", ranksOf = "classicFisher")
-  # pValue.classic <- score(resultKS)
-  # pValue.elim <- score(resultKS.elim)[names(pValue.classic)]
-  # gstat <- termStat(sampleGOdata, names(pValue.classic))
-  # gSize <- gstat$Annotated / max(gstat$Annotated) * 4
-  # gCol <- colMap(gstat$Significant)
-  # plot(pValue.classic, pValue.elim, xlab = "p-value classic", ylab = "p-value elim",pch = 19, cex = gSize, col = gCol)
-  # sel.go <- names(pValue.classic)[pValue.elim < pValue.classic]
-  # cbind(termStat(sampleGOdata, sel.go),elim = pValue.elim[sel.go],classic = pValue.classic[sel.go])
-  # # printGraph(sampleGOdata, resultKS.elim, firstSigNodes = 5, fn.prefix = "sampleFile2", useInfo = "all", pdfSW = TRUE)
-  # showSigOfNodes(sampleGOdata, score(resultKS.elim), firstSigNodes = 5, useInfo = "all")
-  # # printGraph(GOdata, resultFisher, firstSigNodes = 5, fn.prefix = "sampleFile", useInfo = "all", pdfSW = TRUE)
-  # # y <- as.integer(sapply(eset$BT, function(x) return(substr(x, 1, 1) =='T')))
-  # # table(y)
-  # write.csv(allRes,file="C://Users/bbadm/Documents/Dani_GO_CC.csv",sep=",")
-
   #------------------------------------------
 
   output$scores <- renderPlot({
@@ -607,10 +495,6 @@ function(input, output, session) {
     print(plotScree2())
   })
 
-  # output$plot1 <- renderPlotly({
-  # plotInput()
-  # })
-
   output$sum_muMol <- DT::renderDataTable({
     outtab <- collect(rawdata())
     # Averaging over the technical replicates
@@ -625,7 +509,6 @@ function(input, output, session) {
     datatable(outtab,
               options = list(orderClasses = TRUE, pageLength = 10,
                              paging = FALSE, searching = TRUE, dom = 'C<"clear">lfrtip',
-                             # colVis = list(exclude = c(0,1), activate = 'mouseover'),
                              order = list(0,'desc'),
                              deferRender = TRUE,
                              scrollY = 500,
@@ -633,14 +516,14 @@ function(input, output, session) {
               ),
               rownames = FALSE,
               selection = "none"
-              # extensions = 'ColVis'
-              # selection = 'single'
     )
   })
 
 
   ##################################################
   ### Saving
+
+# Saving data and plots -----------------------------------------------------------------------------------------------------
 
   # Saving a dataset as a .RData
   output$downdata <- downloadHandler(
@@ -664,6 +547,7 @@ function(input, output, session) {
       dev.off()
     }
   )
+  #Saving heatmap
   output$saveheatmap <- downloadHandler(
     filename = function() {
       paste0(input$ID, "_", Sys.Date(),"_heatmap.pdf")
@@ -671,7 +555,8 @@ function(input, output, session) {
     content = function(file) {
       out <- prepareHeatmap()
       pdf(file, height = input$heightheat, width = input$widthheat)
-      heatmap.2(out$data,col = out$colors,dendrogram="both",density.info="none",trace="none",breaks=out$break.points,cexCol=1,margins=c(input$heatmarx,input$heatmary))
+      heatmap.2(out$data,col = out$colors,dendrogram="both",density.info="none",trace="none",
+                breaks=out$break.points,cexCol=1,margins=c(input$heatmarx,input$heatmary))
       dev.off()
     }
   )
@@ -755,6 +640,7 @@ function(input, output, session) {
       write.csv(collect(tidySave), row.names = FALSE,
                 file = file)
     })
+
   ##################################################
   # create the standardisation possibilities
   observe({
@@ -785,7 +671,8 @@ function(input, output, session) {
     }
   })
 
-  ###  ShinyJS stuff
+
+# ShinyJS stuff ---------------------------------------------------------------------------------------------------
   # advanced saving options
   observe({
     shinyjs::onclick("toggleAdvanced",
@@ -796,6 +683,8 @@ function(input, output, session) {
                      shinyjs::toggle(id = "advanced", anim = TRUE))
   })
 
+
+# End -------------------------------------------------------------------------------------------------------------
   # End session when window is closed
   session$onSessionEnded(stopApp)
 }

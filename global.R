@@ -18,7 +18,6 @@ library(shinythemes)
 library(shinydashboard)
 ## Plotting
 library(gridExtra)
-library(gplots)
 library(ggplot2)
 library(ggbiplot)
 library(RColorBrewer)
