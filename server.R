@@ -551,7 +551,7 @@ function(input, output, session) {
   })
 
   #------------------------------
-  # The following was in the output$pathway renderPlot, but it's highly unfinished. -- JB
+  # The following was in the output$pathway renderPlot, but it seems highly unfinished. -- JB
 
   # library(topGO)
   # library("hgu95av2.db")
@@ -796,4 +796,6 @@ function(input, output, session) {
                      shinyjs::toggle(id = "advanced", anim = TRUE))
   })
 
+  # End session when window is closed
+  session$onSessionEnded(stopApp)
 }

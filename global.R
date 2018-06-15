@@ -29,64 +29,35 @@ library(Biobase)
 library(BiocGenerics)
 library(pcaMethods)
 
-# Listing current packages:
-
-# sess <- sessionInfo()
-# other <- sess$otherPkgs
-# loaded <- sess$loadedOnly
-# otherpkgs <- purrr::map_df(other, ~ tibble(pkg = .x$Package, version = .x$Version)) %>% mutate(state = "other")
-# loadedpkgs <- purrr::map_df(other, ~ tibble(pkg = .x$Package, version = .x$Version)) %>% mutate(state = "loaded only")
-# rbind(otherpkgs, loadedpkgs) %>% clipr::write_clip()
-
-# pkg	version	state
-# dbplyr	1.2.1	other
-# tidyr	0.8.0	other
-# bindrcpp	0.2.2	other
-# pcaMethods	1.70.0	other
-# Biobase	2.38.0	other
-# BiocGenerics	0.24.0	other
-# RColorBrewer	1.1-2	other
-# ggbiplot	0.55	other
-# scales	0.5.0	other
-# ggplot2	2.2.1	other
-# gplots	3.0.1	other
-# gridExtra	2.3	other
-# shinydashboard	0.7.0	other
-# shinythemes	1.1.1	other
-# DT	0.4	other
-# shinyjs	1.0	other
-# shinyBS	0.61	other
-# reshape2	1.4.3	other
-# dplyr	0.7.4	other
-# plyr	1.8.4	other
-# lazyeval	0.2.1	other
-# RSQLite	2.1.0	other
-# jsonlite	1.5	other
-# shiny	1.0.5	other
-# dbplyr	1.2.1	loaded only
-# tidyr	0.8.0	loaded only
-# bindrcpp	0.2.2	loaded only
-# pcaMethods	1.70.0	loaded only
-# Biobase	2.38.0	loaded only
-# BiocGenerics	0.24.0	loaded only
-# RColorBrewer	1.1-2	loaded only
-# ggbiplot	0.55	loaded only
-# scales	0.5.0	loaded only
-# ggplot2	2.2.1	loaded only
-# gplots	3.0.1	loaded only
-# gridExtra	2.3	loaded only
-# shinydashboard	0.7.0	loaded only
-# shinythemes	1.1.1	loaded only
-# DT	0.4	loaded only
-# shinyjs	1.0	loaded only
-# shinyBS	0.61	loaded only
-# reshape2	1.4.3	loaded only
-# dplyr	0.7.4	loaded only
-# plyr	1.8.4	loaded only
-# lazyeval	0.2.1	loaded only
-# RSQLite	2.1.0	loaded only
-# jsonlite	1.5	loaded only
-# shiny	1.0.5	loaded only
+# sessionInfo()
+# R version 3.4.4 (2018-03-15)
+# Platform: x86_64-w64-mingw32/x64 (64-bit)
+# Running under: Windows >= 8 x64 (build 9200)
+#
+# Matrix products: default
+#
+# locale:
+#     [1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252    LC_MONETARY=English_United States.1252
+# [4] LC_NUMERIC=C                           LC_TIME=English_United States.1252
+#
+# attached base packages:
+#     [1] parallel  grid      stats     graphics  grDevices utils     datasets  methods   base
+#
+# other attached packages:
+#     [1] bindrcpp_0.2.2       pcaMethods_1.70.0    Biobase_2.38.0       BiocGenerics_0.24.0  RColorBrewer_1.1-2
+# [6] ggbiplot_0.55        scales_0.5.0         ggplot2_2.2.1        gplots_3.0.1         gridExtra_2.3
+# [11] shinydashboard_0.7.0 shinythemes_1.1.1    DT_0.4               shinyjs_1.0          shinyBS_0.61
+# [16] reshape2_1.4.3       tidyr_0.8.0          dplyr_0.7.4          plyr_1.8.4           dbplyr_1.2.1
+# [21] lazyeval_0.2.1       jsonlite_1.5         shiny_1.0.5          RSQLite_2.1.0
+#
+# loaded via a namespace (and not attached):
+#     [1] gtools_3.5.0       tidyselect_0.2.4   purrr_0.2.4        colorspace_1.3-2   htmltools_0.3.6    yaml_2.1.18
+# [7] blob_1.1.1         rlang_0.2.0        pillar_1.2.1       glue_1.2.0         DBI_0.8            bit64_0.9-7
+# [13] bindr_0.1.1        stringr_1.3.0      munsell_0.4.3      gtable_0.2.0       htmlwidgets_1.0    caTools_1.17.1
+# [19] memoise_1.1.0      labeling_0.3       Cairo_1.5-9        crosstalk_1.0.0    httpuv_1.3.6.2     Rcpp_0.12.16
+# [25] KernSmooth_2.23-15 xtable_1.8-2       gdata_2.18.0       mime_0.5           bit_1.1-12         digest_0.6.15
+# [31] stringi_1.1.7      tools_3.4.4        bitops_1.0-6       magrittr_1.5       tibble_1.4.2       pkgconfig_2.0.1
+# [37] rsconnect_0.8.8    assertthat_0.2.0   R6_2.2.2           compiler_3.4.4
 
 
 # Sourcing --------------------------------------------------------------------------------------------------------
@@ -97,7 +68,6 @@ source('code/plotter.R')
 ## Code for PCA
 source('code/DeviumPCA.R')
 source('code/DeviumCommon.R')
-
 
 
 # ggplot options --------------------------------------------------------------------------------------------------
@@ -115,7 +85,6 @@ theme_set(
         panel.background = element_blank()
     )
 )
-
 
 
 # Database Connections --------------------------------------------------------------------------------------------
@@ -174,7 +143,6 @@ revwhatnames <-
     )
 
 samplenames <- list()
-
 
 withinnames <-
     c("Sample", "Category", "Functional Category", "Class")

@@ -129,10 +129,6 @@ body <- dashboardBody(
             # selectInput("refsample","Reference Sample",samplenames)
 
           ),
-          # box(title = NULL, width = 3,
-          #     selectInput('samplebase', label = 'Sample to use as base level',
-          #                 choices = list(), multiple = TRUE)
-          # ),
           box(title = NULL, width = 6, status = "primary",
               # conditionalPanel("input.what == 'class' && input.standard == 'Class'",
               #                  "Why would you want to do this?"),
