@@ -91,15 +91,12 @@ prepareSubset <- function(data, advanced, samplesub = NA, whatsub = NA,
     select(Sample = biolSample, Feature =xval, value) %>%
     spread("Sample", "value")
 
-
-  # print("Been there, done that!")
   return(data)
 }
 
 
 
-
-###########################################################
+# Main Plot -------------------------------------------------------------------------------------------------------
 preparePlots <- function(data, checkGroup, plottype, what, within = within,
                          standard = standard, advanced, ...) {
   print("Plotting called")
@@ -128,7 +125,7 @@ preparePlots <- function(data, checkGroup, plottype, what, within = within,
                                        y = Mean,
                                        fill = sample, group = sample)) +
       geom_bar(position = dodge, stat = "identity")
-      # stat_summary(fun.y = mean, geom = "bar", position = dodge)
+
     if (colorCount < 9) {
       graphic <- graphic +
         scale_fill_manual(values = brewer.pal(9, "Set1")[-6]) +
@@ -245,15 +242,11 @@ preparePlots <- function(data, checkGroup, plottype, what, within = within,
     }
 
 
-
-
   }
   # Plot Median
   if ("median" %in% checkGroup) {
     graphic <- graphic +
       geom_errorbar(aes(ymin = Median, ymax = Median), position = dodge)
-#       stat_summary(fun.ymin = median, fun.ymax = median, geom = "errorbar",
-#                    position = dodge)
   }
 
   # Plot Errorbars
@@ -261,15 +254,11 @@ preparePlots <- function(data, checkGroup, plottype, what, within = within,
     graphic <- graphic +
       geom_errorbar(aes(color = sample, ymin = Mean - SD, ymax = Mean + SD),
                     position = dodge)
-#       stat_summary(aes(color = sample), fun.ymax = meanplussd, fun.ymin = meanminussd,
-#                    geom = "errorbar", position = dodge)
   }
   if ("errse" %in% checkGroup) {
     graphic <- graphic +
       geom_errorbar(aes(color = sample, ymin = Mean - SE, ymax= Mean + SE),
                     position = dodge)
-#       stat_summary(aes(color = sample), fun.ymax = meanplusse, fun.ymin = meanminusse,
-#                    geom = "errorbar", position = dodge)
   }
   # Plot Nr of Datapoints
   stddata <- data[!duplicated(data[c("sample","xval")]),]
@@ -287,22 +276,16 @@ preparePlots <- function(data, checkGroup, plottype, what, within = within,
         geom_text(data = stddata, aes(color = sample, y = Mean + SD,
                                                  label = round(Mean, 2)),
                   position = dodge, vjust = -0.5, size = 3)
-#         stat_summary(aes(color = sample), fun.data = mvalsd, geom = "text",
-#                      position = dodge, vjust = -0.5, size = 3)
     } else if ("errse" %in% checkGroup) {
       graphic <- graphic +
         geom_text(data = stddata, aes(color = sample, y = Mean + SE,
                                                  label = round(Mean, 2)),
                   position = dodge, vjust = -0.5, size = 3)
-#         stat_summary(aes(color = sample), fun.data = mvalse, geom = "text",
-#                      position = dodge, vjust = -0.5, size = 3)
     } else {
       graphic <- graphic +
         geom_text(data = stddata, aes(color = sample, x = xval, y = Mean,
                                                  label = round(Mean, 2)),
                   position = dodge, vjust = -0.5, size = 3)
-#         stat_summary(aes(color = sample), fun.data = mval, geom = "text",
-#                      position = dodge, vjust = -0.5, size = 3)
     }
   }
   graphic <- graphic + labs(x = "", y = paste("mol % of measured lipid"))
@@ -313,47 +296,14 @@ preparePlots <- function(data, checkGroup, plottype, what, within = within,
   if ("logtrans" %in% checkGroup)
     graphic <- graphic + scale_y_log10()
 
-  # if (what == "class") {
-  #   graphic <- graphic + labs(x = "Classes", y = paste("mol % of", standard))
-  #                             # title = paste("Classes", "per", standard))
-  # } else if (what == "category") {
-  #   graphic <- graphic + labs(x = "Categories", y = paste("mol % of", standard))
-  #                             # title = paste("Categories", "per", standard))
-  # } else if (what == "chains") {
-  #   graphic <- graphic + labs(x = "Species", y = paste("mol % of", standard))
-  #                             # title = paste("Species", "per", standard)) +
-  #     # theme(axis.text.x = element_text(angle = 45, hjust = 1, size=08))
-  #
-  # } else if (what == "chain_sums") {
-  #   graphic <- graphic + labs(x = "Chain Sums", y = paste("mol % of", standard))
-  #                             # title = paste("Chain Sums", "per", standard)) +
-  #     # theme(axis.text.x = element_text(angle = 45, hjust = 1, size=08))
-  #
-  # } else if (what == "length") {
-  #   graphic <- graphic + labs(x = "Length", y = paste("mol % of", standard))
-  #                             # title = paste("Length", "per", standard))
-  # } else if (what == "db") {
-  #   graphic <- graphic + labs(x = "Double Bonds", y = paste("mol % of", standard))
-  #                             # title = paste("Double Bonds", "per", standard))
-  # } else if (what == "oh") {
-  #   graphic <- graphic + labs(x = "OH-Bounds", y = paste("mol % of", standard))
-  #                             # title = paste("OH-Bounds", "per", standard))
-  # }
-  # graphic <- graphic + guides(fill = guide_legend(nrow = 15))
   print("Plot successful")
-
-  # gg <- ggplotly(graphic)
-  # return(gg)
   return(graphic)
 }
 
 
+# PCA Plots -------------------------------------------------------------------------------------------------------
 preparePCAPlots <- function(data) {
   graphic = plot(data,type="l")
-  # graphic <- graphic + guides(fill = guide_legend(nrow = 15))
   print("Plot successful")
-
-  # gg <- ggplotly(graphic)
-  # return(gg)
   return(graphic)
 }

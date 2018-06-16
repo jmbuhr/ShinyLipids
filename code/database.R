@@ -15,7 +15,6 @@ getraw <- function(ID,data) {
 }
 
 
-
 # Data preparation ------------------------------------------------------------------------------------------------
 prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
                          standardSubset = FALSE, add = FALSE,
@@ -24,6 +23,7 @@ prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
                          whatsub = input$whatsub,
                          repsub = input$repsub,
                          techsub = input$techsub){
+    cat(file = stderr(), "prepareData started")
     filter_crit <- interp(~ !is.na(filter_var), filter_var = as.name(what))
     rawdata <- rawdata %>% filter_(filter_crit) %>% filter(!is.na(value))
 
@@ -214,7 +214,6 @@ prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
 
     print("group_by was used 3")
 
-
     Standardized <- left_join(Standardized, StandardizedNrSamp)
 
     print("standardized created")
@@ -222,13 +221,9 @@ prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
     Standardized <- rename_(Standardized, .dots = list(xval = what))
     StandardizedNrSamp <<- StandardizedNrSamp %>%
         rename_(.dots = list(xval = what))
-    # print(unique(rawdata$sample))
     samplenames <- as.list(unique(rawdata$sample))
-    # print("samplenames")
-    # print(samplenames)
-    names(samplenames) <- unique(rawdata$sample)
-    # print(samplenames)
 
+    names(samplenames) <- unique(rawdata$sample)
     print("Dataprep successful with prepareData")
     return(Standardized)
 }

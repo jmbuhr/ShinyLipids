@@ -3,6 +3,11 @@ title: ' ShinyLipids Version History '
 output: html_document
 ---
 
+## Version 1.0.5 -- 2018-06-15
+
+- Removed legacy and obsolete code
+- started fixing download handlers for improved quality
+
 ## Version 1.0.4 -- 2018-04-18
 
 - Replaced legacy code of DT-package

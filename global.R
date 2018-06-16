@@ -21,6 +21,7 @@ library(gridExtra)
 library(ggplot2)
 library(ggbiplot)
 library(RColorBrewer)
+library(ggsignif)
 ## Bioconductor Packages
 # source("http://bioconductor.org/biocLite.R")
 # biocLite("pcaMethods")
@@ -76,13 +77,18 @@ theme_set(
     + theme(
         axis.line = element_line(colour = "black"),
         axis.text = element_text(size = 10),
-        # axis.text.x= element_text(angle = 90,hjust = 1, vjust = 0.5),
         axis.title.y = element_text(size = 10),
         legend.title = element_text(size = 10, face = "bold"),
         legend.text = element_text(size = 10),
         panel.border = element_rect(colour = "black"),
         panel.background = element_blank()
     )
+)
+
+.theme <- theme(
+    axis.line = element_line(colour = 'gray', size = .75),
+    panel.background = element_blank(),
+    plot.background = element_blank()
 )
 
 

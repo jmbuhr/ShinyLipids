@@ -16,6 +16,8 @@ sidebar <- dashboardSidebar(
                 )
     ),
 
+
+# * Tables/Plot Options -------------------------------------------------------------------------------------------
     ### The Options for tables/plots
     selectInput("ID", label = "Which database?", choices = rev(datanames)),
     selectInput("what", label = "What should be displayed?",
@@ -42,6 +44,7 @@ sidebar <- dashboardSidebar(
                 choices = list(), multiple = TRUE),
 
 
+# * Impressum -----------------------------------------------------------------------------------------------------
     menuItem("About ", href = "http://bzh.db-engine.de/default.asp?lfn=2241&fg=4289"),
     div(strong("ShinyLipids 2015"), "by",
         br(),
@@ -51,10 +54,11 @@ sidebar <- dashboardSidebar(
         br(),
         em("Sebastian Bender"),
         br(),
-        ("Version: 1.0"),
-        ("Last Update: 23.08.2017"))
+        em("Jannik Buhr"),
+        br(),
+        ("Version: 1.0.5"),
+        ("Last Update: 15.06.2018"))
 )
-
 
 
 
@@ -62,6 +66,7 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
     shinyjs::useShinyjs(), # needed to load the necessary java script functions
 
+# ** Meta ---------------------------------------------------------------------------------------------------------
     tabItems(
         tabItem(tabName = "metadata",
                 DT::dataTableOutput("metadataTable"),
@@ -89,14 +94,14 @@ body <- dashboardBody(
                                       value = FALSE),
                         checkboxInput('highlight', label = "Highlight value points in barplot",
                                       value = TRUE),
-                        #                   checkboxInput('compSpec', label = "Allow complete (Sum) Species Plot",
-                        #                                 value = FALSE),
                         selectInput('symbolchoice', label = "Identify individuals in the plot",
                                     choices = list("via sample replicate" = "letters",
                                                    "via symbols" = "symbols"))
                     )
                 )
         ),
+
+# ** PCA ----------------------------------------------------------------------------------------------------------
         tabItem(tabName = "PCA",
                 fluidRow(
                     column(12,
@@ -150,20 +155,11 @@ body <- dashboardBody(
                 )
         ),
 
+
+# ** heatmap ------------------------------------------------------------------------------------------------------
         tabItem(tabName = "heatmap",
                 fluidRow(
                     column(12,
-                           # box(title = NULL, width = 12, status = "primary",
-                           #   conditionalPanel("input.what == 'class' && input.standard == 'Class'",
-                           #                      "Why would you want to do this?"),
-                           #   plotOutput("plotPCA",
-                           #              dblclick = "plot1_dblclick",
-                           #              brush = brushOpts(
-                           #                id = "plot1_brush",
-                           #                resetOnNew = TRUE
-                           #              )
-                           #   )
-                           # ),
                            checkboxInput("heatscale","Scale color key",FALSE),
                            sliderInput("heatmin", label="Minimum", min=-10, max=10, value=-7, ticks = TRUE, animate = FALSE,step=0.1),
                            sliderInput("heatmedmin", label="Size of labels", min=-10, max=10, value=-4, ticks = TRUE, animate = FALSE,step=0.1),
@@ -176,8 +172,6 @@ body <- dashboardBody(
                                                       "White Green Black" = "whitegreenblack",
                                                       "Blue White Red" = "bluewhitered")),
                            box(title = NULL, width = 12, status = "primary",
-                               # conditionalPanel("input.what == 'class' && input.standard == 'Class'",
-                               #                  "Why would you want to do this?"),
                                plotOutput("heatmap")
                            )
                     ),
@@ -197,6 +191,7 @@ body <- dashboardBody(
                 )
         ),
 
+# ** plots -------------------------------------------------------------------------------------------------------
         tabItem(tabName = "plots",
                 fluidRow(
                     column(12,
@@ -262,6 +257,7 @@ body <- dashboardBody(
                                 )
                             ),
 
+# ** summary ------------------------------------------------------------------------------------------------------
                             fluidRow(
                                 column(12,
                                        box(title = "Summary", width = 12, collapsible = TRUE,
