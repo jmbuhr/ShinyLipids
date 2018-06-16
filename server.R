@@ -14,12 +14,10 @@ function(input, output, session) {
         }
     })
 
-
     # Load the rawdata
     rawdata <- reactive({
         print("Raw data loaded")
         collect(getraw(input$ID, "data2"))
-        # getraw(input$ID, "data2")
     })
 
     ### Preparation of Metadatatable
@@ -44,6 +42,7 @@ function(input, output, session) {
         updateSelectInput(session, "ID", choices = datanames)
         updateSelectInput(session, "downid", choices = datanames)
     })
+
     # Initialization
     output$metadataTable <- DT::renderDataTable({
         datatable(
@@ -233,11 +232,13 @@ function(input, output, session) {
         }
     })
 
+    # What is this and why did it use prepareData2?
     FirstData <- reactive({
-        collect(prepareData(rawdata(), what = input$what,
-                             within = input$within,
-                             standard = input$standard,
-                             ID = input$ID))
+        collect(prepareData2(rawdata(), what = input$what,
+                            within = input$within,
+                            standard = input$standard,
+                            ID = input$ID)
+        )
     })
 
 

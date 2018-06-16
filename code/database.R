@@ -15,6 +15,91 @@ getraw <- function(ID,data) {
 }
 
 
+
+# old preparedata2 ------------------------------------------------------------------------------------------------
+prepareData2 <- function (rawdata, what = "", within = "", standard = "", ID){
+
+    filter_crit <- interp(~ !is.na(filter_var), filter_var = as.name(what))
+    rawdata <- rawdata %>% filter_(filter_crit) %>% filter(!is.na(value))
+    # Averaging over the technical replicates
+    rawdata <- rawdata %>%
+        group_by(id, lipid, category, func_cat, class, length,
+                 db, oh, chains, chain_sums, sample, sample_replicate) %>%
+        summarize(value = mean(value, na.rm = T))
+
+    if (what %in% c("class", "category", "func_cat")) {
+        within <- standard
+    }
+
+    # Prepare the grouping of the variables used throughout the function
+    if (within == "Sample") {
+        aggreGroup <- c(samplecols, what)
+        smasGroup  <- list("sample", what)
+    } else if (within == "Category") {
+        aggreGroup <- c(samplecols, "category", what)
+        smasGroup  <- list("sample", "category", what)
+    } else if (within == "Functional Category") {
+        aggreGroup <- c(samplecols, "func_cat", what)
+        smasGroup  <- list("sample", "func_cat", what)
+    } else if (within == "Class") {
+        aggreGroup <- c(samplecols, "category", "class", what)
+        smasGroup  <- list("sample", "category", "class", what)
+    }
+
+    # Prepares the standardization of the variables used throughout the function
+    if (standard == "Sample") {
+        stdGroup   <- list("sample_replicate")
+    } else if (standard == "Category") {
+        stdGroup   <- c(samplecols, "category")
+    } else if (standard == "Functional Category") {
+        stdGroup   <- c(samplecols, "func_cat")
+    } else if (standard == "Class") {
+        stdGroup   <- c(samplecols, "category", "class")
+    } else {
+        return (-1)
+    }
+
+
+    Aggregated <- rawdata %>%
+        group_by(.dots = aggreGroup) %>%
+        summarize(sum = sum(value, na.rm = T))
+
+
+    Standard <- rawdata %>%
+        group_by(.dots = stdGroup) %>%
+        summarize(standardSum = sum(value, na.rm = T))
+
+
+    Standardized <- left_join(Aggregated, Standard, type = "left") %>%
+        mutate(standardizedSum = (sum / standardSum) * 100)
+
+
+    StandardizedNrSamp <- Standardized %>%
+        group_by(.dots = aggreGroup) %>%
+        # summarise(MeanOfTechnicalReplicates = mean(standardizedSum, na.rm = T)) %>%
+        group_by(.dots = smasGroup) %>%
+        summarise(Mean = mean(standardizedSum, na.rm = T),
+                  Median = median(standardizedSum, na.rm = T),
+                  SD = sd(standardizedSum, na.rm = T),
+                  SE = se(standardizedSum, na.rm = T),
+                  NrSamp = n()) #  %>%
+    # filter(class == "Cer", chains == "42:1;2")
+
+
+
+
+    Standardized <- left_join(Standardized, StandardizedNrSamp)
+
+    Standardized <- rename_(Standardized, .dots = list(xval = what))
+    StandardizedNrSamp <<- StandardizedNrSamp %>%
+        rename_(.dots = list(xval = what))
+
+    print("Dataprep successful with prepareData2")
+    return(Standardized)
+}
+
+
+
 # Data preparation ------------------------------------------------------------------------------------------------
 prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
                          standardSubset = FALSE, add = FALSE,
@@ -23,7 +108,9 @@ prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
                          whatsub = input$whatsub,
                          repsub = input$repsub,
                          techsub = input$techsub){
+
     cat(file = stderr(), "prepareData started")
+
     filter_crit <- interp(~ !is.na(filter_var), filter_var = as.name(what))
     rawdata <- rawdata %>% filter_(filter_crit) %>% filter(!is.na(value))
 
