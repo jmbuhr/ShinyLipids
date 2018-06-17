@@ -1,3 +1,4 @@
+# Server function -------------------------------------------------------------------------------------------------
 function(input, output, session) {
 
     # Ranges for zooming
@@ -144,9 +145,6 @@ function(input, output, session) {
         indexFor_datanames <- clicked # Possible Fix as of Febr 2018
         updateSelectInput(session, "ID", choices = datanames, selected=datanames[indexFor_datanames] )
     })
-    ############################################################
-
-
 
     # selecting data to plot ------------------------------------------------------------------------------------------
     ### Select sample subset to plot
@@ -232,34 +230,21 @@ function(input, output, session) {
         }
     })
 
-    # What is this and why does it use prepareData2?
-    FirstData <- reactive({
-        collect(prepareData2(rawdata(), what = input$what,
-                            within = input$within,
-                            standard = input$standard,
-                            ID = input$ID)
-        )
-    })
-
 
     # Creating main plot ----------------------------------------------------------------------------------------------
     ### Create Plot
     PlotData <- reactive({
-        if(input$stdSub || input$add_rem) {
-            collect(prepareData(rawdata(), what = input$what,
-                                within = input$within,
-                                standard = input$standard,
-                                ID = input$ID,
-                                standardSubset = input$stdSub,
-                                add = input$add_rem,
-                                samplesub = input$samplesub,
-                                withsub = input$withsub,
-                                whatsub = input$whatsub,
-                                repsub = input$repsub,
-                                techsub = input$techsub))
-        } else {
-            FirstData()
-        }
+        collect(prepareData(rawdata(), what = input$what,
+                            within = input$within,
+                            standard = input$standard,
+                            ID = input$ID,
+                            standardSubset = input$stdSub,
+                            add = input$add_rem,
+                            samplesub = input$samplesub,
+                            withsub = input$withsub,
+                            whatsub = input$whatsub,
+                            repsub = input$repsub,
+                            techsub = input$techsub))
 
     })
 
@@ -336,30 +321,11 @@ function(input, output, session) {
 
 
     # Heatmap ---------------------------------------------------------------------------------------------------------
-    prepareHeatmap <- reactive({
-        heatmap_df <- SubPlotData()[c('sample','sample_replicate','xval','standardizedSum')] %>%
-            spread(key = 'xval', value = 'standardizedSum')
-        out <- list()
-        out$data <- as.matrix(data.frame(heatmap_df[,-c(1)],row.names = 1))
-
-        if (input$heatcolscheme == "heatcolors") {
-            out$colors <- "heat.colors"
-        } else if (input$heatcolscheme == "bluewhiteviolet") {
-            out$colors <- colorRampPalette(c("blue","blue","white","blueviolet","blueviolet"))(399)
-        } else if (input$heatcolscheme == "whitegreenblack") {
-            out$colors <- colorRampPalette(c("white","green","black"))(399)
-        } else if (input$heatcolscheme == "bluewhitered") {
-            out$colors <- colorRampPalette(c("blue","white","red"))(399)
-        }
-        if (input$heatscale) {
-            out$break.points <- c(seq(input$heatmin,input$heatmedmin,length=101)[-101],
-                                  seq(input$heatmedmin,input$heatmedium,length=101)[-101],
-                                  seq(input$heatmedium,input$heatmedmax,length=101)[-101],
-                                  seq(input$heatmedmax,input$heatmax,length=101)[-101])
-        } else {
-            break.points <- NA
-        }
-        return(out)
+    heatmap_df <- reactive({
+        SubPlotData()[c('sample','sample_replicate','xval','standardizedSum')] %>%
+            group_by(sample, xval) %>% summarise(
+                value = mean(standardizedSum)
+            )
     })
 
     plotScores <- reactive({
@@ -421,14 +387,17 @@ function(input, output, session) {
         if (is.null(PCA.results())) {
             return(NULL)
         } else {
-            x<-PCA.results()
+            x <- PCA.results()
             eigenvalues<-data.frame(x$pca.eigenvalues)
 
             #cumulative
             eigenvalues$eigenvalues<-cumsum(eigenvalues$eigenvalues)
             tmp<-data.frame(melt(eigenvalues),PCs=rep(1:nrow(eigenvalues)))
-            p2<-ggplot(tmp, aes(y=value, x = as.factor(PCs), fill=variable))+geom_bar( stat="identity",position=position_dodge())+
-                .theme + geom_hline(yintercept=.8,linetype=2) +xlab("Principal Component")
+            p2<-ggplot(tmp, aes(y=value, x = as.factor(PCs), fill=variable))+
+                geom_bar( stat="identity",position=position_dodge())+
+                .theme +
+                geom_hline(yintercept=.8,linetype=2)+
+                xlab("Principal Component")
         }
         return(p2)
     })
@@ -453,16 +422,23 @@ function(input, output, session) {
     })
 
     hmap <- reactive({
-        out <- prepareHeatmap()
-        gplots::heatmap.2(out$data,
-                          col = out$colors,
-                          dendrogram="both",
-                          density.info="none",
-                          trace="none",
-                          breaks=out$break.points,
-                          cexCol=input$heatlabsz,
-                          cexRow = input$heatlabsz,
-                          margins=c(input$heatmarx,input$heatmary))
+        heatmap_df() %>%
+            ggplot()+
+            aes(x = xval, y = sample, fill = value)+
+            geom_raster()+
+
+            .theme+
+            theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                  axis.text = element_text(size = input$heatlabsz, colour = "black"),
+                  axis.title.y = element_text(size = 20),
+                  axis.title.x = element_blank(),
+                  plot.background = element_blank(),
+                  panel.grid = element_blank())+
+            scale_x_discrete(expand=c(0,0)) +
+            scale_y_discrete(expand=c(0,0))+
+            labs(x = "species")+
+            scale_fill_viridis(option = input$hmap_color)+
+            NULL
     })
 
     output$heatmap <- renderPlot({
@@ -479,8 +455,6 @@ function(input, output, session) {
         data <- as.matrix(data.frame(C[,-c(1)],row.names = 1))
         print(data)
     })
-
-    #------------------------------------------
 
     output$scores <- renderPlot({
         print(plotScores())
@@ -522,10 +496,7 @@ function(input, output, session) {
     })
 
 
-    ##################################################
-    ### Saving
-
-    # Saving data and plots -----------------------------------------------------------------------------------------------------
+    #**Saving data and plots -----------------------------------------------------------------------------------------------------
 
     # Saving a dataset as a .RData
     output$downdata <- downloadHandler(
@@ -555,18 +526,9 @@ function(input, output, session) {
             paste0(input$ID, "_", Sys.Date(),"_heatmap.pdf")
         },
         content = function(file) {
-            pdf(file, height = input$heightheat, width = input$widthheat)
-            out <- prepareHeatmap()
-            gplots::heatmap.2(out$data,
-                              col = out$colors,
-                              dendrogram="both",
-                              density.info="none",
-                              trace="none",
-                              breaks=out$break.points,
-                              cexCol=input$heatlabsz,
-                              cexRow = input$heatlabsz,
-                              margins=c(input$heatmarx,input$heatmary))
-            dev.off()
+            ggsave(file, hmap(), device = "pdf",
+                   width = input$widthheat,
+                   height = input$heightheat)
         }
     )
     output$saveScores <- downloadHandler(
@@ -648,8 +610,7 @@ function(input, output, session) {
                       file = file)
         })
 
-    ##################################################
-    # create the standardisation possibilities
+    # *** create the standardisation possibilities --------------------------------------------------------------------
     observe({
         if (input$what != "class")
         {

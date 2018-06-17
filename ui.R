@@ -17,7 +17,7 @@ sidebar <- dashboardSidebar(
     ),
 
 
-# * Tables/Plot Options -------------------------------------------------------------------------------------------
+    # * Tables/Plot Options -------------------------------------------------------------------------------------------
     ### The Options for tables/plots
     selectInput("ID", label = "Which database?", choices = rev(datanames)),
     selectInput("what", label = "What should be displayed?",
@@ -44,7 +44,7 @@ sidebar <- dashboardSidebar(
                 choices = list(), multiple = TRUE),
 
 
-# * Impressum -----------------------------------------------------------------------------------------------------
+    # * Impressum -----------------------------------------------------------------------------------------------------
     menuItem("About ", href = "http://bzh.db-engine.de/default.asp?lfn=2241&fg=4289"),
     div(strong("ShinyLipids 2015"), "by",
         br(),
@@ -66,7 +66,7 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
     shinyjs::useShinyjs(), # needed to load the necessary java script functions
 
-# ** Meta ---------------------------------------------------------------------------------------------------------
+    # ** Meta ---------------------------------------------------------------------------------------------------------
     tabItems(
         tabItem(tabName = "metadata",
                 DT::dataTableOutput("metadataTable"),
@@ -101,7 +101,7 @@ body <- dashboardBody(
                 )
         ),
 
-# ** PCA ----------------------------------------------------------------------------------------------------------
+        # ** PCA ----------------------------------------------------------------------------------------------------------
         tabItem(tabName = "PCA",
                 fluidRow(
                     column(12,
@@ -156,21 +156,10 @@ body <- dashboardBody(
         ),
 
 
-# ** heatmap ------------------------------------------------------------------------------------------------------
+        # ** heatmap ------------------------------------------------------------------------------------------------------
         tabItem(tabName = "heatmap",
                 fluidRow(
                     column(12,
-                           checkboxInput("heatscale","Scale color key",FALSE),
-                           sliderInput("heatmin", label="Minimum", min=-10, max=10, value=-7, ticks = TRUE, animate = FALSE,step=0.1),
-                           sliderInput("heatmedmin", label="Size of labels", min=-10, max=10, value=-4, ticks = TRUE, animate = FALSE,step=0.1),
-                           sliderInput("heatmedium", label="Medium", min=-10, max=10, value=0, ticks = TRUE, animate = FALSE,step=0.1),
-                           sliderInput("heatmedmax", label="Size of labels", min=-10, max=10, value=4, ticks = TRUE, animate = FALSE,step=0.1),
-                           sliderInput("heatmax", label="Maximum", min=-10, max=10, value=7, ticks = TRUE, animate = FALSE,step=0.1),
-                           selectInput('heatcolscheme', label = "Heatmap Color Scheme",
-                                       choices = list("Heat Colors" = "heatcolors",
-                                                      "Blue White Violet" = "bluewhiteviolet",
-                                                      "White Green Black" = "whitegreenblack",
-                                                      "Blue White Red" = "bluewhitered")),
                            box(title = NULL, width = 12, status = "primary",
                                plotOutput("heatmap")
                            )
@@ -180,18 +169,25 @@ body <- dashboardBody(
                                downloadButton("saveheatmap", label = "Save as .pdf"),
                                bsTooltip(id = "saveheatmap",  placement = "top",
                                          title = "Save the current heatmap as a .pdf file"),
-                               sliderInput("heatlabsz", label="Size of labels", min=0.1, max=5, value=2, ticks = TRUE, animate = FALSE),
+                               selectInput("hmap_color", "Color scheme",
+                                           choices = list(
+                                               "viridis",
+                                               "magma",
+                                               "plasma",
+                                               "inferno",
+                                               "cvidis"
+                                           )
+                               ),
+                               sliderInput("heatlabsz", label="Size of labels", min= 1,
+                                           max= 50, value= 20, ticks = TRUE, animate = FALSE),
                                numericInput("widthheat", label = "width", value = 20),
-                               numericInput("heightheat", label = "height", value = 10),
-                               numericInput("heatmarx", label = "bottom Margin", value = 10),
-                               numericInput("heatmary", label = "side Margin", value = 10)
+                               numericInput("heightheat", label = "height", value = 10)
                            )
                     )
-
                 )
         ),
 
-# ** plots -------------------------------------------------------------------------------------------------------
+        # ** plots -------------------------------------------------------------------------------------------------------
         tabItem(tabName = "plots",
                 fluidRow(
                     column(12,
@@ -257,7 +253,7 @@ body <- dashboardBody(
                                 )
                             ),
 
-# ** summary ------------------------------------------------------------------------------------------------------
+                            # ** summary ------------------------------------------------------------------------------------------------------
                             fluidRow(
                                 column(12,
                                        box(title = "Summary", width = 12, collapsible = TRUE,
