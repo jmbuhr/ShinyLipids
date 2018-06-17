@@ -232,7 +232,7 @@ function(input, output, session) {
         }
     })
 
-    # What is this and why did it use prepareData2?
+    # What is this and why does it use prepareData2?
     FirstData <- reactive({
         collect(prepareData2(rawdata(), what = input$what,
                             within = input$within,

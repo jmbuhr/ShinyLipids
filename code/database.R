@@ -16,11 +16,14 @@ getraw <- function(ID,data) {
 
 
 
-# old preparedata2 ------------------------------------------------------------------------------------------------
+# old preparedata2 for FirstData ------------------------------------------------------------------------------------------------
 prepareData2 <- function (rawdata, what = "", within = "", standard = "", ID){
+
+    cat(file = stderr(), "prepareData2 started")
 
     filter_crit <- interp(~ !is.na(filter_var), filter_var = as.name(what))
     rawdata <- rawdata %>% filter_(filter_crit) %>% filter(!is.na(value))
+
     # Averaging over the technical replicates
     rawdata <- rawdata %>%
         group_by(id, lipid, category, func_cat, class, length,
@@ -76,17 +79,12 @@ prepareData2 <- function (rawdata, what = "", within = "", standard = "", ID){
 
     StandardizedNrSamp <- Standardized %>%
         group_by(.dots = aggreGroup) %>%
-        # summarise(MeanOfTechnicalReplicates = mean(standardizedSum, na.rm = T)) %>%
         group_by(.dots = smasGroup) %>%
         summarise(Mean = mean(standardizedSum, na.rm = T),
                   Median = median(standardizedSum, na.rm = T),
                   SD = sd(standardizedSum, na.rm = T),
                   SE = se(standardizedSum, na.rm = T),
-                  NrSamp = n()) #  %>%
-    # filter(class == "Cer", chains == "42:1;2")
-
-
-
+                  NrSamp = n())
 
     Standardized <- left_join(Standardized, StandardizedNrSamp)
 
@@ -228,6 +226,7 @@ prepareData <- function (rawdata, what = "", within = "", standard = "", ID,
                     }
                 }
             }
+            browser()
             # Filter on those replicates explicitely desired
             if (length(repsub) != 0) {
                 if (length(repsub) == 1) {
