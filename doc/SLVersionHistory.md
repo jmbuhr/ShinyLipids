@@ -6,7 +6,8 @@ output: html_document
 ## Version 1.0.5 -- 2018-06-15
 
 - Removed legacy and obsolete code
-- started fixing download handlers for improved quality
+- fixing download handlers for improved quality
+- new heatmap with color-blind-friendly scheme (viridis, see https://www.youtube.com/watch?v=xAoljeRJ3lU)
 
 ## Version 1.0.4 -- 2018-04-18
 
