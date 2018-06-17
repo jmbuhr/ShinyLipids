@@ -61,17 +61,6 @@ library(pcaMethods)
 # [37] rsconnect_0.8.8    assertthat_0.2.0   R6_2.2.2           compiler_3.4.4
 
 
-# Sourcing --------------------------------------------------------------------------------------------------------
-
-# now all in global.R
-# ## Code for loading the Data
-# source('code/database.R')
-# ## Code for plotting the Data
-# source('code/plotter.R')
-# ## Code for PCA
-# source('code/DeviumPCA.R')
-# source('code/DeviumCommon.R')
-
 # Database Connection functions -----------------------------------------------------------------------------------
 
 # from Database.R
@@ -81,7 +70,7 @@ library(pcaMethods)
 samplecols <- list("sample", "sample_replicate")
 
 
-# Get Raw Data ----------------------------------------------------------------------------------------------------
+#* Get Raw Data ----------------------------------------------------------------------------------------------------
 # This function takes an ID and a string representing a table
 # and returns a "link" to the corresponding data.frame()
 # Note: This data.frame still needs to be collected later for plotting
@@ -108,13 +97,10 @@ prepareData <-
               techsub = input$techsub) {
         cat(file = stderr(), "prepareData started")
 
-        filter_crit <-
-            interp( ~ !is.na(filter_var), filter_var = as.name(what))
         rawdata <-
-            rawdata %>% filter_(filter_crit) %>% filter(!is.na(value))
+            rawdata %>% filter(!is.na(!!what)) %>% filter(!is.na(value))
 
         # Remove technical replicates
-        bar <<- techsub
         if (!is.null(techsub)) {
             rawdata <-
                 rawdata %>% filter(!(sample_replicate_technical %in% techsub))
@@ -122,20 +108,7 @@ prepareData <-
 
         # Averaging over the technical replicates
         rawdata <- rawdata %>%
-            group_by(
-                id,
-                lipid,
-                category,
-                func_cat,
-                class,
-                length,
-                db,
-                oh,
-                chains,
-                chain_sums,
-                sample,
-                sample_replicate
-            ) %>%
+            group_by_at(vars(-sample_identifier,-sample_replicate_technical,-value)) %>%
             summarize(value = mean(value, na.rm = T))
 
         # Onle here for debugging purposes
@@ -333,103 +306,103 @@ prepareData <-
 
 # T.Test ----------------------------------------------------------------------------------------------------------
 # I should replace this with ggsignif -- JB
-
-Ttest <- function(data, within) {
-    Res <- data.frame()
-    if (within == "Sample") {
-        for (sub in unique(data$xval)) {
-            tmpsub <- filter(data, xval == sub)
-            try ({
-                ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
-                yval <- max(ttest$estimate)
-                Res <-
-                    rbind(Res,
-                          data.frame(
-                              xval = sub,
-                              yval = yval,
-                              pval = round(ttest$p.value, 4),
-                              sample = unique(data$sample)[1]
-                          ))
-            })
-        }
-    } else if (within == "Category") {
-        for (cat in unique(data$category)) {
-            tmp <- filter(data, category == cat)
-            for (sub in unique(tmp$xval)) {
-                tmpsub <- filter(tmp, xval == sub)
-                try({
-                    ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
-                    yval <- max(ttest$estimate)
-                    Res <-
-                        rbind(
-                            Res,
-                            data.frame(
-                                xval = sub,
-                                yval = yval,
-                                pval = round(ttest$p.value, 4),
-                                sample = unique(data$sample)[1],
-                                category = cat
-                            )
-                        )
-                })
-            }
-        }
-    } else if (within == "Functional Category") {
-        for (cat in unique(data$func_cat)) {
-            tmp <- filter(data, func_cat == cat)
-            for (sub in unique(tmp$xval)) {
-                tmpsub <- filter(tmp, xval == sub)
-                try({
-                    ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
-                    yval <- max(ttest$estimate)
-                    Res <-
-                        rbind(
-                            Res,
-                            data.frame(
-                                xval = sub,
-                                yval = yval,
-                                pval = round(ttest$p.value, 4),
-                                sample = unique(data$sample)[1],
-                                func_cat = cat
-                            )
-                        )
-                })
-            }
-        }
-    } else if (within == "Class") {
-        for (cat in unique(data$class)) {
-            print(cat)
-            tmp <- filter(data, class == cat)
-            for (sub in unique(tmp$xval)) {
-                print(sub)
-                tmpsub <- filter(tmp, xval == sub)
-                try({
-                    ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
-                    yval <- max(ttest$estimate)
-                    Res <-
-                        rbind(
-                            Res,
-                            data.frame(
-                                xval = sub,
-                                yval = yval,
-                                pval = round(ttest$p.value, 4),
-                                sample = unique(data$sample)[1],
-                                class = cat
-                            )
-                        )
-                })
-            }
-        }
-    }
-
-    Res$Significant <- ifelse(Res$pval < 0.001,
-                              '***',
-                              ifelse(Res$pval < 0.01, '**',
-                                     ifelse(Res$pval < 0.05, '*', '')))
-    Res$x_bar <- ifelse(Res$pval < 0.05, '_____', '')
-    Res$StarHeight <- max(Res$yval / 12.5)
-    return(Res)
-}
+#
+# Ttest <- function(data, within) {
+#     Res <- data.frame()
+#     if (within == "Sample") {
+#         for (sub in unique(data$xval)) {
+#             tmpsub <- filter(data, xval == sub)
+#             try ({
+#                 ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
+#                 yval <- max(ttest$estimate)
+#                 Res <-
+#                     rbind(Res,
+#                           data.frame(
+#                               xval = sub,
+#                               yval = yval,
+#                               pval = round(ttest$p.value, 4),
+#                               sample = unique(data$sample)[1]
+#                           ))
+#             })
+#         }
+#     } else if (within == "Category") {
+#         for (cat in unique(data$category)) {
+#             tmp <- filter(data, category == cat)
+#             for (sub in unique(tmp$xval)) {
+#                 tmpsub <- filter(tmp, xval == sub)
+#                 try({
+#                     ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
+#                     yval <- max(ttest$estimate)
+#                     Res <-
+#                         rbind(
+#                             Res,
+#                             data.frame(
+#                                 xval = sub,
+#                                 yval = yval,
+#                                 pval = round(ttest$p.value, 4),
+#                                 sample = unique(data$sample)[1],
+#                                 category = cat
+#                             )
+#                         )
+#                 })
+#             }
+#         }
+#     } else if (within == "Functional Category") {
+#         for (cat in unique(data$func_cat)) {
+#             tmp <- filter(data, func_cat == cat)
+#             for (sub in unique(tmp$xval)) {
+#                 tmpsub <- filter(tmp, xval == sub)
+#                 try({
+#                     ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
+#                     yval <- max(ttest$estimate)
+#                     Res <-
+#                         rbind(
+#                             Res,
+#                             data.frame(
+#                                 xval = sub,
+#                                 yval = yval,
+#                                 pval = round(ttest$p.value, 4),
+#                                 sample = unique(data$sample)[1],
+#                                 func_cat = cat
+#                             )
+#                         )
+#                 })
+#             }
+#         }
+#     } else if (within == "Class") {
+#         for (cat in unique(data$class)) {
+#             print(cat)
+#             tmp <- filter(data, class == cat)
+#             for (sub in unique(tmp$xval)) {
+#                 print(sub)
+#                 tmpsub <- filter(tmp, xval == sub)
+#                 try({
+#                     ttest <- t.test(standardizedSum ~ sample, data = tmpsub)
+#                     yval <- max(ttest$estimate)
+#                     Res <-
+#                         rbind(
+#                             Res,
+#                             data.frame(
+#                                 xval = sub,
+#                                 yval = yval,
+#                                 pval = round(ttest$p.value, 4),
+#                                 sample = unique(data$sample)[1],
+#                                 class = cat
+#                             )
+#                         )
+#                 })
+#             }
+#         }
+#     }
+#
+#     Res$Significant <- ifelse(Res$pval < 0.001,
+#                               '***',
+#                               ifelse(Res$pval < 0.01, '**',
+#                                      ifelse(Res$pval < 0.05, '*', '')))
+#     Res$x_bar <- ifelse(Res$pval < 0.05, '_____', '')
+#     Res$StarHeight <- max(Res$yval / 12.5)
+#     return(Res)
+# }
 
 
 # Plotting functions ----------------------------------------------------------------------------------------------
@@ -505,7 +478,6 @@ prepareSubset <-
             if (length(base) != 0) {
                 basedata <- data %>%
                     filter(sample %in% base)
-
             }
         }
 
@@ -672,7 +644,7 @@ preparePlots <-
             graphic <-
                 graphic + facet_grid(~ func_cat, scales = "free_x")
         } else if (within == "Class") {
-            stddata <- stddata %>% filter(class %in% data$class)
+            #stddata <- stddata %>% filter(class %in% data$class)
             graphic <- graphic + facet_grid(~ class, scales = "free_x")
         }
 
@@ -680,33 +652,7 @@ preparePlots <-
         if (!("legend?" %in% checkGroup)) {
             graphic <- graphic + theme(legend.position = "none")
         }
-        # Plot Ttest
-        if ("ttest" %in% checkGroup) {
-            Ttestdata <- Ttest(data, within = within)
-            graphic <- graphic +
-                geom_text(
-                    data = Ttestdata,
-                    aes(
-                        x = as.factor(xval),
-                        y = yval + StarHeight,
-                        label = Significant
-                    ),
-                    vjust = -0.5,
-                    fontface = "bold",
-                    size = 3
-                ) +
-                geom_text(
-                    data = Ttestdata,
-                    aes(
-                        x = as.factor(xval),
-                        y = yval + 0.97 * StarHeight,
-                        label = x_bar
-                    ),
-                    vjust = -0.5,
-                    fontface = "bold",
-                    size = 3
-                )
-        }
+
         # Plot values / maybe shaped
         if ("sample_ident" %in% checkGroup) {
             if ("symbols" %in% advanced) {
@@ -796,11 +742,12 @@ preparePlots <-
                 position = dodge)
         }
         # Plot Nr of Datapoints
-        stddata <- data[!duplicated(data[c("sample", "xval")]), ]
+
+        data <- data[!duplicated(data[c("sample", "xval")]), ]
         if ("nrdat" %in% checkGroup) {
             graphic <- graphic +
                 geom_text(
-                    data = stddata,
+                    data = data,
                     aes(
                         x = xval,
                         y = -0.7,
@@ -819,7 +766,7 @@ preparePlots <-
             if ("errsd" %in% checkGroup) {
                 graphic <- graphic +
                     geom_text(
-                        data = stddata,
+                        data = data,
                         aes(
                             color = sample,
                             y = Mean + SD,
@@ -832,7 +779,7 @@ preparePlots <-
             } else if ("errse" %in% checkGroup) {
                 graphic <- graphic +
                     geom_text(
-                        data = stddata,
+                        data = data,
                         aes(
                             color = sample,
                             y = Mean + SE,
@@ -845,7 +792,7 @@ preparePlots <-
             } else {
                 graphic <- graphic +
                     geom_text(
-                        data = stddata,
+                        data = data,
                         aes(
                             color = sample,
                             x = xval,
@@ -868,7 +815,6 @@ preparePlots <-
                     hjust = 1
                 ))
         }
-
         if ("logtrans" %in% checkGroup)
             graphic <- graphic + scale_y_log10()
 
@@ -879,14 +825,8 @@ preparePlots <-
 
 
 # PCA Plots -------------------------------------------------------------------------------------------------------
-preparePCAPlots <- function(data) {
-    graphic = plot(data, type = "l")
-    print("Plot successful")
-    return(graphic)
-}
 
-
-# DeviumPCA -------------------------------------------------------------------------------------------------------
+# *DeviumPCA -------------------------------------------------------------------------------------------------------
 
 # TODO add control for polygon plot order (https://github.com/hadley/ggplot2/wiki/plotting-polygon-shapefiles)
 # open addition of pallets, themes,add group labels to plot, ...
@@ -898,8 +838,6 @@ devium.pca.calculate <-
              return = "list",
              plot = TRUE)
     {
-        # print("check get packages")
-        check.get.packages("pcaMethods")
         #port of imDEV source code optimized for GUI use
         #accepts list with the following arguments
         #pca.data<- data object (samples as rows)
@@ -910,21 +848,14 @@ devium.pca.calculate <-
 
         #check for text or factor and remove (add to subset)
         tmp <- pca.inputs
-        # print("PCA calculate")
-        # print(tmp)
-        # data.obj<-as.data.frame(get(tmp$pca.data))
-        # data.obj<-data.obj[sapply(1:ncol(data.obj), function(i) {class(data.obj[,i])=="numeric"|class(data.obj[,i])=="integer"})] # has to be better way to avoid factors
-        # print("afixln complete")
         data.obj <-
             afixln(tmp$pca.data) # converts factors or characters to numeric
-        # print("afixln complete")
 
         if (is.null(tmp$pca.cv)) {
             pca.cv <- "none"
         } else {
             pca.cv <- tmp$pca.cv
         } #avoid issues elsewhere
-
 
         #adjust PCS if > than data
         PCs <- tmp$pca.components
@@ -943,6 +874,8 @@ devium.pca.calculate <-
                 seed = 123
             )
 
+# browser()
+
         #results
         scores <- as.data.frame(pca.results@scores)
         loadings <- as.data.frame(pca.results@loadings)
@@ -957,7 +890,7 @@ devium.pca.calculate <-
                     error = function(e) {
                         0
                     }
-                )#some versions of pcaMEthods don't have this?
+                )#some versions of pcaMethods don't have this?
             q2 <- c(q2, rep(q2[length(q2)], nrow(eigenvalues) - length(q2)))
             eigenvalues <- data.frame(eigenvalues, q2 = q2)
         }
@@ -1011,96 +944,7 @@ devium.pca.calculate <-
         }
     }
 
-#standard input
-devium.calculate.pca <-
-    function(data,
-             ncomp = 2,
-             pca.cv = "none",
-             algorithm = "svd",
-             center = TRUE,
-             scale = "uv",
-             return = "list",
-             seed = 123)
-    {
-        data.obj <- afixln(data) # converts factors or characters to numeric
-
-        #adjust PCS if > than data
-        PCs <- ncomp
-        if (PCs > min(dim(data.obj))) {
-            PCs <-
-                min(dim(data.obj))
-        } # this should be done internally in the PCa fxn
-        pca.results <-
-            pcaMethods::pca(
-                as.matrix(data.obj),
-                method = algorithm,
-                nPcs = PCs,
-                center = center,
-                scale = scale,
-                cv = pca.cv,
-                seed = seed
-            )
-
-        #results
-        scores <- as.data.frame(pca.results@scores)
-        loadings <- as.data.frame(pca.results@loadings)
-        eigenvalues <- data.frame(eigenvalues = pca.results@R2)
-
-
-        if (pca.cv == "q2") {
-            # account for unequal r2 and q2 lengths
-            q2 <-
-                tryCatch(
-                    pcaMethods:::Q2(pca.results),
-                    error = function(e) {
-                        0
-                    }
-                )#some versions of pcaMEthods don't have this?
-            q2 <- c(q2, rep(q2[length(q2)], nrow(eigenvalues) - length(q2)))
-            eigenvalues <- data.frame(eigenvalues, q2 = q2)
-        }
-
-        #add leverage and dmodX
-        #bind between scores and loadings
-        lev <-
-            tryCatch(
-                as.matrix(pcaMethods:::leverage(pca.results)),
-                error = function(e) {
-                    "can not calculate"
-                }
-            )
-        dmodx <-
-            tryCatch(
-                as.matrix(pcaMethods:::DModX(pca.results)),
-                error = function(e) {
-                    "can not calculate"
-                }
-            )
-        diagnostics <-
-            tryCatch(
-                data.frame(leverage = lev, DmodX = dmodx),
-                error = function(e) {
-                    data.frame(Error = "not applicable")
-                }
-            )
-
-        #get the name of the data
-        if (return == "list") {
-            return(
-                list(
-                    pca.scores = scores,
-                    pca.loadings =  loadings,
-                    pca.eigenvalues = eigenvalues,
-                    pca.diagnostics = diagnostics
-                )
-            )
-        }
-
-        if (return == "model") {
-            return(pca.results)
-        }
-    }
-
+# *** Screee plot -------------------------------------------------------------------------------------------------
 # generate a scree plot base
 make.scree.plot <- function(eigenvalues)
 {
@@ -1122,7 +966,7 @@ make.scree.plot <- function(eigenvalues)
         frame.plot = TRUE,
         xlab = paste("Principal components (n =", nrow(pcaeigen) , ")"),
         ylab = ""
-    )#cbind(matrix(1:nrow(as.matrix(pcaeigen)))
+    )
     abline(v = seq(1, nrow(pcaeigen), by = 1),
            lty = 2,
            col = "gray40")
@@ -1224,10 +1068,6 @@ plot.PCA <-
              extra = NULL,
              plot = TRUE,
              ...) {
-        library(ggplot2)
-        library(reshape2)
-        library(grid) # arrows
-        #results<-match.args(results) #
         local <- switch(
             results[1],
 
@@ -1237,7 +1077,7 @@ plot.PCA <-
             "scores"		= function(pca, color, size, extra, ...) {
                 obj <- pca$pca.scores[, c(xaxis, yaxis)]
                 tmp <- data.frame(obj, id = rownames(obj))
-                #plot
+
                 if (is.null(theme)) {
                     .theme2 <- theme(
                         axis.line = element_line(colour = 'gray', size = .75),
@@ -2978,33 +2818,6 @@ all.pairs <- function(r, type = "one") {
     )
 }
 
-#source local directory to load devium fxns
-source.local.dir <- function(wd) {
-    o.dir <- getwd()
-    setwd(wd)
-    files <- dir()[unique(c(agrep(".r", dir()), agrep(".R", dir())))]
-    lapply(1:length(files), function(i) {
-        tryCatch(
-            source(files[i]),
-            error = function(e) {
-                paste0("can't load-->", files[i])
-            }
-        )
-    })
-    setwd(o.dir)
-}
-
-#adapt writeClipboard for data frames
-#there is a built in version of this with write.table
-writeClip <- function(obj, delimit = "|") {
-    # add dimnames to data for export
-    # collapse column wise on space
-    obj <-
-        data.frame(row = c("", as.character(rownames(obj))), rbind(colnames(obj), as.matrix(obj)))
-    writeClipboard(join.columns(obj, delimit))
-}
-
-
 
 # Global options  ------------------------------------------------------------------------------------------------
 
@@ -3109,19 +2922,19 @@ plotchoices <- list(
 
 # General functions needed for plotting ---------------------------------------------------------------------------
 # Verification that the ttest gets the desired two samples
-check_ttest <- function(data, input) {
-    if ("ttest" %in% input$checkGroup)
-    {
-        if (length(unique(data$sample)) == 2 |
-            length(unique(input$samplesub)) == 2) {
-            return(TRUE)
-        }
-        else {
-            return(FALSE)
-        }
-    }
-    return(TRUE)
-}
+# check_ttest <- function(data, input) {
+#     if ("ttest" %in% input$checkGroup)
+#     {
+#         if (length(unique(data$sample)) == 2 |
+#             length(unique(input$samplesub)) == 2) {
+#             return(TRUE)
+#         }
+#         else {
+#             return(FALSE)
+#         }
+#     }
+#     return(TRUE)
+# }
 
 # Some functions needed for the summary plottings
 se <- function(X, na.rm = T)

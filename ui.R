@@ -109,14 +109,14 @@ body <- dashboardBody(
                                checkboxInput("center","Center",TRUE),
                                checkboxInput("labels","Sample Labels",FALSE),
                                selectInput("scaling","Scale",
-                                           list(none = "none", "unit variance" = "uv", pareto = "pareto")
+                                           list("none" = "none", "unit variance" = "uv", "pareto" = "pareto")
                                ),
 
                                selectInput("method","Method",
                                            namel(listPcaMethods())
                                ),
                                selectInput("cv","cross-validation",
-                                           list (none = "none", Q2 =  "q2")
+                                           list ("none" = "none", "Q2" =  "q2")
                                ),
                                sliderInput("PCs", label="Number of PCs", min=2, max=8, value=2, ticks = TRUE, animate = FALSE),
                                sliderInput("size", label="Point Size", min=1, max=8, value=3, ticks = TRUE, animate = FALSE)
