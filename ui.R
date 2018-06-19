@@ -177,7 +177,7 @@ body <- dashboardBody(
                                                "magma",
                                                "plasma",
                                                "inferno",
-                                               "cvidis"
+                                               "cividis"
                                            )
                                ),
                                sliderInput("heatlabsz", label="Size of labels", min= 1,
