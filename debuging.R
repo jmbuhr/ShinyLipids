@@ -5,6 +5,9 @@
 
 # Scripts ---------------------------------------------------------------------------------------------------------
 
+
+
+# * PCA -----------------------------------------------------------------------------------------------------------
 dev.off()
 graphic
 
@@ -38,4 +41,25 @@ scores %>% as_tibble(rownames = "sample")
 loadings %>% as_tibble(rownames = "class")
 eigenvalues %>% as_tibble(rownames = "PC")
 
-lev
+
+# * ttest ---------------------------------------------------------------------------------------------------------
+library(ggsignif)
+
+dev.off()
+graphic
+
+data
+
+graphic+
+    aes(x = sample)+
+    facet_wrap(xval, scales = "free")+
+    geom_signif(comparisons = list(c("01 - LD", "05 - WT")),
+                test = "t.test",
+                tip_length = 0.01,
+                step_increase = .05)
+
+data
+
+checkGroup
+
+advanced

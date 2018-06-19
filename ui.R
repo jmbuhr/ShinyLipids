@@ -84,6 +84,8 @@ body <- dashboardBody(
                     actionButton("refresh", "refresh Metadata", icon = icon("refresh"))
                 )
         ),
+
+        # ** Advanced plotting options ------------------------------------------------------------------------------------
         tabItem(tabName = "advanced",
                 fluidRow(
                     box(title = "Advanced Plotting Options",

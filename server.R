@@ -266,7 +266,6 @@ function(input, output, session) {
     observe({
         input$ID
         choice <- rawdata()
-        # choicesam <- as.factor(choice$sample_identifier) # AVERAGING
         choicesam <- as.factor(choice$sample_replicate)
         choicetech <- as.factor(choice$sample_replicate_technical)
         updateSelectInput(session, "repsub", choices = levels(choicesam))
@@ -300,6 +299,20 @@ function(input, output, session) {
     })
 
 
+    # advanced options-list -------------------------------------------------------------------------------------------
+    advplot <-
+        reactive({
+        res <- c(input$symbolchoice)
+        if (input$add_rem) {
+            res <- c(res, "add")
+        }
+        if (input$highlight) {
+            res <- c(res, "highlight")
+        }
+        return(res)
+    })
+
+
     # Creating main plot ----------------------------------------------------------------------------------------------
     ### Create Plot
     PlotData <- reactive({
@@ -323,24 +336,9 @@ function(input, output, session) {
     })
 
     SubPlotData <- reactive({
-        # shiny::validate important, interferance with jsonlite::validate
-        # shiny::validate(need(
-        #     check_ttest(PlotData(), input),
-        #     "Please ensure that you have selected exactly two samples!"
-        # ))
-
-        # TODO: Clean advplotoptions
-        advplot <- c(input$symbolchoice)
-        if (input$add_rem) {
-            advplot <- c(advplot, "add")
-        }
-        if (input$highlight) {
-            advplot <- c(advplot, "highlight")
-        }
-
         prepareSubset(
             PlotData(),
-            advanced = advplot,
+            advanced = advplot(),
             samplesub = input$samplesub,
             whatsub = input$whatsub,
             withsub = input$withsub,
@@ -396,7 +394,7 @@ function(input, output, session) {
                 what = input$what,
                 within = input$within,
                 standard = input$standard,
-                advanced = advplot
+                advanced = advplot()
             )
         print(ranges$x)
         print(ranges$y)
