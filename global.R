@@ -1618,7 +1618,7 @@ class_order <- class_order_database$class
 #                  "CE", "TAG")
 
 
-# * General functions needed for plotting ---------------------------------------------------------------------------
+# * General functions ---------------------------------------------------------------------------
 
 # Some functions needed for the summary plottings
 se <- function(X, na.rm = T)
@@ -1659,4 +1659,21 @@ colMap <- function(x) {
         x
     )))), time = table(x))
     return(.col[match(1:length(x), order(x))])
+}
+
+#convert all columns of a data.frame or matrix to numeric (encoding characters)
+afixln <- function(a, keep.factors = FALSE) {
+    obj <- do.call("cbind", lapply(1:ncol(a), function(i) {
+        tmp <- a[, i]
+        if (is.factor(tmp) | is.character(tmp)) {
+            as.numeric(as.factor(tmp))
+        } else {
+            tmp
+        }
+    }))
+    #maintain object class and dimnames
+    pclass <- paste0("as.", class(a))
+    obj <- do.call(pclass, list(obj))
+    dimnames(obj) <- dimnames(a)
+    return(obj)
 }

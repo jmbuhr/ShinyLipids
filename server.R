@@ -1,24 +1,5 @@
 # Server function -------------------------------------------------------------------------------------------------
 function(input, output, session) {
-    # Ranges for zooming
-    ranges <- reactiveValues(x = NULL, y = NULL)
-
-    observeEvent(input$plot1_dblclick, {
-        brush <- input$plot1_brush
-        if (!is.null(brush)) {
-            ranges$x <- c(brush$xmin, brush$xmax)
-            ranges$y <- c(brush$ymin, brush$ymax)
-        } else {
-            ranges$x <- NULL
-            ranges$y <- NULL
-        }
-    })
-
-    # Load the rawdata
-    rawdata <- reactive({
-        print("Raw data loaded")
-        collect(getraw(input$ID, "data2"))
-    })
 
 
     # * Metadata ------------------------------------------------------------------------------------------------------
@@ -383,7 +364,27 @@ function(input, output, session) {
     })
 
 
-    # Main Plot zoom --------------------------------------------------------------------------------------------------
+
+    # Load the rawdata
+    rawdata <- reactive({
+        print("Raw data loaded")
+        collect(getraw(input$ID, "data2"))
+    })
+
+    # **Main Plot zoom --------------------------------------------------------------------------------------------------
+    # Ranges for zooming
+    ranges <- reactiveValues(x = NULL, y = NULL)
+    observeEvent(input$plot1_dblclick, {
+        brush <- input$plot1_brush
+        if (!is.null(brush)) {
+            ranges$x <- c(brush$xmin, brush$xmax)
+            ranges$y <- c(brush$ymin, brush$ymax)
+        } else {
+            ranges$x <- NULL
+            ranges$y <- NULL
+        }
+    })
+
     plotInput <- reactive({
         print("started plot Input")
         plt_main <-
