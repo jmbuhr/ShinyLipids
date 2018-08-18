@@ -1,8 +1,14 @@
 # Preamble --------------------------------------------------------------------------------------------------------
 # Packages
-## tidyverse
-library(tidyverse)
-# contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+
+# install.packages(pkgs = c("tidyverse", "jsonlite", "RSQLite",
+#                  "shiny", "shinyjs", "DT", "shinythemes", "shinydashboard",
+#                  "RColorBrewer", "scales", "ggthemes", "ggsignif", "BiocManager"),
+#                  quiet = TRUE)
+#
+#
+# BiocManager::install(pkgs = c("Biobase", "BiocGenerics", "pcaMethods"))
+
 library(jsonlite)
 library(RSQLite)
 ## Shiny
@@ -21,6 +27,10 @@ library(ggsignif)
 library(Biobase)
 library(BiocGenerics)
 library(pcaMethods)
+## tidyverse
+library(tidyverse)
+# contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+
 
 # sessionInfo()
 # R version 3.5.1 (2018-07-02)

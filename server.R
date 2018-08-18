@@ -75,6 +75,79 @@ function(input, output, session) {
     })
 
 
+    # ** Download handlers for metadata and raw datasets --------------------------------------------------------------
+
+    # Metadata
+    output$saveMeta <- downloadHandler(
+        filename = function() {
+            paste0("datasets_info.csv")
+        },
+        content = function(file) {
+            write_csv(x = metaData(), path = file)
+        }
+    )
+
+    # Raw Main Data - .csv
+    output$saveRawCSV <- downloadHandler(
+        filename = function() {
+            paste0("dataset" ,".csv")
+        },
+        content = function(file) {
+            write_csv(x = mainData(), path = file)
+        }
+    )
+
+
+    # Updating select options for filtering based on dataset
+
+    observe({
+        choices <- mainData()$sample %>%
+            unique()
+        updateSelectizeInput(session, "sample_select",
+                             choices = choices
+        )
+        updateSelectizeInput(session, "sample_remove",
+                             choices = choices
+        )
+        choices <- mainData()$sample_replicate %>%
+            unique()
+        updateSelectizeInput(session, "rep_select",
+                             choices = choices
+        )
+        updateSelectizeInput(session, "rep_remove",
+                             choices = choices
+        )
+        choices <- mainData()$category %>%
+            unique()
+        updateSelectizeInput(session, "filter_cat",
+                             choices = choices
+        )
+        choices <- mainData()$func_cat %>%
+            unique()
+        updateSelectizeInput(session, "filter_func",
+                             choices = choices
+        )
+        choices <- mainData()$class %>%
+            unique()
+        updateSelectizeInput(session, "filter_class",
+                             choices = choices
+        )
+        ls <- mainData()$length %>%
+            range()
+        updateSliderInput(session, "filter_length",
+                          min = ls[1], max = ls[2],
+                          value = c(ls[1], max = ls[2])
+        )
+        dbs <- mainData()$db %>%
+            range()
+        updateSliderInput(session, "filter_db",
+                          min = dbs[1], max = dbs[2],
+                          value = c(dbs[1], max = dbs[2])
+        )
+    })
+
+
+
     # * Displaying main Dataset as a table ----------------------------------------------------------------------------
 
     # Rendering selected dataset as a table to send to UI

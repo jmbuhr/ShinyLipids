@@ -61,58 +61,24 @@ sidebar <- dashboardSidebar(
         'std_feature', label = "Standardize to 100% within:",
         choices = list()
     ),
-    p("Filtering data:"),
-    selectizeInput(
-        'sample_select',
-        label = 'Select samples',
-        choices = list(),
-        multiple = TRUE
-    ),
-    selectizeInput(
-        'sample_remove',
-        label = 'Remove samples',
-        choices = list(),
-        multiple = TRUE
-    ),
-    selectizeInput(
-        'rep_select',
-        label = "Select replicates",
-        choices = list(),
-        multiple = TRUE
-    ),
-    selectizeInput(
-        'rep_remove',
-        label = "Remove replicates",
-        choices = list(),
-        multiple = TRUE
-    ),
-    selectizeInput(
-        'filter_x',
-        label = "Filter X",
-        choices = list(),
-        multiple = TRUE
-    ),
-
 
     # * Impressum -----------------------------------------------------------------------------------------------------
     menuItem("About ", href = "http://bzh.db-engine.de/default.asp?lfn=2241&fg=4289"),
     div(
-        strong("ShinyLipids 2015"),
-        "by",
+        strong("ShinyLipids alpha"),
+        p("Rewritten by"),
+        em("Jannik Buhr"),
+        p("Version: 2.0"),
+        p("2018-08-04"),
+        p("includes code from:"),
         br(),
         em("Mathias Gerl"),
         br(),
         em("Manuel Haußmann"),
         br(),
         em("Sebastian Bender"),
-        br(),
-        p("Rewritten by"),
-        br(),
-        em("Jannik Buhr"),
-        br(),
-        p("Version: 2.0"),
-        br(),
-        p("2018-08-04")
+        br()
+
     )
 )
 
@@ -129,18 +95,77 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       title = NULL,
                                       status = "primary",
                                       width = 12,
-                                      DTOutput("metaDataTable")
+                                      DTOutput("metaDataTable"),
+                                      # Save buttons
+                                      checkboxInput("showFullMeta", label = "Show all columns", value = FALSE),
+                                      downloadButton("saveMeta", label = "Save metadata as .csv"),
+                                      downloadButton("saveRawCSV", label = "Save selected dataset as .csv (unfiltered)")
                                   )
                               ),
                               fluidRow(
+                                  # Filtering Inputs
                                   box(
-                                      title = NULL,
-                                      checkboxInput("showFullMeta", label = "Show all columns", value = FALSE),
-                                      downloadButton("saveMeta", label = "Save metadata as .csv"),
-                                      downloadButton("saveRawRD", label = "Save raw data as .RData"),
-                                      downloadButton("saveRawCSV", label = "Save raw data as .csv")
+                                      p("Filtering data:"),
+                                      selectizeInput(
+                                          'sample_select',
+                                          label = 'Select samples',
+                                          choices = NULL,
+                                          multiple = TRUE
+                                      ),
+                                      selectizeInput(
+                                          'sample_remove',
+                                          label = 'Remove samples',
+                                          choices = NULL,
+                                          multiple = TRUE
+                                      ),
+                                      selectizeInput(
+                                          'rep_select',
+                                          label = "Select replicates",
+                                          choices = NULL,
+                                          multiple = TRUE
+                                      ),
+                                      selectizeInput(
+                                          'rep_remove',
+                                          label = "Remove replicates",
+                                          choices = NULL,
+                                          multiple = TRUE
+                                      )
+                                  ),
+                                  box(
+                                      # Filtering
+                                      selectizeInput(
+                                          'filter_cat',
+                                          label = "Filter category",
+                                          choices = NULL,
+                                          multiple = TRUE
+                                      ),
+                                      selectizeInput(
+                                          'filter_func',
+                                          label = "Filter functional category",
+                                          choices = NULL,
+                                          multiple = TRUE
+                                      ),
+                                      selectizeInput(
+                                          'filter_class',
+                                          label = "Filter class",
+                                          choices = NULL,
+                                          multiple = TRUE
+                                      ),
+                                      sliderInput(
+                                          'filter_length',
+                                          label = "Filter length",
+                                          min = 1, max = 100,
+                                          value = c(1,100)
+                                      ),
+                                      sliderInput(
+                                          'filter_db',
+                                          label = "Filter double bounds",
+                                          min = 1, max = 10,
+                                          value = c(1,10)
+                                      )
                                   )
                               ),
+
 
                               # *** Dataset Table -----------------------------------------------------------------------------------------------
                               fluidRow(
