@@ -68,7 +68,8 @@ library(tidyverse)
 
 # Debugging -------------------------------------------------------------------------------------------------------
 
-options(shiny.fullstacktrace = FALSE)
+options(shiny.fullstacktrace = FALSE,
+        shiny.error = "default")
 
 # Body ------------------------------------------------------------------------------------------------------------
 
@@ -86,3 +87,16 @@ sqlQueryData <- function(dataset_ID){
 }
 
 
+features <- list("sample",
+                 "lipid",
+                 "value",
+                 "category",
+                 "functional category" = "func_cat",
+                 "class",
+                 "length",
+                 "double bound" ="db",
+                 "hydroxylation" = "oh",
+                 "chains",
+                 "chain_sums",
+                 "sample_replicate",
+                 "sample_replicate_technical")

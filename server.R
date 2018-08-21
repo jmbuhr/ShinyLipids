@@ -68,7 +68,8 @@ function(input, output, session) {
                 category = factor(category),
                 sample = factor(sample),
                 sample_replicate = factor(sample_replicate),
-                sample_replicate_technical = factor(sample_replicate_technical)
+                sample_replicate_technical = factor(sample_replicate_technical),
+                oh = if_else(is.na(oh), 0, oh)
             ) %>%
             select(id, sample_identifier, lipid, value, everything())
         df %>%
@@ -80,7 +81,6 @@ function(input, output, session) {
 
     mainData <- reactive({
         req(rawData())
-
 
         df <- rawData()
 
@@ -102,6 +102,8 @@ function(input, output, session) {
         if(!is.null(input$filter_oh)){
             df <- df %>% filter(oh %>% between(input$filter_oh[1], input$filter_oh[2]))
         }
+
+
 
         df %>%
             return()
@@ -215,6 +217,41 @@ function(input, output, session) {
                    deferRender = TRUE,
                    scrollCollapse = TRUE)
     )
+
+
+
+    # ** plotData from mainData based on sidebar inputs ---------------------------------------------------------------
+
+    plotData <- reactive({
+        df <- mainData()
+        df %>%
+            return()
+    })
+
+
+    # main Plot output ------------------------------------------------------------------------------------------------
+
+    mainPlt <- reactive({
+        df <- plotData()
+        plt <- df %>%
+            ggplot()
+
+        plt <- plt +
+            aes(x = !!sym(input$aes_x), y = !!sym(input$aes_y))+
+            geom_point()+
+            labs(title = "Alpha Version")
+
+
+        plt %>%
+            return()
+    })
+
+    output$mainPlot <- renderPlot({
+        plt <- mainPlt()
+
+        plt %>%
+            return()
+    })
 
 
 

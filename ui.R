@@ -39,12 +39,12 @@ sidebar <- dashboardSidebar(
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     p("Visual mappings of your data:"),
     selectInput("aes_x", label = "Feature to display on x-Axis",
-                choices = ""),
+                choices = features),
     selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
-                choices = "",
+                choices = features,
                 selected = ),
     selectInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
-                choices = ""),
+                choices = features),
     selectInput("aes_pos", label = "Position of colored datapoints",
                 choices = list(
                     "stacked" = "stacked",
@@ -54,12 +54,12 @@ sidebar <- dashboardSidebar(
                 selected = "dodge2"
     ),
     selectInput("aes_facet1", label = "Feature to use for facetting 1",
-                choices = ""),
+                choices = features),
     selectInput("aes_facet2", label = "Feature to use for facetting 2",
-                choices = ""),
+                choices = features),
     selectizeInput(
         'std_feature', label = "Standardize to 100% within:",
-        choices = list()
+        choices = features
     ),
 
     # * Impressum -----------------------------------------------------------------------------------------------------
@@ -105,8 +105,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                               ),
                               fluidRow(
                                   # Filtering Inputs
-                                  box(
-                                      p("Filtering data:"),
+                                  box(width = 3,
                                       selectizeInput(
                                           'sample_select',
                                           label = 'Select samples',
@@ -134,12 +133,12 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           multiple = TRUE
                                       )
                                   ),
-                                  box(
+                                  box(width = 4,
                                       # Filtering
                                       selectizeInput(
                                           'filter_cat',
                                           label = "Filter category",
-                                         options = list(placeholder = "empty field means no filtering based on this feature"),
+                                          options = list(placeholder = "empty field means no filtering based on this feature"),
                                           choices = NULL,
                                           multiple = TRUE
                                       ),
@@ -156,7 +155,10 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           options = list(placeholder = "empty field means no filtering based on this feature"),
                                           choices = NULL,
                                           multiple = TRUE
-                                      ),
+                                      )
+                                  ),
+                                  box(width = 3,
+                                      # Sliders
                                       sliderInput(
                                           'filter_length',
                                           label = "Filter length",
@@ -198,10 +200,8 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           box(
                                               title = NULL,
                                               width = 12,
-                                              height = 7,
                                               status = "primary",
-                                              plotOutput(
-                                                  "mainPlot",
+                                              plotOutput("mainPlot",
                                                   dblclick = "mainPlot_dblclick",
                                                   brush = brushOpts(id = "mainPlot_brush",
                                                                     resetOnNew = TRUE)
@@ -222,7 +222,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                                                  choices = "")
                                           )
                                       ),
-                                      column (width = 6,
+                                      column(width = 6,
                                               fluidRow(
                                                   column(width = 6,
                                                          box(
@@ -394,7 +394,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
 
 
 # Initiate Dashboard page ----------------------------------------------------------------------------------------
-dashboardPage(skin = "green",
+dashboardPage(skin = "purple",
               title = "ShinyLipids",
               header,
               sidebar,
