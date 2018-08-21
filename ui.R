@@ -4,6 +4,8 @@ header <- dashboardHeader(title = p("ShinyLipids", em("alpha")))
 
 # Sidebar ---------------------------------------------------------------------------------------------------------
 sidebar <- dashboardSidebar(
+
+    # *** Visual fixes ------------------------------------------------------------------------------------------------
     # This part fixes the issue of having 2 scroll bars on one side:)
     tags$head(
         tags$style(HTML("
@@ -17,13 +19,17 @@ sidebar <- dashboardSidebar(
     ),
 
     shinyjs::useShinyjs(), # needed to load java script functions
-    # The sidebar
+
+
     sidebarMenu(
+        # * MetaData ------------------------------------------------------------------------------------------------------
         id = "menu",
         menuItem(
-            "Database info", tabName = "metadata", icon = icon("th")
+            "Database info", tabName = "metadata", icon = icon("th"),
+            startExpanded = TRUE
         ),
-        selectInput("ID", label = "Dataset:", choices = ""),
+
+        # * Visualization -------------------------------------------------------------------------------------------------
         menuItem(
             "Visualization",
             tabName = "plotmenu",
@@ -35,31 +41,103 @@ sidebar <- dashboardSidebar(
         )
     ),
 
-
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
-    p("Visual mappings of your data:"),
-    selectInput("aes_x", label = "Feature to display on x-Axis",
-                choices = features),
-    selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
-                choices = features,
-                selected = ),
-    selectInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
-                choices = features),
-    selectInput("aes_pos", label = "Position of colored datapoints",
-                choices = list(
-                    "stacked" = "stacked",
-                    "besides" = "dodge2",
-                    "filled to 100%" = "fill"
+    tabsetPanel(type = "pills",
+                tabPanel("Mapping",
+                         selectInput("aes_x", label = "Feature to display on x-Axis",
+                                     choices = features),
+                         selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
+                                     choices = features,
+                                     selected = ),
+                         selectInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
+                                     choices = features),
+                         selectInput("aes_pos", label = "Position of colored datapoints",
+                                     choices = list(
+                                         "stacked" = "stacked",
+                                         "besides" = "dodge2",
+                                         "filled to 100%" = "fill"
+                                     ),
+                                     selected = "dodge2"
+                         ),
+                         selectInput("aes_facet1", label = "Feature to use for facetting 1",
+                                     choices = features),
+                         selectInput("aes_facet2", label = "Feature to use for facetting 2",
+                                     choices = features),
+                         selectizeInput(
+                             'std_feature', label = "Standardize to 100% within:",
+                             choices = features
+                         )
                 ),
-                selected = "dodge2"
-    ),
-    selectInput("aes_facet1", label = "Feature to use for facetting 1",
-                choices = features),
-    selectInput("aes_facet2", label = "Feature to use for facetting 2",
-                choices = features),
-    selectizeInput(
-        'std_feature', label = "Standardize to 100% within:",
-        choices = features
+                tabPanel("Defaults"),
+                tabPanel("Samples",
+                         selectizeInput(
+                             'sample_select',
+                             label = 'Select samples',
+                             options = list(placeholder = "Not selecting a sample here will keep all samples"),
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'sample_remove',
+                             label = 'Remove samples',
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'rep_select',
+                             label = "Select replicates",
+                             options = list(placeholder = "Not selecting a replicate here will keep them all"),
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'rep_remove',
+                             label = "Remove replicates",
+                             choices = NULL,
+                             multiple = TRUE
+                         )
+                ),
+                tabPanel("Filters",
+                         selectizeInput(
+                             'filter_cat',
+                             label = "Filter category",
+                             options = list(placeholder = "empty field means no filtering based on this feature"),
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'filter_func',
+                             label = "Filter functional category",
+                             options = list(placeholder = "empty field means no filtering based on this feature"),
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'filter_class',
+                             label = "Filter class",
+                             options = list(placeholder = "empty field means no filtering based on this feature"),
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         sliderInput(
+                             'filter_length',
+                             label = "Filter length",
+                             min = 1, max = 100,
+                             value = c(1,100)
+                         ),
+                         sliderInput(
+                             'filter_db',
+                             label = "Filter double bounds",
+                             min = 1, max = 10,
+                             value = c(1,10)
+                         ),
+                         sliderInput(
+                             'filter_oh',
+                             label = "Filter hydroxylation",
+                             min = 1, max = 10,
+                             value = c(1,10)
+                         )
+                )
     ),
 
     # * Impressum -----------------------------------------------------------------------------------------------------
@@ -98,88 +176,14 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       DTOutput("metaDataTable"),
                                       # Save buttons
                                       checkboxInput("showFullMeta", label = "Show all columns", value = FALSE),
+                                      selectInput("ID",
+                                                  label = "Select dataset by clicking on the table or use this dropdown list",
+                                                  choices = "",width = "50%"),
                                       downloadButton("saveMeta", label = "Save metadata as .csv"),
                                       downloadButton("saveRawCSV", label = "Save selected dataset as .csv (unfiltered)"),
                                       downloadButton("saveMainCSV", label = "Save selected dataset as .csv (filtered)")
                                   )
                               ),
-                              fluidRow(
-                                  # Filtering Inputs
-                                  box(width = 3,
-                                      selectizeInput(
-                                          'sample_select',
-                                          label = 'Select samples',
-                                          options = list(placeholder = "Not selecting a sample here will keep all samples"),
-                                          choices = NULL,
-                                          multiple = TRUE
-                                      ),
-                                      selectizeInput(
-                                          'sample_remove',
-                                          label = 'Remove samples',
-                                          choices = NULL,
-                                          multiple = TRUE
-                                      ),
-                                      selectizeInput(
-                                          'rep_select',
-                                          label = "Select replicates",
-                                          options = list(placeholder = "Not selecting a replicate here will keep them all"),
-                                          choices = NULL,
-                                          multiple = TRUE
-                                      ),
-                                      selectizeInput(
-                                          'rep_remove',
-                                          label = "Remove replicates",
-                                          choices = NULL,
-                                          multiple = TRUE
-                                      )
-                                  ),
-                                  box(width = 4,
-                                      # Filtering
-                                      selectizeInput(
-                                          'filter_cat',
-                                          label = "Filter category",
-                                          options = list(placeholder = "empty field means no filtering based on this feature"),
-                                          choices = NULL,
-                                          multiple = TRUE
-                                      ),
-                                      selectizeInput(
-                                          'filter_func',
-                                          label = "Filter functional category",
-                                          options = list(placeholder = "empty field means no filtering based on this feature"),
-                                          choices = NULL,
-                                          multiple = TRUE
-                                      ),
-                                      selectizeInput(
-                                          'filter_class',
-                                          label = "Filter class",
-                                          options = list(placeholder = "empty field means no filtering based on this feature"),
-                                          choices = NULL,
-                                          multiple = TRUE
-                                      )
-                                  ),
-                                  box(width = 3,
-                                      # Sliders
-                                      sliderInput(
-                                          'filter_length',
-                                          label = "Filter length",
-                                          min = 1, max = 100,
-                                          value = c(1,100)
-                                      ),
-                                      sliderInput(
-                                          'filter_db',
-                                          label = "Filter double bounds",
-                                          min = 1, max = 10,
-                                          value = c(1,10)
-                                      ),
-                                      sliderInput(
-                                          'filter_oh',
-                                          label = "Filter hydroxylation",
-                                          min = 1, max = 10,
-                                          value = c(1,10)
-                                      )
-                                  )
-                              ),
-
 
                               # *** Dataset Table -----------------------------------------------------------------------------------------------
                               fluidRow(
@@ -202,9 +206,9 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                               width = 12,
                                               status = "primary",
                                               plotOutput("mainPlot",
-                                                  dblclick = "mainPlot_dblclick",
-                                                  brush = brushOpts(id = "mainPlot_brush",
-                                                                    resetOnNew = TRUE)
+                                                         dblclick = "mainPlot_dblclick",
+                                                         brush = brushOpts(id = "mainPlot_brush",
+                                                                           resetOnNew = TRUE)
                                               )
                                           )
                                       )
@@ -223,48 +227,48 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           )
                                       ),
                                       column(width = 6,
-                                              fluidRow(
-                                                  column(width = 6,
-                                                         box(
-                                                             title = NULL,
-                                                             width = NULL,
-                                                             selectInput(
-                                                                 'main_plottype',
-                                                                 label = 'Plottype',
-                                                                 choices = list(
-                                                                     "Barplot" = 'barplot',
-                                                                     "Boxplot" = 'boxplot',
-                                                                     "Points" = 'points',
-                                                                     "Pointrange" = 'pointrange'
-                                                                 )
-                                                             )
-                                                         )),
-                                                  column(
-                                                      width = 6,
-                                                      box(
-                                                          title = NULL,
-                                                          width = NULL,
-                                                          downloadButton("main_savePlot", label = "Save as .pdf"),
-                                                          downloadButton("main_saveStd", label = "Save as .csv"),
-                                                          br(),
-                                                          numericInput("mainWidth", label = "width", value = 20),
-                                                          numericInput("mainHeight", label = "height", value = 10),
-                                                          downloadButton("mainSave", label = "Save pdf")
-                                                      )
-                                                  )
-                                              ),
+                                             fluidRow(
+                                                 column(width = 6,
+                                                        box(
+                                                            title = NULL,
+                                                            width = NULL,
+                                                            selectInput(
+                                                                'main_plottype',
+                                                                label = 'Plottype',
+                                                                choices = list(
+                                                                    "Barplot" = 'barplot',
+                                                                    "Boxplot" = 'boxplot',
+                                                                    "Points" = 'points',
+                                                                    "Pointrange" = 'pointrange'
+                                                                )
+                                                            )
+                                                        )),
+                                                 column(
+                                                     width = 6,
+                                                     box(
+                                                         title = NULL,
+                                                         width = NULL,
+                                                         downloadButton("main_savePlot", label = "Save as .pdf"),
+                                                         downloadButton("main_saveStd", label = "Save as .csv"),
+                                                         br(),
+                                                         numericInput("mainWidth", label = "width", value = 20),
+                                                         numericInput("mainHeight", label = "height", value = 10),
+                                                         downloadButton("mainSave", label = "Save pdf")
+                                                     )
+                                                 )
+                                             ),
 
-                                              # *** summary ------------------------------------------------------------------------------------------------------
-                                              fluidRow(column(
-                                                  12,
-                                                  box(
-                                                      title = "Summary",
-                                                      width = 12,
-                                                      collapsible = TRUE,
-                                                      collapsed = FALSE,
-                                                      DT::dataTableOutput("sum_muMol")
-                                                  )
-                                              )))
+                                             # *** summary ------------------------------------------------------------------------------------------------------
+                                             fluidRow(column(
+                                                 12,
+                                                 box(
+                                                     title = "Summary",
+                                                     width = 12,
+                                                     collapsible = TRUE,
+                                                     collapsed = FALSE,
+                                                     DT::dataTableOutput("sum_muMol")
+                                                 )
+                                             )))
                                   )),
 
                           # ** PCA ----------------------------------------------------------------------------------------------------------

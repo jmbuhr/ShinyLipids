@@ -103,8 +103,6 @@ function(input, output, session) {
             df <- df %>% filter(oh %>% between(input$filter_oh[1], input$filter_oh[2]))
         }
 
-
-
         df %>%
             return()
     })
@@ -240,6 +238,9 @@ function(input, output, session) {
             aes(x = !!sym(input$aes_x), y = !!sym(input$aes_y))+
             geom_point()+
             labs(title = "Alpha Version")
+
+        plt <- plt +
+            aes(color = NULL)
 
 
         plt %>%
