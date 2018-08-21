@@ -51,7 +51,7 @@ function(input, output, session) {
 
     # * Reading in raw data based on dataset selected -----------------------------------------------------------------
 
-    mainData <- reactive({
+    rawData <- reactive({
         # Only runs if a dataset is selected
         req(input$ID)
 
@@ -71,13 +71,46 @@ function(input, output, session) {
                 sample_replicate_technical = factor(sample_replicate_technical)
             ) %>%
             select(id, sample_identifier, lipid, value, everything())
-        df
+        df %>%
+            return()
+    })
+
+
+    # ** Filtering rawData to create mainData -------------------------------------------------------------------------
+
+    mainData <- reactive({
+        req(rawData())
+
+
+        df <- rawData()
+
+        if(!is.null(input$filter_cat)){
+            df <- df %>% filter(category %in% input$filter_cat)
+        }
+        if(!is.null(input$filter_class)){
+            df <- df %>% filter(class %in% input$filter_class)
+        }
+        if(!is.null(input$filter_func)){
+            df <- df %>% filter(func_cat %in% input$filter_func)
+        }
+        if(!is.null(input$filter_length)){
+            df <- df %>% filter(length %>% between(input$filter_length[1], input$filter_length[2]))
+        }
+        if(!is.null(input$filter_db)){
+            df <- df %>% filter(db %>% between(input$filter_db[1], input$filter_db[2]))
+        }
+        if(!is.null(input$filter_oh)){
+            df <- df %>% filter(oh %>% between(input$filter_oh[1], input$filter_oh[2]))
+        }
+
+        df %>%
+            return()
     })
 
 
     # ** Download handlers for metadata and raw datasets --------------------------------------------------------------
 
-    # Metadata
+    # Metadata - .csv
     output$saveMeta <- downloadHandler(
         filename = function() {
             paste0("datasets_info.csv")
@@ -90,18 +123,31 @@ function(input, output, session) {
     # Raw Main Data - .csv
     output$saveRawCSV <- downloadHandler(
         filename = function() {
-            paste0("dataset" ,".csv")
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-raw" ,".csv")
+        },
+        content = function(file) {
+            write_csv(x = rawData(), path = file)
+        }
+    )
+
+    #  Main Data - .csv
+    output$saveMainCSV <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-filtered" ,".csv")
         },
         content = function(file) {
             write_csv(x = mainData(), path = file)
         }
     )
 
-
     # Updating select options for filtering based on dataset
 
     observe({
-        choices <- mainData()$sample %>%
+        choices <- rawData()$sample %>%
             unique()
         updateSelectizeInput(session, "sample_select",
                              choices = choices
@@ -109,7 +155,7 @@ function(input, output, session) {
         updateSelectizeInput(session, "sample_remove",
                              choices = choices
         )
-        choices <- mainData()$sample_replicate %>%
+        choices <- rawData()$sample_replicate %>%
             unique()
         updateSelectizeInput(session, "rep_select",
                              choices = choices
@@ -117,32 +163,38 @@ function(input, output, session) {
         updateSelectizeInput(session, "rep_remove",
                              choices = choices
         )
-        choices <- mainData()$category %>%
+        choices <- rawData()$category %>%
             unique()
         updateSelectizeInput(session, "filter_cat",
                              choices = choices
         )
-        choices <- mainData()$func_cat %>%
+        choices <- rawData()$func_cat %>%
             unique()
         updateSelectizeInput(session, "filter_func",
                              choices = choices
         )
-        choices <- mainData()$class %>%
+        choices <- rawData()$class %>%
             unique()
         updateSelectizeInput(session, "filter_class",
                              choices = choices
         )
-        ls <- mainData()$length %>%
-            range()
+        ls <- rawData()$length %>%
+            range(na.rm = TRUE)
         updateSliderInput(session, "filter_length",
                           min = ls[1], max = ls[2],
                           value = c(ls[1], max = ls[2])
         )
-        dbs <- mainData()$db %>%
-            range()
+        dbs <- rawData()$db %>%
+            range(na.rm = TRUE)
         updateSliderInput(session, "filter_db",
                           min = dbs[1], max = dbs[2],
                           value = c(dbs[1], max = dbs[2])
+        )
+        ohs <- rawData()$oh %>%
+            range(na.rm = TRUE)
+        updateSliderInput(session, "filter_oh",
+                          min = 0, max = ohs[2],
+                          value = c(ohs[1], max = ohs[2])
         )
     })
 
@@ -163,11 +215,6 @@ function(input, output, session) {
                    deferRender = TRUE,
                    scrollCollapse = TRUE)
     )
-
-
-
-    # TODO Save buttons for data
-
 
 
 

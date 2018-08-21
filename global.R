@@ -68,8 +68,7 @@ library(tidyverse)
 
 # Debugging -------------------------------------------------------------------------------------------------------
 
-options(shiny.error = browser,
-        shiny.fullstacktrace = FALSE)
+options(shiny.fullstacktrace = FALSE)
 
 # Body ------------------------------------------------------------------------------------------------------------
 

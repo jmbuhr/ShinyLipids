@@ -99,7 +99,8 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       # Save buttons
                                       checkboxInput("showFullMeta", label = "Show all columns", value = FALSE),
                                       downloadButton("saveMeta", label = "Save metadata as .csv"),
-                                      downloadButton("saveRawCSV", label = "Save selected dataset as .csv (unfiltered)")
+                                      downloadButton("saveRawCSV", label = "Save selected dataset as .csv (unfiltered)"),
+                                      downloadButton("saveMainCSV", label = "Save selected dataset as .csv (filtered)")
                                   )
                               ),
                               fluidRow(
@@ -109,6 +110,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       selectizeInput(
                                           'sample_select',
                                           label = 'Select samples',
+                                          options = list(placeholder = "Not selecting a sample here will keep all samples"),
                                           choices = NULL,
                                           multiple = TRUE
                                       ),
@@ -121,6 +123,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       selectizeInput(
                                           'rep_select',
                                           label = "Select replicates",
+                                          options = list(placeholder = "Not selecting a replicate here will keep them all"),
                                           choices = NULL,
                                           multiple = TRUE
                                       ),
@@ -136,18 +139,21 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       selectizeInput(
                                           'filter_cat',
                                           label = "Filter category",
+                                         options = list(placeholder = "empty field means no filtering based on this feature"),
                                           choices = NULL,
                                           multiple = TRUE
                                       ),
                                       selectizeInput(
                                           'filter_func',
                                           label = "Filter functional category",
+                                          options = list(placeholder = "empty field means no filtering based on this feature"),
                                           choices = NULL,
                                           multiple = TRUE
                                       ),
                                       selectizeInput(
                                           'filter_class',
                                           label = "Filter class",
+                                          options = list(placeholder = "empty field means no filtering based on this feature"),
                                           choices = NULL,
                                           multiple = TRUE
                                       ),
@@ -160,6 +166,12 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       sliderInput(
                                           'filter_db',
                                           label = "Filter double bounds",
+                                          min = 1, max = 10,
+                                          value = c(1,10)
+                                      ),
+                                      sliderInput(
+                                          'filter_oh',
+                                          label = "Filter hydroxylation",
                                           min = 1, max = 10,
                                           value = c(1,10)
                                       )
@@ -206,7 +218,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                               width = 12,
                                               collapsible = TRUE,
                                               collapsed = FALSE,
-                                              checkboxGroupInput("checkGroup", label = NULL,
+                                              checkboxGroupInput("main_checkGroup", label = NULL,
                                                                  choices = "")
                                           )
                                       ),
@@ -217,7 +229,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                                              title = NULL,
                                                              width = NULL,
                                                              selectInput(
-                                                                 'plottype',
+                                                                 'main_plottype',
                                                                  label = 'Plottype',
                                                                  choices = list(
                                                                      "Barplot" = 'barplot',
@@ -232,9 +244,8 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                                       box(
                                                           title = NULL,
                                                           width = NULL,
-                                                          downloadButton("savePlotR", label = "Save .RData"),
-                                                          downloadButton("savePlot", label = "Save as .pdf"),
-                                                          downloadButton("savestddata", label = "Save as .csv"),
+                                                          downloadButton("main_savePlot", label = "Save as .pdf"),
+                                                          downloadButton("main_saveStd", label = "Save as .csv"),
                                                           br(),
                                                           numericInput("mainWidth", label = "width", value = 20),
                                                           numericInput("mainHeight", label = "height", value = 10),
@@ -264,33 +275,33 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       title = NULL,
                                       width = 6,
                                       status = "primary",
-                                      plotOutput("screeplot1", height = 140 * 2, width = 250 *
+                                      plotOutput("pca_screeplot1", height = 140 * 2, width = 250 *
                                                      2)
                                   ),
                                   box(
                                       title = NULL,
                                       width = 6,
                                       status = "primary",
-                                      plotOutput("screeplot2", height = 140 * 2, width = 250 *
+                                      plotOutput("pca_screeplot2", height = 140 * 2, width = 250 *
                                                      2)
                                   ),
                                   box(
                                       title = NULL,
                                       width = 6,
                                       status = "primary",
-                                      plotOutput("scores")
+                                      plotOutput("pca_scores")
                                   ),
                                   box(
                                       title = NULL,
                                       width = 6,
                                       status = "primary",
-                                      plotOutput("loadings")
+                                      plotOutput("pca_loadings")
                                   )
                               ),
                               fluidRow(
                                   box(title = NULL, width = 6,
-                                      checkboxInput("center", "Center", TRUE),
-                                      checkboxInput("labels", "Sample Labels", FALSE),
+                                      checkboxInput("pca_center", "Center", TRUE),
+                                      checkboxInput("pca_labels", "Sample Labels", FALSE),
                                       selectInput(
                                           "scaling",
                                           "Scale",
@@ -300,9 +311,9 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                               "pareto" = "pareto"
                                           )
                                       ),
-                                      selectInput("method", "Method",
+                                      selectInput("pca_method", "Method",
                                                   c("PCA Stuff")),
-                                      selectInput("cv", "cross-validation",
+                                      selectInput("pca_cv", "cross-validation",
                                                   list ("none" = "none", "Q2" =  "q2")),
                                       sliderInput(
                                           "PCs",
@@ -314,7 +325,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           animate = FALSE
                                       ),
                                       sliderInput(
-                                          "size",
+                                          "pca_pointSize",
                                           label = "Point Size",
                                           min = 1,
                                           max = 8,
@@ -328,12 +339,12 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       box(
                                           title = NULL,
                                           width = NULL,
-                                          downloadButton("savescree1", label = "Save Scree Plot as .pdf"),
-                                          downloadButton("savescree2", label = "Save Scree Plot as .pdf"),
-                                          downloadButton("saveScores", label = "Save Score Plot as .pdf"),
-                                          downloadButton("saveLoadings", label = "Save Loadings Plot as .pdf"),
-                                          numericInput("pcaWidth", label = "width", value = 20),
-                                          numericInput("pcaHeight", label = "height", value = 10)
+                                          downloadButton("pca_saveScree1", label = "Save Scree Plot as .pdf"),
+                                          downloadButton("pca_saveScree2", label = "Save Scree Plot as .pdf"),
+                                          downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
+                                          downloadButton("pca_saveLoadings", label = "Save Loadings Plot as .pdf"),
+                                          numericInput("pca_Width", label = "width", value = 20),
+                                          numericInput("pca_Height", label = "height", value = 10)
                                       )
                                   )
                               )
@@ -347,7 +358,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           title = NULL,
                                           width = 12,
                                           status = "primary",
-                                          plotOutput("heatmap")
+                                          plotOutput("heatPlot")
                                       )
                                   ),
                                   column(
