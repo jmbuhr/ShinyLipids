@@ -87,7 +87,8 @@ sqlQueryData <- function(dataset_ID){
 }
 
 # Features that can serve as aesthetics (visual mappings, short aes) in plots
-features <- list("sample",
+features <- list("",
+                 "sample",
                  "lipid",
                  "value",
                  "category",

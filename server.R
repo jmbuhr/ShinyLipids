@@ -233,7 +233,7 @@ function(input, output, session) {
             updateSelectizeInput(session,
                                  "sample_remove",
                                  choices = input$sample_select
-                                 )
+            )
         }
         if (is.null(input$sample_select)){
             updateSelectizeInput(session,
@@ -278,21 +278,40 @@ function(input, output, session) {
         # temorary dataframe inside this function
         df <- plotData()
 
-        # number of colors needed if any
-        colorCount <- df[,input$aes_color] %>% unique() %>% as_vector() %>% length()
-
         # basic plot object
         plt <- df %>%
             ggplot()
 
-        # main plot definition, adds all aes !NULL
+        # Validations, friendly error messages
+        shiny::validate(
+            # if color/fill is not a factor, return helpfull message to user
+            need( is.discrete(df[[input$aes_color]]),
+                  "You are trying to map a continuous variable to discrete colors,
+                 this should be more suitable to a heatmap (see sidebar) :)"),
+            need( input$aes_x != "",
+                  "Please select a feature to display on the x-axis"),
+            need( input$aes_y != "",
+                  "Please select a feature to display on the y-axis")
+        )
+
+        # main plot definition, add all aes !NULL
         plt <- plt +
             aes(x = !!sym(input$aes_x),
-                y = !!sym(input$aes_y),
-                color = !!sym(input$aes_color),
-                fill = !!sym(input$aes_color),
-                group = !!sym(input$aes_color)
+                y = !!sym(input$aes_y)
+            )
+
+
+        # add color/fill if requested
+        if(input$aes_color != ""){
+            # number of colors needed, if any
+            colorCount <- df[,input$aes_color] %>% unique() %>% as_vector() %>% length()
+
+            plt <- plt +
+                aes(color = !!sym(input$aes_color),
+                    fill = !!sym(input$aes_color),
+                    group = !!sym(input$aes_color)
                 )
+        }
 
         # Add points
         plt <- plt +
