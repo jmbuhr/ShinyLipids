@@ -12,10 +12,13 @@ names(df)
 
 df
 
-colorCount <- length(unique(df[[,input$aes_color]]))
+is.discrete(df["oh"])
+is.factor(df[[input$aes_facet1]])
+
+class(df[[input$aes_color]])
 
 input$aes_color
-
+input$aes_facet1
 
 
 names(df)

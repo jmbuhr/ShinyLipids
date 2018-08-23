@@ -50,7 +50,7 @@ sidebar <- dashboardSidebar(
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
                                      choices = features,
                                      selected = "value"),
-                         selectInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
+                         selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
                                      choices = features,
                                      selected = "sample"),
                          selectInput("aes_pos", label = "Position of colored datapoints",
@@ -61,13 +61,16 @@ sidebar <- dashboardSidebar(
                                      ),
                                      selected = "dodge2"
                          ),
-                         selectInput("aes_facet1", label = "Feature to use for facetting 1",
-                                     choices = features),
-                         selectInput("aes_facet2", label = "Feature to use for facetting 2",
-                                     choices = features),
+                         selectizeInput("aes_facet1", label = "Feature to use for facetting 1",
+                                     choices = features,
+                                     selected = NULL),
+                         selectizeInput("aes_facet2", label = "Feature to use for facetting 2",
+                                     choices = features,
+                                     selected = NULL),
                          selectizeInput(
                              'std_feature', label = "Standardize to 100% within:",
-                             choices = features
+                             choices = features,
+                             selected = NULL
                          )
                 ),
                 tabPanel("Defaults"),
