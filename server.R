@@ -278,6 +278,9 @@ function(input, output, session) {
         # temorary dataframe inside this function
         df <- plotData()
 
+        # number of colors needed if any
+        colorCount <- df[,input$aes_color] %>% unique() %>% as_vector() %>% length()
+
         # basic plot object
         plt <- df %>%
             ggplot()
@@ -298,7 +301,7 @@ function(input, output, session) {
         # add theme and scale (defined in global.R) includes titles and formatting
         plt <- plt +
             mainTheme +
-            mainScale
+            mainScale(colorCount)
 
         # return final plot
         plt %>%

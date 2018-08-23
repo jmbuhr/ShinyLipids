@@ -10,10 +10,11 @@ input %>% names()
 
 names(df)
 
-df <- rawData()
+df
 
+colorCount <- length(unique(df[[,input$aes_color]]))
 
-
+input$aes_color
 
 
 

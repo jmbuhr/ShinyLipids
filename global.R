@@ -106,20 +106,26 @@ mainTheme <- theme(
     axis.line = element_line(colour = 'grey70', size = .75),
     text = element_text(color = "black"),
     panel.background = element_blank(),
-    plot.background = element_blank()
+    plot.background = element_blank(),
+    legend.position = "bottom"
 )
 
-mainScale <- list(
-    scale_fill_gdocs(),
-    scale_color_gdocs(),
-    labs(title = "Alpha Version")
-)
+# Returns a function that takes an interger and creates a color palette
+getPalette <- colorRampPalette(brewer.pal(9, "Set1")[-6])
+
+# Color scale
+mainScale <- function(colorCount){
+    list(
+        scale_fill_manual(values = getPalette(colorCount)),
+        scale_color_manual(values = getPalette(colorCount)),
+        labs(title = "Alpha Version")
+    )
+}
 
 # Example
-head(mpg)
-ggplot(mpg)+
-    aes(x = cyl, y = cty, color = class, fill = class, group = class)+
-    geom_point()+
-    mainTheme +
-    mainScale +
-    geom_line()
+# head(mpg)
+# ggplot(mpg)+
+#     aes(x = cyl, y = cty, color = factor(model))+
+#     geom_point()+
+#     mainTheme +
+#     mainScale(12)
