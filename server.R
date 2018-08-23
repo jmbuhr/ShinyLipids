@@ -82,25 +82,48 @@ function(input, output, session) {
     mainData <- reactive({
         req(rawData())
 
+        # Temporary dataframe in the scope of this function
         df <- rawData()
 
+        # Category
         if(!is.null(input$filter_cat)){
             df <- df %>% filter(category %in% input$filter_cat)
         }
+        # Class
         if(!is.null(input$filter_class)){
             df <- df %>% filter(class %in% input$filter_class)
         }
+        # Functional category
         if(!is.null(input$filter_func)){
             df <- df %>% filter(func_cat %in% input$filter_func)
         }
+        # Total length of sidechains
         if(!is.null(input$filter_length)){
             df <- df %>% filter(length %>% between(input$filter_length[1], input$filter_length[2]))
         }
+        # Total number of double bounds
         if(!is.null(input$filter_db)){
             df <- df %>% filter(db %>% between(input$filter_db[1], input$filter_db[2]))
         }
+        # Total number of hydroxyl groups
         if(!is.null(input$filter_oh)){
             df <- df %>% filter(oh %>% between(input$filter_oh[1], input$filter_oh[2]))
+        }
+        # explicitly demanding sample
+        if(!is.null(input$sample_select)){
+            df <- df %>% filter(sample %in% input$sample_select)
+        }
+        if(!is.null(input$sample_remove)){
+            df <- df %>% filter(!(sample %in% input$sample_remove))
+        }
+        if(!is.null(input$rep_select)){
+            df <- df %>% filter(sample_replicate %in% input$rep_select)
+        }
+        if(!is.null(input$rep_remove)){
+            df <- df %>% filter(!(sample_replicate %in% input$rep_remove))
+        }
+        if(!is.null(input$tecRep_remove)){
+            df <- df %>% filter(!(sample_replicate_technical %in% input$tecRep_remove))
         }
 
         df %>%
@@ -144,7 +167,8 @@ function(input, output, session) {
         }
     )
 
-    # Updating select options for filtering based on dataset
+
+    # * Updating select options for filtering based on dataset --------------------------------------------------------
 
     observe({
         choices <- rawData()$sample %>%
@@ -161,6 +185,11 @@ function(input, output, session) {
                              choices = choices
         )
         updateSelectizeInput(session, "rep_remove",
+                             choices = choices
+        )
+        choices <- rawData()$sample_replicate_technical %>%
+            unique()
+        updateSelectizeInput(session, "tecRep_remove",
                              choices = choices
         )
         choices <- rawData()$category %>%
@@ -198,7 +227,21 @@ function(input, output, session) {
         )
     })
 
-
+    # Updating selectizeOptions of samples based dataset and sample_remove based on selected samples
+    observe({
+        if(!is.null(input$sample_select)){
+            updateSelectizeInput(session,
+                                 "sample_remove",
+                                 choices = input$sample_select
+                                 )
+        }
+        if (is.null(input$sample_select)){
+            updateSelectizeInput(session,
+                                 "sample_remove",
+                                 choices =  unique(rawData()$sample)
+            )
+        }
+    })
 
     # * Displaying main Dataset as a table ----------------------------------------------------------------------------
 
