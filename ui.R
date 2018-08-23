@@ -73,26 +73,35 @@ sidebar <- dashboardSidebar(
                          selectizeInput(
                              'sample_select',
                              label = 'Select samples',
-                             options = list(placeholder = "Not selecting a sample here will keep all samples"),
+                             options = list(placeholder = "Explicitly demand sample"),
                              choices = NULL,
                              multiple = TRUE
                          ),
                          selectizeInput(
                              'sample_remove',
                              label = 'Remove samples',
+                             options = list(placeholder = "Explicitly remove sample"),
                              choices = NULL,
                              multiple = TRUE
                          ),
                          selectizeInput(
                              'rep_select',
                              label = "Select replicates",
-                             options = list(placeholder = "Not selecting a replicate here will keep them all"),
+                             options = list(placeholder = "Explicitly demand replicate"),
                              choices = NULL,
                              multiple = TRUE
                          ),
                          selectizeInput(
                              'rep_remove',
                              label = "Remove replicates",
+                             options = list(placeholder = "Explicitly remove replicate"),
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'tecRep_remove',
+                             label = "Remove technical replicates",
+                             options = list(placeholder = "Explicitly remove tec. replicate"),
                              choices = NULL,
                              multiple = TRUE
                          )
