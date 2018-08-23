@@ -263,6 +263,7 @@ function(input, output, session) {
 
     # ** plotData from mainData based on sidebar inputs ---------------------------------------------------------------
 
+    # TODO add apropriate summarize functions based on selecte plot type and aes
     plotData <- reactive({
         df <- mainData()
         df %>%
@@ -272,24 +273,39 @@ function(input, output, session) {
 
     # main Plot output ------------------------------------------------------------------------------------------------
 
+    # reactive ggplot object
     mainPlt <- reactive({
+        # temorary dataframe inside this function
         df <- plotData()
+
+        # basic plot object
         plt <- df %>%
             ggplot()
 
+        # main plot definition, adds all aes !NULL
         plt <- plt +
-            aes(x = !!sym(input$aes_x), y = !!sym(input$aes_y))+
-            geom_point()+
-            labs(title = "Alpha Version")
+            aes(x = !!sym(input$aes_x),
+                y = !!sym(input$aes_y),
+                color = !!sym(input$aes_color),
+                fill = !!sym(input$aes_color),
+                group = !!sym(input$aes_color)
+                )
 
+        # Add points
         plt <- plt +
-            aes(color = NULL)
+            geom_point()
 
+        # add theme and scale (defined in global.R) includes titles and formatting
+        plt <- plt +
+            mainTheme +
+            mainScale
 
+        # return final plot
         plt %>%
             return()
     })
 
+    # create actual rendered plot output from mainPlt
     output$mainPlot <- renderPlot({
         plt <- mainPlt()
 

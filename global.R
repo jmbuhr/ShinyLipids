@@ -86,7 +86,7 @@ sqlQueryData <- function(dataset_ID){
     return(query)
 }
 
-
+# Features that can serve as aesthetics (visual mappings, short aes) in plots
 features <- list("sample",
                  "lipid",
                  "value",
@@ -100,3 +100,26 @@ features <- list("sample",
                  "chain_sums",
                  "sample_replicate",
                  "sample_replicate_technical")
+
+# Global theme definition to add to ggplots
+mainTheme <- theme(
+    axis.line = element_line(colour = 'grey70', size = .75),
+    text = element_text(color = "black"),
+    panel.background = element_blank(),
+    plot.background = element_blank()
+)
+
+mainScale <- list(
+    scale_fill_gdocs(),
+    scale_color_gdocs(),
+    labs(title = "Alpha Version")
+)
+
+# Example
+head(mpg)
+ggplot(mpg)+
+    aes(x = cyl, y = cty, color = class, fill = class, group = class)+
+    geom_point()+
+    mainTheme +
+    mainScale +
+    geom_line()
