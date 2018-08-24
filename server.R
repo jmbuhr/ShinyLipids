@@ -329,13 +329,14 @@ function(input, output, session) {
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){
             plt <- plt+
                 facet_grid(rows = vars(!!sym(input$aes_facet1)),
-                           cols = vars(!!sym(input$aes_facet2))
+                           cols = vars(!!sym(input$aes_facet2)),
+                           scales = "free_x"
                 )+
                 theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
         }
         if (input$aes_facet1 != "" & input$aes_facet2 == ""){
             plt <- plt+
-                facet_wrap(facets = vars(!!sym(input$aes_facet1))
+                facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free_x"
                 )+
                 theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
         }
