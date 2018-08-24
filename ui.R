@@ -1,11 +1,10 @@
 # Header ----------------------------------------------------------------------------------------------------------
-header <- dashboardHeader(title = p("ShinyLipids", em("alpha")))
-
+header <- dashboardHeader(title = span(tagList(icon("compass"), span("ShinyLipids", em("alpha")))))
 
 # Sidebar ---------------------------------------------------------------------------------------------------------
 sidebar <- dashboardSidebar(
 
-    # *** Visual fixes ------------------------------------------------------------------------------------------------
+    # * Visual fixes ------------------------------------------------------------------------------------------------
     # This part fixes the issue of having 2 scroll bars on one side:)
     tags$head(
         tags$style(HTML("
@@ -17,22 +16,21 @@ sidebar <- dashboardSidebar(
             "label { margin-bottom: 5px; }"
         ))
     ),
+    tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
 
     shinyjs::useShinyjs(), # needed to load java script functions
 
-
     sidebarMenu(
-        # * MetaData ------------------------------------------------------------------------------------------------------
+        # * MetaData ---------------------------------------------------------------------------------------------------
         id = "menu",
         menuItem(
             "Database info", tabName = "metadata", icon = icon("th"),
             startExpanded = TRUE
         ),
 
-        # * Visualization -------------------------------------------------------------------------------------------------
+        # * Visualization ----------------------------------------------------------------------------------------------
         menuItem(
             "Visualization",
-            tabName = "plotmenu",
             icon = icon("bar-chart"),
             menuSubItem("Main plot", tabName = "main"),
             menuSubItem("PCA", tabName = "PCA"),
@@ -44,15 +42,15 @@ sidebar <- dashboardSidebar(
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills",
                 tabPanel("Mapping",
-                         selectInput("aes_x", label = "Feature to display on x-Axis",
+                         selectInput("aes_x", label = span(tagList("Feature to display on x-Axis")),
                                      choices = features,
                                      selected = "class"),
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
                                      choices = features,
                                      selected = "value"),
                          selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
-                                     choices = features[-c(3,4,8,11,12)],
-                                     selected = "sample"),
+                                        choices = features[-c(3,4,8,11,12)],
+                                        selected = "sample"),
                          selectInput("aes_pos", label = "Position of colored datapoints",
                                      choices = list(
                                          "stacked" = "stacked",
@@ -62,11 +60,11 @@ sidebar <- dashboardSidebar(
                                      selected = "dodge2"
                          ),
                          selectizeInput("aes_facet1", label = "Feature to use for facetting 1",
-                                     choices = features,
-                                     selected = NULL),
+                                        choices = features[-c(3,4,8,11,12)],
+                                        selected = NULL),
                          selectizeInput("aes_facet2", label = "Feature to use for facetting 2",
-                                     choices = features,
-                                     selected = NULL),
+                                        choices = features[-c(3,4,8,11,12)],
+                                        selected = NULL),
                          selectizeInput(
                              'std_feature', label = "Standardize to 100% within:",
                              choices = features,
@@ -178,7 +176,7 @@ sidebar <- dashboardSidebar(
 # Body ------------------------------------------------------------------------------------------------------------
 body <- dashboardBody(shinyjs::useShinyjs(),
 
-                      # ** Database Info / Meta ---------------------------------------------------------------------------------------------------------
+                      # ** Database Info / Meta ------------------------------------------------------------------------
                       tabItems(
                           tabItem(
                               tabName = "metadata",
@@ -199,7 +197,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                   )
                               ),
 
-                              # *** Dataset Table -----------------------------------------------------------------------------------------------
+                              # *** Dataset Table ----------------------------------------------------------------------
                               fluidRow(
                                   box(
                                       title = "Selected Dataset",
@@ -210,20 +208,20 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                               )
                           ),
 
-                          # ** Main plot -------------------------------------------------------------------------------------------------------
+                          # ** Main plot -------------------------------------------------------------------------------
                           tabItem(tabName = "main",
                                   fluidRow(
-                                          box(
-                                              title = NULL,
-                                              width = 12,
-                                              height = 600,
-                                              status = "primary",
-                                              plotOutput("mainPlot",
-                                                         dblclick = "mainPlot_dblclick",
-                                                         brush = brushOpts(id = "mainPlot_brush",
-                                                                           resetOnNew = TRUE)
-                                              )
+                                      box(
+                                          title = NULL,
+                                          width = 12,
+                                          height = 620,
+                                          status = "primary",
+                                          plotOutput("mainPlot",height = 600,
+                                                     dblclick = "mainPlot_dblclick",
+                                                     brush = brushOpts(id = "mainPlot_brush",
+                                                                       resetOnNew = TRUE)
                                           )
+                                      )
                                   ),
                                   fluidRow(
                                       column (
@@ -270,7 +268,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                                  )
                                              ),
 
-                                             # *** summary ------------------------------------------------------------------------------------------------------
+                                             # *** summary -------------------------------------------------------------
                                              fluidRow(column(
                                                  12,
                                                  box(
@@ -283,7 +281,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                              )))
                                   )),
 
-                          # ** PCA ----------------------------------------------------------------------------------------------------------
+                          # ** PCA -------------------------------------------------------------------------------------
                           tabItem(
                               tabName = "PCA",
                               fluidRow(
@@ -366,7 +364,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                               )
                           ),
 
-                          # ** heatmap ------------------------------------------------------------------------------------------------------
+                          # ** heatmap ---------------------------------------------------------------------------------
                           tabItem(tabName = "heatmap",
                                   fluidRow(column(
                                       12,
@@ -396,8 +394,8 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                               "heatLabSize",
                                               label = "Size of labels",
                                               min = 1,
-                                              max = 50,
-                                              value = 20,
+                                              max = 30,
+                                              value = 9,
                                               ticks = TRUE,
                                               animate = FALSE
                                           ),
@@ -409,7 +407,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
 )
 
 
-# Initiate Dashboard page ----------------------------------------------------------------------------------------
+# Initiate Dashboard page ----------------------------------------------------------------------------------------------
 dashboardPage(skin = "purple",
               title = "ShinyLipids",
               header,
