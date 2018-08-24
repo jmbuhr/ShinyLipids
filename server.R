@@ -261,11 +261,19 @@ function(input, output, session) {
 
 
 
-    # * plotData from mainData based on sidebar inputs ---------------------------------------------------------------
+    # plotData from mainData based on sidebar inputs ---------------------------------------------------------------
 
-    # TODO add apropriate summarize functions based on selecte plot type and aes
+    # TODO add apropriate summarize functions based on selecte plot type, standards and aes
     plotData <- reactive({
         df <- mainData()
+
+        # Averaging over the technical replicates
+        # if (){
+        #     df <- df %>%
+        #         group_by_at(vars(-sample_identifier,-sample_replicate_technical,-value)) %>%
+        #         summarize(value = mean(value, na.rm = T))
+        # }
+
         df
     })
 
