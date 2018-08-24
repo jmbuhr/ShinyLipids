@@ -27,7 +27,7 @@ library(ggsignif)
 library(Biobase)
 library(BiocGenerics)
 library(pcaMethods)
-## tidyverse
+##
 library(tidyverse)
 # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 
@@ -71,8 +71,6 @@ library(tidyverse)
 options(shiny.fullstacktrace = FALSE,
         shiny.error = "default")
 
-# Body ------------------------------------------------------------------------------------------------------------
-
 
 # * Database connection ---------------------------------------------------------------------------------------------
 
@@ -85,6 +83,9 @@ sqlQueryData <- function(dataset_ID){
     query <- paste("SELECT * FROM data2", "WHERE ID =", dataset_ID)
     return(query)
 }
+
+
+# ggplot options --------------------------------------------------------------------------------------------------
 
 # Features that can serve as aesthetics (visual mappings, short aes) in plots
 features <- list("",
@@ -130,3 +131,9 @@ mainScale <- function(colorCount){
 #     geom_point()+
 #     mainTheme +
 #     mainScale(12)
+
+
+# helper functions -------------------------------------------------------------------------------------------------------
+
+# borrowed from plyr (https://github.com/hadley/plyr/):
+is.discrete <- function(x) is.factor(x) || is.character(x) || is.logical(x)

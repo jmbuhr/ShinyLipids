@@ -261,19 +261,18 @@ function(input, output, session) {
 
 
 
-    # ** plotData from mainData based on sidebar inputs ---------------------------------------------------------------
+    # * plotData from mainData based on sidebar inputs ---------------------------------------------------------------
 
     # TODO add apropriate summarize functions based on selecte plot type and aes
     plotData <- reactive({
         df <- mainData()
-        df %>%
-            return()
+        df
     })
 
 
-    # main Plot output ------------------------------------------------------------------------------------------------
+    # Main Plot output ------------------------------------------------------------------------------------------------
 
-    # reactive ggplot object
+    # * Plot Object ----------------------------------------------------------------------------------------
     mainPlt <- reactive({
         # temorary dataframe inside this function
         df <- plotData()
@@ -299,6 +298,7 @@ function(input, output, session) {
             aes(x = !!sym(input$aes_x),
                 y = !!sym(input$aes_y)
             )
+
 
 
         # add color/fill if requested
@@ -327,14 +327,58 @@ function(input, output, session) {
             return()
     })
 
+
+    # ** Plot Render --------------------------------------------------------------------------------------------
     # create actual rendered plot output from mainPlt
     output$mainPlot <- renderPlot({
         plt <- mainPlt()
-
-        plt %>%
-            return()
+        plt
     })
 
+
+
+    # PCA -------------------------------------------------------------------------------------------------------------
+
+    # TODO
+
+
+
+    # Heatmap ---------------------------------------------------------------------------------------------------------
+
+
+    # * Plot Object ---------------------------------------------------------------------------------------------------
+    heatPlt <- reactive({
+        # dataframe
+        df <- plotData()
+
+        # plot
+        plt <- ggplot(df) +
+            aes(x = !!sym(input$aes_x),
+                y = !!sym(input$aes_color),
+                fill = !!sym(input$aes_y)) +
+            geom_raster() +
+            mainTheme +
+            theme(
+                axis.text.x = element_text(angle = 45, hjust = 1),
+                axis.text.y = element_text(size = input$heatLabSize, colour = "black"),
+                axis.title.y = element_text(size = 20),
+                axis.title.x = element_blank(),
+                plot.background = element_blank(),
+                panel.grid = element_blank()
+            ) +
+            scale_x_discrete(expand = c(0, 0)) +
+            scale_y_discrete(expand = c(0, 0)) +
+            scale_fill_viridis_c(option = input$heatColor, name = "mol%") +
+            NULL
+    })
+
+
+    # * Plot Render ---------------------------------------------------------------------------------------------------
+
+    output$heatPlot <-renderPlot({
+        plt <- heatPlt()
+        plt
+    })
 
 
 

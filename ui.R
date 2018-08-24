@@ -213,11 +213,10 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                           # ** Main plot -------------------------------------------------------------------------------------------------------
                           tabItem(tabName = "main",
                                   fluidRow(
-                                      column(
-                                          12,
                                           box(
                                               title = NULL,
                                               width = 12,
+                                              height = 600,
                                               status = "primary",
                                               plotOutput("mainPlot",
                                                          dblclick = "mainPlot_dblclick",
@@ -225,7 +224,6 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                                                            resetOnNew = TRUE)
                                               )
                                           )
-                                      )
                                   ),
                                   fluidRow(
                                       column (
