@@ -297,10 +297,10 @@ function(input, output, session) {
 
         # Validations, friendly error messages
         shiny::validate(
-            # if color/fill is not a factor, return helpfull message to user
-            need( is.discrete(df[[input$aes_color]]),
-                  "You are trying to map a continuous variable to discrete colors,
-                 this should be more suitable to the color-value of a heatmap (see sidebar) :)"),
+            # # if color/fill is not a factor, return helpfull message to user
+            # need( (is.discrete(df[[input$aes_color]]) | input$aes_color == "oh" | input$aes_color == "db"),
+            #       "You are trying to map a continuous variable to discrete colors,
+            #      this should be more suitable to the color-value of a heatmap (see sidebar) :)"),
             need( input$aes_x != "",
                   "Please select a feature to display on the x-axis"),
             need( input$aes_y != "",
@@ -319,9 +319,9 @@ function(input, output, session) {
             colorCount <- df[,input$aes_color] %>% unique() %>% as_vector() %>% length()
 
             plt <- plt +
-                aes(color = !!sym(input$aes_color),
-                    fill = !!sym(input$aes_color),
-                    group = !!sym(input$aes_color)
+                aes(color = factor(!!sym(input$aes_color)),
+                    fill = factor(!!sym(input$aes_color)),
+                    group = factor(!!sym(input$aes_color))
                 )
         }
 
@@ -329,12 +329,27 @@ function(input, output, session) {
         plt <- plt +
             geom_point()
 
+        # facetting
+        if (input$aes_facet1 != "" & input$aes_facet2 != ""){
+            plt <- plt+
+                facet_grid(rows = vars(!!sym(input$aes_facet1)),
+                           cols = vars(!!sym(input$aes_facet2))
+                )+
+                theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
+        }
+        if (input$aes_facet1 != "" & input$aes_facet2 == ""){
+            plt <- plt+
+                facet_wrap(facets = vars(!!sym(input$aes_facet1))
+                )+
+                theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
+        }
+
         # add theme and scale (defined in global.R) includes titles and formatting
         plt <- plt +
             mainTheme +
             mainScale(colorCount)+
             guides(color = guide_legend(ncol = 15, nrow = as.integer(colorCount/15)+1 ),# usefull if way to many values of color
-            fill = guide_legend(ncol = 15, nrow = as.integer(colorCount/15)+1 )
+                   fill = guide_legend(ncol = 15, nrow = as.integer(colorCount/15)+1 )
             )
 
         # Zooming
@@ -371,7 +386,7 @@ function(input, output, session) {
         # plot
         plt <- ggplot(df) +
             aes(x = !!sym(input$aes_x),
-                y = !!sym(input$aes_color),
+                y = factor(!!sym(input$aes_color)),
                 fill = !!sym(input$aes_y)) +
             geom_raster() +
             mainTheme +

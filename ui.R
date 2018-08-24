@@ -51,7 +51,7 @@ sidebar <- dashboardSidebar(
                                      choices = features,
                                      selected = "value"),
                          selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
-                                     choices = features,
+                                     choices = features[-c(3,4,8,11,12)],
                                      selected = "sample"),
                          selectInput("aes_pos", label = "Position of colored datapoints",
                                      choices = list(
