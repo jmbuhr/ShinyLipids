@@ -272,6 +272,20 @@ function(input, output, session) {
 
     # Main Plot output ------------------------------------------------------------------------------------------------
 
+    # Ranges for zooming by clicking on the plot
+    ranges <- reactiveValues(x = NULL, y = NULL)
+    observeEvent(input$mainPlot_dblclick, {
+        brush <- input$mainPlot_brush
+        if (!is.null(brush)) {
+            ranges$x <- c(brush$xmin, brush$xmax)
+            ranges$y <- c(brush$ymin, brush$ymax)
+        } else {
+            ranges$x <- NULL
+            ranges$y <- NULL
+        }
+    })
+
+
     # * Plot Object ----------------------------------------------------------------------------------------
     mainPlt <- reactive({
         # temorary dataframe inside this function
@@ -286,20 +300,18 @@ function(input, output, session) {
             # if color/fill is not a factor, return helpfull message to user
             need( is.discrete(df[[input$aes_color]]),
                   "You are trying to map a continuous variable to discrete colors,
-                 this should be more suitable to a heatmap (see sidebar) :)"),
+                 this should be more suitable to the color-value of a heatmap (see sidebar) :)"),
             need( input$aes_x != "",
                   "Please select a feature to display on the x-axis"),
             need( input$aes_y != "",
                   "Please select a feature to display on the y-axis")
         )
 
-        # main plot definition, add all aes !NULL
+        # main plot definition
         plt <- plt +
             aes(x = !!sym(input$aes_x),
                 y = !!sym(input$aes_y)
             )
-
-
 
         # add color/fill if requested
         if(input$aes_color != ""){
@@ -320,11 +332,16 @@ function(input, output, session) {
         # add theme and scale (defined in global.R) includes titles and formatting
         plt <- plt +
             mainTheme +
-            mainScale(colorCount)
+            mainScale(colorCount)+
+            guides(color = guide_legend(ncol = 15, nrow = as.integer(colorCount/15)+1 ),# usefull if way to many values of color
+            fill = guide_legend(ncol = 15, nrow = as.integer(colorCount/15)+1 )
+            )
+
+        # Zooming
+        plt <- plt + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
 
         # return final plot
-        plt %>%
-            return()
+        plt
     })
 
 
@@ -368,7 +385,7 @@ function(input, output, session) {
             ) +
             scale_x_discrete(expand = c(0, 0)) +
             scale_y_discrete(expand = c(0, 0)) +
-            scale_fill_viridis_c(option = input$heatColor, name = "mol%") +
+            scale_fill_viridis_c(option = input$heatColor) +
             NULL
     })
 
