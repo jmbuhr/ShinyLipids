@@ -104,12 +104,15 @@ features <- list("", #1
                  "sample_replicate_technical")#14
 
 # Global theme definition to add to ggplots
-mainTheme <- theme(
+mainTheme <- list(
+    theme_minimal(),
+    theme(
     axis.line = element_line(colour = 'grey70', size = .75),
     text = element_text(color = "black"),
     panel.background = element_blank(),
     plot.background = element_blank(),
     legend.position = "bottom"
+)
 )
 
 # Returns a function that takes an interger and creates a color palette
