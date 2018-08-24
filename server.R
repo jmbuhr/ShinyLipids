@@ -1,7 +1,6 @@
 # Server function -------------------------------------------------------------------------------------------------
 function(input, output, session) {
 
-
     # Metadata / Datasets --------------------------------------------------------------------------------------------------------
 
     # Reading in table of datasets
@@ -268,11 +267,11 @@ function(input, output, session) {
         df <- mainData()
 
         # Averaging over the technical replicates
-        # if (){
-        #     df <- df %>%
-        #         group_by_at(vars(-sample_identifier,-sample_replicate_technical,-value)) %>%
-        #         summarize(value = mean(value, na.rm = T))
-        # }
+        if (input$tecRep_average){
+            df <- df %>%
+                group_by_at(vars(-sample_identifier,-sample_replicate_technical,-value)) %>%
+                summarize(value = mean(value, na.rm = T))
+        }
 
         df
     })
@@ -308,7 +307,16 @@ function(input, output, session) {
             need( input$aes_x != "",
                   "Please select a feature to display on the x-axis"),
             need( input$aes_y != "",
-                  "Please select a feature to display on the y-axis")
+                  "Please select a feature to display on the y-axis"),
+            need( !(input$tecRep_average & ( input$aes_color == "sample_replicate_technical" |
+                                               input$aes_x == "sample_replicate_technical" |
+                                               input$aes_y == "sample_replicate_technical" |
+                                               input$aes_facet1 == "sample_replicate_technical" |
+                                               input$aes_facet2 == "sample_replicate_technical"  )
+                    ),
+                  "You are currently averaging over technical replicates (see the samples tab in the sidebar)
+                  and thus can't use this feature in your plot."
+                  )
         )
 
         # main plot definition

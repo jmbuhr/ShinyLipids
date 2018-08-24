@@ -107,6 +107,10 @@ sidebar <- dashboardSidebar(
                              options = list(placeholder = "Explicitly remove tec. replicate"),
                              choices = NULL,
                              multiple = TRUE
+                         ),
+                         checkboxInput(
+                             "tecRep_average",
+                             label = "average over technical replicates", value = TRUE
                          )
                 ),
                 tabPanel("Filters",
