@@ -88,20 +88,20 @@ sqlQueryData <- function(dataset_ID){
 # ggplot options --------------------------------------------------------------------------------------------------
 
 # Features that can serve as aesthetics (visual mappings, short aes) in plots
-features <- list("",
-                 "sample",
-                 "lipid",
-                 "value",
-                 "category",
-                 "functional category" = "func_cat",
-                 "class",
-                 "length",
-                 "double bound" ="db",
-                 "hydroxylation" = "oh",
-                 "chains",
-                 "chain_sums",
-                 "sample_replicate",
-                 "sample_replicate_technical")
+features <- list("", #1
+                 "sample", #2
+                 "lipid", #3
+                 "value", #4
+                 "category", #5
+                 "functional category" = "func_cat", #6
+                 "class",#7
+                 "length",#8
+                 "double bound" ="db",#9
+                 "hydroxylation" = "oh",#10
+                 "chains",#11
+                 "chain_sums",#12
+                 "sample_replicate",#13
+                 "sample_replicate_technical")#14
 
 # Global theme definition to add to ggplots
 mainTheme <- theme(
