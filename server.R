@@ -297,10 +297,6 @@ function(input, output, session) {
 
         # Validations, friendly error messages
         shiny::validate(
-            # # if color/fill is not a factor, return helpfull message to user
-            # need( (is.discrete(df[[input$aes_color]]) | input$aes_color == "oh" | input$aes_color == "db"),
-            #       "You are trying to map a continuous variable to discrete colors,
-            #      this should be more suitable to the color-value of a heatmap (see sidebar) :)"),
             need( input$aes_x != "",
                   "Please select a feature to display on the x-axis"),
             need( input$aes_y != "",
@@ -348,8 +344,8 @@ function(input, output, session) {
         plt <- plt +
             mainTheme +
             mainScale(colorCount)+
-            guides(color = guide_legend(ncol = 15, nrow = as.integer(colorCount/15)+1 ),# usefull if way to many values of color
-                   fill = guide_legend(ncol = 15, nrow = as.integer(colorCount/15)+1 )
+            guides(color = guide_legend(ncol = 12, nrow = as.integer(colorCount/12)+1 ),# usefull if way to many values of color
+                   fill = guide_legend(ncol = 12, nrow = as.integer(colorCount/12)+1 )
             )
 
         # Zooming
@@ -377,6 +373,8 @@ function(input, output, session) {
 
     # Heatmap ---------------------------------------------------------------------------------------------------------
 
+    # Change choices for color value in the sidebar selectInput
+    # TODO
 
     # * Plot Object ---------------------------------------------------------------------------------------------------
     heatPlt <- reactive({

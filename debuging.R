@@ -16,9 +16,6 @@ plt
 
 
 
-
-
-
 # Loading data
 
 
