@@ -1,9 +1,0 @@
-name: test_yvesrouiller
-account: lipidomicsheidelberg
-server: shinyapps.io
-appId: 77508
-bundleId: 347420
-url: https://lipidomicsheidelberg.shinyapps.io/test_yvesrouiller/
-when: 1452519741.31181
-asMultiple: FALSE
-asStatic: FALSE
