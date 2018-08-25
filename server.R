@@ -35,7 +35,8 @@ function(input, output, session) {
                    scrollCollapse = TRUE)
     )
 
-    # Update SelectInput for datasets based on sets loaded and row selected
+    ## Update SelectInput for datasets based on sets loaded and row selected
+    # select clicked row in table
     observe({
         choices <- metaData()$id
         names(choices) <- metaData()$title
@@ -273,6 +274,29 @@ function(input, output, session) {
                 summarize(value = mean(value, na.rm = T))
         }
 
+        # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
+        df <- df %>% filter(!is.na(!!sym(input$aes_x)),
+                                   !is.na(!!sym(input$aes_y)))
+        if (input$aes_color != ""){
+            df <- df %>% filter(!is.na(!!sym(input$aes_color)))
+        }
+        if (input$aes_facet1 != ""){
+            df <- df %>% filter(!is.na(!!sym(input$aes_facet1)))
+        }
+        if (input$aes_facet2 != ""){
+            df <- df %>% filter(!is.na(!!sym(input$aes_facet2)))
+        }
+
+        # standardization based on input$std_feature
+
+
+        if(input$std_feature != ""){
+            df <- df %>% group_by(!!sym(input$std_feature)) %>%
+                mutate(
+                    value = value / sum(value) * 100
+                )
+        }
+
         df
     })
 
@@ -347,14 +371,12 @@ function(input, output, session) {
                 facet_grid(rows = vars(!!sym(input$aes_facet1)),
                            cols = vars(!!sym(input$aes_facet2)),
                            scales = "free_x"
-                )+
-                theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
+                )
         }
         if (input$aes_facet1 != "" & input$aes_facet2 == ""){
             plt <- plt+
                 facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free_x"
-                )+
-                theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
+                )
         }
 
         # add theme and scale (defined in global.R) includes titles and formatting
@@ -406,10 +428,7 @@ function(input, output, session) {
             geom_raster() +
             mainTheme +
             theme(
-                axis.text.x = element_text(angle = 45, hjust = 1),
                 axis.text.y = element_text(size = input$heatLabSize, colour = "black"),
-                axis.title.y = element_text(size = 20),
-                axis.title.x = element_blank(),
                 plot.background = element_blank(),
                 panel.grid = element_blank()
             ) +

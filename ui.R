@@ -1,5 +1,5 @@
 # Header ----------------------------------------------------------------------------------------------------------
-header <- dashboardHeader(title = span(tagList(icon("compass"), span("ShinyLipids", em("alpha")))))
+header <- dashboardHeader(title = span(tagList(icon("flask"), span("ShinyLipids", em("alpha")))))
 
 # Sidebar ---------------------------------------------------------------------------------------------------------
 sidebar <- dashboardSidebar(
@@ -45,9 +45,6 @@ sidebar <- dashboardSidebar(
                          selectInput("aes_x", label = span(tagList("Feature to display on x-Axis")),
                                      choices = features,
                                      selected = "class"),
-                         selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
-                                     choices = features,
-                                     selected = "value"),
                          selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
                                         choices = features[-c(3,4,8,11,12)],
                                         selected = "sample"),
@@ -67,9 +64,12 @@ sidebar <- dashboardSidebar(
                                         selected = NULL),
                          selectizeInput(
                              'std_feature', label = "Standardize to 100% within:",
-                             choices = features,
+                             choices = features[-4],
                              selected = NULL
-                         )
+                         ),
+                         selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
+                                     choices = features[4],# fixed to "value" for now, other choices seem not helpful to user
+                                     selected = "value")
                 ),
                 tabPanel("Defaults"),
                 tabPanel("Samples",
@@ -143,7 +143,7 @@ sidebar <- dashboardSidebar(
                          ),
                          sliderInput(
                              'filter_db',
-                             label = "Filter double bounds",
+                             label = "Filter double bonds",
                              min = 1, max = 10,
                              value = c(1,10)
                          ),
@@ -194,7 +194,8 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       checkboxInput("showFullMeta", label = "Show all columns", value = FALSE),
                                       selectInput("ID",
                                                   label = "Select dataset by clicking on the table or use this dropdown list",
-                                                  choices = "",width = "50%"),
+                                                  choices = "",
+                                                  width = "50%"),
                                       downloadButton("saveMeta", label = "Save metadata as .csv"),
                                       downloadButton("saveRawCSV", label = "Save selected dataset as .csv (unfiltered)"),
                                       downloadButton("saveMainCSV", label = "Save selected dataset as .csv (filtered)")
