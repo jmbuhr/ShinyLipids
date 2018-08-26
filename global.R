@@ -9,14 +9,9 @@
 #
 # BiocManager::install(pkgs = c("Biobase", "BiocGenerics", "pcaMethods"))
 
-library(jsonlite)
+# Database
+#library(jsonlite)
 library(RSQLite)
-## Shiny
-library(shiny)
-library(shinyjs) # for UI hiding
-library(DT)
-library(shinythemes)
-library(shinydashboard)
 ## Plotting
 library(RColorBrewer)
 library(scales)
@@ -30,8 +25,14 @@ library(pcaMethods)
 ##
 library(tidyverse)
 # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+## Shiny
+library(shiny)
+library(shinyjs) # for UI hiding
+library(DT)
+library(shinythemes)
+library(shinydashboard)
 
-
+# (.packages())
 # sessionInfo()
 # R version 3.5.1 (2018-07-02)
 # Platform: x86_64-w64-mingw32/x64 (64-bit)

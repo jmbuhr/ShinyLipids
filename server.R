@@ -53,7 +53,9 @@ function(input, output, session) {
 
     rawData <- reactive({
         # Only runs if a dataset is selected
-        req(input$ID)
+        validate(
+            need(input$ID, "Please select a dataset first.")
+        )
 
         query <- sqlQueryData(input$ID)
         raw <- collect(tbl(database_connection, sql(query)))
@@ -361,9 +363,15 @@ function(input, output, session) {
                 )
         }
 
+        # Dodging
+        if(input$aes_pos == "dodge2"){ dodge <- position_dodge2(width = 0.9)
+        } else {
+            dodge <- input$aes_pos
+        }
+
         # Add points
         plt <- plt +
-            geom_point()
+            geom_point(position = dodge)
 
         # facetting
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){

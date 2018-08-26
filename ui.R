@@ -5,18 +5,14 @@ header <- dashboardHeader(title = span(tagList(icon("flask"), span("ShinyLipids"
 sidebar <- dashboardSidebar(
 
     # * Visual fixes ------------------------------------------------------------------------------------------------
-    # This part fixes the issue of having 2 scroll bars on one side:)
     tags$head(
-        tags$style(HTML("
-                      .sidebar {height: 90vh; overflow-y: auto; }
-                      " )
-        ),
+        # tags$style(HTML(".sidebar {height: 90vh; overflow-y: auto; }" )
+        # ),
         # As well as moving labels closer to their fields
-        tags$style(HTML(
-            "label { margin-bottom: 5px; }"
-        ))
+        tags$style(HTML("label { margin-bottom: 3px; }")),
+        tags$style(HTML(".form-group, .selectize-control {margin-bottom: 0px;}"))
     ),
-    tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
+    tags$head(tags$style(".wrapper {overflow: visible !important;}")),  # This part fixes the issue of having 2 scroll bars on one side:)
 
     shinyjs::useShinyjs(), # needed to load java script functions
 
@@ -50,9 +46,11 @@ sidebar <- dashboardSidebar(
                                         selected = "sample"),
                          selectInput("aes_pos", label = "Position of colored datapoints",
                                      choices = list(
-                                         "stacked" = "stacked",
+                                         "stacked" = "stack",
                                          "besides" = "dodge2",
-                                         "filled to 100%" = "fill"
+                                         "filled to 100%" = "fill",
+                                         "old besides" = "dodge",
+                                         "jitter" = "jitter"
                                      ),
                                      selected = "dodge2"
                          ),
@@ -115,6 +113,13 @@ sidebar <- dashboardSidebar(
                 ),
                 tabPanel("Filters",
                          selectizeInput(
+                             'filter_class',
+                             label = "Filter class",
+                             options = list(placeholder = "empty field means no filtering based on this feature"),
+                             choices = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
                              'filter_cat',
                              label = "Filter category",
                              options = list(placeholder = "empty field means no filtering based on this feature"),
@@ -124,13 +129,6 @@ sidebar <- dashboardSidebar(
                          selectizeInput(
                              'filter_func',
                              label = "Filter functional category",
-                             options = list(placeholder = "empty field means no filtering based on this feature"),
-                             choices = NULL,
-                             multiple = TRUE
-                         ),
-                         selectizeInput(
-                             'filter_class',
-                             label = "Filter class",
                              options = list(placeholder = "empty field means no filtering based on this feature"),
                              choices = NULL,
                              multiple = TRUE
