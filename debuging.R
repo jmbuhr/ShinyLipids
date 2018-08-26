@@ -12,7 +12,15 @@ dev.off()
 names(df)
 df
 
-plt
+df$lipid %>% unique() %>% length()
+df$chains %>% unique() %>% length()
+df$chain_sums %>% unique() %>% length()
+df$length %>% unique() %>% length()
+
+
+df <- df %>% ungroup()
+
+df %>% count(class, length, sample_replicate) %>% filter(n == 2)
 
 
 # old preparaData -------------------------------------------------------------------------------------------------

@@ -227,62 +227,34 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       )
                                   ),
                                   fluidRow(
-                                      column (
-                                          width = 6,
-                                          box(
-                                              title = "Plotting details",
-                                              id = "pdetails",
-                                              width = 12,
-                                              collapsible = TRUE,
-                                              collapsed = FALSE,
-                                              checkboxGroupInput("main_checkGroup", label = NULL,
-                                                                 choices = "")
+                                      box(width = 4,
+                                          checkboxGroupInput("main_add", label = NULL,
+                                                             choices = list(
+                                                                 "boxplot"
+                                                             ))
+                                      ),
+                                      box(width = 3,
+                                          selectInput(
+                                              'main_plottype',
+                                              label = 'Plottype',
+                                              choices = list(
+                                                  "Barplot" = 'barplot',
+                                                  "Boxplot" = 'boxplot',
+                                                  "Points" = 'points',
+                                                  "Pointrange" = 'pointrange'
+                                              )
                                           )
                                       ),
-                                      column(width = 6,
-                                             fluidRow(
-                                                 column(width = 6,
-                                                        box(
-                                                            title = NULL,
-                                                            width = NULL,
-                                                            selectInput(
-                                                                'main_plottype',
-                                                                label = 'Plottype',
-                                                                choices = list(
-                                                                    "Barplot" = 'barplot',
-                                                                    "Boxplot" = 'boxplot',
-                                                                    "Points" = 'points',
-                                                                    "Pointrange" = 'pointrange'
-                                                                )
-                                                            )
-                                                        )),
-                                                 column(
-                                                     width = 6,
-                                                     box(
-                                                         title = NULL,
-                                                         width = NULL,
-                                                         downloadButton("main_savePlot", label = "Save as .pdf"),
-                                                         downloadButton("main_saveStd", label = "Save as .csv"),
-                                                         br(),
-                                                         numericInput("mainWidth", label = "width", value = 20),
-                                                         numericInput("mainHeight", label = "height", value = 10),
-                                                         downloadButton("mainSave", label = "Save pdf")
-                                                     )
-                                                 )
-                                             ),
-
-                                             # *** summary -------------------------------------------------------------
-                                             fluidRow(column(
-                                                 12,
-                                                 box(
-                                                     title = "Summary",
-                                                     width = 12,
-                                                     collapsible = TRUE,
-                                                     collapsed = FALSE,
-                                                     DT::dataTableOutput("sum_muMol")
-                                                 )
-                                             )))
-                                  )),
+                                      box(width = 4,
+                                          downloadButton("main_savePlot", label = "Save as .pdf"),
+                                          downloadButton("main_saveStd", label = "Save as .csv"),
+                                          br(),
+                                          numericInput("mainWidth", label = "width", value = 20),
+                                          numericInput("mainHeight", label = "height", value = 10),
+                                          downloadButton("mainSave", label = "Save pdf")
+                                      )
+                                  )
+                          ),
 
                           # ** PCA -------------------------------------------------------------------------------------
                           tabItem(

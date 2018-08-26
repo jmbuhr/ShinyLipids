@@ -115,15 +115,19 @@ function(input, output, session) {
         if(!is.null(input$sample_select)){
             df <- df %>% filter(sample %in% input$sample_select)
         }
+        # removing sample
         if(!is.null(input$sample_remove)){
             df <- df %>% filter(!(sample %in% input$sample_remove))
         }
+        # demanding replicate
         if(!is.null(input$rep_select)){
             df <- df %>% filter(sample_replicate %in% input$rep_select)
         }
+        # removing replicate
         if(!is.null(input$rep_remove)){
             df <- df %>% filter(!(sample_replicate %in% input$rep_remove))
         }
+        # removing technical replicate
         if(!is.null(input$tecRep_remove)){
             df <- df %>% filter(!(sample_replicate_technical %in% input$tecRep_remove))
         }
@@ -273,7 +277,8 @@ function(input, output, session) {
         if (input$tecRep_average){
             df <- df %>%
                 group_by_at(vars(-sample_identifier,-sample_replicate_technical,-value)) %>%
-                summarize(value = mean(value, na.rm = T))
+                summarize(value = mean(value, na.rm = T)) %>%
+                ungroup()
         }
 
         # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
@@ -290,8 +295,6 @@ function(input, output, session) {
         }
 
         # standardization based on input$std_feature
-
-
         if(input$std_feature != ""){
             df <- df %>% group_by(!!sym(input$std_feature)) %>%
                 mutate(
@@ -323,6 +326,8 @@ function(input, output, session) {
     mainPlt <- reactive({
         # temorary dataframe inside this function
         df <- plotData()
+
+        browser()
 
         # basic plot object
         plt <- df %>%
@@ -358,9 +363,8 @@ function(input, output, session) {
 
             plt <- plt +
                 aes(color = factor(!!sym(input$aes_color)),
-                    fill = factor(!!sym(input$aes_color)),
-                    group = factor(!!sym(input$aes_color))
-                )
+                    fill = factor(!!sym(input$aes_color))
+                    )
         }
 
         # Dodging
@@ -369,9 +373,17 @@ function(input, output, session) {
             dodge <- input$aes_pos
         }
 
+
+        #TODO
+        if ("boxplot" %in% input$main_add){
+            plt <- plt +
+                geom_boxplot(position = dodge)
+
+        }
+
         # Add points
         plt <- plt +
-            geom_point(position = dodge)
+            geom_point(position = dodge, alpha = .3)
 
         # facetting
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){
