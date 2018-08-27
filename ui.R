@@ -18,7 +18,7 @@ sidebar <- dashboardSidebar(
 
     sidebarMenu(
         # * MetaData ---------------------------------------------------------------------------------------------------
-        id = "menu",
+        id = "tab",
         menuItem(
             "Database info", tabName = "metadata", icon = icon("th"),
             startExpanded = TRUE
@@ -38,7 +38,7 @@ sidebar <- dashboardSidebar(
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills",
                 tabPanel("Mapping",
-                         selectInput("aes_x", label = span(tagList("Feature to display on x-Axis")),
+                         selectInput("aes_x", label = span(tagList("Feature to display on x-Axis / use in the PCA")),
                                      choices = features,
                                      selected = "class"),
                          selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
@@ -61,7 +61,7 @@ sidebar <- dashboardSidebar(
                              selected = NULL
                          )
                 ),
-                tabPanel("Defaulst",
+                tabPanel("Defaults",
                          # Future Defaults panel
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
                                      choices = features[4],# fixed to "value" for now, other choices seem not helpful to user
@@ -270,20 +270,6 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       title = NULL,
                                       width = 6,
                                       status = "primary",
-                                      plotOutput("pca_screeplot1", height = 140 * 2, width = 250 *
-                                                     2)
-                                  ),
-                                  box(
-                                      title = NULL,
-                                      width = 6,
-                                      status = "primary",
-                                      plotOutput("pca_screeplot2", height = 140 * 2, width = 250 *
-                                                     2)
-                                  ),
-                                  box(
-                                      title = NULL,
-                                      width = 6,
-                                      status = "primary",
                                       plotOutput("pca_scores")
                                   ),
                                   box(
@@ -294,11 +280,14 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                   )
                               ),
                               fluidRow(
+                                  box(
+                                      verbatimTextOutput("pca_info")
+                                  ),
                                   box(title = NULL, width = 6,
                                       checkboxInput("pca_center", "Center", TRUE),
                                       checkboxInput("pca_labels", "Sample Labels", FALSE),
                                       selectInput(
-                                          "scaling",
+                                          "pca_scaling",
                                           "Scale",
                                           list(
                                               "none" = "none",
@@ -307,11 +296,12 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           )
                                       ),
                                       selectInput("pca_method", "Method",
-                                                  c("PCA Stuff")),
+                                                  listPcaMethods(),
+                                                  selected = "svd"),
                                       selectInput("pca_cv", "cross-validation",
                                                   list ("none" = "none", "Q2" =  "q2")),
                                       sliderInput(
-                                          "PCs",
+                                          "pca_nPC",
                                           label = "Number of PCs",
                                           min = 2,
                                           max = 8,

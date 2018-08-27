@@ -196,7 +196,7 @@ function(input, output, session) {
     )
 
 
-    # * Updating select options for filtering based on dataset --------------------------------------------------------
+    # Updating filtering options by dataset --------------------------------------------------------
 
     observe({
         choices <- rawData()$sample %>%
@@ -276,7 +276,70 @@ function(input, output, session) {
         }
     })
 
-    # * Displaying main Dataset as a table ----------------------------------------------------------------------------
+    # Updating aes-options by tab --------------------------------------------------------------------------------------------------
+    # update nPCs, they should not exceed the dimensions of the data
+    # Runs upon changing of tabs
+    observeEvent(eventExpr = input$tab, handlerExpr = {
+        if (input$tab == "PCA"){
+            req(pcaData())
+            updateSliderInput(session,
+                              "pca_nPC",
+                              max = min(dim(pcaData()))
+            )
+            # PCA can only work with sample as color
+            updateSelectizeInput(session,
+                                 "aes_color",
+                                 choices = "sample",
+                                 selected = "sample")
+            # PCA also doesn't like sample on the x-axis
+            updateSelectizeInput(session,
+                                 "aes_x",
+                                 choices = features[-c(1,2,4,13,14)],
+                                 selected = "class"
+                                 )
+            # and facets
+            updateSelectizeInput(session,
+                                 "aes_facet1",
+                                 choices = "",
+                                 selected = ""
+            )
+            updateSelectizeInput(session,
+                                 "aes_facet2",
+                                 choices = "",
+                                 selected = ""
+            )
+        }
+
+        if (input$tab == "main" | input$tab == "heatmap"){
+            # but the main plot can have other features as color and x-axis
+            updateSelectizeInput(session,
+                                 "aes_color",
+                                 choices = features[-c(3,4,8,11,12)],
+                                 selected = "sample")
+            updateSelectizeInput(session,
+                                 "aes_x",
+                                 choices = features[-c(4)],
+                                 selected = "class"
+            )
+            updateSelectizeInput(session,
+                                 "aes_facet1",
+                                 choices = features[-c(3,4,8,11,12)],
+                                 selected = NULL
+            )
+            updateSelectizeInput(session,
+                                 "aes_facet2",
+                                 choices = features[-c(3,4,8,11,12)],
+                                 selected = NULL
+            )
+        }
+    }
+    )
+
+    observe({
+        print(input$tab)
+    })
+
+    # Displaying main Dataset as a table ----------------------------------------------------------------------------
 
     # Rendering selected dataset as a table to send to UI
     output$mainDataTable <- renderDT({
@@ -298,6 +361,7 @@ function(input, output, session) {
 
     # with apropriate summarize functions based on selecte plot type, standards and aes
     plotData <- reactive({
+        req(mainData())
         df <- mainData()
 
         # Averaging over the technical replicates
@@ -310,7 +374,7 @@ function(input, output, session) {
 
         # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
         df <- df %>% filter(!is.na(!!sym(input$aes_x)),
-                                   !is.na(!!sym(input$aes_y)))
+                            !is.na(!!sym(input$aes_y)))
         if (input$aes_color != ""){
             df <- df %>% filter(!is.na(!!sym(input$aes_color)))
         }
@@ -354,14 +418,14 @@ function(input, output, session) {
             value = sum(value, na.rm = TRUE)
         )
 
-
         df
     })
 
 
-# meanPlotData for bars/averages ----------------------------------------------------------------------------------
+    # meanPlotData for bars/averages ----------------------------------------------------------------------------------
 
     meanPlotData <- reactive({
+        req(plotData())
         df <- plotData()
 
         df <- df %>% summarize(
@@ -404,14 +468,14 @@ function(input, output, session) {
             need( input$aes_y != "",
                   "Please select a feature to display on the y-axis"),
             need( !(input$tecRep_average & ( input$aes_color == "sample_replicate_technical" |
-                                               input$aes_x == "sample_replicate_technical" |
-                                               input$aes_y == "sample_replicate_technical" |
-                                               input$aes_facet1 == "sample_replicate_technical" |
-                                               input$aes_facet2 == "sample_replicate_technical"  )
-                    ),
-                  "You are currently averaging over technical replicates (see the samples tab in the sidebar)
+                                                 input$aes_x == "sample_replicate_technical" |
+                                                 input$aes_y == "sample_replicate_technical" |
+                                                 input$aes_facet1 == "sample_replicate_technical" |
+                                                 input$aes_facet2 == "sample_replicate_technical"  )
+            ),
+            "You are currently averaging over technical replicates (see the samples tab in the sidebar)
                   and thus can't use this feature in your plot."
-                  )
+            )
         )
 
         # main plot definition
@@ -428,7 +492,7 @@ function(input, output, session) {
             plt <- plt +
                 aes(color = factor(!!sym(input$aes_color)),
                     fill = factor(!!sym(input$aes_color))
-                    )
+                )
         }
 
         # Dodging
@@ -439,16 +503,16 @@ function(input, output, session) {
 
 
         #TODO
-        if ("boxplot" %in% input$main_add){
-            plt <- plt +
-                geom_boxplot(position = dodge)
-
-        }
+        # if ("boxplot" %in% input$main_add){
+        #     plt <- plt +
+        #         geom_boxplot(position = dodge)
+        #
+        # }
 
         # Add bars and points
         plt <- plt +
             geom_col(data = meanPlotData() ,position = dodge)+
-            geom_point(position = dodge, pch = 21, alpha = .7, color = "white")
+            geom_point(position = dodge, pch = 21, alpha = .2, color = "grey90")
 
         # facetting
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){
@@ -493,12 +557,91 @@ function(input, output, session) {
 
     # TODO
 
+    # * pcaData -------------------------------------------------------------------------------------------------------
+    pcaData <- reactive({
+        req(plotData())
+        df <- plotData() %>% ungroup()
+
+        df <- df %>%
+            select(sample_replicate, !!sym(input$aes_x), value) %>%
+            spread(key = input$aes_x, value = "value") %>%
+            data.frame(row.names = TRUE) %>%
+            as.matrix()
+
+        df # not a dataframe but a matrix in this case
+    })
+
+    # * pcaObject -----------------------------------------------------------------------------------------------------
+    pcaObject <- reactive({
+        df <- pcaData() # needs to be a numeric matrix with samples in rows, variables in columns
+
+        # returns pcaRes object
+        res <- pcaMethods::pca(
+            as.matrix(df),
+            method = input$pca_method,
+            nPcs = input$pca_nPC,
+            center = input$pca_center,
+            scale = input$pca_scaling,
+            cv = input$pca_cv,
+            seed = 123
+        )
+
+        res
+    })
+
+
+    # * pcaOutputs ------------------------------------------------------------------------------------------------------
+    # Info
+    output$pca_info <- renderPrint({
+        req(pcaObject())
+
+        pca <- pcaObject()
+        pca %>% summary()
+    })
+
+    # ** Scores -----------------------------------------------------------------------------------------------------
+    output$pca_scores <- renderPlot({
+
+        req(pcaData(), pcaObject())
+
+        sample_names <- plotData() %>% ungroup() %>%
+            select(sample, sample_replicate) %>% distinct() %>%
+            mutate(sample = as.character(sample),
+                   sample_replicate = as.character(sample_replicate))
+
+        colorCount <- rownames(pcaData()) %>% length()
+        scores <- pcaObject()@scores %>% as_tibble(rownames = "sample_replicate") %>%
+            left_join(sample_names)
+
+        plt <- scores %>%
+            ggplot(aes(PC1, PC2, color = sample))+
+            geom_point()+
+            mainTheme+
+            mainScale(colorCount = colorCount)+
+            geom_text_repel(aes(label = sample))
+
+        plt
+    })
+
+
+    # ** Loadings -----------------------------------------------------------------------------------------------------
+
+    output$pca_loadings <- renderPlot({
+
+        req(pcaObject())
+
+        loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aes_x)
+
+        plt <- loadings %>%
+            ggplot(aes(PC1, PC2))+
+            geom_point()+
+            mainTheme+
+            geom_text_repel(aes(label = !!sym(input$aes_x)))
+        plt
+    })
 
 
     # Heatmap ---------------------------------------------------------------------------------------------------------
-
-    # Change choices for color value in the sidebar selectInput
-    # TODO
 
     # * Plot Object ---------------------------------------------------------------------------------------------------
     heatPlt <- reactive({

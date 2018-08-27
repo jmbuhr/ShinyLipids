@@ -9,6 +9,8 @@ input
 input %>% names()
 
 dev.off()
+sink()
+
 names(df)
 df$sample %>% head()
 
@@ -16,8 +18,11 @@ input$base_sample
 
 
 
-
 # * PCA -----------------------------------------------------------------------------------------------------------
 
+pca %>% str()
 
+pca@R2
+pca@R2cum
 
+pca
