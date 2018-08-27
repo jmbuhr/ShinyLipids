@@ -39,7 +39,7 @@ sidebar <- dashboardSidebar(
     tabsetPanel(type = "pills",
                 tabPanel("Mapping",
                          selectInput("aes_x", label = span(tagList("Feature to display on x-Axis / use in the PCA")),
-                                     choices = features,
+                                     choices = features[-c(4)],
                                      selected = "class"),
                          selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
                                         choices = features[-c(3,4,8,11,12)],

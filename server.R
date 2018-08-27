@@ -276,64 +276,15 @@ function(input, output, session) {
         }
     })
 
-    # Updating aes-options by tab --------------------------------------------------------------------------------------------------
+    # Updating pca-options --------------------------------------------------------------------------------------------------
     # update nPCs, they should not exceed the dimensions of the data
-    # Runs upon changing of tabs
-    observeEvent(eventExpr = input$tab, handlerExpr = {
-        if (input$tab == "PCA"){
+    observe({
             req(pcaData())
             updateSliderInput(session,
                               "pca_nPC",
                               max = min(dim(pcaData()))
-            )
-            # PCA can only work with sample as color
-            updateSelectizeInput(session,
-                                 "aes_color",
-                                 choices = "sample",
-                                 selected = "sample")
-            # PCA also doesn't like sample on the x-axis
-            updateSelectizeInput(session,
-                                 "aes_x",
-                                 choices = features[-c(1,2,4,13,14)],
-                                 selected = "class"
-                                 )
-            # and facets
-            updateSelectizeInput(session,
-                                 "aes_facet1",
-                                 choices = "",
-                                 selected = ""
-            )
-            updateSelectizeInput(session,
-                                 "aes_facet2",
-                                 choices = "",
-                                 selected = ""
-            )
-        }
-
-        if (input$tab == "main" | input$tab == "heatmap"){
-            # but the main plot can have other features as color and x-axis
-            updateSelectizeInput(session,
-                                 "aes_color",
-                                 choices = features[-c(3,4,8,11,12)],
-                                 selected = "sample")
-            updateSelectizeInput(session,
-                                 "aes_x",
-                                 choices = features[-c(4)],
-                                 selected = "class"
-            )
-            updateSelectizeInput(session,
-                                 "aes_facet1",
-                                 choices = features[-c(3,4,8,11,12)],
-                                 selected = NULL
-            )
-            updateSelectizeInput(session,
-                                 "aes_facet2",
-                                 choices = features[-c(3,4,8,11,12)],
-                                 selected = NULL
-            )
-        }
-    }
-    )
+            )}
+        )
 
     observe({
         print(input$tab)
@@ -560,6 +511,15 @@ function(input, output, session) {
     # * pcaData -------------------------------------------------------------------------------------------------------
     pcaData <- reactive({
         req(plotData())
+
+        validate(
+            need( input$aes_color == "sample", "To perform a PCA, please set color to sample in the mappings"),
+            need( input$aes_x != "sample", "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"),
+            need( input$aes_facet1 == "", "To perform a PCA, please remove any facetting in the mappings"),
+            need( input$aes_facet2 == "", "To perform a PCA, please remove any facetting in the mappings")
+        )
+
+
         df <- plotData() %>% ungroup()
 
         df <- df %>%
