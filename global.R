@@ -24,6 +24,7 @@ library(BiocGenerics)
 library(pcaMethods)
 ##
 library(tidyverse)
+library(ggrepel)
 # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 ## Shiny
 library(shiny)
