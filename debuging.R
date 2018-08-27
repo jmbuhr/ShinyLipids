@@ -10,27 +10,9 @@ input %>% names()
 
 dev.off()
 names(df)
-df
+df$sample %>% head()
 
-df$lipid %>% unique() %>% length()
-df$chains %>% unique() %>% length()
-df$chain_sums %>% unique() %>% length()
-df$length %>% unique() %>% length()
-
-
-
-
-
-
-
-# old preparaData -------------------------------------------------------------------------------------------------
-
-rawdata
-
-
-
-
-# Loading data
+input$base_sample
 
 
 
