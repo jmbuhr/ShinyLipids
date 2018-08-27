@@ -79,7 +79,8 @@ function(input, output, session) {
     })
 
 
-    # ** Filtering rawData to create mainData -------------------------------------------------------------------------
+    # * mainData from rawData -------------------------------------------------------------------------
+    # standardization, then filtering
 
     mainData <- reactive({
         req(rawData())
@@ -87,6 +88,27 @@ function(input, output, session) {
         # Temporary dataframe in the scope of this function
         df <- rawData()
 
+        # TODO
+        # # Base level substraction
+        # if(input$base_sample != ""){
+        #     df %>%
+        #         mutate(
+        #             value = value - value[df$sample_identifier == input$base_sample]
+        #         ) %>%
+        #         ungroup()
+        # }
+
+        # Standardization based on input$std_feature
+        if(input$std_feature != ""){
+            df <- df %>% group_by(!!sym(input$std_feature)) %>%
+                mutate(
+                    value = value / sum(value) * 100
+                ) %>%
+                ungroup()
+        }
+
+
+        # Filtering
         # Category
         if(!is.null(input$filter_cat)){
             df <- df %>% filter(category %in% input$filter_cat)
@@ -181,6 +203,11 @@ function(input, output, session) {
             unique()
         updateSelectizeInput(session, "sample_select",
                              choices = choices
+        )
+        sample_IDs <- rawData()$sample_identifier %>% unique()
+        updateSelectizeInput(session, "base_sample",
+                             choices = sample_IDs,
+                             selected = ""
         )
         updateSelectizeInput(session, "sample_remove",
                              choices = choices
@@ -294,13 +321,6 @@ function(input, output, session) {
             df <- df %>% filter(!is.na(!!sym(input$aes_facet2)))
         }
 
-        # standardization based on input$std_feature
-        if(input$std_feature != ""){
-            df <- df %>% group_by(!!sym(input$std_feature)) %>%
-                mutate(
-                    value = value / sum(value) * 100
-                )
-        }
 
         # Maybe a baseline substraction at this point
         #
@@ -495,12 +515,28 @@ function(input, output, session) {
             theme(
                 axis.text.y = element_text(size = input$heatLabSize, colour = "black"),
                 plot.background = element_blank(),
-                panel.grid = element_blank()
+                panel.grid = element_blank(),
+                panel.background = element_rect(colour = NA, fill = "grey80")
             ) +
             scale_x_discrete(expand = c(0, 0)) +
             scale_y_discrete(expand = c(0, 0)) +
             scale_fill_viridis_c(option = input$heatColor) +
             NULL
+
+        # facetting
+        if (input$aes_facet1 != "" & input$aes_facet2 != ""){
+            plt <- plt+
+                facet_grid(rows = vars(!!sym(input$aes_facet1)),
+                           cols = vars(!!sym(input$aes_facet2)),
+                           scales = "free_x"
+                )
+        }
+        if (input$aes_facet1 != "" & input$aes_facet2 == ""){
+            plt <- plt+
+                facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free_x"
+                )
+        }
+        plt
     })
 
 

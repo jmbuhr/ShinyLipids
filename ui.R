@@ -54,6 +54,11 @@ sidebar <- dashboardSidebar(
                              'std_feature', label = "Standardize to 100% within:",
                              choices = features[-4],
                              selected = NULL
+                         ),
+                         selectizeInput(
+                             'base_sample', label = "Substract sample as baseline",
+                             choices = "",
+                             selected = NULL
                          )
                 ),
                 tabPanel("Defaulst",
