@@ -269,7 +269,7 @@ function(input, output, session) {
 
     # plotData from mainData based on sidebar inputs ---------------------------------------------------------------
 
-    # TODO add apropriate summarize functions based on selecte plot type, standards and aes
+    # with apropriate summarize functions based on selecte plot type, standards and aes
     plotData <- reactive({
         df <- mainData()
 
@@ -302,6 +302,52 @@ function(input, output, session) {
                 )
         }
 
+        # Maybe a baseline substraction at this point
+        #
+        #
+        #
+
+        # Summation of values within the displayed aesthetics
+        # TODO show individual tec. sample reps.
+        # By features mapped to aesthetics, always by sample rep
+        df <- df %>% ungroup()
+        if (input$aes_x != ""){
+            df <- df %>% group_by(!!sym(input$aes_x), add = TRUE)
+        }
+        if (input$aes_color != ""){
+            df <- df %>% group_by(!!sym(input$aes_color), add = TRUE)
+        }
+        if (input$aes_facet1 != ""){
+            df <- df %>% group_by(!!sym(input$aes_facet1), add = TRUE)
+        }
+        if (input$aes_facet2 != ""){
+            df <- df %>% group_by(!!sym(input$aes_facet2), add = TRUE)
+        }
+        if (input$tecRep_average){
+            df <- df %>% group_by(sample_replicate, add = TRUE)
+        } else {
+            df <- df %>% group_by(sample_replicate_technical, add = TRUE)
+        }
+
+        # Sums for each group
+        df <- df %>% summarize(
+            value = sum(value, na.rm = TRUE)
+        )
+
+
+        df
+    })
+
+
+# meanPlotData for bars/averages ----------------------------------------------------------------------------------
+
+    meanPlotData <- reactive({
+        df <- plotData()
+
+        df <- df %>% summarize(
+            value = mean(value, na.rm = TRUE)
+        )
+
         df
     })
 
@@ -326,8 +372,6 @@ function(input, output, session) {
     mainPlt <- reactive({
         # temorary dataframe inside this function
         df <- plotData()
-
-        browser()
 
         # basic plot object
         plt <- df %>%
@@ -381,9 +425,10 @@ function(input, output, session) {
 
         }
 
-        # Add points
+        # Add bars and points
         plt <- plt +
-            geom_point(position = dodge, alpha = .3)
+            geom_col(data = meanPlotData() ,position = dodge)+
+            geom_point(position = dodge, pch = 21, alpha = .7, color = "white")
 
         # facetting
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){

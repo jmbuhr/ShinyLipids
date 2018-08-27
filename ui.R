@@ -44,16 +44,6 @@ sidebar <- dashboardSidebar(
                          selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
                                         choices = features[-c(3,4,8,11,12)],
                                         selected = "sample"),
-                         selectInput("aes_pos", label = "Position of colored datapoints",
-                                     choices = list(
-                                         "stacked" = "stack",
-                                         "besides" = "dodge2",
-                                         "filled to 100%" = "fill",
-                                         "old besides" = "dodge",
-                                         "jitter" = "jitter"
-                                     ),
-                                     selected = "dodge2"
-                         ),
                          selectizeInput("aes_facet1", label = "Feature to use for facetting 1",
                                         choices = features[-c(3,4,8,11,12)],
                                         selected = NULL),
@@ -64,12 +54,25 @@ sidebar <- dashboardSidebar(
                              'std_feature', label = "Standardize to 100% within:",
                              choices = features[-4],
                              selected = NULL
-                         ),
+                         )
+                ),
+                tabPanel("Defaulst",
+                         # Future Defaults panel
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
                                      choices = features[4],# fixed to "value" for now, other choices seem not helpful to user
-                                     selected = "value")
+                                     selected = "value"),
+                         # limit options for now, dodge2 is the most usefull
+                         selectInput("aes_pos", label = "Position of colored datapoints",
+                                     choices = list(
+                                         #"stacked" = "stack",
+                                         "besides" = "dodge2"
+                                         #"filled to 100%" = "fill",
+                                         #"old besides" = "dodge",
+                                         #"jitter" = "jitter"
+                                     ),
+                                     selected = "dodge2"
+                         )
                 ),
-                tabPanel("Defaults"),
                 tabPanel("Samples",
                          selectizeInput(
                              'sample_select',
@@ -160,17 +163,15 @@ sidebar <- dashboardSidebar(
         strong("ShinyLipids alpha"),
         p("Rewritten by"),
         em("Jannik Buhr"),
-        p("Version: 2.0"),
-        p("2018-08-04"),
+        p("Version: 2.0.1"),
+        p("2018-08-27"),
         p("includes code from:"),
         br(),
         em("Mathias Gerl"),
         br(),
         em("Manuel Haußmann"),
         br(),
-        em("Sebastian Bender"),
-        br()
-
+        em("Sebastian Bender")
     )
 )
 
