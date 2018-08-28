@@ -276,20 +276,6 @@ function(input, output, session) {
         }
     })
 
-    # Updating pca-options --------------------------------------------------------------------------------------------------
-    # update nPCs, they should not exceed the dimensions of the data
-    observe({
-            req(pcaData())
-            updateSliderInput(session,
-                              "pca_nPC",
-                              max = min(dim(pcaData()))
-            )}
-        )
-
-    observe({
-        print(input$tab)
-    })
-
     # Displaying main Dataset as a table ----------------------------------------------------------------------------
 
     # Rendering selected dataset as a table to send to UI
@@ -506,7 +492,16 @@ function(input, output, session) {
 
     # PCA -------------------------------------------------------------------------------------------------------------
 
-    # TODO
+
+    # ** Updating pca-options --------------------------------------------------------------------------------------------------
+    # update nPCs, they should not exceed the dimensions of the data
+    observe({
+        req(pcaData())
+        updateSliderInput(session,
+                          "pca_nPC",
+                          max = min(dim(pcaData()))
+        )}
+    )
 
     # * pcaData -------------------------------------------------------------------------------------------------------
     pcaData <- reactive({
@@ -575,7 +570,7 @@ function(input, output, session) {
 
         plt <- scores %>%
             ggplot(aes(PC1, PC2, color = sample))+
-            geom_point()+
+            geom_point(pch = 19, size = input$pca_pointSize / 3)+
             mainTheme+
             mainScale(colorCount = colorCount)+
             geom_text_repel(aes(label = sample))
@@ -594,7 +589,7 @@ function(input, output, session) {
 
         plt <- loadings %>%
             ggplot(aes(PC1, PC2))+
-            geom_point()+
+            geom_point(pch = 19 ,size = input$pca_pointSize / 3)+
             mainTheme+
             geom_text_repel(aes(label = !!sym(input$aes_x)))
         plt
