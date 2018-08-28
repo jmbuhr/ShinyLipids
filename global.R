@@ -132,14 +132,6 @@ mainScale <- function(colorCount){
     )
 }
 
-# Example
-# head(mpg)
-# ggplot(mpg)+
-#     aes(x = cyl, y = cty, color = factor(model))+
-#     geom_point()+
-#     mainTheme +
-#     mainScale(12)
-
 
 # helper functions -------------------------------------------------------------------------------------------------------
 
