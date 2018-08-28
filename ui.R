@@ -228,7 +228,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                                      dblclick = "mainPlot_dblclick",
                                                      brush = brushOpts(id = "mainPlot_brush",
                                                                        resetOnNew = TRUE)
-                                          )
+                                          ) %>% withSpinner(type = 4, color = "#605ca8")
                                       )
                                   ),
                                   fluidRow(
@@ -269,18 +269,18 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       title = NULL,
                                       width = 6,
                                       status = "primary",
-                                      plotOutput("pca_scores")
+                                      plotOutput("pca_scores") %>% withSpinner(type = 4, color = "#605ca8")
                                   ),
                                   box(
                                       title = NULL,
                                       width = 6,
                                       status = "primary",
-                                      plotOutput("pca_loadings")
+                                      plotOutput("pca_loadings") %>% withSpinner(type = 4, color = "#605ca8")
                                   )
                               ),
                               fluidRow(
                                   box(
-                                      verbatimTextOutput("pca_info")
+                                      verbatimTextOutput("pca_info") %>% withSpinner(type = 1, color = "#605ca8")
                                   ),
                                   box(title = NULL, width = 6,
                                       checkboxInput("pca_center", "Center", TRUE),
@@ -340,7 +340,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           title = NULL,
                                           width = 12,
                                           status = "primary",
-                                          plotOutput("heatPlot")
+                                          plotOutput("heatPlot") %>% withSpinner(type = 4, color = "#605ca8")
                                       )
                                   ),
                                   column(

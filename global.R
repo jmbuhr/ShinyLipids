@@ -32,6 +32,8 @@ library(shinyjs) # for UI hiding
 library(DT)
 library(shinythemes)
 library(shinydashboard)
+library(shinycssloaders)
+
 
 # (.packages())
 # sessionInfo()
