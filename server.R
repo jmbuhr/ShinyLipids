@@ -107,7 +107,6 @@ function(input, output, session) {
                 ungroup()
         }
 
-
         # Filtering
         # Category
         if(!is.null(input$filter_cat)){
@@ -301,6 +300,23 @@ function(input, output, session) {
         req(mainData())
         df <- mainData()
 
+        # Validations, friendly error messages
+        validate(
+            need( !(input$tecRep_average & ( input$aes_color == "sample_replicate_technical" |
+                                                 input$aes_x == "sample_replicate_technical" |
+                                                 input$aes_y == "sample_replicate_technical" |
+                                                 input$aes_facet1 == "sample_replicate_technical" |
+                                                 input$aes_facet2 == "sample_replicate_technical"  )
+            ),
+            "You are currently averaging over technical replicates (see the samples tab in the sidebar)
+                  and thus can't use this feature in your plots."
+            ),
+            need( input$aes_x != "",
+                  "Please select a feature to display on the x-axis"),
+            need( input$aes_y != "",
+                  "Please select a feature to display on the y-axis")
+        )
+
         # Averaging over the technical replicates
         if (input$tecRep_average){
             df <- df %>%
@@ -350,6 +366,7 @@ function(input, output, session) {
             df <- df %>% group_by(sample_replicate_technical, add = TRUE)
         }
 
+
         # Sums for each group
         df <- df %>% summarize(
             value = sum(value, na.rm = TRUE)
@@ -391,29 +408,13 @@ function(input, output, session) {
 
     # * Plot Object ----------------------------------------------------------------------------------------
     mainPlt <- reactive({
-        # temorary dataframe inside this function
+        req(plotData())
+        # temporary dataframe inside this function
         df <- plotData()
 
         # basic plot object
         plt <- df %>%
             ggplot()
-
-        # Validations, friendly error messages
-        shiny::validate(
-            need( input$aes_x != "",
-                  "Please select a feature to display on the x-axis"),
-            need( input$aes_y != "",
-                  "Please select a feature to display on the y-axis"),
-            need( !(input$tecRep_average & ( input$aes_color == "sample_replicate_technical" |
-                                                 input$aes_x == "sample_replicate_technical" |
-                                                 input$aes_y == "sample_replicate_technical" |
-                                                 input$aes_facet1 == "sample_replicate_technical" |
-                                                 input$aes_facet2 == "sample_replicate_technical"  )
-            ),
-            "You are currently averaging over technical replicates (see the samples tab in the sidebar)
-                  and thus can't use this feature in your plot."
-            )
-        )
 
         # main plot definition
         plt <- plt +
@@ -509,16 +510,21 @@ function(input, output, session) {
 
         validate(
             need( input$aes_color == "sample", "To perform a PCA, please set color to sample in the mappings"),
-            need( input$aes_x != "sample", "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"),
+            need( (input$aes_x != "sample" & input$aes_x != "sample_replicate" & input$aes_x != "sample_replicate_technical"),
+                  "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"),
             need( input$aes_facet1 == "", "To perform a PCA, please remove any facetting in the mappings"),
             need( input$aes_facet2 == "", "To perform a PCA, please remove any facetting in the mappings")
         )
 
-
         df <- plotData() %>% ungroup()
 
         df <- df %>%
-            select(sample_replicate, !!sym(input$aes_x), value) %>%
+            select(!!sym(ifelse(input$tecRep_average,
+                                "sample_replicate",
+                                "sample_replicate_technical")),
+                   !!sym(input$aes_x), value)
+
+        df <- df %>%
             spread(key = input$aes_x, value = "value") %>%
             data.frame(row.names = TRUE) %>%
             as.matrix()
@@ -545,6 +551,41 @@ function(input, output, session) {
     })
 
 
+    # Scaling factor for orignial data dimenision vectors in principal component space
+
+    sample_names <- reactive({
+        if (input$tecRep_average){
+            res <- plotData() %>% ungroup() %>%
+                select(sample, sample_replicate) %>% distinct() %>%
+                mutate(sample = as.character(sample),
+                       sample_replicate = as.character(sample_replicate))
+        } else {
+            res <- plotData() %>% ungroup() %>%
+                select(sample, sample_replicate_technical) %>% distinct() %>%
+                mutate(sample = as.character(sample),
+                       sample_replicate_technical = as.character(sample_replicate_technical))
+        }
+        res
+    })
+
+    scaled_loadings <- reactive({
+        req(pcaObject())
+        p <- pcaObject()
+
+        loadings <- p@loadings %>% as_tibble(rownames = input$aes_x)
+
+        scores <- p@scores %>%
+            as_tibble(rownames = if_else(input$tecRep_average, "sample_replicate", "sample_replicate_technical")) %>%
+            left_join(sample_names())
+
+        scaler <- min(max(abs(scores[, "PC1"]))/max(abs(loadings[,"PC1"])),
+                      max(abs(scores[, "PC2"]))/max(abs(loadings[, "PC2"]))
+        )
+        loadings[, c("PC1", "PC2")] <- loadings[, c("PC1", "PC2")] * scaler * 0.8
+        loadings
+    })
+
+
     # * pcaOutputs ------------------------------------------------------------------------------------------------------
     # Info
     output$pca_info <- renderPrint({
@@ -556,25 +597,40 @@ function(input, output, session) {
 
     # ** Scores -----------------------------------------------------------------------------------------------------
     output$pca_scores <- renderPlot({
-
         req(pcaData(), pcaObject())
-
-        sample_names <- plotData() %>% ungroup() %>%
-            select(sample, sample_replicate) %>% distinct() %>%
-            mutate(sample = as.character(sample),
-                   sample_replicate = as.character(sample_replicate))
+        p <- pcaObject()
 
         colorCount <- rownames(pcaData()) %>% length()
-        scores <- pcaObject()@scores %>% as_tibble(rownames = "sample_replicate") %>%
-            left_join(sample_names)
+        scores <- p@scores %>%
+            as_tibble(rownames = if_else(input$tecRep_average, "sample_replicate", "sample_replicate_technical")) %>%
+            left_join(sample_names())
 
         plt <- scores %>%
             ggplot(aes(PC1, PC2, color = sample))+
             geom_point(pch = 19, size = input$pca_pointSize / 3)+
             mainTheme+
-            mainScale(colorCount = colorCount)+
-            geom_text_repel(aes(label = sample))
+            mainScale(colorCount = colorCount)
 
+
+        if (input$pca_labels){
+            plt <- plt +
+                geom_text_repel(aes(label = !!sym(ifelse(input$tecRep_average,
+                                                         "sample_replicate",
+                                                         "sample_replicate_technical"))
+                )
+                )
+        }
+
+        # Add scaled orginal vectors as arrows
+        if(input$pca_vectors){
+            plt <- plt+
+                geom_segment(data = scaled_loadings(),
+                             aes(x = 0, y = 0, xend = PC1, yend = PC2, group = !!sym(input$aes_x)),
+                             inherit.aes = FALSE, arrow = arrow()
+                )+
+                geom_label_repel(data = scaled_loadings(), aes(x = PC1, y = PC2, label = !!sym(input$aes_x)),
+                                 inherit.aes = FALSE, alpha = .3)
+        }
         plt
     })
 
