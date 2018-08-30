@@ -11,10 +11,11 @@ input %>% names()
 dev.off()
 sink()
 
-names(df)
-df$sample %>% head()
 
-input$base_sample
+p <- pcaObject()
+p %>% str()
+
+plt
 
 
 

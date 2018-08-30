@@ -119,7 +119,8 @@ mainTheme <- list(
         panel.background = element_rect(color = "grey70", fill = NA, size = 1),
         strip.background = element_rect(fill = "grey80", color = "black"),
         strip.text = element_text(color = "black")
-    )
+    ),
+    labs(title = "Alpha Version")
 )
 
 # Returns a function that takes an interger and creates a color palette
@@ -129,8 +130,7 @@ getPalette <- colorRampPalette(brewer.pal(9, "Set1")[-6])
 mainScale <- function(colorCount){
     list(
         scale_fill_manual(values = getPalette(colorCount)),
-        scale_color_manual(values = getPalette(colorCount)),
-        labs(title = "Alpha Version")
+        scale_color_manual(values = getPalette(colorCount))
     )
 }
 
