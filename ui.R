@@ -279,64 +279,63 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                   )
                               ),
                               fluidRow(
-                                  box(
-                                      verbatimTextOutput("pca_info") %>% withSpinner(type = 1, color = "#605ca8")
+                                  column(width = 6,
+                                         box(width = NULL,
+                                             verbatimTextOutput("pca_info") %>% withSpinner(type = 1, color = "#605ca8")
+                                         ),
+                                         box(width = NULL,
+                                             downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
+                                             downloadButton("pca_saveLoadings", label = "Save Loadings Plot as .pdf"),
+                                             numericInput("pca_Width", label = "width", value = 20),
+                                             numericInput("pca_Height", label = "height", value = 10)
+                                         )
                                   ),
-                                  box(title = NULL, width = 6,
-                                      checkboxInput("pca_center", "Center", TRUE),
-                                      checkboxInput("pca_labels", "Sample Labels", TRUE),
-                                      checkboxInput("pca_vectors", "Show original dimensions in principal component space", TRUE),
-                                      selectInput(
-                                          "pca_scaling",
-                                          "Scale",
-                                          list(
-                                              "none" = "none",
-                                              "unit variance" = "uv",
-                                              "pareto" = "pareto"
-                                          )
-                                      ),
-                                      selectInput("pca_method", "Method",
-                                                  listPcaMethods()[1:7],# The last three don't work for now
-                                                  selected = "svd"),
-                                      selectInput("pca_cv", "cross-validation",
-                                                  list ("none" = "none", "Q2" =  "q2")),
-                                      sliderInput(
-                                          "pca_nPC",
-                                          label = "Number of PCs",
-                                          min = 2,
-                                          max = 8,
-                                          value = 2,
-                                          ticks = TRUE,
-                                          animate = FALSE
-                                      ),
-                                      sliderInput(
-                                          "pca_pointSize",
-                                          label = "Point Size",
-                                          min = 1,
-                                          max = 10,
-                                          value =5,
-                                          ticks = TRUE,
-                                          animate = FALSE
-                                      )
-                                  ),
-                                  column(
-                                      width = 6,
-                                      box(
-                                          title = NULL,
-                                          width = NULL,
-                                          downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
-                                          downloadButton("pca_saveLoadings", label = "Save Loadings Plot as .pdf"),
-                                          numericInput("pca_Width", label = "width", value = 20),
-                                          numericInput("pca_Height", label = "height", value = 10)
-                                      )
+                                  column(width = 6,
+                                         box(width = NULL,
+                                             checkboxInput("pca_center", "Center", TRUE),
+                                             checkboxInput("pca_labels", "Sample Labels", TRUE),
+                                             checkboxInput("pca_vectors", "Show original dimensions in principal component space", TRUE),
+                                             checkboxInput("pca_hull", "Draw convex hull", FALSE),
+                                             selectInput(
+                                                 "pca_scaling",
+                                                 "Scale",
+                                                 list(
+                                                     "none" = "none",
+                                                     "unit variance" = "uv",
+                                                     "pareto" = "pareto"
+                                                 )
+                                             ),
+                                             selectInput("pca_method", "Method",
+                                                         listPcaMethods()[1:7],# The last three don't work for now
+                                                         selected = "svd"),
+                                             selectInput("pca_cv", "cross-validation",
+                                                         list ("none" = "none", "Q2" =  "q2")),
+                                             sliderInput(
+                                                 "pca_nPC",
+                                                 label = "Number of PCs",
+                                                 min = 2,
+                                                 max = 8,
+                                                 value = 2,
+                                                 ticks = TRUE,
+                                                 animate = FALSE
+                                             ),
+                                             sliderInput(
+                                                 "pca_pointSize",
+                                                 label = "Point Size",
+                                                 min = 1,
+                                                 max = 10,
+                                                 value =5,
+                                                 ticks = TRUE,
+                                                 animate = FALSE
+                                             )
+                                         )
                                   )
                               )
                           ),
 
                           # ** heatmap ---------------------------------------------------------------------------------
                           tabItem(tabName = "heatmap",
-                                  fluidRow(column(
-                                      12,
+                                  fluidRow(
                                       box(
                                           title = NULL,
                                           width = 12,
@@ -344,12 +343,13 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           plotOutput("heatPlot") %>% withSpinner(type = 4, color = "#605ca8")
                                       )
                                   ),
-                                  column(
-                                      width = 6,
+                                  fluidRow(
                                       box(
-                                          title = NULL,
-                                          width = NULL,
                                           downloadButton("heatSave", label = "Save as .pdf"),
+                                          numericInput("heatWidth", label = "width", value = 20),
+                                          numericInput("heatHeight", label = "height", value = 10)
+                                      ),
+                                      box(
                                           selectInput(
                                               "heatColor",
                                               "Color scheme",
@@ -367,14 +367,12 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                               value = 9,
                                               ticks = TRUE,
                                               animate = FALSE
-                                          ),
-                                          numericInput("heatWidth", label = "width", value = 20),
-                                          numericInput("heatHeight", label = "height", value = 10)
+                                          )
                                       )
-                                  )))
+                                  )
+                          )
                       )
 )
-
 
 # Initiate Dashboard page ----------------------------------------------------------------------------------------------
 dashboardPage(skin = "purple",
