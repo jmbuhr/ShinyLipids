@@ -626,11 +626,18 @@ function(input, output, session) {
             plt <- plt+
                 geom_segment(data = scaled_loadings(),
                              aes(x = 0, y = 0, xend = PC1, yend = PC2, group = !!sym(input$aes_x)),
-                             inherit.aes = FALSE, arrow = arrow()
+                             inherit.aes = FALSE, arrow = arrow(), alpha = .3
                 )+
                 geom_label_repel(data = scaled_loadings(), aes(x = PC1, y = PC2, label = !!sym(input$aes_x)),
-                                 inherit.aes = FALSE, alpha = .3)
+                                 inherit.aes = FALSE, alpha = .3, show.legend = FALSE)
         }
+
+
+        if (input$pca_hull){
+            plt <- plt +
+                stat_chull(alpha = .4, show.legend = FALSE)
+        }
+
         plt
     })
 
