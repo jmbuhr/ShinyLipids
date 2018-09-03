@@ -235,8 +235,12 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       box(width = 4,
                                           checkboxGroupInput("main_add", label = NULL,
                                                              choices = list(
-                                                                 "boxplot"
-                                                             ))
+                                                                 ""
+                                                             )
+                                          ),
+                                          selectInput("main_error", "Type of error bars",
+                                                      choices = list("SD", "SEM", "95% CI" = "CI")
+                                                      )
                                       ),
                                       box(width = 3,
                                           selectInput(
@@ -251,12 +255,18 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           )
                                       ),
                                       box(width = 4,
-                                          downloadButton("main_savePlot", label = "Save as .pdf"),
-                                          downloadButton("main_saveStd", label = "Save as .csv"),
+                                          downloadButton("main_savePlot", label = "Save plot as .pdf"),
                                           br(),
+                                          downloadButton("main_saveData", label = "Save datapoints as .csv"),
+                                          downloadButton("main_saveMeans", label = "Save means as .csv"),
                                           numericInput("mainWidth", label = "width", value = 20),
-                                          numericInput("mainHeight", label = "height", value = 10),
-                                          downloadButton("mainSave", label = "Save pdf")
+                                          numericInput("mainHeight", label = "height", value = 10)
+                                      )
+                                  ),
+                                  fluidRow(
+                                      box(title = "Summary",
+                                          width = NULL,
+                                          DTOutput("meanPlotDataTable")
                                       )
                                   )
                           ),
@@ -281,7 +291,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                               fluidRow(
                                   column(width = 6,
                                          box(width = NULL,
-                                             verbatimTextOutput("pca_info") %>% withSpinner(type = 1, color = "#605ca8")
+                                             verbatimTextOutput("pca_info")
                                          ),
                                          box(width = NULL,
                                              downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
