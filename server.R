@@ -158,8 +158,9 @@ function(input, output, session) {
     })
 
 
-    # ** Download handlers for metadata and raw datasets --------------------------------------------------------------
+    # Download handlers  --------------------------------------------------------------
 
+    # * metadata and raw datasets ------------------------------------------------------------------------------------
     # Metadata - .csv
     output$saveMeta <- downloadHandler(
         filename = function() {
@@ -194,6 +195,46 @@ function(input, output, session) {
         }
     )
 
+
+    # * Plot Data -----------------------------------------------------------------------------------------------------
+    #  Plot Data - .csv
+    output$main_saveData <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-plot" ,".csv")
+        },
+        content = function(file) {
+            write_csv(x = plotData(), path = file)
+        }
+    )
+
+    #  Plot mean Data (bars) - .csv
+    output$main_saveMeans <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-means" ,".csv")
+        },
+        content = function(file) {
+            write_csv(x = meanPlotData(), path = file)
+        }
+    )
+
+
+    # * Plots ---------------------------------------------------------------------------------------------------------
+
+    output$main_savePlot <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-plot" ,".pdf")
+        },
+        content = function(file) {
+            ggsave(file, plot = mainPlt(),
+                   width = input$mainWidth, height = input$mainHeight)
+        }
+    )
 
     # Updating filtering options by dataset --------------------------------------------------------
 
@@ -371,6 +412,9 @@ function(input, output, session) {
         df <- df %>% summarize(
             value = sum(value, na.rm = TRUE)
         )
+        # This will remove only the last layer of grouping (sample_replicate or sample_replicate_technical)
+        # and keep the other groups, in either case, ase_x will still be a group
+        cat(file=stderr(), "\n plotData still grouped by", paste(groups(df), collapse = ", "), "\n")
 
         df
     })
@@ -383,8 +427,19 @@ function(input, output, session) {
         df <- plotData()
 
         df <- df %>% summarize(
-            value = mean(value, na.rm = TRUE)
-        )
+            SD = sd(value, na.rm = TRUE),
+            SEM = sd(value, na.rm = TRUE)/n(),
+            N = n(),
+            value = mean(value, na.rm = TRUE),
+            CI_lower = value - qt(1 - (0.05 / 2), N - 1) * SEM,
+            CI_upper = value + qt(1 - (0.05 / 2), N - 1) * SEM
+        ) %>%
+            # Assumption: we are 100% sure that no lipid has a value smaller than 0
+            mutate(
+                CI_lower = if_else(CI_lower < 0, 0,CI_lower)
+            )
+
+        cat(file=stderr(), "\n meanPlotData still grouped by", paste(groups(df), collapse = ", "), "\n")
 
         df
     })
@@ -409,6 +464,7 @@ function(input, output, session) {
     # * Plot Object ----------------------------------------------------------------------------------------
     mainPlt <- reactive({
         req(plotData())
+        req(meanPlotData())
         # temporary dataframe inside this function
         df <- plotData()
 
@@ -440,17 +496,26 @@ function(input, output, session) {
         }
 
 
-        #TODO
-        # if ("boxplot" %in% input$main_add){
-        #     plt <- plt +
-        #         geom_boxplot(position = dodge)
-        #
-        # }
-
         # Add bars and points
         plt <- plt +
             geom_col(data = meanPlotData() ,position = dodge)+
-            geom_point(position = dodge, pch = 21, alpha = .2, color = "grey90")
+            geom_point(position = dodge, pch = 21, alpha = .6, color = "grey90")
+
+        # Error bars
+        plt <- plt +
+            geom_errorbar(
+                data = meanPlotData(), position = position_dodge2(width = 0.2, padding = 0.5),
+                aes(ymin = switch(input$main_error,
+                                  "SD" = value - SD,
+                                  "SEM" = value - SEM,
+                                  "CI" = CI_lower
+                ), ymax = switch(input$main_error,
+                                 "SD" = value + SD,
+                                 "SEM" = value + SEM,
+                                 "CI" = CI_upper
+                )
+                ), color = "grey20"
+            )
 
         # facetting
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){
@@ -489,6 +554,25 @@ function(input, output, session) {
         plt
     })
 
+
+
+    # meanPlotDataTable -----------------------------------------------------------------------------------------------
+
+    output$meanPlotDataTable <- renderDT({
+        req(meanPlotData())
+
+        df <- meanPlotData()
+        df
+    },
+    filter = 'none',
+    rownames = FALSE,
+    options = list(orderClasses = TRUE,
+                   pageLength = 10,
+                   order = list(0, 'desc'),
+                   scrollX = TRUE,
+                   deferRender = TRUE,
+                   scrollCollapse = TRUE)
+    )
 
 
     # PCA -------------------------------------------------------------------------------------------------------------
