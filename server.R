@@ -18,6 +18,8 @@ function(input, output, session) {
 
     # Rendering datasets as a table to send to UI
     output$metaDataTable <- renderDT({
+        req(metaData())
+
         if (input$showFullMeta == TRUE){
             meta <- metaData()
         } else{
@@ -25,7 +27,7 @@ function(input, output, session) {
         }
         meta
     },
-    server = FALSE, selection = 'single',
+    server = FALSE, selection = list(mode = 'single', selected = 1),
     options = list(orderClasses = TRUE,
                    pageLength = 10,
                    order = list(0, 'desc'),
@@ -501,10 +503,10 @@ function(input, output, session) {
             geom_col(data = meanPlotData() ,position = dodge)+
             geom_point(position = dodge, pch = 21, alpha = .6, color = "grey90")
 
-        # Error bars
+        # Error bars and mean
         plt <- plt +
             geom_errorbar(
-                data = meanPlotData(), position = position_dodge2(width = 0.2, padding = 0.5),
+                data = meanPlotData(), position = position_dodge2(width = 0.2, padding = 0.8),
                 aes(ymin = switch(input$main_error,
                                   "SD" = value - SD,
                                   "SEM" = value - SEM,
@@ -516,6 +518,7 @@ function(input, output, session) {
                 )
                 ), color = "grey20"
             )
+
 
         # facetting
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){
@@ -701,7 +704,7 @@ function(input, output, session) {
                 geom_text_repel(aes(label = !!sym(ifelse(input$tecRep_average,
                                                          "sample_replicate",
                                                          "sample_replicate_technical"))
-                )
+                ), show.legend = FALSE
                 )
         }
 
