@@ -38,10 +38,10 @@ sidebar <- dashboardSidebar(
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills",
                 tabPanel("Mapping",
-                         selectInput("aes_x", label = span(tagList("Feature to display on x-Axis / use in the PCA")),
+                         selectInput("aes_x", label = HTML("Feature to display on x-Axis /<br>use in the PCA"),
                                      choices = features[-c(4)],
                                      selected = "class"),
-                         selectizeInput("aes_color", label = "Feature to display by color / y-axis of heatmap",
+                         selectizeInput("aes_color", label = HTML("Feature to display by color /<br> y-axis of heatmap"),
                                         choices = features[-c(3,4,8,11,12)],
                                         selected = "sample"),
                          selectizeInput("aes_facet1", label = "Feature to use for facetting 1",
@@ -122,21 +122,21 @@ sidebar <- dashboardSidebar(
                 tabPanel("Filters",
                          selectizeInput(
                              'filter_class',
-                             label = "Filter class",
+                             label = "Select classes",
                              options = list(placeholder = "empty field means no filtering based on this feature"),
                              choices = NULL,
                              multiple = TRUE
                          ),
                          selectizeInput(
                              'filter_cat',
-                             label = "Filter category",
+                             label = "Select categories",
                              options = list(placeholder = "empty field means no filtering based on this feature"),
                              choices = NULL,
                              multiple = TRUE
                          ),
                          selectizeInput(
                              'filter_func',
-                             label = "Filter functional category",
+                             label = "Select functional categories",
                              options = list(placeholder = "empty field means no filtering based on this feature"),
                              choices = NULL,
                              multiple = TRUE
