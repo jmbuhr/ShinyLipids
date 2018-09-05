@@ -503,11 +503,17 @@ function(input, output, session) {
             dodge <- input$aes_pos
         }
 
+        # Add bars
+        if ("bars" %in% input$main_add){
+            plt <- plt +
+                geom_col(data = meanPlotData() ,position = dodge)
+        }
 
-        # Add bars and points
-        plt <- plt +
-            geom_col(data = meanPlotData() ,position = dodge)+
-            geom_point(position = dodge, pch = 21, alpha = .6, color = "grey90")
+        # Add points
+        if ("points" %in% input$main_add){
+            plt <- plt +
+                geom_point(position = dodge, pch = 21, alpha = .8, color = "grey90")
+        }
 
         # Error bars and mean
         plt <- plt +
@@ -522,21 +528,29 @@ function(input, output, session) {
                                  "SEM" = value + SEM
                                  #"CI" = CI_upper
                 )
-                ), color = "grey20"
+                ), alpha = .8
             )
 
+        # Hightlight Average
+        if ("mean" %in% input$main_add){
+            plt <- plt +
+                geom_errorbar(data = meanPlotData(),
+                              aes(ymin = value, ymax = value),
+                              position = dodge, color = "black")
+        }
 
         # facetting
-        if (input$aes_facet1 != "" & input$aes_facet2 != ""){
+        if (input$aes_facet1 != "" | input$aes_facet2 != ""){
+            facet_col <- vars(!!sym(input$aes_facet1))
+            facet_row <- vars(!!sym(input$aes_facet2))
+
+            if(input$aes_facet1 == ""){facet_col = NULL}
+            if(input$aes_facet2 == ""){facet_row = NULL}
+
             plt <- plt+
-                facet_grid(rows = vars(!!sym(input$aes_facet1)),
-                           cols = vars(!!sym(input$aes_facet2)),
-                           scales = "free_x"
-                )
-        }
-        if (input$aes_facet1 != "" & input$aes_facet2 == ""){
-            plt <- plt+
-                facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free_x"
+                facet_grid(cols = facet_col,
+                           rows = facet_row,
+                           scales = "free_x", space = "free_x"
                 )
         }
 
