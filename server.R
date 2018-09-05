@@ -90,15 +90,21 @@ function(input, output, session) {
         # Temporary dataframe in the scope of this function
         df <- rawData()
 
-        # TODO
-        # # Base level substraction
-        # if(input$base_sample != ""){
-        #     df %>%
-        #         mutate(
-        #             value = value - value[df$sample_identifier == input$base_sample]
-        #         ) %>%
-        #         ungroup()
-        # }
+
+        # Base level substraction
+        if(input$base_sample != ""){
+            baseline <- df %>%
+                filter(sample == input$base_sample) %>%
+                group_by(lipid) %>%
+                summarize(baseline = mean(value, na.rm = TRUE))
+            df <- df %>% left_join(baseline) %>%
+                mutate(
+                    baseline = if_else(is.na(baseline),0,baseline)
+                ) %>%
+                mutate(
+                    value = value - baseline
+                )
+        }
 
         # Standardization based on input$std_feature
         if(input$std_feature != ""){
@@ -246,11 +252,11 @@ function(input, output, session) {
         updateSelectizeInput(session, "sample_select",
                              choices = choices
         )
-        sample_IDs <- rawData()$sample_identifier %>% unique()
         updateSelectizeInput(session, "base_sample",
-                             choices = sample_IDs,
+                             choices = choices,
                              selected = ""
         )
+        sample_IDs <- rawData()$sample_identifier %>% unique()
         updateSelectizeInput(session, "sample_remove",
                              choices = choices
         )
@@ -432,14 +438,14 @@ function(input, output, session) {
             SD = sd(value, na.rm = TRUE),
             SEM = sd(value, na.rm = TRUE)/n(),
             N = n(),
-            value = mean(value, na.rm = TRUE),
-            CI_lower = value - qt(1 - (0.05 / 2), N - 1) * SEM,
-            CI_upper = value + qt(1 - (0.05 / 2), N - 1) * SEM
-        ) %>%
-            # Assumption: we are 100% sure that no lipid has a value smaller than 0
-            mutate(
-                CI_lower = if_else(CI_lower < 0, 0,CI_lower)
-            )
+            value = mean(value, na.rm = TRUE)
+            # CI_lower = value - qt(1 - (0.05 / 2), N - 1) * SEM,
+            # CI_upper = value + qt(1 - (0.05 / 2), N - 1) * SEM
+        )# %>%
+        # Assumption: we are 100% sure that no lipid has a value smaller than 0
+        # mutate(
+        #     CI_lower = if_else(CI_lower < 0, 0,CI_lower)
+        # )
 
         cat(file=stderr(), "\n meanPlotData still grouped by", paste(groups(df), collapse = ", "), "\n")
 
@@ -509,12 +515,12 @@ function(input, output, session) {
                 data = meanPlotData(), position = position_dodge2(width = 0.2, padding = 0.8),
                 aes(ymin = switch(input$main_error,
                                   "SD" = value - SD,
-                                  "SEM" = value - SEM,
-                                  "CI" = CI_lower
+                                  "SEM" = value - SEM
+                                  #"CI" = CI_lower
                 ), ymax = switch(input$main_error,
                                  "SD" = value + SD,
-                                 "SEM" = value + SEM,
-                                 "CI" = CI_upper
+                                 "SEM" = value + SEM
+                                 #"CI" = CI_upper
                 )
                 ), color = "grey20"
             )
@@ -534,6 +540,13 @@ function(input, output, session) {
                 )
         }
 
+        # Display Values as text
+        if ("values" %in% input$main_add){
+            plt <- plt +
+                geom_text(data = meanPlotData(), aes(label = round(value, 2)),
+                          vjust = 0, color = "black", position = dodge)
+        }
+
         # add theme and scale (defined in global.R) includes titles and formatting
         plt <- plt +
             mainTheme +
@@ -544,6 +557,29 @@ function(input, output, session) {
 
         # Zooming
         plt <- plt + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
+
+
+        # Logarithmic Scale
+        if ("log" %in% input$main_add){
+            plt <- plt +
+                scale_y_log10(
+                    breaks = scales::trans_breaks("log10", function(x) 10^x),
+                    labels = scales::trans_format("log10", scales::math_format(10^.x)
+                    )
+                )
+        }
+
+
+        # Swap X and Y
+        if ("swap" %in% input$main_add){
+            validate(
+                need(!("log" %in% input$main_add),
+                     "Swapped X and Y Axis are currently not supported for a logarithmic Y-Axis")
+            )
+            plt <- plt +
+                coord_flip()
+        }
+
 
         # return final plot
         plt
@@ -565,7 +601,9 @@ function(input, output, session) {
         req(meanPlotData())
 
         df <- meanPlotData()
-        df
+        df %>% select(!!sym(input$aes_x),
+                      sample,
+                      Average = value, everything())
     },
     filter = 'none',
     rownames = FALSE,
