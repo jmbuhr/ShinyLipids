@@ -235,11 +235,15 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                       box(width = 4,
                                           checkboxGroupInput("main_add", label = NULL,
                                                              choices = list(
-                                                                 ""
-                                                             )
+                                                                 "Log10 Y-Axis" = "log",
+                                                                 "Display values on bars" = "values",
+                                                                 "Show Points" = "points",
+                                                                 "Swap X- and Y-Axis" = "swap"
+                                                             ),
+                                                             selected = list("points")
                                           ),
                                           selectInput("main_error", "Type of error bars",
-                                                      choices = list("SD", "SEM", "95% CI" = "CI")
+                                                      choices = list("SD", "SEM")
                                                       )
                                       ),
                                       box(width = 3,

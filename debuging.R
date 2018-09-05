@@ -11,11 +11,17 @@ input %>% names()
 dev.off()
 sink()
 
+library(broom)
 
-p <- pcaObject()
-p %>% str()
 
-plt
+
+
+
+
+
+df$value %>% hist(breaks = 100)
+
+qqnorm(log(df$value[df$value != 0]))
 
 
 
