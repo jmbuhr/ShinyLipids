@@ -44,10 +44,10 @@ sidebar <- dashboardSidebar(
                          selectizeInput("aes_color", label = HTML("Feature to display by color /<br> y-axis of heatmap"),
                                         choices = features[-c(3,4,8,11,12)],
                                         selected = "sample"),
-                         selectizeInput("aes_facet1", label = "Feature to use for facetting 1",
+                         selectizeInput("aes_facet1", label = "Feature to use for facetting in columns",
                                         choices = features[-c(3,4,8,11,12,14)],
                                         selected = NULL),
-                         selectizeInput("aes_facet2", label = "Feature to use for facetting 2",
+                         selectizeInput("aes_facet2", label = "Feature to use for facetting in rows",
                                         choices = features[-c(3,4,8,11,12,14)],
                                         selected = NULL),
                          selectizeInput(
@@ -236,11 +236,13 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           checkboxGroupInput("main_add", label = NULL,
                                                              choices = list(
                                                                  "Log10 Y-Axis" = "log",
-                                                                 "Display values on bars" = "values",
+                                                                 "Display values" = "values",
                                                                  "Show Points" = "points",
-                                                                 "Swap X- and Y-Axis" = "swap"
+                                                                 "Show bars" = "bars",
+                                                                 "Swap X- and Y-Axis" = "swap",
+                                                                 "Highlite average" = "mean"
                                                              ),
-                                                             selected = list("points")
+                                                             selected = list("points", "bars")
                                           ),
                                           selectInput("main_error", "Type of error bars",
                                                       choices = list("SD", "SEM")
