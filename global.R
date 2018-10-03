@@ -119,8 +119,7 @@ mainTheme <- list(
         panel.background = element_rect(color = "grey70", fill = NA, size = 1),
         strip.background = element_rect(fill = "grey80", color = "black"),
         strip.text = element_text(color = "black")
-    ),
-    labs(title = "Alpha Version")
+    )
 )
 
 # Returns a function that takes an interger and creates a color palette

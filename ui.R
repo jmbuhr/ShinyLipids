@@ -248,18 +248,6 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                                       choices = list("SD", "SEM")
                                                       )
                                       ),
-                                      box(width = 3,
-                                          selectInput(
-                                              'main_plottype',
-                                              label = 'Plottype',
-                                              choices = list(
-                                                  "Barplot" = 'barplot',
-                                                  "Boxplot" = 'boxplot',
-                                                  "Points" = 'points',
-                                                  "Pointrange" = 'pointrange'
-                                              )
-                                          )
-                                      ),
                                       box(width = 4,
                                           downloadButton("main_savePlot", label = "Save plot as .pdf"),
                                           br(),
@@ -303,7 +291,7 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                              downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
                                              downloadButton("pca_saveLoadings", label = "Save Loadings Plot as .pdf"),
                                              numericInput("pca_Width", label = "width", value = 20),
-                                             numericInput("pca_Height", label = "height", value = 10)
+                                             numericInput("pca_Height", label = "height", value = 20)
                                          )
                                   ),
                                   column(width = 6,
