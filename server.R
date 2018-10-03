@@ -426,12 +426,6 @@ function(input, output, session) {
             df <- df %>% filter(!is.na(!!sym(input$aes_facet2)))
         }
 
-
-        # Maybe a baseline substraction at this point
-        #
-        #
-        #
-
         # Summation of values within the displayed aesthetics
         # TODO show individual tec. sample reps.
         # By features mapped to aesthetics, always by sample rep
@@ -601,12 +595,22 @@ function(input, output, session) {
                           vjust = 0, color = "black", position = dodge)
         }
 
+        if ("ind_values" %in% input$main_add){
+            plt <- plt +
+                geom_text(aes(label = round(value, 2)),
+                          vjust = 0, color = "black", position = dodge)
+        }
+
         # add theme and scale (defined in global.R) includes titles and formatting
         plt <- plt +
             mainTheme +
             mainScale(colorCount)+
-            guides(color = guide_legend(ncol = 12, nrow = as.integer(colorCount/12)+1 ),# usefull if way to many values of color
-                   fill = guide_legend(ncol = 12, nrow = as.integer(colorCount/12)+1 )
+            guides(color = guide_legend(ncol = 12,
+                                        nrow = as.integer(colorCount/12)+1,
+                                        title = input$aes_color),# usefull if way to many values of color
+                   fill = guide_legend(ncol = 12,
+                                       nrow = as.integer(colorCount/12)+1,
+                                       title = input$aes_color)
             )
 
         # Zooming
@@ -867,7 +871,8 @@ function(input, output, session) {
             ) +
             scale_x_discrete(expand = c(0, 0)) +
             scale_y_discrete(expand = c(0, 0)) +
-            scale_fill_viridis_c(option = input$heatColor) +
+            scale_fill_viridis_c(option = input$heatColor)+
+            labs(y = input$aes_color)
             NULL
 
         # facetting
@@ -875,12 +880,12 @@ function(input, output, session) {
             plt <- plt+
                 facet_grid(rows = vars(!!sym(input$aes_facet1)),
                            cols = vars(!!sym(input$aes_facet2)),
-                           scales = "free_x"
+                           scales = "free"
                 )
         }
         if (input$aes_facet1 != "" & input$aes_facet2 == ""){
             plt <- plt+
-                facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free_x"
+                facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free"
                 )
         }
         plt
