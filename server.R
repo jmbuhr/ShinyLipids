@@ -225,13 +225,14 @@ function(input, output, session) {
             paste0(Sys.Date(), "_", tmp, "-means" ,".csv")
         },
         content = function(file) {
-            write_csv(x = meanPlotData(), path = file)
+            write_csv(x = meanPlotData() %>% rename(mean = value), path = file)
         }
     )
 
 
     # * Plots ---------------------------------------------------------------------------------------------------------
 
+    # Main Plot
     output$main_savePlot <- downloadHandler(
         filename = function() {
             tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
@@ -241,6 +242,44 @@ function(input, output, session) {
         content = function(file) {
             ggsave(file, plot = mainPlt(),
                    width = input$mainWidth, height = input$mainHeight)
+        }
+    )
+
+    # PCA
+    output$pca_saveScores <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-PCA_scores" ,".pdf")
+        },
+        content = function(file) {
+            ggsave(file, plot = pca_ScoresPlt(),
+                   width = input$pca_Width, height = input$pca_Height)
+        }
+    )
+
+    output$pca_saveLoadings <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-PCA_loadings" ,".pdf")
+        },
+        content = function(file) {
+            ggsave(file, plot = pca_LoadingsPlt(),
+                   width = input$pca_Width, height = input$pca_Height)
+        }
+    )
+
+    # Heatmapt
+    output$heatSave <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-heatmap" ,".pdf")
+        },
+        content = function(file) {
+            ggsave(file, plot = heatPlt(),
+                   width = input$heatWidth, height = input$heatHeight)
         }
     )
 
@@ -512,7 +551,8 @@ function(input, output, session) {
         # Add points
         if ("points" %in% input$main_add){
             plt <- plt +
-                geom_point(position = dodge, pch = 21, alpha = .8, color = "grey90")
+                geom_point(position = dodge, pch = 21, alpha = 1,
+                           color = "grey95", show.legend = F)
         }
 
         # Error bars and mean
@@ -632,7 +672,6 @@ function(input, output, session) {
 
     # PCA -------------------------------------------------------------------------------------------------------------
 
-
     # ** Updating pca-options --------------------------------------------------------------------------------------------------
     # update nPCs, they should not exceed the dimensions of the data
     observe({
@@ -735,7 +774,7 @@ function(input, output, session) {
     })
 
     # ** Scores -----------------------------------------------------------------------------------------------------
-    output$pca_scores <- renderPlot({
+    pca_ScoresPlt <- reactive({
         req(pcaData(), pcaObject())
         p <- pcaObject()
 
@@ -780,11 +819,14 @@ function(input, output, session) {
         plt
     })
 
+    output$pca_scores <- renderPlot({
+        pca_ScoresPlt()
+    })
+
 
     # ** Loadings -----------------------------------------------------------------------------------------------------
 
-    output$pca_loadings <- renderPlot({
-
+    pca_LoadingsPlt <- reactive({
         req(pcaObject())
 
         loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aes_x)
@@ -795,6 +837,11 @@ function(input, output, session) {
             mainTheme+
             geom_text_repel(aes(label = !!sym(input$aes_x)))
         plt
+    })
+
+
+    output$pca_loadings <- renderPlot({
+        pca_LoadingsPlt()
     })
 
 
