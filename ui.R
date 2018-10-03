@@ -1,5 +1,5 @@
 # Header ----------------------------------------------------------------------------------------------------------
-header <- dashboardHeader(title = span(tagList(icon("flask"), span("ShinyLipids", em("alpha")))))
+header <- dashboardHeader(title = span(tagList(icon("flask"), span("ShinyLipids"))))
 
 # Sidebar ---------------------------------------------------------------------------------------------------------
 sidebar <- dashboardSidebar(
@@ -165,12 +165,11 @@ sidebar <- dashboardSidebar(
     # * Impressum -----------------------------------------------------------------------------------------------------
     menuItem("About ", href = "http://bzh.db-engine.de/default.asp?lfn=2241&fg=4289"),
     div(
-        strong("ShinyLipids alpha"),
+        strong("ShinyLipids"),
         p("Rewritten by"),
         em("Jannik Buhr"),
-        p("SL 2.0.2 -- 2018-08-28"),
-        p("includes code from:"),
-        br(),
+        p("SL 2.1.0 -- 2018-10-03"),
+        p("Based on the original Shiny Lipids by:"),
         em("Mathias Gerl"),
         br(),
         em("Manuel Haußmann"),
@@ -236,7 +235,8 @@ body <- dashboardBody(shinyjs::useShinyjs(),
                                           checkboxGroupInput("main_add", label = NULL,
                                                              choices = list(
                                                                  "Log10 Y-Axis" = "log",
-                                                                 "Display values" = "values",
+                                                                 "Display value of means" = "values",
+                                                                 "Display value of points" = "ind_values",
                                                                  "Show Points" = "points",
                                                                  "Show bars" = "bars",
                                                                  "Swap X- and Y-Axis" = "swap",

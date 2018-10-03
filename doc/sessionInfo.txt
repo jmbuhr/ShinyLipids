@@ -1,0 +1,30 @@
+R version 3.5.1 (2018-07-02)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows >= 8 x64 (build 9200)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252    LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                           LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] bindrcpp_0.2.2        shinycssloaders_0.2.0 shinydashboard_0.7.0  shinythemes_1.1.1     DT_0.4               
+ [6] shinyjs_1.0           ggrepel_0.8.0         forcats_0.3.0         stringr_1.3.1         dplyr_0.7.6          
+[11] purrr_0.2.5           readr_1.1.1           tidyr_0.8.1           tibble_1.4.2          ggplot2_3.0.0        
+[16] tidyverse_1.2.1       pcaMethods_1.72.0     Biobase_2.40.0        BiocGenerics_0.26.0   ggsignif_0.4.0       
+[21] ggthemes_4.0.1        scales_1.0.0          RColorBrewer_1.1-2    RSQLite_2.1.1         shiny_1.1.0          
+
+loaded via a namespace (and not attached):
+ [1] httr_1.3.1        bit64_0.9-7       jsonlite_1.5      viridisLite_0.3.0 modelr_0.1.2      assertthat_0.2.0  blob_1.1.1       
+ [8] cellranger_1.1.0  yaml_2.2.0        pillar_1.3.0      backports_1.1.2   lattice_0.20-35   glue_1.3.0        digest_0.6.17    
+[15] promises_1.0.1    rvest_0.3.2       colorspace_1.3-2  htmltools_0.3.6   httpuv_1.4.5      plyr_1.8.4        clipr_0.4.1      
+[22] pkgconfig_2.0.2   broom_0.5.0       haven_1.1.2       xtable_1.8-3      later_0.7.4       withr_2.1.2       lazyeval_0.2.1   
+[29] cli_1.0.0         magrittr_1.5      crayon_1.3.4      readxl_1.1.0      mime_0.5          memoise_1.1.0     nlme_3.1-137     
+[36] xml2_1.2.0        tools_3.5.1       hms_0.4.2         munsell_0.5.0     compiler_3.5.1    rlang_0.2.2.9001  grid_3.5.1       
+[43] rstudioapi_0.7    htmlwidgets_1.2   crosstalk_1.0.0   labeling_0.3      gtable_0.2.0      DBI_1.0.0         reshape2_1.4.3   
+[50] R6_2.2.2          lubridate_1.7.4   bit_1.1-14        bindr_0.1.1       stringi_1.1.7     Rcpp_0.12.18      dbplyr_1.2.2     
+[57] tidyselect_0.2.4 

@@ -1,7 +1,12 @@
 ---
-title: ' ShinyLipids _alpha_ Version History '
+title: ' ShinyLipids Version History '
 output: html_document
 ---
+
+
+## Version 2.1.0 -- 2018-10-03
+
+- Fully functional, _non-alpha_ version
 
 ## Version 2.0.2 -- 2018-08-28
 
