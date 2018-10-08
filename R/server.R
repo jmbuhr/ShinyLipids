@@ -3,9 +3,19 @@ function(input, output, session) {
 
     # Metadata / Datasets --------------------------------------------------------------------------------------------------------
 
+    # * Database connection ---------------------------------------------------------------------------------------------
+
+    # # connection
+    # database_connection = src_sqlite("../database/Sqlite_old.db")
+
+    database_connection <- reactive({
+        req(input$database_connection)
+        src_sqlite(input$database_connection["datapath"] %>% as.character())
+    })
+
     # Reading in table of datasets
     metaData <- reactive({
-        meta <- collect(tbl(database_connection, sql(sqlQueryMeta))) %>%
+        meta <- collect(tbl(database_connection(), sql(sqlQueryMeta))) %>%
             mutate(
                 date_upload = as.Date(date_upload, format = "%y%m%d"),
                 date_sample = as.Date(date_sample, format = "%y%m%d"),
@@ -60,7 +70,7 @@ function(input, output, session) {
         )
 
         query <- sqlQueryData(input$ID)
-        raw <- collect(tbl(database_connection, sql(query)))
+        raw <- collect(tbl(database_connection(), sql(query)))
         df <- raw %>%
             filter(!is.na(value))
         df <- df %>%
@@ -873,7 +883,7 @@ function(input, output, session) {
             scale_y_discrete(expand = c(0, 0)) +
             scale_fill_viridis_c(option = input$heatColor)+
             labs(y = input$aes_color)
-            NULL
+        NULL
 
         # facetting
         if (input$aes_facet1 != "" & input$aes_facet2 != ""){
