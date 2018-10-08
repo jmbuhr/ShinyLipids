@@ -44,17 +44,11 @@ library(shinycssloaders)
 options(shiny.fullstacktrace = FALSE,
         shiny.error = "default")
 
-
-# * Database connection ---------------------------------------------------------------------------------------------
-
-# connection
-database_connection = src_sqlite("database/Sqlite.db")
-
 # SQL queries
 sqlQueryMeta <- paste("SELECT * FROM id_info")
 sqlQueryData <- function(dataset_ID){
-    query <- paste("SELECT * FROM data2", "WHERE ID =", dataset_ID)
-    return(query)
+  query <- paste("SELECT * FROM data2", "WHERE ID =", dataset_ID)
+  return(query)
 }
 
 
@@ -78,17 +72,17 @@ features <- list("", #1
 
 # Global theme definition to add to ggplots
 mainTheme <- list(
-    theme_minimal(),
-    theme(
-        axis.line = element_line(colour = 'grey70', size = .75),
-        text = element_text(color = "black"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        plot.background = element_blank(),
-        legend.position = "bottom",
-        panel.background = element_rect(color = "grey70", fill = NA, size = 1),
-        strip.background = element_rect(fill = "grey80", color = "black"),
-        strip.text = element_text(color = "black")
-    )
+  theme_minimal(),
+  theme(
+    axis.line = element_line(colour = 'grey70', size = .75),
+    text = element_text(color = "black"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.background = element_blank(),
+    legend.position = "bottom",
+    panel.background = element_rect(color = "grey70", fill = NA, size = 1),
+    strip.background = element_rect(fill = "grey80", color = "black"),
+    strip.text = element_text(color = "black")
+  )
 )
 
 # Returns a function that takes an interger and creates a color palette
@@ -96,10 +90,10 @@ getPalette <- colorRampPalette(brewer.pal(9, "Set1")[-6])
 
 # Color scale
 mainScale <- function(colorCount){
-    list(
-        scale_fill_manual(values = getPalette(colorCount)),
-        scale_color_manual(values = getPalette(colorCount))
-    )
+  list(
+    scale_fill_manual(values = getPalette(colorCount)),
+    scale_color_manual(values = getPalette(colorCount))
+  )
 }
 
 
@@ -112,7 +106,7 @@ is.discrete <- function(x) is.factor(x) || is.character(x) || is.logical(x)
 # borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
 StatChull <- ggproto("StatChull", Stat,
                      compute_group = function(data, scales) {
-                         data[chull(data$x, data$y), , drop = FALSE]
+                       data[chull(data$x, data$y), , drop = FALSE]
                      },
 
                      required_aes = c("x", "y")
@@ -121,9 +115,29 @@ StatChull <- ggproto("StatChull", Stat,
 stat_chull <- function(mapping = NULL, data = NULL, geom = "polygon",
                        position = "identity", na.rm = FALSE, show.legend = NA,
                        inherit.aes = TRUE, ...) {
-    layer(
-        stat = StatChull, data = data, mapping = mapping, geom = geom,
-        position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-        params = list(na.rm = na.rm, ...)
-    )
+  layer(
+    stat = StatChull, data = data, mapping = mapping, geom = geom,
+    position = position, show.legend = show.legend, inherit.aes = inherit.aes,
+    params = list(na.rm = na.rm, ...)
+  )
 }
+
+
+
+# roxygen2 / package stuff ----------------------------------------------------------------------------------------
+
+#' @import RSQLite RColorBrewer scales ggthemes ggsignif Biobase BiocGenerics pcaMethods tidyverse
+#' @import ggrepel shiny shinyjs DT shinythemes shinydashboard shinycssloaders
+
+#' @export
+run_ShinyLipids <- function() {
+  shiny::runApp("./R", launch.browser = TRUE)
+}
+
+#
+# pkgs <- list("RSQLite", "RColorBrewer", "scales", "ggthemes",
+#              "ggsignif","Biobase", "BiocGenerics", "pcaMethods", "tidyverse",
+#              "ggrepel", "shiny", "shinyjs", "DT", "shinythemes", "shinydashboard", "shinycssloaders")
+#
+# purrr::walk(pkgs, ~devtools::use_package(package = .,type = "Imports"))
+# devtools::document()
