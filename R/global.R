@@ -8,35 +8,37 @@
 #
 #
 # BiocManager::install(pkgs = c("Biobase", "BiocGenerics", "pcaMethods"))
+# Packages that are not loaded here by library() are explicitely called
 
 # Database
 #library(jsonlite)
 library(RSQLite)
 ## Plotting
-library(RColorBrewer)
-library(scales)
+# library(RColorBrewer)
+# library(scales)
 library(ggthemes)
 library(ggsignif)
 ## Bioconductor Packages, install via
 # BiocManager::install("<package>")
-library(Biobase)
-library(BiocGenerics)
-library(pcaMethods)
+# library(Biobase)
+# library(BiocGenerics)
+# library(pcaMethods)
 ##
 library(tidyverse)
-library(ggrepel)
+# library(ggrepel)
 # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 ## Shiny
 library(shiny)
-library(shinyjs) # for UI hiding
-library(DT)
+# library(shinyjs) # for UI hiding
+# library(DT)
 library(shinythemes)
-library(shinydashboard)
-library(shinycssloaders)
+# library(shinydashboard)
+# library(shinycssloaders)
 
 
 # (.packages())
 # sessionInfo()
+# NCmisc:::list.functions.in.file("./R/global.R")
 # writeLines(capture.output(sessionInfo()), "./doc/sessionInfo.txt")
 
 # Debugging -------------------------------------------------------------------------------------------------------
@@ -86,7 +88,7 @@ mainTheme <- list(
 )
 
 # Returns a function that takes an interger and creates a color palette
-getPalette <- colorRampPalette(brewer.pal(9, "Set1")[-6])
+getPalette <- colorRampPalette(RColorBrewer::brewer.pal(9, "Set1")[-6])
 
 # Color scale
 mainScale <- function(colorCount){

@@ -27,7 +27,7 @@ function(input, output, session) {
     })
 
     # Rendering datasets as a table to send to UI
-    output$metaDataTable <- renderDT({
+    output$metaDataTable <- DT::renderDT({
         req(metaData())
 
         if (input$showFullMeta == TRUE){
@@ -376,7 +376,7 @@ function(input, output, session) {
     # Displaying main Dataset as a table ----------------------------------------------------------------------------
 
     # Rendering selected dataset as a table to send to UI
-    output$mainDataTable <- renderDT({
+    output$mainDataTable <- DT::renderDT({
         mainData()
     },
     filter = 'none',
@@ -665,7 +665,7 @@ function(input, output, session) {
 
     # meanPlotDataTable -----------------------------------------------------------------------------------------------
 
-    output$meanPlotDataTable <- renderDT({
+    output$meanPlotDataTable <- DT::renderDT({
         req(meanPlotData())
 
         df <- meanPlotData()
@@ -806,7 +806,7 @@ function(input, output, session) {
 
         if (input$pca_labels){
             plt <- plt +
-                geom_text_repel(aes(label = !!sym(ifelse(input$tecRep_average,
+                ggrepel::geom_text_repel(aes(label = !!sym(ifelse(input$tecRep_average,
                                                          "sample_replicate",
                                                          "sample_replicate_technical"))
                 ), show.legend = FALSE
@@ -820,7 +820,7 @@ function(input, output, session) {
                              aes(x = 0, y = 0, xend = PC1, yend = PC2, group = !!sym(input$aes_x)),
                              inherit.aes = FALSE, arrow = arrow(), alpha = .3
                 )+
-                geom_label_repel(data = scaled_loadings(), aes(x = PC1, y = PC2, label = !!sym(input$aes_x)),
+                ggrepel::geom_label_repel(data = scaled_loadings(), aes(x = PC1, y = PC2, label = !!sym(input$aes_x)),
                                  inherit.aes = FALSE, alpha = .3, show.legend = FALSE)
         }
 
@@ -849,7 +849,7 @@ function(input, output, session) {
             ggplot(aes(PC1, PC2))+
             geom_point(pch = 19 ,size = input$pca_pointSize / 3)+
             mainTheme+
-            geom_text_repel(aes(label = !!sym(input$aes_x)))
+            ggrepel::geom_text_repel(aes(label = !!sym(input$aes_x)))
         plt
     })
 
