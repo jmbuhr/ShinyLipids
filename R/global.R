@@ -2,39 +2,17 @@
 # Packages
 
 # install.packages(pkgs = c("tidyverse", "jsonlite", "RSQLite",
-#                  "shiny", "shinyjs", "DT", "shinythemes", "shinydashboard",
-#                  "RColorBrewer", "scales", "ggthemes", "ggsignif", "BiocManager"),
+#                  "shiny", "shinyjs", "DT", "shinydashboard",
+#                  "RColorBrewer", "scales", "ggthemes", "BiocManager"),
 #                  quiet = TRUE)
 #
 #
 # BiocManager::install(pkgs = c("Biobase", "BiocGenerics", "pcaMethods"))
 # Packages that are not loaded here by library() are explicitely called
 
-# Database
-#library(jsonlite)
-library(RSQLite)
-## Plotting
-# library(RColorBrewer)
-# library(scales)
-library(ggthemes)
-library(ggsignif)
-## Bioconductor Packages, install via
-# BiocManager::install("<package>")
-# library(Biobase)
-# library(BiocGenerics)
-# library(pcaMethods)
 ##
-library(tidyverse)
-# library(ggrepel)
-# contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
-## Shiny
+library(tidyverse) # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 library(shiny)
-# library(shinyjs) # for UI hiding
-# library(DT)
-library(shinythemes)
-# library(shinydashboard)
-# library(shinycssloaders)
-
 
 # (.packages())
 # sessionInfo()
