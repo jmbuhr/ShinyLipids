@@ -1,0 +1,41 @@
+app <- ShinyDriver$new("../")
+app$snapshotInit("GeneralTest")
+
+# Input 'mainDataTable_rows_current' was set, but doesn't have an input binding.
+# Input 'mainDataTable_rows_all' was set, but doesn't have an input binding.
+app$setInputs(tab = "main")
+# Input 'meanPlotDataTable_rows_current' was set, but doesn't have an input binding.
+# Input 'meanPlotDataTable_rows_all' was set, but doesn't have an input binding.
+app$setInputs(tab = "PCA")
+app$setInputs(tab = "heatmap")
+app$setInputs(sample_select = "01 - LD")
+app$setInputs(sample_select = c("01 - LD", "11 - opi1 plce2"))
+app$setInputs(sample_select = c("01 - LD", "11 - opi1 plce2", "03 - LD opi1"))
+app$setInputs(rep_remove = "01 - LD_A")
+app$setInputs(tecRep_remove = "01 - LD_A_a")
+app$setInputs(tecRep_remove = c("01 - LD_A_a", "11 - opi1 plce2_B_a"))
+app$setInputs(sample_select = c("01 - LD", "11 - opi1 plce2", "03 - LD opi1", "05 - WT"))
+app$setInputs(filter_class = "EE")
+app$setInputs(filter_class = c("EE", "DAG"))
+app$setInputs(filter_class = c("EE", "DAG", "PC O-"))
+app$setInputs(filter_class = c("EE", "DAG", "PC O-", "Erg"))
+app$setInputs(filter_class = c("EE", "DAG", "PC O-", "Erg", "PE O-"))
+app$setInputs(filter_class = c("EE", "DAG", "PC O-", "Erg", "PE O-", "Cer"))
+app$setInputs(filter_class = c("EE", "DAG", "PC O-", "Erg", "PE O-", "Cer", "PE"))
+app$setInputs(filter_class = c("EE", "DAG", "PC O-", "Erg", "PE O-", "Cer", "PE", "PG O-"))
+app$setInputs(base_sample = "05 - WT")
+app$setInputs(std_feature = "sample")
+app$setInputs(aes_facet1 = "sample")
+app$setInputs(aes_facet2 = "category")
+app$setInputs(filter_length = c(17, 60))
+app$setInputs(filter_length = c(17, 37))
+app$setInputs(tab = "PCA")
+app$setInputs(tab = "main")
+app$setInputs(main_add = c("points", "bars", "swap"))
+app$setInputs(main_add = c("log", "points", "bars", "swap"))
+app$setInputs(main_add = c("log", "points", "bars", "swap", "mean"))
+app$setInputs(main_add = c("log", "points", "bars", "mean"))
+app$setInputs(main_add = c("log", "ind_values", "points", "bars", "mean"))
+# Input 'mainPlot_brush' was set, but doesn't have an input binding.
+# Input 'mainPlot_dblclick' was set, but doesn't have an input binding.
+app$snapshot()

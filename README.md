@@ -21,7 +21,8 @@ implementation of new features within R. A documentation can be found on [my web
 You can download or clone this repository from GitHub. Make sure you have the latest version of R installed.
 Then, open the `ShinyLipids.Rproj`-file in in R-Studio and have a look at the file `global.R`. From line 4 onwards
 you find a list of R-packages you need in order for ShinyLipids to run smoothly. You can also have a look
-at _"docs/sessionInfo.txt"_ to see my version of R, operating system and installed packages.
+at _"docs/sessionInfo.txt"_ to see my version of R, operating system and installed packages ^[If you want to publish
+the ShinyApp on RStudio-connect, you will need a couple of addictional packages.].
 Once all packages are installed, make sure line 31 in `global.R` is active and place an approriate SQLite-database
 file under _/database/Sqlite.db_. This database file needs to contain the two tables "id_info" and "data2"
 (the naming is due to backend compatibility, because I did not touch the original server- and database-structure).
