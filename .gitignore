@@ -8,3 +8,4 @@ rsconnect
 *.html
 *.DS_Store
 debugging.R
+tests/GeneralTest-expected
