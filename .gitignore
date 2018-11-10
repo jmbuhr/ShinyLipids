@@ -7,3 +7,4 @@ rsconnect
 *.db
 *.html
 *.DS_Store
+debugging.R
