@@ -12,7 +12,8 @@ sidebar <- shinydashboard::dashboardSidebar(
         tags$style(HTML("label { margin-bottom: 3px; }")),
         tags$style(HTML(".form-group, .selectize-control {margin-bottom: 0px;}"))
     ),
-    tags$head(tags$style(".wrapper {overflow: visible !important;}")),  # This part fixes the issue of having 2 scroll bars on one side:)
+    # This part fixes the issue of having 2 scroll bars on one side :)
+    tags$head(tags$style(".wrapper {overflow: visible !important;}")),
 
     shinyjs::useShinyjs(), # needed to load java script functions
 
@@ -186,12 +187,13 @@ body <- shinydashboard::dashboardBody(
     shinydashboard::tabItems(
         shinydashboard::tabItem(
             tabName = "metadata",
-            fluidRow(
-                fileInput("database_connection",
-                          label = "Load a local Sqlite database (a .db file)",
-                          accept = c(".db")
-                          )
-            ),
+            ## Only show the selection box for the database connection of necessary
+                # fluidRow(
+                #     fileInput("database_connection",
+                #               label = "Load a local Sqlite database (a .db file)",
+                #               accept = c(".db")
+                #     )
+                # ),
             fluidRow(
                 shinydashboard::box(
                     title = NULL,

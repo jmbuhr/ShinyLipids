@@ -6,31 +6,47 @@
 #                  "RColorBrewer", "scales", "ggthemes", "BiocManager"),
 #                  quiet = TRUE)
 #
-#
 # BiocManager::install(pkgs = c("Biobase", "BiocGenerics", "pcaMethods"))
-# Packages that are not loaded here by library() are explicitely called
-
-##
-library(tidyverse) # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
-library(shiny)
+# Packages that are not attached here by library() are explicitely called via <packagename>::<function>(),
+# you still need to install them.
 
 # (.packages())
 # sessionInfo()
 # NCmisc:::list.functions.in.file("./R/global.R")
 # writeLines(capture.output(sessionInfo()), "./doc/sessionInfo.txt")
 
+# Attaching packages ----------------------------------------------------------------------------------------------
+library(tidyverse) # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+library(shiny)
+
 # Debugging -------------------------------------------------------------------------------------------------------
 
 options(shiny.fullstacktrace = FALSE,
         shiny.error = "default")
 
-# SQL queries
+
+# Database Connection ---------------------------------------------------------------------------------------------
+
+## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)
+database_connection = src_sqlite("./database/Sqlite.db")
+
+## uncomment this to read from a serverside database (and fill in credentials as necessary)
+# database_connection = src_postgres(dbname = "ldb",
+#                                    host = "129.206.154.238",
+#                                    port = 5432,
+#                                    user = "mathias")
+
+## uncomment this to read from a database on the same server this App is running (and fill in credentials as necessary)
+# database_connection = src_postgres(dbname = "ldb",
+#                                    host = "localhost",
+#                                    user = "mathias")
+
+# SQL queries -----------------------------------------------------------------------------------------------------
 sqlQueryMeta <- paste("SELECT * FROM id_info")
 sqlQueryData <- function(dataset_ID){
   query <- paste("SELECT * FROM data2", "WHERE ID =", dataset_ID)
   return(query)
 }
-
 
 # ggplot options --------------------------------------------------------------------------------------------------
 
@@ -101,23 +117,3 @@ stat_chull <- function(mapping = NULL, data = NULL, geom = "polygon",
     params = list(na.rm = na.rm, ...)
   )
 }
-
-
-
-# roxygen2 / package stuff ----------------------------------------------------------------------------------------
-
-#' @import RSQLite RColorBrewer scales ggthemes ggsignif Biobase BiocGenerics pcaMethods tidyverse
-#' @import ggrepel shiny shinyjs DT shinythemes shinydashboard shinycssloaders
-
-#' @export
-run_ShinyLipids <- function() {
-  shiny::runApp("./R", launch.browser = TRUE)
-}
-
-#
-# pkgs <- list("RSQLite", "RColorBrewer", "scales", "ggthemes",
-#              "ggsignif","Biobase", "BiocGenerics", "pcaMethods", "tidyverse",
-#              "ggrepel", "shiny", "shinyjs", "DT", "shinythemes", "shinydashboard", "shinycssloaders")
-#
-# purrr::walk(pkgs, ~devtools::use_package(package = .,type = "Imports"))
-# devtools::document()
