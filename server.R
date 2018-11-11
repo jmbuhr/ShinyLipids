@@ -337,19 +337,19 @@ function(input, output, session) {
             range(na.rm = TRUE)
         updateSliderInput(session, "filter_length",
                           min = ls[1], max = ls[2],
-                          value = c(ls[1], max = ls[2])
+                          value = c(ls[1], ls[2])
         )
         dbs <- rawData()$db %>%
             range(na.rm = TRUE)
         updateSliderInput(session, "filter_db",
                           min = dbs[1], max = dbs[2],
-                          value = c(dbs[1], max = dbs[2])
+                          value = c(dbs[1], dbs[2])
         )
         ohs <- rawData()$oh %>%
             range(na.rm = TRUE)
         updateSliderInput(session, "filter_oh",
                           min = 0, max = ohs[2],
-                          value = c(ohs[1], max = ohs[2])
+                          value = c(ohs[1], ohs[2])
         )
     })
 
