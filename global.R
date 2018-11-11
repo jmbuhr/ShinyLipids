@@ -1,40 +1,48 @@
 # Preamble --------------------------------------------------------------------------------------------------------
 # Packages
+## From global.R
+# install.packages(c("BiocManager", "ggplot2", "RColorBrewer", "shiny", "tidyr", "dbplyr"))
 
-# install.packages(pkgs = c("tidyverse", "jsonlite", "RSQLite",
-#                  "shiny", "shinyjs", "DT", "shinydashboard",
-#                  "RColorBrewer", "scales", "ggthemes", "BiocManager"),
-#                  quiet = TRUE)
-#
+## From server.R
+# install.packages(c("DT", "ggrepel", "RSQLite"))
+
+## From ui.RRSQLite
+# install.packages(c("DT", "shinycssloaders", "shinydashboard", "shinyjs"))
+
+## deprecated or installed as dependency automatically:
+# "shinyjs", "ggthemes", "jsonlite"
+
+## For deployment from RStudio
+# install.packages(c("bitops", "RCurl", "openssl", "rstudioapi"))
+
 # BiocManager::install() # installs core packages
-# BiocManager::install(pkgs = c("Biobase", "BiocGenerics", "pcaMethods"))
+# BiocManager::install(pkgs = c("pcaMethods"))
+
 # Packages that are not attached here by library() are explicitely called via <packagename>::<function>(),
 # you still need to install them.
 
 # Run this before deployment
-options(repos = BiocManager::repositories())
+options(repos = c(BiocManager::repositories()) )
 
+## If deployment fails, run this:
+# BiocManager::install("rsconnect", update = TRUE, ask = FALSE)
 
-# (.packages())
-# sessionInfo()
-# NCmisc:::list.functions.in.file("./R/global.R")
-# writeLines(capture.output(sessionInfo()), "./docs/sessionInfo.txt")
-# write.table(rsconnect::appDependencies(), "./docs/appDependencies.txt")
 
 # Attaching packages ----------------------------------------------------------------------------------------------
-library(tidyverse) # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+# library(tidyverse, quietly = TRUE) # contains: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 library(shiny)
+library(dbplyr)
+library(dplyr , quietly = TRUE)
+library(ggplot2)
+library(tidyr)
+library(purrr)
+library(RSQLite)
 
-# Debugging -------------------------------------------------------------------------------------------------------
-
-options(shiny.fullstacktrace = FALSE,
-        shiny.error = "default"
-        )
 
 # Database Connection ---------------------------------------------------------------------------------------------
 
 ## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)
-database_connection = src_sqlite("./database/Sqlite.db")
+database_connection = src_sqlite("database/Sqlite.db")
 
 ## uncomment this to read from a serverside database (and fill in credentials as necessary)
 # database_connection = src_postgres(dbname = "ldb",
@@ -102,7 +110,7 @@ mainScale <- function(colorCount){
 # helper functions -------------------------------------------------------------------------------------------------------
 
 # borrowed from plyr (https://github.com/hadley/plyr/):
-is.discrete <- function(x) is.factor(x) || is.character(x) || is.logical(x)
+is.discrete <- function(x){ is.factor(x) || is.character(x) || is.logical(x) }
 
 # Convex hull for PCA plots
 # borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
@@ -123,3 +131,16 @@ stat_chull <- function(mapping = NULL, data = NULL, geom = "polygon",
     params = list(na.rm = na.rm, ...)
   )
 }
+
+
+# Debugging -------------------------------------------------------------------------------------------------------
+
+options(shiny.fullstacktrace = FALSE,
+        shiny.error = "default"
+)
+
+# (.packages())
+# sessionInfo()
+# NCmisc:::list.functions.in.file("./R/global.R")
+# writeLines(capture.output(sessionInfo()), "./docs/sessionInfo.txt")
+# write.table(rsconnect::appDependencies(), "./docs/appDependencies.txt")
