@@ -6,14 +6,20 @@
 #                  "RColorBrewer", "scales", "ggthemes", "BiocManager"),
 #                  quiet = TRUE)
 #
+# BiocManager::install() # installs core packages
 # BiocManager::install(pkgs = c("Biobase", "BiocGenerics", "pcaMethods"))
 # Packages that are not attached here by library() are explicitely called via <packagename>::<function>(),
 # you still need to install them.
 
+# Run this before deployment
+options(repos = BiocManager::repositories())
+
+
 # (.packages())
 # sessionInfo()
 # NCmisc:::list.functions.in.file("./R/global.R")
-# writeLines(capture.output(sessionInfo()), "./doc/sessionInfo.txt")
+# writeLines(capture.output(sessionInfo()), "./docs/sessionInfo.txt")
+# write.table(rsconnect::appDependencies(), "./docs/appDependencies.txt")
 
 # Attaching packages ----------------------------------------------------------------------------------------------
 library(tidyverse) # contains: ggplot, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
@@ -22,8 +28,8 @@ library(shiny)
 # Debugging -------------------------------------------------------------------------------------------------------
 
 options(shiny.fullstacktrace = FALSE,
-        shiny.error = "default")
-
+        shiny.error = "default"
+        )
 
 # Database Connection ---------------------------------------------------------------------------------------------
 
