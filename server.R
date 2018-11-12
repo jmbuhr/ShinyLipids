@@ -860,11 +860,12 @@ function(input, output, session) {
     # * Plot Object ---------------------------------------------------------------------------------------------------
     heatPlt <- reactive({
         # dataframe
-        df <- plotData()
+        # df <- plotData()
+        df <- meanPlotData()
 
         # plot
         plt <- ggplot(df) +
-            aes(x = !!sym(input$aes_x),
+            aes(x = factor(!!sym(input$aes_x)),
                 y = factor(!!sym(input$aes_color)),
                 fill = !!sym(input$aes_y)) +
             geom_raster() +
