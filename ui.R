@@ -1,5 +1,22 @@
 # Header ----------------------------------------------------------------------------------------------------------
-header <- shinydashboard::dashboardHeader(title = span(tagList(icon("flask"), span("ShinyLipids"))))
+header <- shinydashboard::dashboardHeader(
+    title = span(tagList(icon("flask"),
+                         span("ShinyLipids"))),
+    dropdownMenu(type = "notification", badgeStatus = NULL,
+                 icon = icon("question-circle"),
+                 headerText = "Need Help?",
+                 notificationItem(text = "Documentation",
+                                  href = "https://jannikbuhr.github.io/doc/shinylipids/",
+                                  icon = icon("book"),
+                                  status = "success"
+                 ),
+                 notificationItem(text = "Contact author",
+                                  href = "https://jannikbuhr.github.io/#contact",
+                                  status = "success",
+                                  icon = icon("envelope")
+                 )
+    )
+)
 
 # Sidebar ---------------------------------------------------------------------------------------------------------
 sidebar <- shinydashboard::dashboardSidebar(
@@ -188,12 +205,12 @@ body <- shinydashboard::dashboardBody(
         shinydashboard::tabItem(
             tabName = "metadata",
             ## Only show the selection box for the database connection of necessary
-                # fluidRow(
-                #     fileInput("database_connection",
-                #               label = "Load a local Sqlite database (a .db file)",
-                #               accept = c(".db")
-                #     )
-                # ),
+            # fluidRow(
+            #     fileInput("database_connection",
+            #               label = "Load a local Sqlite database (a .db file)",
+            #               accept = c(".db")
+            #     )
+            # ),
             fluidRow(
                 shinydashboard::box(
                     title = NULL,
@@ -225,52 +242,52 @@ body <- shinydashboard::dashboardBody(
 
         # ** Main plot -------------------------------------------------------------------------------
         shinydashboard::tabItem(tabName = "main",
-                fluidRow(
-                    shinydashboard::box(
-                        title = NULL,
-                        width = 12,
-                        height = 620,
-                        status = "primary",
-                        plotOutput("mainPlot",height = 600,
-                                   dblclick = "mainPlot_dblclick",
-                                   brush = brushOpts(id = "mainPlot_brush",
-                                                     resetOnNew = TRUE)
-                        ) %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
-                    )
-                ),
-                fluidRow(
-                    shinydashboard::box(width = 4,
-                        checkboxGroupInput("main_add", label = NULL,
-                                           choices = list(
-                                               "Log10 Y-Axis" = "log",
-                                               "Display value of means" = "values",
-                                               "Display value of points" = "ind_values",
-                                               "Show Points" = "points",
-                                               "Show bars" = "bars",
-                                               "Swap X- and Y-Axis" = "swap",
-                                               "Highlite average" = "mean"
-                                           ),
-                                           selected = list("points", "bars")
-                        ),
-                        selectInput("main_error", "Type of error bars",
-                                    choices = list("SD", "SEM")
-                        )
-                    ),
-                    shinydashboard::box(width = 4,
-                        downloadButton("main_savePlot", label = "Save plot as .pdf"),
-                        br(),
-                        downloadButton("main_saveData", label = "Save datapoints as .csv"),
-                        downloadButton("main_saveMeans", label = "Save means as .csv"),
-                        numericInput("mainWidth", label = "width", value = 20),
-                        numericInput("mainHeight", label = "height", value = 10)
-                    )
-                ),
-                fluidRow(
-                    shinydashboard::box(title = "Summary",
-                        width = NULL,
-                        DT::DTOutput("meanPlotDataTable")
-                    )
-                )
+                                fluidRow(
+                                    shinydashboard::box(
+                                        title = NULL,
+                                        width = 12,
+                                        height = 620,
+                                        status = "primary",
+                                        plotOutput("mainPlot",height = 600,
+                                                   dblclick = "mainPlot_dblclick",
+                                                   brush = brushOpts(id = "mainPlot_brush",
+                                                                     resetOnNew = TRUE)
+                                        ) %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+                                    )
+                                ),
+                                fluidRow(
+                                    shinydashboard::box(width = 4,
+                                                        checkboxGroupInput("main_add", label = NULL,
+                                                                           choices = list(
+                                                                               "Log10 Y-Axis" = "log",
+                                                                               "Display value of means" = "values",
+                                                                               "Display value of points" = "ind_values",
+                                                                               "Show Points" = "points",
+                                                                               "Show bars" = "bars",
+                                                                               "Swap X- and Y-Axis" = "swap",
+                                                                               "Highlite average" = "mean"
+                                                                           ),
+                                                                           selected = list("points", "bars")
+                                                        ),
+                                                        selectInput("main_error", "Type of error bars",
+                                                                    choices = list("SD", "SEM")
+                                                        )
+                                    ),
+                                    shinydashboard::box(width = 4,
+                                                        downloadButton("main_savePlot", label = "Save plot as .pdf"),
+                                                        br(),
+                                                        downloadButton("main_saveData", label = "Save datapoints as .csv"),
+                                                        downloadButton("main_saveMeans", label = "Save means as .csv"),
+                                                        numericInput("mainWidth", label = "width", value = 20),
+                                                        numericInput("mainHeight", label = "height", value = 10)
+                                    )
+                                ),
+                                fluidRow(
+                                    shinydashboard::box(title = "Summary",
+                                                        width = NULL,
+                                                        DT::DTOutput("meanPlotDataTable")
+                                    )
+                                )
         ),
 
         # ** PCA -------------------------------------------------------------------------------------
@@ -293,53 +310,53 @@ body <- shinydashboard::dashboardBody(
             fluidRow(
                 column(width = 6,
                        shinydashboard::box(width = NULL,
-                           verbatimTextOutput("pca_info")
+                                           verbatimTextOutput("pca_info")
                        ),
                        shinydashboard::box(width = NULL,
-                           downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
-                           downloadButton("pca_saveLoadings", label = "Save Loadings Plot as .pdf"),
-                           numericInput("pca_Width", label = "width", value = 20),
-                           numericInput("pca_Height", label = "height", value = 20)
+                                           downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
+                                           downloadButton("pca_saveLoadings", label = "Save Loadings Plot as .pdf"),
+                                           numericInput("pca_Width", label = "width", value = 20),
+                                           numericInput("pca_Height", label = "height", value = 20)
                        )
                 ),
                 column(width = 6,
                        shinydashboard::box(width = NULL,
-                           checkboxInput("pca_center", "Center", TRUE),
-                           checkboxInput("pca_labels", "Sample Labels", TRUE),
-                           checkboxInput("pca_vectors", "Show original dimensions in principal component space", TRUE),
-                           checkboxInput("pca_hull", "Draw convex hull", FALSE),
-                           selectInput(
-                               "pca_scaling",
-                               "Scale",
-                               list(
-                                   "none" = "none",
-                                   "unit variance" = "uv",
-                                   "pareto" = "pareto"
-                               )
-                           ),
-                           selectInput("pca_method", "Method",
-                                       pcaMethods::listPcaMethods()[1:7],# The last three don't work for now
-                                       selected = "svd"),
-                           selectInput("pca_cv", "cross-validation",
-                                       list ("none" = "none", "Q2" =  "q2")),
-                           sliderInput(
-                               "pca_nPC",
-                               label = "Number of PCs",
-                               min = 2,
-                               max = 8,
-                               value = 2,
-                               ticks = TRUE,
-                               animate = FALSE
-                           ),
-                           sliderInput(
-                               "pca_pointSize",
-                               label = "Point Size",
-                               min = 1,
-                               max = 10,
-                               value =5,
-                               ticks = TRUE,
-                               animate = FALSE
-                           )
+                                           checkboxInput("pca_center", "Center", TRUE),
+                                           checkboxInput("pca_labels", "Sample Labels", TRUE),
+                                           checkboxInput("pca_vectors", "Show original dimensions in principal component space", TRUE),
+                                           checkboxInput("pca_hull", "Draw convex hull", FALSE),
+                                           selectInput(
+                                               "pca_scaling",
+                                               "Scale",
+                                               list(
+                                                   "none" = "none",
+                                                   "unit variance" = "uv",
+                                                   "pareto" = "pareto"
+                                               )
+                                           ),
+                                           selectInput("pca_method", "Method",
+                                                       pcaMethods::listPcaMethods()[1:7],# The last three don't work for now
+                                                       selected = "svd"),
+                                           selectInput("pca_cv", "cross-validation",
+                                                       list ("none" = "none", "Q2" =  "q2")),
+                                           sliderInput(
+                                               "pca_nPC",
+                                               label = "Number of PCs",
+                                               min = 2,
+                                               max = 8,
+                                               value = 2,
+                                               ticks = TRUE,
+                                               animate = FALSE
+                                           ),
+                                           sliderInput(
+                                               "pca_pointSize",
+                                               label = "Point Size",
+                                               min = 1,
+                                               max = 10,
+                                               value =5,
+                                               ticks = TRUE,
+                                               animate = FALSE
+                                           )
                        )
                 )
             )
@@ -347,48 +364,48 @@ body <- shinydashboard::dashboardBody(
 
         # ** heatmap ---------------------------------------------------------------------------------
         shinydashboard::tabItem(tabName = "heatmap",
-                fluidRow(
-                    shinydashboard::box(
-                        title = NULL,
-                        width = 12,
-                        status = "primary",
-                        plotOutput("heatPlot") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
-                    )
-                ),
-                fluidRow(
-                    shinydashboard::box(
-                        downloadButton("heatSave", label = "Save as .pdf"),
-                        numericInput("heatWidth", label = "width", value = 20),
-                        numericInput("heatHeight", label = "height", value = 10)
-                    ),
-                    shinydashboard::box(
-                        selectInput(
-                            "heatColor",
-                            "Color scheme",
-                            choices = list("viridis",
-                                           "magma",
-                                           "plasma",
-                                           "inferno",
-                                           "cividis")
-                        ),
-                        sliderInput(
-                            "heatLabSize",
-                            label = "Size of labels",
-                            min = 1,
-                            max = 30,
-                            value = 9,
-                            ticks = TRUE,
-                            animate = FALSE
-                        )
-                    )
-                )
+                                fluidRow(
+                                    shinydashboard::box(
+                                        title = NULL,
+                                        width = 12,
+                                        status = "primary",
+                                        plotOutput("heatPlot") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+                                    )
+                                ),
+                                fluidRow(
+                                    shinydashboard::box(
+                                        downloadButton("heatSave", label = "Save as .pdf"),
+                                        numericInput("heatWidth", label = "width", value = 20),
+                                        numericInput("heatHeight", label = "height", value = 10)
+                                    ),
+                                    shinydashboard::box(
+                                        selectInput(
+                                            "heatColor",
+                                            "Color scheme",
+                                            choices = list("viridis",
+                                                           "magma",
+                                                           "plasma",
+                                                           "inferno",
+                                                           "cividis")
+                                        ),
+                                        sliderInput(
+                                            "heatLabSize",
+                                            label = "Size of labels",
+                                            min = 1,
+                                            max = 30,
+                                            value = 9,
+                                            ticks = TRUE,
+                                            animate = FALSE
+                                        )
+                                    )
+                                )
         )
     )
 )
 
 # Initiate Dashboard page ----------------------------------------------------------------------------------------------
 shinydashboard::dashboardPage(skin = "purple",
-              title = "ShinyLipids",
-              header,
-              sidebar,
-              body)
+                              title = "ShinyLipids",
+                              header,
+                              sidebar,
+                              body)
