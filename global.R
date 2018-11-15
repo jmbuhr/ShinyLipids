@@ -4,7 +4,7 @@
 # install.packages(c("BiocManager", "ggplot2", "RColorBrewer", "shiny", "tidyr", "dbplyr"))
 
 ## From server.R
-# install.packages(c("DT", "ggrepel", "RSQLite"))
+# install.packages(c("DT", "ggrepel", "RSQLite", "umap"))
 
 ## From ui.RRSQLite
 # install.packages(c("DT", "shinycssloaders", "shinydashboard", "shinyjs"))
