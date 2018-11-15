@@ -251,6 +251,19 @@ function(input, output, session) {
         }
     )
 
+    # Heatmapt
+    output$heatSave <- downloadHandler(
+        filename = function() {
+            tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+            tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+            paste0(Sys.Date(), "_", tmp, "-heatmap" ,".pdf")
+        },
+        content = function(file) {
+            ggsave(file, plot = heatPlt(),
+                   width = input$heatWidth, height = input$heatHeight)
+        }
+    )
+
     # PCA
     output$pca_saveScores <- downloadHandler(
         filename = function() {
@@ -276,18 +289,19 @@ function(input, output, session) {
         }
     )
 
-    # Heatmapt
-    output$heatSave <- downloadHandler(
+    # UMAP
+    output$umapSave <- downloadHandler(
         filename = function() {
             tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
             tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-            paste0(Sys.Date(), "_", tmp, "-heatmap" ,".pdf")
+            paste0(Sys.Date(), "_", tmp, "-UMAP" ,".pdf")
         },
         content = function(file) {
-            ggsave(file, plot = heatPlt(),
-                   width = input$heatWidth, height = input$heatHeight)
+            ggsave(file, plot = umap_plt(),
+                   width = input$umapWidth, height = input$umapHeight)
         }
     )
+
 
     # Updating filtering options by dataset --------------------------------------------------------
 
@@ -680,6 +694,57 @@ function(input, output, session) {
     )
 
 
+    # Heatmap ---------------------------------------------------------------------------------------------------------
+
+    # * Plot Object ---------------------------------------------------------------------------------------------------
+    heatPlt <- reactive({
+        # dataframe
+        # df <- plotData()
+        df <- meanPlotData()
+
+        # plot
+        plt <- ggplot(df) +
+            aes(x = factor(!!sym(input$aes_x)),
+                y = factor(!!sym(input$aes_color)),
+                fill = !!sym(input$aes_y)) +
+            geom_raster() +
+            mainTheme +
+            theme(
+                axis.text.y = element_text(size = input$heatLabSize, colour = "black"),
+                plot.background = element_blank(),
+                panel.grid = element_blank(),
+                panel.background = element_rect(colour = NA, fill = "grey80")
+            ) +
+            scale_x_discrete(expand = c(0, 0)) +
+            scale_y_discrete(expand = c(0, 0)) +
+            scale_fill_viridis_c(option = input$heatColor)+
+            labs(y = input$aes_color)
+        NULL
+
+        # facetting
+        if (input$aes_facet1 != "" & input$aes_facet2 != ""){
+            plt <- plt+
+                facet_grid(rows = vars(!!sym(input$aes_facet1)),
+                           cols = vars(!!sym(input$aes_facet2)),
+                           scales = "free"
+                )
+        }
+        if (input$aes_facet1 != "" & input$aes_facet2 == ""){
+            plt <- plt+
+                facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free"
+                )
+        }
+        plt
+    })
+
+
+    # * Plot Render ---------------------------------------------------------------------------------------------------
+
+    output$heatPlot <-renderPlot({
+        plt <- heatPlt()
+        plt
+    })
+
     # PCA -------------------------------------------------------------------------------------------------------------
 
     # ** Updating pca-options --------------------------------------------------------------------------------------------------
@@ -845,7 +910,8 @@ function(input, output, session) {
             ggplot(aes(PC1, PC2))+
             geom_point(pch = 19 ,size = input$pca_pointSize / 3)+
             mainTheme+
-            ggrepel::geom_text_repel(aes(label = !!sym(input$aes_x)))
+            ggrepel::geom_text_repel(aes(label = !!sym(input$aes_x)),
+                                     show.legend = FALSE)
         plt
     })
 
@@ -855,57 +921,59 @@ function(input, output, session) {
     })
 
 
-    # Heatmap ---------------------------------------------------------------------------------------------------------
+    # UMAP ------------------------------------------------------------------------------------------------------------
 
-    # * Plot Object ---------------------------------------------------------------------------------------------------
-    heatPlt <- reactive({
-        # dataframe
-        # df <- plotData()
-        df <- meanPlotData()
+    umap_wide <- reactive({
+        req(rawData())
+        rawData() %>%
+            select(sample_identifier, lipid, value) %>%
+            spread(lipid, value) %>%
+            replace(is.na(.), 0)
+    })
 
-        # plot
-        plt <- ggplot(df) +
-            aes(x = factor(!!sym(input$aes_x)),
-                y = factor(!!sym(input$aes_color)),
-                fill = !!sym(input$aes_y)) +
-            geom_raster() +
+    umap_data <- reactive({
+        umap_wide() %>% select(-sample_identifier) %>% as.data.frame()
+    })
+
+    umap_labels <- reactive({
+        umap_wide() %>% select(sample_identifier)
+    })
+
+    umap_samples <- reactive({
+        req(rawData())
+        rawData() %>%
+            select(sample_identifier, sample) %>%
+            distinct()
+    })
+
+    umap_model <- reactive({
+        req(umap_data())
+        umap::umap(umap_data())
+    })
+
+    umap_annotated <- reactive({
+        req(umap_model())
+        umap_model()$layout %>%
+            as_tibble() %>%
+            bind_cols(umap_labels()) %>%
+            inner_join(umap_samples())
+    })
+
+    umap_plt <- reactive({
+        req(umap_annotated())
+        umap_annotated() %>% ggplot(aes(V1, V2, color = sample))+
+            geom_point(size = 3.4)+
             mainTheme +
-            theme(
-                axis.text.y = element_text(size = input$heatLabSize, colour = "black"),
-                plot.background = element_blank(),
-                panel.grid = element_blank(),
-                panel.background = element_rect(colour = NA, fill = "grey80")
-            ) +
-            scale_x_discrete(expand = c(0, 0)) +
-            scale_y_discrete(expand = c(0, 0)) +
-            scale_fill_viridis_c(option = input$heatColor)+
-            labs(y = input$aes_color)
-        NULL
-
-        # facetting
-        if (input$aes_facet1 != "" & input$aes_facet2 != ""){
-            plt <- plt+
-                facet_grid(rows = vars(!!sym(input$aes_facet1)),
-                           cols = vars(!!sym(input$aes_facet2)),
-                           scales = "free"
-                )
-        }
-        if (input$aes_facet1 != "" & input$aes_facet2 == ""){
-            plt <- plt+
-                facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free"
-                )
-        }
-        plt
+            ggrepel::geom_text_repel(aes(label = sample), show.legend = FALSE)
     })
 
-
-    # * Plot Render ---------------------------------------------------------------------------------------------------
-
-    output$heatPlot <-renderPlot({
-        plt <- heatPlt()
-        plt
+    output$umap_plot <- renderPlot({
+        umap_plt()
     })
 
+    output$umap_summary <- renderText({
+        #m <- umap_model()
+    })
 
 
     # End -------------------------------------------------------------------------------------------------------------

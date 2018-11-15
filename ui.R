@@ -2,19 +2,19 @@
 header <- shinydashboard::dashboardHeader(
     title = span(tagList(icon("flask"),
                          span("ShinyLipids"))),
-    dropdownMenu(type = "notification", badgeStatus = NULL,
-                 icon = icon("question-circle"),
-                 headerText = "Need Help?",
-                 notificationItem(text = "Documentation",
-                                  href = "https://jannikbuhr.github.io/doc/shinylipids/",
-                                  icon = icon("book"),
-                                  status = "success"
-                 ),
-                 notificationItem(text = "Contact author",
-                                  href = "https://jannikbuhr.github.io/#contact",
-                                  status = "success",
-                                  icon = icon("envelope")
-                 )
+    shinydashboard::dropdownMenu(type = "notification", badgeStatus = NULL,
+                                 icon = icon("question-circle"),
+                                 headerText = "Need Help?",
+                                 shinydashboard::notificationItem(text = "Documentation",
+                                                                  href = "https://jannikbuhr.github.io/doc/shinylipids/",
+                                                                  icon = icon("book"),
+                                                                  status = "success"
+                                 ),
+                                 shinydashboard::notificationItem(text = "Contact author",
+                                                                  href = "https://jannikbuhr.github.io/#contact",
+                                                                  status = "success",
+                                                                  icon = icon("envelope")
+                                 )
     )
 )
 
@@ -47,8 +47,9 @@ sidebar <- shinydashboard::dashboardSidebar(
             "Visualization",
             icon = icon("bar-chart"),
             shinydashboard::menuSubItem("Main plot", tabName = "main"),
-            shinydashboard::menuSubItem("PCA", tabName = "PCA"),
             shinydashboard::menuSubItem("Heatmap", tabName = "heatmap"),
+            shinydashboard::menuSubItem("PCA", tabName = "PCA"),
+            shinydashboard::menuSubItem("UMAP", tabName = "umap"),
             startExpanded = TRUE
         )
     ),
@@ -397,6 +398,38 @@ body <- shinydashboard::dashboardBody(
                                             ticks = TRUE,
                                             animate = FALSE
                                         )
+                                    )
+                                )
+        ),
+        shinydashboard::tabItem(tabName = "umap",
+                                fluidRow(
+                                    shinydashboard::box(
+                                        title = NULL,
+                                        width = 6,
+                                        status = "primary",
+                                        plotOutput("umap_plot") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+                                    ),
+                                    shinydashboard::box(
+                                        title = NULL,
+                                        width = 6,
+                                        status = "primary",
+                                        HTML("
+                                        This is the implementation of a farily new algorithm called UMAP, explainded in
+                                        this paper:
+                                        <a href=https://arxiv.org/abs/1802.03426>
+                                        UMAP: Uniform Manifold Approximation and Projection for
+                                             Dimension Reduction &#8211 Leland McInnes, John Healy </a>
+                                             ")
+                                    )
+                                ),
+                                fluidRow(
+                                    shinydashboard::box(
+                                        downloadButton("umapSave", label = "Save as .pdf"),
+                                        numericInput("umapWidth", label = "width", value = 10),
+                                        numericInput("umapHeight", label = "height", value = 10)
+                                    ),
+                                    shinydashboard::box(
+                                        textOutput("umap_summary")
                                     )
                                 )
         )
