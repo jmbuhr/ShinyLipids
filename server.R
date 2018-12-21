@@ -549,23 +549,23 @@ function(input, output, session) {
                 )
         }
 
-        # Dodging
-        if(input$aes_pos == "dodge2"){ dodge <- position_dodge2(width = 0.9)
-        } else {
-            dodge <- input$aes_pos
-        }
+        # # Dodging
+        # if(input$aes_pos == "dodge2"){ dodge <- position_dodge2(width = 0.9)
+        # } else {
+        #     dodge <- input$aes_pos
+        # }
 
         # Add bars
         if ("bars" %in% input$main_add){
             plt <- plt +
-                geom_col(data = meanPlotData() ,position = dodge)
+                geom_col(data = meanPlotData() ,position = position_dodge2(width = 0.9))
         }
 
         # Add points
         if ("points" %in% input$main_add){
             plt <- plt +
-                geom_point(position = dodge, pch = 21, alpha = 1,
-                           color = "grey95", show.legend = F)
+                geom_point(position = position_dodge(width = 0.9), pch = 21, alpha = 1,
+                           color = "black", show.legend = F)
         }
 
         # Error bars and mean

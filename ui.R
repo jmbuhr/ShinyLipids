@@ -52,7 +52,7 @@ sidebar <- shinydashboard::dashboardSidebar(
             shinydashboard::menuSubItem("Main plot", tabName = "main"),
             shinydashboard::menuSubItem("Heatmap", tabName = "heatmap"),
             shinydashboard::menuSubItem("PCA", tabName = "PCA"),
-            shinydashboard::menuSubItem("UMAP", tabName = "umap"),
+            shinydashboard::menuSubItem("UMAP (experimental)", tabName = "umap"),
             startExpanded = TRUE
         )
     ),
@@ -88,16 +88,6 @@ sidebar <- shinydashboard::dashboardSidebar(
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
                                      choices = features[4],# fixed to "value" for now, other choices seem not helpful to user
                                      selected = "value"),
-                         # limit options for now, dodge2 is the most usefull
-                         selectInput("aes_pos", label = "Position of colored datapoints",
-                                     choices = list(
-                                         #"stacked" = "stack",
-                                         "besides" = "dodge2"
-                                         #"filled to 100%" = "fill",
-                                         #"old besides" = "dodge",
-                                         #"jitter" = "jitter"
-                                     ),
-                                     selected = "dodge2"
                          )
                 ),
                 tabPanel("Samples",
@@ -401,7 +391,7 @@ body <- shinydashboard::dashboardBody(
                                     )
                                 )
         ),
-        shinydashboard::tabItem(tabName = "umap",
+        shinydashboard::tabItem(tabName = "umap (",
                                 fluidRow(
                                     shinydashboard::box(
                                         title = NULL,
