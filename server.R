@@ -468,7 +468,6 @@ function(input, output, session) {
             df <- df %>% group_by(sample_replicate_technical, add = TRUE)
         }
 
-
         # Sums for each group
         df <- df %>% summarize(
             value = sum(value, na.rm = TRUE)
@@ -859,11 +858,17 @@ function(input, output, session) {
             left_join(sample_names())
 
         plt <- scores %>%
-            ggplot(aes(PC1, PC2, color = sample))+
+            ggplot(aes(PC1, PC2, color = sample))
+
+        if (input$pca_hull){
+            plt <- plt +
+                stat_chull(alpha = .05, show.legend = FALSE)
+        }
+
+        plt <- plt+
             geom_point(pch = 19, size = input$pca_pointSize / 3)+
             mainTheme+
             mainScale(colorCount = colorCount)
-
 
         if (input$pca_labels){
             plt <- plt +
@@ -883,12 +888,6 @@ function(input, output, session) {
                 )+
                 ggrepel::geom_label_repel(data = scaled_loadings(), aes(x = PC1, y = PC2, label = !!sym(input$aes_x)),
                                           inherit.aes = FALSE, alpha = .3, show.legend = FALSE)
-        }
-
-
-        if (input$pca_hull){
-            plt <- plt +
-                stat_chull(alpha = .4, show.legend = FALSE)
         }
 
         plt
