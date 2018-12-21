@@ -37,6 +37,9 @@ sidebar <- shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
         # * MetaData ---------------------------------------------------------------------------------------------------
         id = "tab",
+        selectInput("ID",
+                    label = "Select dataset by clicking on the table or use this dropdown list",
+                    choices = ""),
         shinydashboard::menuItem(
             "Database info", tabName = "metadata", icon = icon("th"),
             startExpanded = TRUE
@@ -220,10 +223,6 @@ body <- shinydashboard::dashboardBody(
                     DT::DTOutput("metaDataTable"),
                     # Save buttons
                     checkboxInput("showFullMeta", label = "Show all columns", value = FALSE),
-                    selectInput("ID",
-                                label = "Select dataset by clicking on the table or use this dropdown list",
-                                choices = "",
-                                width = "50%"),
                     downloadButton("saveMeta", label = "Save metadata as .csv"),
                     downloadButton("saveRawCSV", label = "Save selected dataset as .csv (unfiltered)"),
                     downloadButton("saveMainCSV", label = "Save selected dataset as .csv (filtered)")
