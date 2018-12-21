@@ -569,20 +569,22 @@ function(input, output, session) {
         }
 
         # Error bars and mean
-        plt <- plt +
-            geom_errorbar(
-                data = meanPlotData(), position = position_dodge2(width = 0.2, padding = 0.8),
-                aes(ymin = switch(input$main_error,
-                                  "SD" = value - SD,
-                                  "SEM" = value - SEM
-                                  #"CI" = CI_lower
-                ), ymax = switch(input$main_error,
-                                 "SD" = value + SD,
-                                 "SEM" = value + SEM
-                                 #"CI" = CI_upper
+        if (input$main_error != "None"){
+            plt <- plt +
+                geom_errorbar(
+                    data = meanPlotData(), position = position_dodge2(width = 0.2, padding = 0.8),
+                    aes(ymin = switch(input$main_error,
+                                      "SD" = value - SD,
+                                      "SEM" = value - SEM
+                                      #"CI" = CI_lower
+                    ), ymax = switch(input$main_error,
+                                     "SD" = value + SD,
+                                     "SEM" = value + SEM
+                                     #"CI" = CI_upper
+                    )
+                    ), alpha = .8
                 )
-                ), alpha = .8
-            )
+        }
 
         # Hightlight Average
         if ("mean" %in% input$main_add){

@@ -75,7 +75,7 @@ sidebar <- shinydashboard::dashboardSidebar(
                          selectizeInput(
                              'std_feature', label = "Standardize to 100% within:",
                              choices = features[-4],
-                             selected = NULL
+                             selected = "sample_replicate"
                          ),
                          selectizeInput(
                              'base_sample', label = "Substract sample as baseline",
@@ -270,7 +270,8 @@ body <- shinydashboard::dashboardBody(
                                                                            selected = list("points", "bars")
                                                         ),
                                                         selectInput("main_error", "Type of error bars",
-                                                                    choices = list("SD", "SEM")
+                                                                    choices = list("SD", "SEM", "None"),
+                                                                    selected = "None"
                                                         )
                                     ),
                                     shinydashboard::box(width = 4,
