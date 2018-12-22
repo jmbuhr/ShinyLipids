@@ -74,7 +74,7 @@ function(input, output, session) {
                 sample_identifier = factor(sample_identifier),
                 lipid = factor(lipid),
                 func_cat = factor(func_cat),
-                class = fct_relevel(class, input$custom_class_order_order),
+                class = forcats::fct_relevel(class, input$custom_class_order_order),
                 category = factor(category),
                 sample = factor(sample),
                 sample_replicate = factor(sample_replicate),
