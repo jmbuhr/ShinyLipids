@@ -399,7 +399,7 @@ body <- shinydashboard::dashboardBody(
                                     )
                                 )
         ),
-        shinydashboard::tabItem(tabName = "umap (",
+        shinydashboard::tabItem(tabName = "umap",
                                 fluidRow(
                                     shinydashboard::box(
                                         title = NULL,
