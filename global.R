@@ -103,7 +103,7 @@ mainTheme <- list(
 )
 
 # Returns a function that takes an interger and creates a color palette
-getPalette <- colorRampPalette(RColorBrewer::brewer.pal(9, "Set1")[-6])
+getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1")) #[-6]
 
 # Color scale
 mainScale <- function(colorCount){

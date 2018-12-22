@@ -235,6 +235,7 @@ body <- shinydashboard::dashboardBody(
                                                    brush = brushOpts(id = "mainPlot_brush",
                                                                      resetOnNew = TRUE)
                                         ) %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+                                        #plotly::plotlyOutput("mainPlot_ly")
                                     )
                                 ),
                                 fluidRow(
@@ -275,7 +276,7 @@ body <- shinydashboard::dashboardBody(
                                                                               width = '100%'),
                                                         shinyjqui::orderInput('custom_sample_order',
                                                                               label = 'Custom Sample Order',
-                                                                              items = month.abb,
+                                                                              items = letters,
                                                                               item_class = 'primary',
                                                                               width = '100%')
                                     )
