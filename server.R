@@ -3,7 +3,7 @@ function(input, output, session) {
 
     # Metadata / Datasets ---------------------------------------------------------------------------------------------
 
-    ## Legacy code for a reactive database_connection set from the UI
+    ## Debugging code for a reactive database_connection set from the UI
     # database_connection <- reactive({
     #     req(input$database_connection)
     #     src_sqlite(input$database_connection["datapath"] %>% as.character())
@@ -74,7 +74,7 @@ function(input, output, session) {
                 sample_identifier = factor(sample_identifier),
                 lipid = factor(lipid),
                 func_cat = factor(func_cat),
-                class = factor(class),
+                class = fct_relevel(class, input$custom_class_order_order),
                 category = factor(category),
                 sample = factor(sample),
                 sample_replicate = factor(sample_replicate),
