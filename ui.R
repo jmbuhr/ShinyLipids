@@ -87,8 +87,7 @@ sidebar <- shinydashboard::dashboardSidebar(
                          # Future Defaults panel
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
                                      choices = features[4],# fixed to "value" for now, other choices seem not helpful to user
-                                     selected = "value"),
-                         )
+                                     selected = "value")
                 ),
                 tabPanel("Samples",
                          selectizeInput(
@@ -198,13 +197,6 @@ body <- shinydashboard::dashboardBody(
     shinydashboard::tabItems(
         shinydashboard::tabItem(
             tabName = "metadata",
-            ## Only show the selection box for the database connection of necessary
-            # fluidRow(
-            #     fileInput("database_connection",
-            #               label = "Load a local Sqlite database (a .db file)",
-            #               accept = c(".db")
-            #     )
-            # ),
             fluidRow(
                 shinydashboard::box(
                     title = NULL,
@@ -271,6 +263,21 @@ body <- shinydashboard::dashboardBody(
                                                         downloadButton("main_saveMeans", label = "Save means as .csv"),
                                                         numericInput("mainWidth", label = "width", value = 20),
                                                         numericInput("mainHeight", label = "height", value = 10)
+                                    )
+                                ),
+                                fluidRow(
+                                    shinydashboard::box(title = "Order",
+                                                        width = NULL,
+                                                        shinyjqui::orderInput('custom_class_order',
+                                                                              label = 'Custom Class Order',
+                                                                              items = class_levels,
+                                                                              item_class = 'primary',
+                                                                              width = '100%'),
+                                                        shinyjqui::orderInput('custom_sample_order',
+                                                                              label = 'Custom Sample Order',
+                                                                              items = month.abb,
+                                                                              item_class = 'primary',
+                                                                              width = '100%')
                                     )
                                 ),
                                 fluidRow(
