@@ -96,7 +96,6 @@ function(input, output, session) {
         # Temporary dataframe in the scope of this function
         df <- rawData()
 
-
         # Base level substraction
         if(input$base_sample != ""){
             baseline <- df %>%
@@ -591,7 +590,8 @@ function(input, output, session) {
             plt <- plt +
                 geom_errorbar(data = meanPlotData(),
                               aes(ymin = value, ymax = value),
-                              position = dodge, color = "black")
+                              position = position_dodge2(width = 0.9),
+                              color = "black", size = 1.2)
         }
 
         # facetting
@@ -613,13 +613,13 @@ function(input, output, session) {
         if ("values" %in% input$main_add){
             plt <- plt +
                 geom_text(data = meanPlotData(), aes(label = round(value, 2)),
-                          vjust = 0, color = "black", position = dodge)
+                          vjust = 0, color = "black", position = position_dodge(width = 0.9))
         }
 
         if ("ind_values" %in% input$main_add){
             plt <- plt +
                 geom_text(aes(label = round(value, 2)),
-                          vjust = 0, color = "black", position = dodge)
+                          vjust = 0, color = "black", position = position_dodge(width = 0.9))
         }
 
         # add theme and scale (defined in global.R) includes titles and formatting
@@ -659,11 +659,11 @@ function(input, output, session) {
                 coord_flip()
         }
 
-
         # return final plot
         plt
     })
 
+    #output$mainPlot_ly <- plotly::renderPlotly(plotly::ggplotly(mainPlt()))
 
     # ** Plot Render --------------------------------------------------------------------------------------------
     # create actual rendered plot output from mainPlt
@@ -859,17 +859,19 @@ function(input, output, session) {
             as_tibble(rownames = if_else(input$tecRep_average, "sample_replicate", "sample_replicate_technical")) %>%
             left_join(sample_names())
 
+        scores$sample <- factor(scores$sample)
+
         plt <- scores %>%
-            ggplot(aes(PC1, PC2, color = sample))
+            ggplot(aes(PC1, PC2, fill = sample))
 
         if (input$pca_hull){
             plt <- plt +
-                stat_chull(alpha = .05, show.legend = FALSE)
+                stat_chull(alpha = .15, show.legend = FALSE)
         }
 
         plt <- plt+
-            geom_point(pch = 19, size = input$pca_pointSize / 3)+
-            mainTheme+
+            geom_point(pch = 21, alpha = 1, size = input$pca_pointSize / 2)+
+            mainTheme +
             mainScale(colorCount = colorCount)
 
         if (input$pca_labels){
