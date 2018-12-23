@@ -242,7 +242,7 @@ body <- shinydashboard::dashboardBody(
                                     shinydashboard::box(width = 4,
                                                         checkboxGroupInput("main_add", label = NULL,
                                                                            choices = list(
-                                                                               "Log10 Y-Axis" = "log",
+                                                                               "Log1p Y-Axis" = "log",
                                                                                "Display value of means" = "values",
                                                                                "Display value of points" = "ind_values",
                                                                                "Show Points" = "points",
