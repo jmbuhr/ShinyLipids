@@ -115,7 +115,7 @@ function(input, output, session) {
         if(input$std_feature != ""){
             df <- df %>% group_by(!!sym(input$std_feature)) %>%
                 mutate(
-                    value = value / sum(value) * 100
+                    value = value / sum(value)
                 ) %>%
                 ungroup()
         }
@@ -548,16 +548,10 @@ function(input, output, session) {
                 )
         }
 
-        # # Dodging
-        # if(input$aes_pos == "dodge2"){ dodge <- position_dodge2(width = 0.9)
-        # } else {
-        #     dodge <- input$aes_pos
-        # }
-
         # Add bars
         if ("bars" %in% input$main_add){
             plt <- plt +
-                geom_col(data = meanPlotData() ,position = position_dodge2(width = 0.9))
+                geom_col(data = meanPlotData(), position = position_dodge2(width = 0.9))
         }
 
         # Add points
@@ -633,6 +627,18 @@ function(input, output, session) {
                                        nrow = as.integer(colorCount/12)+1,
                                        title = input$aes_color)
             )
+
+        # Percent scaling if something is standardized
+        if (input$std_feature != ""){
+            plt <- plt +
+                scale_y_continuous(name = "amount [ mol % ]",
+                                   labels = scales::percent_format()#, breaks = 10
+                                   )
+        } else {
+            plt <- plt +
+                scale_y_continuous(name = "amount [ µM ]",
+                                   labels = scales::number_format())
+        }
 
         # Zooming
         plt <- plt + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
