@@ -242,13 +242,15 @@ body <- shinydashboard::dashboardBody(
                                     shinydashboard::box(width = 4,
                                                         checkboxGroupInput("main_add", label = NULL,
                                                                            choices = list(
-                                                                               "Log1p Y-Axis" = "log",
-                                                                               "Display value of means" = "values",
-                                                                               "Display value of points" = "ind_values",
-                                                                               "Show Points" = "points",
+                                                                               "Show points" = "points",
                                                                                "Show bars" = "bars",
-                                                                               "Swap X- and Y-Axis" = "swap",
-                                                                               "Highlite average" = "mean"
+                                                                               "Show average" = "mean",
+                                                                               "Show value of means" = "values",
+                                                                               "Show value of points" = "ind_values",
+                                                                               "Transform y-axis log1p" = "log",
+                                                                               "Show N per sample" = "n",
+                                                                               "Label points" = "label",
+                                                                               "Swap x- and y-axis" = "swap"
                                                                            ),
                                                                            selected = list("points", "bars")
                                                         ),
