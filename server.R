@@ -96,6 +96,15 @@ function(input, output, session) {
         # Temporary dataframe in the scope of this function
         df <- rawData()
 
+        # Standardization based on input$std_feature
+        if(input$std_feature != ""){
+            df <- df %>% group_by(!!sym(input$std_feature)) %>%
+                mutate(
+                    value = value / sum(value) * 100
+                ) %>%
+                ungroup()
+        }
+
         # Base level substraction
         if(input$base_sample != ""){
             baseline <- df %>%
@@ -108,17 +117,10 @@ function(input, output, session) {
                 ) %>%
                 mutate(
                     value = value - baseline
-                )
-        }
-
-        # Standardization based on input$std_feature
-        if(input$std_feature != ""){
-            df <- df %>% group_by(!!sym(input$std_feature)) %>%
-                mutate(
-                    value = value / sum(value)
                 ) %>%
                 ungroup()
         }
+
 
         # Filtering
         # Category
@@ -628,32 +630,42 @@ function(input, output, session) {
                                        title = input$aes_color)
             )
 
-        # Percent scaling if something is standardized
-        if (input$std_feature != ""){
-            plt <- plt +
-                scale_y_continuous(name = "amount [ mol % ]",
-                                   labels = scales::percent_format()#, breaks = 10
-                                   )
+        if ("log" %in% input$main_add){
+            if (input$std_feature != ""){
+                y_name <- "amount + 1 [ Mol % ], log scale"
+                y_breaks <- scales::trans_breaks("log1p", function(x) 10^x)
+                y_labels <- scales::percent_format(scale = 1)
+                y_trans <- "log1p"
+            } else {
+                y_name <- "amount + 1 [ µM ], log scale"
+                y_breaks <- scales::trans_breaks("log1p", function(x) 10^x)
+                y_labels <- scales::trans_format("log1p", scales::math_format(10^.x))
+                y_trans <- "log1p"
+            }
         } else {
-            plt <- plt +
-                scale_y_continuous(name = "amount [ µM ]",
-                                   labels = scales::number_format())
+            if (input$std_feature != ""){
+                y_name <- "amount [ Mol % ]"
+                y_breaks <- waiver()
+                y_labels <- scales::percent_format(scale = 1)
+                y_trans <- "identity"
+            } else {
+                y_name <- "amount [ µM ]"
+                y_breaks <- waiver()
+                y_labels <- scales::number_format()
+                y_trans <- "identity"
+            }
         }
+
+        # Percent scaling if something is standardized
+        plt <- plt +
+            scale_y_continuous(name = y_name,
+                               labels = y_labels,
+                               #breaks = y_breaks,
+                               trans = y_trans
+            )
 
         # Zooming
         plt <- plt + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
-
-
-        # Logarithmic Scale
-        if ("log" %in% input$main_add){
-            plt <- plt +
-                scale_y_log10(
-                    breaks = scales::trans_breaks("log10", function(x) 10^x),
-                    labels = scales::trans_format("log10", scales::math_format(10^.x)
-                    )
-                )
-        }
-
 
         # Swap X and Y
         if ("swap" %in% input$main_add){
