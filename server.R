@@ -605,18 +605,43 @@ function(input, output, session) {
                 )
         }
 
-        # Display Values as text
+        # Display value of means as text
         if ("values" %in% input$main_add){
             plt <- plt +
                 geom_text(data = meanPlotData(), aes(label = round(value, 2)),
                           vjust = 0, color = "black", position = position_dodge(width = 0.9))
         }
 
+        # Display value of points as text
         if ("ind_values" %in% input$main_add){
             plt <- plt +
                 geom_text(aes(label = round(value, 2)),
                           vjust = 0, color = "black", position = position_dodge(width = 0.9))
         }
+
+        # Label points
+        if ("label" %in% input$main_add){
+            plt <- plt +
+                geom_text(
+                    aes(label = !!sym(ifelse(input$tecRep_average,
+                                             "sample_replicate",
+                                             "sample_replicate_technical"))
+                    ),
+                    vjust = 0,
+                    hjust = 0,
+                    color = "black",
+                    position = position_dodge(width = 0.9)
+                )
+        }
+
+        # Show N
+        if ("n" %in% input$main_add){
+            browser()
+            plt <- plt +
+                geom_text(aes(label = round(value, 2)),
+                          vjust = 0, color = "black", position = position_dodge(width = 0.9))
+        }
+
 
         # add theme and scale (defined in global.R) includes titles and formatting
         plt <- plt +
@@ -630,6 +655,7 @@ function(input, output, session) {
                                        title = input$aes_color)
             )
 
+        # Log scale, name of y-axis and percent format for standardized data
         if ("log" %in% input$main_add){
             if (input$std_feature != ""){
                 y_name <- "amount [ Mol % ], log1p scale"
@@ -656,7 +682,6 @@ function(input, output, session) {
             }
         }
 
-        # Percent scaling if something is standardized
         plt <- plt +
             scale_y_continuous(name = y_name,
                                labels = y_labels,
