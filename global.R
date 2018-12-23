@@ -66,19 +66,37 @@ sqlQueryData <- function(dataset_ID){
 
 # Features that can serve as aesthetics (visual mappings, short aes) in plots
 features <- list("", #1
-                 "sample", #2
-                 "lipid", #3
+                 "Sample" = "sample", #2
+                 "Lipid species" = "lipid", #3
                  "value", #4
-                 "category", #5
-                 "functional category" = "func_cat", #6
-                 "class",#7
-                 "length",#8
-                 "double bound" ="db",#9
-                 "hydroxylation" = "oh",#10
-                 "chains",#11
-                 "chain_sums",#12
-                 "sample_replicate",#13
-                 "sample_replicate_technical")#14
+                 "Category" = "category", #5
+                 "Functional category" = "func_cat", #6
+                 "Class" = "class", #7
+                 "Chain Length" = "length", #8
+                 "Double bonds" ="db", #9
+                 "Hydroxylation state" = "oh", #10
+                 "Chains" = "chains", #11
+                 "Chain sums" = "chain_sums", #12
+                 "Sample replicate" = "sample_replicate", #13
+                 "Sample replicate technical" = "sample_replicate_technical" #14
+)
+
+features_std <- list("", #1
+                     "Sample" = "sample", #2
+                     "Lipid species" = "lipid", #3
+                     "value", #4
+                     "Category" = "category", #5
+                     "Functional category" = "func_cat", #6
+                     "Class" = "class", #7
+                     "Chain Length" = "length", #8
+                     "Double bonds" ="db", #9
+                     "Hydroxylation state" = "oh", #10
+                     "Chains" = "chains", #11
+                     "Chain sums" = "chain_sums", #12
+                     "Sample replicate" = "sample_replicate", #13
+                     "Sample replicate technical" = "sample_replicate_technical" #14
+)
+
 
 class_levels <- c("PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE", "PS",
                   "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG", "PA", "PA O-",
@@ -92,7 +110,7 @@ mainTheme <- list(
   theme_minimal(),
   theme(
     axis.line = element_line(colour = 'grey70', size = .75),
-    text = element_text(color = "black"),
+    text = element_text(color = "black", face = "bold", family = "sans"),
     axis.text.x = element_text(angle = 45, hjust = 1),
     plot.background = element_blank(),
     legend.position = "bottom",
