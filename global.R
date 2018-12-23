@@ -4,7 +4,7 @@
 # install.packages(c("BiocManager", "ggplot2", "RColorBrewer", "shiny", "tidyr", "dbplyr"))
 
 ## From server.R
-# install.packages(c("DT", "ggrepel", "RSQLite", "umap"))
+# install.packages(c("DT", "ggrepel", "RSQLite", "umap", "readr"))
 
 ## From ui.RRSQLite
 # install.packages(c("DT", "shinycssloaders", "shinydashboard", "shinyjs"))
@@ -31,7 +31,7 @@ options(repos = c(BiocManager::repositories()) )
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(tidyverse, quietly = TRUE) # contains: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 library(shiny)
-library(dbplyr)
+#library(dbplyr)
 library(dplyr , quietly = TRUE)
 library(ggplot2)
 library(tidyr)

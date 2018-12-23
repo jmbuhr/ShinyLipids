@@ -178,11 +178,11 @@ function(input, output, session) {
     # * metadata and raw datasets ------------------------------------------------------------------------------------
     # Metadata - .csv
     output$saveMeta <- downloadHandler(
-        filename = function() {
+        filename = function(){
             paste0("datasets_info.csv")
         },
         content = function(file) {
-            write_csv(x = metaData(), path = file)
+            readr::write_csv(x = metaData(), path = file)
         }
     )
 
@@ -194,7 +194,7 @@ function(input, output, session) {
             paste0(Sys.Date(), "_", tmp, "-raw" ,".csv")
         },
         content = function(file) {
-            write_csv(x = rawData(), path = file)
+            readr::write_csv(x = rawData(), path = file)
         }
     )
 
@@ -206,7 +206,7 @@ function(input, output, session) {
             paste0(Sys.Date(), "_", tmp, "-filtered" ,".csv")
         },
         content = function(file) {
-            write_csv(x = mainData(), path = file)
+            readr::write_csv(x = mainData(), path = file)
         }
     )
 
@@ -220,7 +220,7 @@ function(input, output, session) {
             paste0(Sys.Date(), "_", tmp, "-plot" ,".csv")
         },
         content = function(file) {
-            write_csv(x = plotData(), path = file)
+            readr::write_csv(x = plotData(), path = file)
         }
     )
 
@@ -232,7 +232,7 @@ function(input, output, session) {
             paste0(Sys.Date(), "_", tmp, "-means" ,".csv")
         },
         content = function(file) {
-            write_csv(x = meanPlotData() %>% rename(mean = value), path = file)
+            readr::write_csv(x = meanPlotData() %>% rename(mean = value), path = file)
         }
     )
 
@@ -632,12 +632,12 @@ function(input, output, session) {
 
         if ("log" %in% input$main_add){
             if (input$std_feature != ""){
-                y_name <- "amount + 1 [ Mol % ], log scale"
+                y_name <- "amount [ Mol % ], log1p scale"
                 y_breaks <- scales::trans_breaks("log1p", function(x) 10^x)
                 y_labels <- scales::percent_format(scale = 1)
                 y_trans <- "log1p"
             } else {
-                y_name <- "amount + 1 [ µM ], log scale"
+                y_name <- "amount [ µM ], log1p scale"
                 y_breaks <- scales::trans_breaks("log1p", function(x) 10^x)
                 y_labels <- scales::trans_format("log1p", scales::math_format(10^.x))
                 y_trans <- "log1p"
