@@ -60,33 +60,52 @@ sidebar <- shinydashboard::dashboardSidebar(
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills",
                 tabPanel("Mapping",
-                         selectInput("aes_x", label = HTML("Feature to display on x-Axis /<br>use in the PCA"),
-                                     choices = features[-c(4)],
+                         selectInput("aes_x",
+                                     label = HTML("Feature to display on x-Axis /<br>use in the PCA"),
+                                     choices = features[!features %in% c("value")],
                                      selected = "class"),
-                         selectizeInput("aes_color", label = HTML("Feature to display by color /<br> y-axis of heatmap"),
-                                        choices = features[-c(3,4,8,11,12)],
+                         selectizeInput("aes_color",
+                                        label = HTML("Feature to display by color /<br> y-axis of heatmap"),
+                                        choices = features[!features %in% c("lipid",
+                                                                            "value",
+                                                                            "length",
+                                                                            "chains",
+                                                                            "chain_sums",
+                                                                            "sample_replicate_technical")],
                                         selected = "sample"),
-                         selectizeInput("aes_facet1", label = "Feature to use for facetting in columns",
-                                        choices = features[-c(3,4,8,11,12,14)],
+                         selectizeInput("aes_facet1",
+                                        label = "Feature to use for facetting in columns",
+                                        choices = features[!features %in% c("lipid",
+                                                                             "value",
+                                                                             "length",
+                                                                             "chains",
+                                                                             "chain_sums",
+                                                                             "sample_replicate_technical")],
                                         selected = NULL),
-                         selectizeInput("aes_facet2", label = "Feature to use for facetting in rows",
-                                        choices = features[-c(3,4,8,11,12,14)],
+                         selectizeInput("aes_facet2",
+                                        label = "Feature to use for facetting in rows",
+                                        choices = features[!features %in% c("lipid",
+                                                                             "value",
+                                                                             "length",
+                                                                             "chains",
+                                                                             "chain_sums",
+                                                                             "sample_replicate_technical")],
                                         selected = NULL),
-                         selectizeInput(
-                             'std_feature', label = "Standardize to 100% within:",
-                             choices = features[-4],
-                             selected = "sample_replicate"
+                         selectizeInput("std_feature",
+                                        label = "Standardize to 100% within:",
+                                        choices = features[!features %in% c("value")],
+                                        selected = "sample_replicate"
                          ),
-                         selectizeInput(
-                             'base_sample', label = "Substract sample as baseline",
-                             choices = "",
-                             selected = NULL
+                         selectizeInput("base_sample",
+                                        label = "Substract sample as baseline",
+                                        choices = "",
+                                        selected = NULL
                          )
                 ),
                 tabPanel("Defaults",
                          # Future Defaults panel
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
-                                     choices = features[4],# fixed to "value" for now, other choices seem not helpful to user
+                                     choices = features[features %in% c("value")],# fixed to "value" for now, other choices seem not helpful to user
                                      selected = "value")
                 ),
                 tabPanel("Samples",
@@ -248,7 +267,7 @@ body <- shinydashboard::dashboardBody(
                                                                                "Show value of means" = "values",
                                                                                "Show value of points" = "ind_values",
                                                                                "Transform y-axis log1p" = "log",
-                                                                               "Show N per sample" = "n",
+                                                                               "Show N per sample" = "N",
                                                                                "Label points" = "label",
                                                                                "Swap x- and y-axis" = "swap"
                                                                            ),

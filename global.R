@@ -65,20 +65,20 @@ sqlQueryData <- function(dataset_ID){
 # ggplot options --------------------------------------------------------------------------------------------------
 
 # Features that can serve as aesthetics (visual mappings, short aes) in plots
-features <- list("", #1
-                 "Sample" = "sample", #2
-                 "Lipid species" = "lipid", #3
-                 "value", #4
-                 "Category" = "category", #5
-                 "Functional category" = "func_cat", #6
-                 "Class" = "class", #7
-                 "Chain Length" = "length", #8
-                 "Double bonds" ="db", #9
-                 "Hydroxylation state" = "oh", #10
-                 "Chains" = "chains", #11
-                 "Chain sums" = "chain_sums", #12
-                 "Sample replicate" = "sample_replicate", #13
-                 "Sample replicate technical" = "sample_replicate_technical" #14
+features <- c("",
+              "value",
+              "Sample" = "sample",
+              "Sample replicate" = "sample_replicate",
+              "Sample replicate technical" = "sample_replicate_technical",
+              "Class" = "class",
+              "Lipid species" = "lipid",
+              "Category" = "category",
+              "Functional category" = "func_cat",
+              "Chain Length" = "length",
+              "Double bonds" ="db",
+              "Hydroxylation state" = "oh",
+              "Chains" = "chains",
+              "Chain sums" = "chain_sums"
 )
 
 features_std <- list("", #1
