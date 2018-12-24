@@ -101,7 +101,7 @@ function(input, output, session) {
 
         # Standardization based on input$std_feature
         if (input$std_feature != "") {
-            df <- df %>% group_by(!!sym(input$std_feature)) %>%
+            df <- df %>% group_by(id, !!sym(input$std_feature)) %>%
                 mutate(value = value / sum(value) * 100) %>%
                 ungroup()
         }
@@ -117,7 +117,6 @@ function(input, output, session) {
                 mutate(value = value - baseline) %>%
                 ungroup()
         }
-
 
         # Filtering
         # Category
@@ -1122,62 +1121,6 @@ function(input, output, session) {
     output$pca_loadings <- renderPlot({
         pca_LoadingsPlt()
     })
-
-
-    # UMAP ------------------------------------------------------------------------------------------------------------
-
-    umap_wide <- reactive({
-        req(rawData())
-        rawData() %>%
-            select(sample_identifier, lipid, value) %>%
-            spread(lipid, value) %>%
-            replace(is.na(.), 0)
-    })
-
-    umap_data <- reactive({
-        umap_wide() %>% select(-sample_identifier) %>% as.data.frame()
-    })
-
-    umap_labels <- reactive({
-        umap_wide() %>% select(sample_identifier)
-    })
-
-    umap_samples <- reactive({
-        req(rawData())
-        rawData() %>%
-            select(sample_identifier, sample) %>%
-            distinct()
-    })
-
-    umap_model <- reactive({
-        req(umap_data())
-        umap::umap(umap_data())
-    })
-
-    umap_annotated <- reactive({
-        req(umap_model())
-        umap_model()$layout %>%
-            as_tibble() %>%
-            bind_cols(umap_labels()) %>%
-            inner_join(umap_samples())
-    })
-
-    umap_plt <- reactive({
-        req(umap_annotated())
-        umap_annotated() %>% ggplot(aes(V1, V2, color = sample)) +
-            geom_point(size = 3.4) +
-            mainTheme +
-            ggrepel::geom_text_repel(aes(label = sample), show.legend = FALSE)
-    })
-
-    output$umap_plot <- renderPlot({
-        umap_plt()
-    })
-
-    output$umap_summary <- renderText({
-        #m <- umap_model()
-    })
-
 
     # End -------------------------------------------------------------------------------------------------------------
     # End session when window is closed
