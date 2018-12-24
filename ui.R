@@ -52,7 +52,6 @@ sidebar <- shinydashboard::dashboardSidebar(
             shinydashboard::menuSubItem("Main plot", tabName = "main"),
             shinydashboard::menuSubItem("Heatmap", tabName = "heatmap"),
             shinydashboard::menuSubItem("PCA", tabName = "PCA"),
-            shinydashboard::menuSubItem("UMAP (experimental)", tabName = "umap"),
             startExpanded = TRUE
         )
     ),
@@ -94,7 +93,7 @@ sidebar <- shinydashboard::dashboardSidebar(
                          selectizeInput("std_feature",
                                         label = "Standardize to 100% within:",
                                         choices = features[!features %in% c("value")],
-                                        selected = "sample_replicate"
+                                        selected = "sample_replicate_technical"
                          ),
                          selectizeInput("base_sample",
                                         label = "Substract sample as baseline",
@@ -417,38 +416,6 @@ body <- shinydashboard::dashboardBody(
                                             ticks = TRUE,
                                             animate = FALSE
                                         )
-                                    )
-                                )
-        ),
-        shinydashboard::tabItem(tabName = "umap",
-                                fluidRow(
-                                    shinydashboard::box(
-                                        title = NULL,
-                                        width = 6,
-                                        status = "primary",
-                                        plotOutput("umap_plot") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
-                                    ),
-                                    shinydashboard::box(
-                                        title = NULL,
-                                        width = 6,
-                                        status = "primary",
-                                        HTML("
-                                        This is the implementation of a farily new algorithm called UMAP, explainded in
-                                        this paper:
-                                        <a href=https://arxiv.org/abs/1802.03426>
-                                        UMAP: Uniform Manifold Approximation and Projection for
-                                             Dimension Reduction &#8211 Leland McInnes, John Healy </a>
-                                             ")
-                                    )
-                                ),
-                                fluidRow(
-                                    shinydashboard::box(
-                                        downloadButton("umapSave", label = "Save as .pdf"),
-                                        numericInput("umapWidth", label = "width", value = 10),
-                                        numericInput("umapHeight", label = "height", value = 10)
-                                    ),
-                                    shinydashboard::box(
-                                        textOutput("umap_summary")
                                     )
                                 )
         )

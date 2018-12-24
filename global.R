@@ -31,18 +31,17 @@ options(repos = c(BiocManager::repositories()) )
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(tidyverse, quietly = TRUE) # contains: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 library(shiny)
-#library(dbplyr)
-library(dplyr , quietly = TRUE)
-library(ggplot2)
-library(tidyr)
-library(purrr)
-library(RSQLite)
+library(dplyr, quietly = TRUE)
+library(ggplot2, quietly = TRUE)
+library(tidyr, quietly = TRUE)
+library(purrr, quietly = TRUE)
+library(RSQLite, quietly = TRUE)
 
 
 # Database Connection ---------------------------------------------------------------------------------------------
 
 ## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)
-database_connection = src_sqlite("database/Sqlite.db")
+database_connection = DBI::dbConnect(RSQLite::SQLite(), "database/Sqlite.db")
 
 ## uncomment this to read from a serverside database (and fill in credentials as necessary)
 # database_connection = src_postgres(dbname = "ldb",
