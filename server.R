@@ -524,14 +524,14 @@ function(input, output, session) {
             SD = sd(value, na.rm = TRUE),
             SEM = sd(value, na.rm = TRUE) / n(),
             N = n(),
-            value = mean(value, na.rm = TRUE)
-            # CI_lower = value - qt(1 - (0.05 / 2), N - 1) * SEM,
-            # CI_upper = value + qt(1 - (0.05 / 2), N - 1) * SEM
+            value = mean(value, na.rm = TRUE)#,
+            #CI_lower = value - qt(1 - (0.05 / 2), N - 1) * SEM,
+            #CI_upper = value + qt(1 - (0.05 / 2), N - 1) * SEM
         )# %>%
-        # Assumption: we are 100% sure that no lipid has a value smaller than 0
-        # mutate(
-        #     CI_lower = if_else(CI_lower < 0, 0,CI_lower)
-        # )
+            # assumption: we are 100% sure that no lipid has a value smaller than 0
+            # mutate(
+            #     CI_lower = if_else(CI_lower < 0, 0,CI_lower)
+            # )
 
         df
     })
@@ -557,8 +557,22 @@ function(input, output, session) {
     mainPlt <- reactive({
         req(plotData())
         req(meanPlotData())
-        # temporary dataframe inside this function
+
         df <- plotData()
+        mean_df <- meanPlotData()
+
+        if ("length" %in% names(df)){
+            df <-
+                df %>%
+                ungroup() %>%
+                mutate(length = factor(length)) %>%
+                group_by(length)
+            mean_df <-
+                mean_df %>%
+                ungroup() %>%
+                mutate(length = factor(length)) %>%
+                group_by(length)
+        }
 
         # basic plot object
         plt <- df %>%
@@ -583,7 +597,7 @@ function(input, output, session) {
         # Add bars
         if ("bars" %in% input$main_add) {
             plt <- plt +
-                geom_col(data = meanPlotData(),
+                geom_col(data = mean_df,
                          position = position_dodge2(width = 0.9))
         }
 
@@ -603,7 +617,7 @@ function(input, output, session) {
         if (input$main_error != "None") {
             plt <- plt +
                 geom_errorbar(
-                    data = meanPlotData(),
+                    data = mean_df,
                     position = position_dodge2(width = 0.2, padding = 0.8),
                     aes(ymin = switch(
                         input$main_error,
@@ -624,7 +638,7 @@ function(input, output, session) {
         if ("mean" %in% input$main_add) {
             plt <- plt +
                 geom_errorbar(
-                    data = meanPlotData(),
+                    data = mean_df,
                     aes(ymin = value, ymax = value),
                     position = position_dodge2(width = 0.9),
                     color = "black",
@@ -657,7 +671,7 @@ function(input, output, session) {
         if ("values" %in% input$main_add) {
             plt <- plt +
                 geom_text(
-                    data = meanPlotData(),
+                    data = mean_df,
                     aes(label = round(value, 2)),
                     vjust = 0,
                     color = "black",
@@ -698,7 +712,7 @@ function(input, output, session) {
         if ("N" %in% input$main_add) {
             plt <- plt +
                 geom_text(
-                    data = meanPlotData(),
+                    data = mean_df,
                     aes(y = -Inf, label = N),
                     # fix at some interval
                     vjust = -1,
@@ -715,15 +729,13 @@ function(input, output, session) {
             guides(
                 color = guide_legend(
                     ncol = 12,
-                    nrow = as.integer(colorCount / 12) +
-                        1,
+                    nrow = as.integer(colorCount / 12) + 1,
                     title = input$aes_color
                 ),
                 # usefull if way to many values of color
                 fill = guide_legend(
                     ncol = 12,
-                    nrow = as.integer(colorCount / 12) +
-                        1,
+                    nrow = as.integer(colorCount / 12) + 1,
                     title = input$aes_color
                 )
             )
@@ -798,7 +810,6 @@ function(input, output, session) {
 
 
     # meanPlotDataTable -----------------------------------------------------------------------------------------------
-
     output$meanPlotDataTable <- DT::renderDT({
         req(meanPlotData())
 
@@ -820,12 +831,17 @@ function(input, output, session) {
 
 
     # Heatmap ---------------------------------------------------------------------------------------------------------
-
     # * Plot Object ---------------------------------------------------------------------------------------------------
     heatPlt <- reactive({
         # dataframe
         # df <- plotData()
         df <- meanPlotData()
+
+        if (input$std_feature != "") {
+            fill_name <- "amount [ Mol % ]"
+        } else {
+            fill_name <- "amount [ µM ]"
+        }
 
         # plot
         plt <- ggplot(df) +
@@ -845,7 +861,9 @@ function(input, output, session) {
             scale_x_discrete(expand = c(0, 0)) +
             scale_y_discrete(expand = c(0, 0)) +
             scale_fill_viridis_c(option = input$heatColor) +
-            labs(y = input$aes_color)
+            labs(y = input$aes_color,
+                 x = input$aes_x,
+                 fill = fill_name)
         NULL
 
         # facetting

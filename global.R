@@ -27,6 +27,8 @@ options(repos = c(BiocManager::repositories()))
 ## If deployment fails, run this:
 # BiocManager::install("rsconnect", update = TRUE, ask = FALSE)
 
+## Debug
+options(shiny.fullstacktrace = FALSE, shiny.error = browser)
 
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(tidyverse, quietly = TRUE) # contains: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
@@ -39,7 +41,6 @@ library(RSQLite, quietly = TRUE)
 
 
 # Database Connection ---------------------------------------------------------------------------------------------
-
 ## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)
 database_connection = DBI::dbConnect(RSQLite::SQLite(), "database/Sqlite.db")
 
@@ -75,52 +76,20 @@ features <- c(
   "Lipid species" = "lipid",
   "Category" = "category",
   "Functional category" = "func_cat",
-  "Chain Length" = "length",
   "Double bonds" = "db",
   "Hydroxylation state" = "oh",
+  "Chain Length" = "length",
   "Chains" = "chains",
   "Chain sums" = "chain_sums"
 )
 
-features_std <- list(
-  "",
-  #1
-  "Sample" = "sample",
-  #2
-  "Lipid species" = "lipid",
-  #3
-  "value",
-  #4
-  "Category" = "category",
-  #5
-  "Functional category" = "func_cat",
-  #6
-  "Class" = "class",
-  #7
-  "Chain Length" = "length",
-  #8
-  "Double bonds" = "db",
-  #9
-  "Hydroxylation state" = "oh",
-  #10
-  "Chains" = "chains",
-  #11
-  "Chain sums" = "chain_sums",
-  #12
-  "Sample replicate" = "sample_replicate",
-  #13
-  "Sample replicate technical" = "sample_replicate_technical" #14
-)
-
 
 # Lipid class order -----------------------------------------------------------------------------------------------
-
 if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(database_connection)) {
   class_levels <-
     collect(tbl(database_connection, "LIPID_CLASS_ORDER_COMPLETE")) %>%
     arrange(class_order) %>%
     pull(class)
-  DBI::dbDisconnect(database_connection)
 } else {
   class_levels <- c("PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE",
                     "PS", "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG", "PA",
