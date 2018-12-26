@@ -22,7 +22,7 @@
 # you still need to install them.
 
 # Run this before deployment
-options(repos = c(BiocManager::repositories()) )
+options(repos = c(BiocManager::repositories()))
 
 ## If deployment fails, run this:
 # BiocManager::install("rsconnect", update = TRUE, ask = FALSE)
@@ -30,7 +30,7 @@ options(repos = c(BiocManager::repositories()) )
 
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(tidyverse, quietly = TRUE) # contains: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
-library(shiny)
+library(shiny, quietly = TRUE)
 library(dplyr, quietly = TRUE)
 library(ggplot2, quietly = TRUE)
 library(tidyr, quietly = TRUE)
@@ -56,60 +56,90 @@ database_connection = DBI::dbConnect(RSQLite::SQLite(), "database/Sqlite.db")
 
 # SQL queries -----------------------------------------------------------------------------------------------------
 sqlQueryMeta <- paste("SELECT * FROM id_info")
-sqlQueryData <- function(dataset_ID){
+sqlQueryData <- function(dataset_ID) {
   query <- paste("SELECT * FROM data2", "WHERE ID =", dataset_ID)
   return(query)
 }
 
+
 # ggplot options --------------------------------------------------------------------------------------------------
 
 # Features that can serve as aesthetics (visual mappings, short aes) in plots
-features <- c("",
-              "value",
-              "Sample" = "sample",
-              "Sample replicate" = "sample_replicate",
-              "Sample replicate technical" = "sample_replicate_technical",
-              "Class" = "class",
-              "Lipid species" = "lipid",
-              "Category" = "category",
-              "Functional category" = "func_cat",
-              "Chain Length" = "length",
-              "Double bonds" ="db",
-              "Hydroxylation state" = "oh",
-              "Chains" = "chains",
-              "Chain sums" = "chain_sums"
+features <- c(
+  "",
+  "value",
+  "Sample" = "sample",
+  "Sample replicate" = "sample_replicate",
+  "Sample replicate technical" = "sample_replicate_technical",
+  "Class" = "class",
+  "Lipid species" = "lipid",
+  "Category" = "category",
+  "Functional category" = "func_cat",
+  "Chain Length" = "length",
+  "Double bonds" = "db",
+  "Hydroxylation state" = "oh",
+  "Chains" = "chains",
+  "Chain sums" = "chain_sums"
 )
 
-features_std <- list("", #1
-                     "Sample" = "sample", #2
-                     "Lipid species" = "lipid", #3
-                     "value", #4
-                     "Category" = "category", #5
-                     "Functional category" = "func_cat", #6
-                     "Class" = "class", #7
-                     "Chain Length" = "length", #8
-                     "Double bonds" ="db", #9
-                     "Hydroxylation state" = "oh", #10
-                     "Chains" = "chains", #11
-                     "Chain sums" = "chain_sums", #12
-                     "Sample replicate" = "sample_replicate", #13
-                     "Sample replicate technical" = "sample_replicate_technical" #14
+features_std <- list(
+  "",
+  #1
+  "Sample" = "sample",
+  #2
+  "Lipid species" = "lipid",
+  #3
+  "value",
+  #4
+  "Category" = "category",
+  #5
+  "Functional category" = "func_cat",
+  #6
+  "Class" = "class",
+  #7
+  "Chain Length" = "length",
+  #8
+  "Double bonds" = "db",
+  #9
+  "Hydroxylation state" = "oh",
+  #10
+  "Chains" = "chains",
+  #11
+  "Chain sums" = "chain_sums",
+  #12
+  "Sample replicate" = "sample_replicate",
+  #13
+  "Sample replicate technical" = "sample_replicate_technical" #14
 )
 
 
-class_levels <- c("PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE", "PS",
-                  "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG", "PA", "PA O-",
-                  "LPA", "CL", "MLCL", "Cer", "SM", "HexCer", "SGalCer", "GM3",
-                  "Sulf", "diHexCer", "Hex2Cer", "For", "IPC", "MIPC", "M(IP)2C",
-                  "Chol", "Desm", "Erg", "CE", "EE", "DAG", "TAG", "PIP", "PIP2",
-                  "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi", "PGP", "WE", "FA")
+# Lipid class order -----------------------------------------------------------------------------------------------
+
+if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(database_connection)) {
+  class_levels <-
+    collect(tbl(database_connection, "LIPID_CLASS_ORDER_COMPLETE")) %>%
+    arrange(class_order) %>%
+    pull(class)
+  DBI::dbDisconnect(database_connection)
+} else {
+  class_levels <- c("PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE",
+                    "PS", "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG", "PA",
+                    "PA O-", "LPA", "CL", "MLCL", "Cer", "SM", "HexCer", "SGalCer",
+                    "GM3", "Sulf", "diHexCer", "Hex2Cer", "For", "IPC", "MIPC",
+                    "M(IP)2C", "Chol", "Desm", "Erg", "CE", "EE", "DAG", "TAG",
+                    "PIP", "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi", "PGP", "WE", "FA")
+}
 
 # Global theme definition to add to ggplots
 mainTheme <- list(
   theme_minimal(),
   theme(
     axis.line = element_line(colour = 'grey70', size = .75),
-    text = element_text(color = "black", face = "bold", family = "sans"),
+    text = element_text(
+      color = "black",
+      face = "bold",
+      family = "sans"
+    ),
     axis.text.x = element_text(angle = 45, hjust = 1),
     plot.background = element_blank(),
     legend.position = "bottom",
@@ -120,48 +150,62 @@ mainTheme <- list(
 )
 
 # Returns a function that takes an interger and creates a color palette
-getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1")) #[-6]
+getPalette <-
+  colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1")) #[-6]
 
 # Color scale
-mainScale <- function(colorCount){
-  list(
-    scale_fill_manual(values = getPalette(colorCount)),
-    scale_color_manual(values = getPalette(colorCount))
-  )
+mainScale <- function(colorCount) {
+  list(scale_fill_manual(values = getPalette(colorCount)),
+       scale_color_manual(values = getPalette(colorCount)))
 }
 
 
 # helper functions -------------------------------------------------------------------------------------------------------
 
 # borrowed from plyr (https://github.com/hadley/plyr/):
-is.discrete <- function(x){ is.factor(x) || is.character(x) || is.logical(x) }
+is.discrete <-
+  function(x) {
+    is.factor(x) || is.character(x) || is.logical(x)
+  }
 
 # Convex hull for PCA plots
 # borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
-StatChull <- ggproto("StatChull", Stat,
-                     compute_group = function(data, scales) {
-                       data[chull(data$x, data$y), , drop = FALSE]
-                     },
+StatChull <- ggproto(
+  "StatChull",
+  Stat,
+  compute_group = function(data, scales) {
+    data[chull(data$x, data$y), , drop = FALSE]
+  },
 
-                     required_aes = c("x", "y")
+  required_aes = c("x", "y")
 )
 
-stat_chull <- function(mapping = NULL, data = NULL, geom = "polygon",
-                       position = "identity", na.rm = FALSE, show.legend = NA,
-                       inherit.aes = TRUE, ...) {
-  layer(
-    stat = StatChull, data = data, mapping = mapping, geom = geom,
-    position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-    params = list(na.rm = na.rm, ...)
-  )
-}
+stat_chull <-
+  function(mapping = NULL,
+           data = NULL,
+           geom = "polygon",
+           position = "identity",
+           na.rm = FALSE,
+           show.legend = NA,
+           inherit.aes = TRUE,
+           ...) {
+    layer(
+      stat = StatChull,
+      data = data,
+      mapping = mapping,
+      geom = geom,
+      position = position,
+      show.legend = show.legend,
+      inherit.aes = inherit.aes,
+      params = list(na.rm = na.rm, ...)
+    )
+  }
 
 
 # Debugging -------------------------------------------------------------------------------------------------------
 
 options(shiny.fullstacktrace = FALSE,
-        shiny.error = "default"
-)
+        shiny.error = "default")
 
 # (.packages())
 # sessionInfo()
