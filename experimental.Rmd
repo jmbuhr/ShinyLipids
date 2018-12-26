@@ -1,0 +1,209 @@
+---
+title: "Experimental Features"
+description: |
+author:
+  - name: Jannik Buhr 
+    url: https://jmbuhr.de/
+    affiliation: Heidelberg University
+    affiliation_url: https://www.uni-heidelberg.de/
+date: "`r Sys.Date()`"
+output: radix::radix_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = FALSE)
+```
+
+## Data
+
+```{r}
+# packages
+library(tidyverse)
+library(umap)
+library(plotly)
+library(knitr)
+library(rmarkdown)
+
+
+theme_set(theme_light())
+
+# con
+con = DBI::dbConnect(RSQLite::SQLite(), "database/Sqlite.db")
+
+# queries
+sqlQueryMeta <- paste("SELECT * FROM id_info")
+sqlQueryData <- function(dataset_ID){
+  query <- paste0("SELECT * FROM data2 WHERE ID IN (", paste(dataset_ID, collapse = ","), ")")
+  return(query)
+}
+
+# # tables 
+# DBI::dbListTables(con)
+
+# data
+meta <- collect(tbl(con, sql(sqlQueryMeta))) %>% 
+  mutate(id = factor(id))
+
+query <- sqlQueryData(meta$id[meta$id != 83])
+raw <- collect(tbl(con, sql(query)))
+
+DBI::dbDisconnect(con)
+
+class_levels <- c("PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE", "PS",
+                  "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG", "PA", "PA O-",
+                  "LPA", "CL", "MLCL", "Cer", "SM", "HexCer", "SGalCer", "GM3",
+                  "Sulf", "diHexCer", "Hex2Cer", "For", "IPC", "MIPC", "M(IP)2C",
+                  "Chol", "Desm", "Erg", "CE", "EE", "DAG", "TAG", "PIP", "PIP2",
+                  "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi", "PGP", "WE", "FA")
+
+# Standardized to mol% (100% per technical replicate i.e .measurement)
+mainData <-
+  raw %>%
+  filter(!is.na(value)) %>% 
+  mutate(
+    id = factor(id),
+    sample_identifier = factor(sample_identifier),
+    lipid = factor(lipid),
+    func_cat = factor(func_cat),
+    class = forcats::fct_relevel(class, class_levels),
+    category = factor(category),
+    sample = factor(sample),
+    sample_replicate = factor(sample_replicate),
+    sample_replicate_technical = factor(sample_replicate_technical),
+    oh = if_else(is.na(oh), 0, oh)
+  ) %>%
+  select(id, sample_identifier, lipid, value, everything()) %>%
+  group_by(id, sample_replicate_technical) %>%
+  mutate(value = value / sum(value) * 100) %>%
+  unite(sam, id, sample_identifier, sep = "_", remove = FALSE) %>% 
+  ungroup()
+```
+
+```{r show_data, fig.cap="The general format of our data"}
+mainData %>% head(5) %>% paged_table()
+```
+
+## UMAP
+
+This is the implementation of a farily new algorithm called UMAP, explainded in
+this [paper](https://arxiv.org/abs/1802.03426): "UMAP: Uniform Manifold Approximation and Projection for
+Dimension Reduction", Leland McInnes and John Healy.
+
+```{r firstUmap, layout="l-body-outset", fig.cap="First stab at UMAP"}
+umap_wide <- 
+  mainData %>%
+  select(sam, lipid, value) %>%
+  spread(lipid, value) %>%
+  replace(is.na(.), 0)
+
+umap_data <- 
+  umap_wide %>%
+  select(-sam) %>%
+  as.data.frame()
+
+umap_labels <-
+  umap_wide %>% select(sam)
+
+umap_samples <- 
+  mainData %>%
+  select(sam, id, sample) %>%
+  distinct()
+
+umap_model <- 
+  umap(umap_data)
+
+umap_annotated <- 
+  umap_model$layout %>%
+  as_tibble() %>%
+  bind_cols(umap_labels) %>%
+  inner_join(umap_samples) %>% 
+  inner_join(select(meta, id, title))
+
+umap_plt <-
+  umap_annotated %>%
+  ggplot(aes(V1, V2, color = id, label = paste(sample, title))) +
+  geom_point()
+
+umap_plt
+# ggplotly(umap_plt)
+
+```
+
+```{r secondUmap, fig.cap="Second try"}
+custom.settings = umap.defaults
+custom.settings$n_epochs = 400
+custom.settings$n_neighbors = 20
+custom.settings$random_state = 2018
+
+umap_model_tweaked <- 
+  umap(umap_data, config = custom.settings)
+
+umap_annotated <- 
+  umap_model$layout %>%
+  as_tibble() %>%
+  bind_cols(umap_labels) %>%
+  inner_join(umap_samples) %>% 
+  inner_join(select(meta, id, title))
+
+plt_tweaked <-
+  umap_annotated %>%
+  ggplot(aes(V1, V2, color = id, label = paste(sample, title))) +
+  geom_point()+
+  scale_color_brewer(palette = "Set1")
+
+plt_tweaked
+```
+
+#### Proof of concept for UMAP
+
+with a 4-dimensional space of colors
+
+```{r proof, fig.cap="Demonstration of the effect of n_neighbors", fig.show='hold', out.width='20%'}
+data <- data.frame(
+  id = 1:200,
+  r = sample(0:255, 200, replace = T),
+  g = sample(0:255, 200, replace = T),
+  b = sample(0:255, 200, replace = T),
+  a = sample(0:255, 200, replace = T)
+)
+
+for (n in c(2,10,50,200)){
+  model <- umap(data[2:5], n_neighbors = n)
+  annotated <-
+    model$layout %>%
+    as_tibble() %>%
+    bind_cols(data)
+  
+  data_colors <- map_chr(1:200, ~rgb(data[.,1], data[.,2], data[.,3], data[.,4], maxColorValue = 255))
+  plot(annotated$V1, annotated$V2, col = data_colors, pch = 19, cex = 2)
+  title(paste("N of neighbors:", n))
+}
+```
+
+```{r pca, fig.cap="Comparison to PCA"}
+rownames(umap_data) <- umap_wide$sam
+
+model_pca <- pcaMethods::pca(umap_data, scale = "uv")
+# plot(model_pca)
+
+# pcaMethods::slplot(model_pca)
+# pcaMethods::plotPcs(model_pca)
+
+scores <- 
+  model_pca@scores %>%
+  as_tibble(rownames = "sam") %>% 
+  separate(sam, c("id", "sample"), sep = "_", remove = FALSE)
+
+loadings <-
+  model_pca@loadings %>%
+  as_tibble(rownames = "lipid")
+
+scr_plt <-
+  scores %>% 
+  ggplot(aes(PC1, PC2, label = sam, col = id))+
+  geom_point()+
+  scale_color_brewer(palette = "Set1")
+
+scr_plt # %>% plotly::ggplotly()
+```
+

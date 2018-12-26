@@ -52,7 +52,6 @@ sidebar <- shinydashboard::dashboardSidebar(
             shinydashboard::menuSubItem("Main plot", tabName = "main"),
             shinydashboard::menuSubItem("Heatmap", tabName = "heatmap"),
             shinydashboard::menuSubItem("PCA", tabName = "PCA"),
-            shinydashboard::menuSubItem("UMAP", tabName = "umap"),
             startExpanded = TRUE
         )
     ),
@@ -60,45 +59,58 @@ sidebar <- shinydashboard::dashboardSidebar(
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills",
                 tabPanel("Mapping",
-                         selectInput("aes_x", label = HTML("Feature to display on x-Axis /<br>use in the PCA"),
-                                     choices = features[-c(4)],
+                         selectInput("aes_x",
+                                     label = HTML("Feature to display on x-Axis /<br>use in the PCA"),
+                                     choices = features[!features %in% c("value",
+                                                                         "sample_replicate",
+                                                                         "sample_replicate_technical")],
                                      selected = "class"),
-                         selectizeInput("aes_color", label = HTML("Feature to display by color /<br> y-axis of heatmap"),
-                                        choices = features[-c(3,4,8,11,12)],
+                         selectizeInput("aes_color",
+                                        label = HTML("Feature to display by color /<br> y-axis of heatmap"),
+                                        choices = features[!features %in% c("lipid",
+                                                                            "value",
+                                                                            "length",
+                                                                            "chains",
+                                                                            "chain_sums",
+                                                                            "sample_replicate",
+                                                                            "sample_replicate_technical")],
                                         selected = "sample"),
-                         selectizeInput("aes_facet1", label = "Feature to use for facetting in columns",
-                                        choices = features[-c(3,4,8,11,12,14)],
+                         selectizeInput("aes_facet1",
+                                        label = "Feature to use for facetting in columns",
+                                        choices = features[!features %in% c("lipid",
+                                                                            "value",
+                                                                            "length",
+                                                                            "chains",
+                                                                            "chain_sums",
+                                                                            "sample_replicate",
+                                                                            "sample_replicate_technical")],
                                         selected = NULL),
-                         selectizeInput("aes_facet2", label = "Feature to use for facetting in rows",
-                                        choices = features[-c(3,4,8,11,12,14)],
+                         selectizeInput("aes_facet2",
+                                        label = "Feature to use for facetting in rows",
+                                        choices = features[!features %in% c("lipid",
+                                                                            "value",
+                                                                            "length",
+                                                                            "chains",
+                                                                            "chain_sums",
+                                                                            "sample_replicate",
+                                                                            "sample_replicate_technical")],
                                         selected = NULL),
-                         selectizeInput(
-                             'std_feature', label = "Standardize to 100% within:",
-                             choices = features[-4],
-                             selected = NULL
+                         selectizeInput("std_feature",
+                                        label = "Standardize to 100% within:",
+                                        choices = features[!features %in% c("value")],
+                                        selected = "sample_replicate_technical"
                          ),
-                         selectizeInput(
-                             'base_sample', label = "Substract sample as baseline",
-                             choices = "",
-                             selected = NULL
+                         selectizeInput("base_sample",
+                                        label = "Substract sample as baseline",
+                                        choices = "",
+                                        selected = NULL
                          )
                 ),
                 tabPanel("Defaults",
                          # Future Defaults panel
                          selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
-                                     choices = features[4],# fixed to "value" for now, other choices seem not helpful to user
-                                     selected = "value"),
-                         # limit options for now, dodge2 is the most usefull
-                         selectInput("aes_pos", label = "Position of colored datapoints",
-                                     choices = list(
-                                         #"stacked" = "stack",
-                                         "besides" = "dodge2"
-                                         #"filled to 100%" = "fill",
-                                         #"old besides" = "dodge",
-                                         #"jitter" = "jitter"
-                                     ),
-                                     selected = "dodge2"
-                         )
+                                     choices = features[features %in% c("value")],# fixed to "value" for now, other choices seem not helpful to user
+                                     selected = "value")
                 ),
                 tabPanel("Samples",
                          selectizeInput(
@@ -208,13 +220,6 @@ body <- shinydashboard::dashboardBody(
     shinydashboard::tabItems(
         shinydashboard::tabItem(
             tabName = "metadata",
-            ## Only show the selection box for the database connection of necessary
-            # fluidRow(
-            #     fileInput("database_connection",
-            #               label = "Load a local Sqlite database (a .db file)",
-            #               accept = c(".db")
-            #     )
-            # ),
             fluidRow(
                 shinydashboard::box(
                     title = NULL,
@@ -253,24 +258,28 @@ body <- shinydashboard::dashboardBody(
                                                    brush = brushOpts(id = "mainPlot_brush",
                                                                      resetOnNew = TRUE)
                                         ) %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+                                        #plotly::plotlyOutput("mainPlot_ly")
                                     )
                                 ),
                                 fluidRow(
                                     shinydashboard::box(width = 4,
                                                         checkboxGroupInput("main_add", label = NULL,
                                                                            choices = list(
-                                                                               "Log10 Y-Axis" = "log",
-                                                                               "Display value of means" = "values",
-                                                                               "Display value of points" = "ind_values",
-                                                                               "Show Points" = "points",
+                                                                               "Show points" = "points",
                                                                                "Show bars" = "bars",
-                                                                               "Swap X- and Y-Axis" = "swap",
-                                                                               "Highlite average" = "mean"
+                                                                               "Show average" = "mean",
+                                                                               "Show value of means" = "values",
+                                                                               "Show value of points" = "ind_values",
+                                                                               "Transform y-axis log1p" = "log",
+                                                                               "Show N per sample" = "N",
+                                                                               "Label points" = "label",
+                                                                               "Swap x- and y-axis" = "swap"
                                                                            ),
                                                                            selected = list("points", "bars")
                                                         ),
                                                         selectInput("main_error", "Type of error bars",
-                                                                    choices = list("SD", "SEM")
+                                                                    choices = list("SD", "SEM", "None"),
+                                                                    selected = "None"
                                                         )
                                     ),
                                     shinydashboard::box(width = 4,
@@ -280,6 +289,21 @@ body <- shinydashboard::dashboardBody(
                                                         downloadButton("main_saveMeans", label = "Save means as .csv"),
                                                         numericInput("mainWidth", label = "width", value = 20),
                                                         numericInput("mainHeight", label = "height", value = 10)
+                                    )
+                                ),
+                                fluidRow(
+                                    shinydashboard::box(title = "Order",
+                                                        width = NULL,
+                                                        shinyjqui::orderInput('custom_class_order',
+                                                                              label = 'Custom Class Order',
+                                                                              items = class_levels,
+                                                                              item_class = 'primary',
+                                                                              width = '100%'),
+                                                        shinyjqui::orderInput('custom_sample_order',
+                                                                              label = 'Custom Sample Order',
+                                                                              items = letters,
+                                                                              item_class = 'primary',
+                                                                              width = '100%')
                                     )
                                 ),
                                 fluidRow(
@@ -397,38 +421,6 @@ body <- shinydashboard::dashboardBody(
                                             ticks = TRUE,
                                             animate = FALSE
                                         )
-                                    )
-                                )
-        ),
-        shinydashboard::tabItem(tabName = "umap",
-                                fluidRow(
-                                    shinydashboard::box(
-                                        title = NULL,
-                                        width = 6,
-                                        status = "primary",
-                                        plotOutput("umap_plot") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
-                                    ),
-                                    shinydashboard::box(
-                                        title = NULL,
-                                        width = 6,
-                                        status = "primary",
-                                        HTML("
-                                        This is the implementation of a farily new algorithm called UMAP, explainded in
-                                        this paper:
-                                        <a href=https://arxiv.org/abs/1802.03426>
-                                        UMAP: Uniform Manifold Approximation and Projection for
-                                             Dimension Reduction &#8211 Leland McInnes, John Healy </a>
-                                             ")
-                                    )
-                                ),
-                                fluidRow(
-                                    shinydashboard::box(
-                                        downloadButton("umapSave", label = "Save as .pdf"),
-                                        numericInput("umapWidth", label = "width", value = 10),
-                                        numericInput("umapHeight", label = "height", value = 10)
-                                    ),
-                                    shinydashboard::box(
-                                        textOutput("umap_summary")
                                     )
                                 )
         )
