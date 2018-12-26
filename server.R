@@ -528,11 +528,10 @@ function(input, output, session) {
             #CI_lower = value - qt(1 - (0.05 / 2), N - 1) * SEM,
             #CI_upper = value + qt(1 - (0.05 / 2), N - 1) * SEM
         )# %>%
-            # assumption: we are 100% sure that no lipid has a value smaller than 0
-            # mutate(
-            #     CI_lower = if_else(CI_lower < 0, 0,CI_lower)
-            # )
-
+        # assumption: we are 100% sure that no lipid has a value smaller than 0
+        # mutate(
+        #     CI_lower = if_else(CI_lower < 0, 0,CI_lower)
+        # )
         df
     })
 
@@ -584,14 +583,16 @@ function(input, output, session) {
                 y = !!sym(input$aes_y))
 
         # add color/fill if requested
+        # number of colors needed, if any
         if (input$aes_color != "") {
-            # number of colors needed, if any
             colorCount <-
                 df[, input$aes_color] %>% unique() %>% as_vector() %>% length()
 
             plt <- plt +
                 aes(color = factor(!!sym(input$aes_color)),
                     fill = factor(!!sym(input$aes_color)))
+        } else {
+            colorCount <- 0
         }
 
         # Add bars
@@ -814,9 +815,11 @@ function(input, output, session) {
         req(meanPlotData())
 
         df <- meanPlotData()
-        df %>% select(!!sym(input$aes_x),
-                      sample,
-                      Average = value, everything())
+        df %>% select(
+            Average value = value,
+            !!sym(input$aes_x),
+            everything()
+        )
     },
     filter = 'none',
     rownames = FALSE,
