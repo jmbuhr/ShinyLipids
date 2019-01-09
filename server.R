@@ -745,7 +745,7 @@ function(input, output, session) {
         if ("log" %in% input$main_add) {
             if (input$std_feature != "") {
                 y_name <- "amount [ Mol % ], log1p scale"
-                y_labels <- scales::percent_format(scale = 1)
+                y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
                 y_trans <- "log1p"
             } else {
                 y_name <- "amount [ µM ], log1p scale"
@@ -755,7 +755,7 @@ function(input, output, session) {
         } else {
             if (input$std_feature != "") {
                 y_name <- "amount [ Mol % ]"
-                y_labels <- scales::percent_format(scale = 1)
+                y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
                 y_trans <- "identity"
             } else {
                 y_name <- "amount [ µM ]"
