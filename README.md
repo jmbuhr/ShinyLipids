@@ -39,5 +39,8 @@ Table: data2
 id | sample_identifier | lipid | category | func_cat | class | length | db | oh | chains | chain_sums | sample | sample_replicate | sample_replicate_technical | value
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
+Optionally, your database can contain a table named "LIPID_CLASS_ORDER_COMPLETE" (name like this for backwards compatibility) with
+a numeric _class_order_ column associated with a _class_ column. You can also reorder your lipid classes in the app.
+
 Once you are ready, press _run App_ in the top right corner of your R-Studio editor panel with e.g. global.R open, or
-if you prefer typing over clicking, run `shiny::runApp()` in the R-console.
+if you prefer typing over clicking, run `shiny::runApp()` in the R-console or use the R-Studio-Shortcut `ctrl+shift+Enter` (with `cmd` instead of `ctrl` for mac users).
