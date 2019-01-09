@@ -106,11 +106,8 @@ sidebar <- shinydashboard::dashboardSidebar(
                                         selected = NULL
                          )
                 ),
-                tabPanel("Defaults",
+                tabPanel("Defaults"
                          # Future Defaults panel
-                         selectInput("aes_y", label = "Feature to display on y-Axis / color value of heatmap",
-                                     choices = features[features %in% c("value")],# fixed to "value" for now, other choices seem not helpful to user
-                                     selected = "value")
                 ),
                 tabPanel("Samples",
                          selectizeInput(

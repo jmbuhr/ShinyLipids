@@ -440,7 +440,7 @@ function(input, output, session) {
                         (
                             input$aes_color == "sample_replicate_technical" |
                                 input$aes_x == "sample_replicate_technical" |
-                                input$aes_y == "sample_replicate_technical" |
+                                # input$aes_y == "sample_replicate_technical" |
                                 input$aes_facet1 == "sample_replicate_technical" |
                                 input$aes_facet2 == "sample_replicate_technical"
                         )
@@ -451,11 +451,11 @@ function(input, output, session) {
             need(
                 input$aes_x != "",
                 "Please select a feature to display on the x-axis"
-            ),
-            need(
-                input$aes_y != "",
-                "Please select a feature to display on the y-axis"
             )
+            # need(
+            #     input$aes_y != "",
+            #     "Please select a feature to display on the y-axis"
+            # )
         )
 
         # Averaging over the technical replicates
@@ -472,7 +472,7 @@ function(input, output, session) {
 
         # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
         df <- df %>% filter(!is.na(!!sym(input$aes_x)),
-                            !is.na(!!sym(input$aes_y)))
+                            !is.na(value))
         if (input$aes_color != "") {
             df <- df %>% filter(!is.na(!!sym(input$aes_color)))
         }
@@ -580,7 +580,7 @@ function(input, output, session) {
         # main plot definition
         plt <- plt +
             aes(x = !!sym(input$aes_x),
-                y = !!sym(input$aes_y))
+                y = value)
 
         # add color/fill if requested
         # number of colors needed, if any
@@ -841,7 +841,7 @@ function(input, output, session) {
             aes(
                 x = factor(!!sym(input$aes_x)),
                 y = factor(!!sym(input$aes_color)),
-                fill = !!sym(input$aes_y)
+                fill = value
             ) +
             geom_raster() +
             mainTheme +
