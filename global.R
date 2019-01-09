@@ -22,7 +22,7 @@
 # you still need to install them.
 
 # Run this before deployment
-options(repos = c(BiocManager::repositories()))
+# options(repos = c(BiocManager::repositories()))
 
 ## If deployment fails, run this:
 # BiocManager::install("rsconnect", update = TRUE, ask = FALSE)
