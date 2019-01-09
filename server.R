@@ -745,29 +745,20 @@ function(input, output, session) {
         if ("log" %in% input$main_add) {
             if (input$std_feature != "") {
                 y_name <- "amount [ Mol % ], log1p scale"
-                y_breaks <-
-                    scales::trans_breaks("log1p", function(x)
-                        10 ^ x)
                 y_labels <- scales::percent_format(scale = 1)
                 y_trans <- "log1p"
             } else {
                 y_name <- "amount [ µM ], log1p scale"
-                y_breaks <-
-                    scales::trans_breaks("log1p", function(x)
-                        10 ^ x)
-                y_labels <-
-                    scales::trans_format("log1p", scales::math_format(10 ^ .x))
+                y_labels <- waiver()
                 y_trans <- "log1p"
             }
         } else {
             if (input$std_feature != "") {
                 y_name <- "amount [ Mol % ]"
-                y_breaks <- waiver()
                 y_labels <- scales::percent_format(scale = 1)
                 y_trans <- "identity"
             } else {
                 y_name <- "amount [ µM ]"
-                y_breaks <- waiver()
                 y_labels <- scales::number_format()
                 y_trans <- "identity"
             }
@@ -776,7 +767,6 @@ function(input, output, session) {
         plt <- plt +
             scale_y_continuous(name = y_name,
                                labels = y_labels,
-                               #breaks = y_breaks,
                                trans = y_trans)
 
         # Zooming
