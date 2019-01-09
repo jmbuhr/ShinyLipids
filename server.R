@@ -806,7 +806,7 @@ function(input, output, session) {
 
         df <- meanPlotData()
         df %>% select(
-            Average value = value,
+            Average_value = value,
             !!sym(input$aes_x),
             everything()
         )
