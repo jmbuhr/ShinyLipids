@@ -106,9 +106,9 @@ sidebar <- shinydashboard::dashboardSidebar(
                                         selected = NULL
                          )
                 ),
-                tabPanel("Defaults"
-                         # Future Defaults panel
-                ),
+                # tabPanel("Defaults"
+                #          # Future Defaults panel
+                # ),
                 tabPanel("Samples",
                          selectizeInput(
                              'sample_select',
