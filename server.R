@@ -118,7 +118,10 @@ function(input, output, session) {
                 ungroup()
         }
 
+        input$filter_apply
+
         # Filtering
+
         # Category
         if (!is.null(input$filter_cat)) {
             df <- df %>% filter(category %in% input$filter_cat)
@@ -170,8 +173,7 @@ function(input, output, session) {
                 ))
         }
 
-        df %>%
-            return()
+        return(df)
     })
 
 
@@ -509,6 +511,7 @@ function(input, output, session) {
         df <- df %>% summarize(value = sum(value, na.rm = TRUE))
         # This will remove only the last layer of grouping (sample_replicate or sample_replicate_technical)
         # and keep the other groups, in either case, ase_x will still be a group
+        # this group will then be summarized in meanPlotData
 
         df
     })
@@ -535,6 +538,38 @@ function(input, output, session) {
         df
     })
 
+
+    # Pairwise Comparisons --------------------------------------------------------------------------------------------
+
+    test_pairwise <- function(response, group){
+        res <- pairwise.t.test(x = log(response), g = group,
+                               paired = F, alternative = "two.sided")
+        broom::tidy(res)
+    }
+
+    pairwiseComparisons <- reactive({
+        req(plotData())
+        validate(
+            need(input$aes_color == "sample",
+                 "To compare between samples, chose sample as the color"),
+            need(input$aes_x %in% c("class", "category"),
+                 "Comparisons are currently onyl supported for class on the x axis")
+        )
+
+        dfSignif <- plotData() %>%
+            ungroup() %>%
+            nest(-!!sym(input$aes_x)) %>%
+            mutate(
+                pairwise  =  map(data, ~test_pairwise(response = .$value, group = .$sample))
+            ) %>%
+            unnest(pairwise) %>%
+            mutate(p.value = p.adjust(p.value, "BH"))
+        dfSignif
+    })
+
+    output$pairwiseComparisonsTable <- DT::renderDT({
+        pairwiseComparisons()
+    })
 
     # Main Plot output ------------------------------------------------------------------------------------------------
 
@@ -663,7 +698,7 @@ function(input, output, session) {
                 facet_grid(
                     cols = facet_col,
                     rows = facet_row,
-                    scales = "free_x",
+                    scales = if_else("free_y" %in% input$main_add , "free" ,"free_x"),
                     space = "free_x"
                 )
         }
@@ -721,6 +756,21 @@ function(input, output, session) {
                     color = "grey10",
                     position = position_dodge(width = 0.9)
                 )
+        }
+
+        # Highlite significant hits
+        if ("signif" %in% input$main_add){
+            signif <- filter(pairwiseComparisons(), p.value <= 0.05) %>%
+                distinct(!!sym(input$aes_x))
+            if (nrow(signif) > 0 ){
+                plt <- plt+
+                    geom_text(data = signif,
+                              aes(!!sym(input$aes_x), max(df$value), label = "*"),
+                              inherit.aes = F,
+                              nudge_y = 5,
+                              size = 10
+                    )
+            }
         }
 
         # add theme and scale (defined in global.R) includes titles and formatting

@@ -264,7 +264,8 @@ body <- shinydashboard::dashboardBody(
                                     )
                                 ),
                                 fluidRow(
-                                    shinydashboard::box(width = 4,
+                                    shinydashboard::box(title = "Options",
+                                                        width = 3,
                                                         checkboxGroupInput("main_add", label = NULL,
                                                                            choices = list(
                                                                                "Show points" = "points",
@@ -275,7 +276,9 @@ body <- shinydashboard::dashboardBody(
                                                                                "Transform y-axis log1p" = "log",
                                                                                "Show N per sample" = "N",
                                                                                "Label points" = "label",
-                                                                               "Swap x- and y-axis" = "swap"
+                                                                               "Swap x- and y-axis" = "swap",
+                                                                               "Free y scale for facets" = "free_y",
+                                                                               "Mark groups with significant hits" = "signif"
                                                                            ),
                                                                            selected = list("points", "bars")
                                                         ),
@@ -284,13 +287,24 @@ body <- shinydashboard::dashboardBody(
                                                                     selected = "None"
                                                         )
                                     ),
-                                    shinydashboard::box(width = 4,
+                                    shinydashboard::box(title = "Download",
+                                                        width = 3,
                                                         downloadButton("main_savePlot", label = "Save plot as .pdf"),
                                                         br(),
                                                         downloadButton("main_saveData", label = "Save datapoints as .csv"),
                                                         downloadButton("main_saveMeans", label = "Save means as .csv"),
                                                         numericInput("mainWidth", label = "width", value = 20),
                                                         numericInput("mainHeight", label = "height", value = 10)
+                                    ),
+                                    shinydashboard::box(title = "Pairwise Comparisons",
+                                                        width = 6,
+                                                        DT::DTOutput("pairwiseComparisonsTable")
+                                    )
+                                ),
+                                fluidRow(
+                                    shinydashboard::box(title = "Summary",
+                                                        width = NULL,
+                                                        DT::DTOutput("meanPlotDataTable")
                                     )
                                 ),
                                 fluidRow(
@@ -300,18 +314,12 @@ body <- shinydashboard::dashboardBody(
                                                                               label = 'Custom Class Order',
                                                                               items = class_levels,
                                                                               item_class = 'primary',
-                                                                              width = '100%'),
-                                                        shinyjqui::orderInput('custom_sample_order',
-                                                                              label = 'Custom Sample Order',
-                                                                              items = letters,
-                                                                              item_class = 'primary',
-                                                                              width = '100%')
-                                    )
-                                ),
-                                fluidRow(
-                                    shinydashboard::box(title = "Summary",
-                                                        width = NULL,
-                                                        DT::DTOutput("meanPlotDataTable")
+                                                                              width = '100%') #,
+                                                        # shinyjqui::orderInput('custom_sample_order',
+                                                        #                       label = 'Custom Sample Order',
+                                                        #                       items = letters,
+                                                        #                       item_class = 'primary',
+                                                        #                       width = '100%')
                                     )
                                 )
         ),
