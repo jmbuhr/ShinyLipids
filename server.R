@@ -590,7 +590,8 @@ function(input, output, session) {
       )
     )
 
-    dfSignif <- plotData() %>%
+    # Significance
+    plotData() %>%
       ungroup() %>%
       nest(-!!sym(input$aes_x)) %>%
       mutate(
@@ -598,7 +599,6 @@ function(input, output, session) {
       ) %>%
       unnest(pairwise) %>%
       mutate(p.value = p.adjust(p.value, "BH"))
-    dfSignif
   })
 
   output$pairwiseComparisonsTable <- DT::renderDT({
@@ -794,28 +794,11 @@ function(input, output, session) {
         geom_text(
           data = mean_df,
           aes(y = -Inf, label = N),
-          # fix at some interval
           vjust = -1,
           hjust = 0.5,
           color = "grey10",
           position = position_dodge(width = 0.9)
         )
-    }
-
-    # Highlite significant hits
-    if ("signif" %in% input$main_add) {
-      signif <- filter(pairwiseComparisons(), p.value <= 0.05) %>%
-        distinct(!!sym(input$aes_x))
-      if (nrow(signif) > 0) {
-        plt <- plt +
-          geom_text(
-            data = signif,
-            aes(!!sym(input$aes_x), max(df$value), label = "*"),
-            inherit.aes = F,
-            nudge_y     = 5,
-            size        = 10
-          )
-      }
     }
 
     # add theme and scale (defined in global.R) includes titles and formatting
@@ -880,6 +863,21 @@ function(input, output, session) {
       )
       plt <- plt +
         coord_flip()
+    }
+
+    # Highlite significant hits
+    if ("signif" %in% input$main_add) {
+      signif <- filter(pairwiseComparisons(), p.value <= 0.05) %>%
+        distinct(!!sym(input$aes_x))
+      if (nrow(signif) > 0) {
+        plt <- plt +
+          geom_text(
+            data = signif,
+            aes(!!sym(input$aes_x), Inf, label = "*", vjust = 1, hjust = 0.5),
+            inherit.aes = F,
+            size        = 10
+          )
+      }
     }
 
     # return final plot

@@ -1,25 +1,12 @@
 # Preamble --------------------------------------------------------------------------------------------------------
 # Packages
-## From global.R
 # install.packages(c("BiocManager", "ggplot2", "RColorBrewer", "shiny", "tidyr", "dbplyr"))
-
-## From server.R
 # install.packages(c("DT", "ggrepel", "RSQLite", "umap", "readr"))
-
-## From ui.RRSQLite
 # install.packages(c("DT", "shinycssloaders", "shinydashboard", "shinyjs"))
-
-## deprecated or installed as dependency automatically:
-# "shinyjs", "ggthemes", "jsonlite"
-
-## For deployment from RStudio
-# install.packages(c("bitops", "RCurl", "openssl", "rstudioapi", "dbplyr"))
-
-# BiocManager::install() # installs core packages
 # BiocManager::install(pkgs = c("pcaMethods"))
 
-# Packages that are not attached here by library() are explicitely called via <packagename>::<function>(),
-# you still need to install them.
+## For deployment from RStudio
+# install.packages(c("bitops", "RCurl", "openssl", "rstudioapi"))
 
 # Run this before deployment
 options(repos = c(BiocManager::repositories()))
@@ -27,14 +14,8 @@ options(repos = c(BiocManager::repositories()))
 ## If deployment fails, run this:
 # BiocManager::install("rsconnect", update = TRUE, ask = FALSE)
 
-## Debug
-options(shiny.fullstacktrace = FALSE,
-        shiny.error          = browser,
-        tidyverse.quiet      = TRUE)
-
 # Attaching packages ----------------------------------------------------------------------------------------------
-# library(tidyverse, quietly = TRUE) # contains: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
-library(dbplyr) # only needed for deployment
+# library(dbplyr) # only needed for deployment
 library(shiny, quietly   = TRUE)
 library(dplyr, quietly   = TRUE)
 library(ggplot2, quietly = TRUE)
