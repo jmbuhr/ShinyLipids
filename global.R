@@ -1,8 +1,9 @@
 # Preamble --------------------------------------------------------------------------------------------------------
 # Packages
-# install.packages(c("BiocManager", "ggplot2", "RColorBrewer", "shiny", "tidyr", "dbplyr"))
-# install.packages(c("DT", "ggrepel", "RSQLite", "umap", "readr"))
-# install.packages(c("DT", "shinycssloaders", "shinydashboard", "shinyjs"))
+# install.packages(c("BiocManager", "tidyverse", "RColorBrewer", "shiny",
+#                    "dbplyr", "purrr", "DT", "ggrepel", "RSQLite", "umap",
+#                    "DT", "shinycssloaders", "shinydashboard", "shinyjs"))
+#
 # BiocManager::install(pkgs = c("pcaMethods"))
 
 ## For deployment from RStudio
@@ -16,12 +17,12 @@ options(repos = c(BiocManager::repositories()))
 
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(dbplyr) # only needed for deployment
-library(shiny, quietly   = TRUE)
-library(dplyr, quietly   = TRUE)
-library(ggplot2, quietly = TRUE)
-library(tidyr, quietly   = TRUE)
-library(purrr, quietly   = TRUE)
-library(RSQLite, quietly = TRUE)
+library(shiny)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(purrr)
+library(RSQLite)
 
 
 # Database Connection ---------------------------------------------------------------------------------------------
@@ -105,8 +106,7 @@ mainTheme <- list(
 )
 
 # Returns a function that takes an interger and creates a color palette
-getPalette <-
-  colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1")) # [-6]
+getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1")) # [-6]
 
 # Color scale
 mainScale <- function(colorCount) {
@@ -125,6 +125,11 @@ is.discrete <-
     is.factor(x) || is.character(x) || is.logical(x)
   }
 
+# Suppress warning that not all factor levels for lipid class order are used:
+quiet_fct_relevel <- purrr::quietly(forcats::fct_relevel)
+
+safe_qt <- possibly(qt, otherwise = NA_real_)
+
 # Convex hull for PCA plots
 # borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
 StatChull <- ggproto(
@@ -136,27 +141,25 @@ StatChull <- ggproto(
   required_aes = c("x", "y")
 )
 
-stat_chull <-
-  function(mapping       = NULL,
-             data        = NULL,
-             geom        = "polygon",
-             position    = "identity",
-             na.rm       = FALSE,
-             show.legend = NA,
-             inherit.aes = TRUE,
-             ...) {
-    layer(
-      stat        = StatChull,
-      data        = data,
-      mapping     = mapping,
-      geom        = geom,
-      position    = position,
-      show.legend = show.legend,
-      inherit.aes = inherit.aes,
-      params      = list(na.rm = na.rm, ...)
-    )
-  }
-
+stat_chull <- function(mapping       = NULL,
+                         data        = NULL,
+                         geom        = "polygon",
+                         position    = "identity",
+                         na.rm       = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE,
+                         ...) {
+  layer(
+    stat        = StatChull,
+    data        = data,
+    mapping     = mapping,
+    geom        = geom,
+    position    = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params      = list(na.rm = na.rm, ...)
+  )
+}
 
 # Debugging -------------------------------------------------------------------------------------------------------
 

@@ -82,7 +82,7 @@ function(input, output, session) {
         sample_identifier          = factor(sample_identifier),
         lipid                      = factor(lipid),
         func_cat                   = factor(func_cat),
-        class                      = forcats::fct_relevel(class, input$custom_class_order_order),
+        class                      = quiet_fct_relevel(class, input$custom_class_order_order)$result,
         category                   = factor(category),
         sample                     = factor(sample),
         sample_replicate           = factor(sample_replicate),
@@ -555,8 +555,8 @@ function(input, output, session) {
       SEM      = sd(value, na.rm = TRUE) / n(),
       N        = n(),
       value    = mean(value, na.rm = TRUE),
-      CI_lower = value - qt(1 - (0.05 / 2), N - 1) * SEM,
-      CI_upper = value + qt(1 - (0.05 / 2), N - 1) * SEM
+      CI_lower = value - safe_qt(1 - (0.05 / 2), N - 1) * SEM,
+      CI_upper = value + safe_qt(1 - (0.05 / 2), N - 1) * SEM
     ) %>%
     # assumption: we are 100% sure that no lipid has a value smaller than 0
     mutate(
