@@ -570,15 +570,15 @@ function(input, output, session) {
   # Pairwise Comparisons --------------------------------------------------------------------------------------------
 
   test_pairwise <- function(response, group) {
-    res <- pairwise.t.test(
+    pairwise.t.test(
       x = log(response), g = group,
       paired = F, alternative = "two.sided"
-    )
-    broom::tidy(res)
+    ) %>%
+    broom::tidy()
   }
 
   pairwiseComparisons <- reactive({
-    req(plotData())
+    # req(plotData())
     validate(
       need(
         input$aes_color == "sample",
@@ -587,6 +587,10 @@ function(input, output, session) {
       need(
         input$aes_x %in% c("class", "category"),
         "Comparisons are currently onyl supported for class on the x axis"
+      ),
+      need(
+        length(unique(plotData()$sample)) > 1,
+        "You need at least 2 samples to compare them"
       )
     )
 
@@ -889,8 +893,7 @@ function(input, output, session) {
   # ** Plot Render --------------------------------------------------------------------------------------------
   # create actual rendered plot output from mainPlt
   output$mainPlot <- renderPlot({
-    plt <- mainPlt()
-    plt
+    mainPlt()
   })
 
 
@@ -977,8 +980,7 @@ function(input, output, session) {
   # * Plot Render ---------------------------------------------------------------------------------------------------
 
   output$heatPlot <- renderPlot({
-    plt <- heatPlt()
-    plt
+    heatPlt()
   })
 
   # PCA -------------------------------------------------------------------------------------------------------------
@@ -995,7 +997,7 @@ function(input, output, session) {
 
   # * pcaData -------------------------------------------------------------------------------------------------------
   pcaData <- reactive({
-    req(plotData())
+    # req(plotData())
     validate(
       need(
         input$aes_color == "sample",
@@ -1019,9 +1021,8 @@ function(input, output, session) {
       )
     )
 
-    df <- plotData() %>% ungroup()
-
-    df <- df %>%
+    plotData() %>%
+      ungroup() %>%
       select(
         !!sym(
           ifelse(
@@ -1031,9 +1032,7 @@ function(input, output, session) {
           )
         ),
         !!sym(input$aes_x), value
-      )
-
-    df %>%
+      ) %>%
       spread(key = input$aes_x, value = "value") %>%
       data.frame(row.names = TRUE) %>%
       as.matrix()
@@ -1085,12 +1084,10 @@ function(input, output, session) {
   })
 
   scaled_loadings <- reactive({
-    req(pcaObject())
-    pca <- pcaObject()
+    # req(pcaObject())
+    loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aes_x)
 
-    loadings <- pca@loadings %>% as_tibble(rownames = input$aes_x)
-
-    scores <- pca@scores %>%
+    scores <- pcaObject()@scores %>%
       as_tibble(
         rownames = if_else(
           input$tecRep_average,
@@ -1111,8 +1108,7 @@ function(input, output, session) {
         max(abs(scores[, "PC1"])) / max(abs(loadings[, "PC1"])),
         max(abs(scores[, "PC2"])) / max(abs(loadings[, "PC2"]))
       )
-    loadings[, c("PC1", "PC2")] <-
-      loadings[, c("PC1", "PC2")] * scaler * 0.8
+    loadings[, c("PC1", "PC2")] <- loadings[, c("PC1", "PC2")] * scaler * 0.8
     loadings
   })
 
@@ -1120,19 +1116,15 @@ function(input, output, session) {
   # * pcaOutputs ------------------------------------------------------------------------------------------------------
   # Info
   output$pca_info <- renderPrint({
-    req(pcaObject())
-
-    pca <- pcaObject()
-    pca %>% summary()
+    # req(pcaObject())
+    pcaObject() %>% summary()
   })
 
   # ** Scores -----------------------------------------------------------------------------------------------------
   pca_ScoresPlt <- reactive({
-    req(pcaData(), pcaObject(), sample_names())
-    pca <- pcaObject()
-
+    # req(pcaData(), pcaObject(), sample_names())
     colorCount <- rownames(pcaData()) %>% length()
-    scores <- pca@scores %>%
+    scores <- pcaObject()@scores %>%
       as_tibble(
         rownames = if_else(
           input$tecRep_average,
@@ -1219,8 +1211,7 @@ function(input, output, session) {
   # ** Loadings -----------------------------------------------------------------------------------------------------
 
   pca_LoadingsPlt <- reactive({
-    req(pcaObject())
-
+    # req(pcaObject())
     loadings <-
       pcaObject()@loadings %>%
       as_tibble(rownames = input$aes_x)

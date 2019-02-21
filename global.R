@@ -18,7 +18,7 @@ options(repos = c(BiocManager::repositories()))
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(dbplyr) # only needed for deployment
 library(shiny)
-library(dplyr)
+library(dplyr, quietly = TRUE)
 library(ggplot2)
 library(tidyr)
 library(purrr)
