@@ -10,6 +10,7 @@ Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+biocViews:
 Imports:
   shiny,
   shinytest,
@@ -17,7 +18,6 @@ Imports:
   tidyverse,
   RColorBrewer,
   dbplyr,
-  purrr,
   DT,
   ggrepel,
   RSQLite,
