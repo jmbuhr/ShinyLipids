@@ -27,7 +27,7 @@ library(RSQLite)
 
 # Database Connection ---------------------------------------------------------------------------------------------
 ## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)
-database_connection <- DBI::dbConnect(RSQLite::SQLite(), "database/Sqlite.db")
+database_connection <- DBI::dbConnect(RSQLite::SQLite(), "database/Sqlite_dev.db")
 
 ## uncomment this to read from a serverside database (and fill in credentials as necessary)
 # database_connection <- src_postgres(dbname = "ldb",
@@ -43,7 +43,7 @@ database_connection <- DBI::dbConnect(RSQLite::SQLite(), "database/Sqlite.db")
 # SQL queries -----------------------------------------------------------------------------------------------------
 sqlQueryMeta <- paste("SELECT * FROM id_info")
 sqlQueryData <- function(dataset_ID) {
-  query <- paste("SELECT * FROM data2", "WHERE ID =", dataset_ID)
+  query <- paste("SELECT * FROM data2", "WHERE id =", dataset_ID)
   return(query)
 }
 
