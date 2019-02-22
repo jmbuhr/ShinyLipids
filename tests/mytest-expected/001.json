@@ -1,0 +1,373 @@
+{
+  "input": {
+    "aes_color": "sample",
+    "aes_color-selectized": "",
+    "aes_facet1": "",
+    "aes_facet1-selectized": "",
+    "aes_facet2": "",
+    "aes_facet2-selectized": "",
+    "aes_x": "class",
+    "aes_x-selectized": "",
+    "base_sample": "",
+    "base_sample-selectized": "",
+    "custom_class_order__shinyjquiBookmarkState__sortable": {
+      "items": "",
+      "index": [
+        "custom_class_order__1",
+        "custom_class_order__2",
+        "custom_class_order__3",
+        "custom_class_order__4",
+        "custom_class_order__5",
+        "custom_class_order__6",
+        "custom_class_order__7",
+        "custom_class_order__8",
+        "custom_class_order__9",
+        "custom_class_order__10",
+        "custom_class_order__11",
+        "custom_class_order__12",
+        "custom_class_order__13",
+        "custom_class_order__14",
+        "custom_class_order__15",
+        "custom_class_order__16",
+        "custom_class_order__17",
+        "custom_class_order__18",
+        "custom_class_order__19",
+        "custom_class_order__20",
+        "custom_class_order__21",
+        "custom_class_order__22",
+        "custom_class_order__23",
+        "custom_class_order__24",
+        "custom_class_order__25",
+        "custom_class_order__26",
+        "custom_class_order__27",
+        "custom_class_order__28",
+        "custom_class_order__29",
+        "custom_class_order__30",
+        "custom_class_order__31",
+        "custom_class_order__32",
+        "custom_class_order__33",
+        "custom_class_order__34",
+        "custom_class_order__35",
+        "custom_class_order__36",
+        "custom_class_order__37",
+        "custom_class_order__38",
+        "custom_class_order__39",
+        "custom_class_order__40",
+        "custom_class_order__41",
+        "custom_class_order__42",
+        "custom_class_order__43",
+        "custom_class_order__44",
+        "custom_class_order__45",
+        "custom_class_order__46",
+        "custom_class_order__47",
+        "custom_class_order__48"
+      ]
+    },
+    "custom_class_order_order": [
+      "PC",
+      "PC O-",
+      "LPC",
+      "PE",
+      "PE O-",
+      "PE P-",
+      "LPE",
+      "PS",
+      "PS O-",
+      "PI",
+      "PI O-",
+      "PG",
+      "PG O-",
+      "LPG",
+      "PA",
+      "PA O-",
+      "LPA",
+      "CL",
+      "MLCL",
+      "Cer",
+      "SM",
+      "HexCer",
+      "SGalCer",
+      "GM3",
+      "Sulf",
+      "diHexCer",
+      "Hex2Cer",
+      "For",
+      "IPC",
+      "MIPC",
+      "M(IP)2C",
+      "Chol",
+      "Desm",
+      "Erg",
+      "CE",
+      "EE",
+      "DAG",
+      "TAG",
+      "PIP",
+      "PIP2",
+      "PIP3",
+      "GM1Cer",
+      "GD1Cer",
+      "MAG",
+      "Epi",
+      "PGP",
+      "WE",
+      "FA"
+    ],
+    "filter_apply": 0,
+    "filter_cat": null,
+    "filter_cat-selectized": "",
+    "filter_class": null,
+    "filter_class-selectized": "",
+    "filter_db": [
+      1,
+      10
+    ],
+    "filter_func": null,
+    "filter_func-selectized": "",
+    "filter_length": [
+      1,
+      100
+    ],
+    "filter_oh": [
+      1,
+      10
+    ],
+    "heatColor": "viridis",
+    "heatColor-selectized": "",
+    "heatHeight": 10,
+    "heatLabSize": 9,
+    "heatWidth": 20,
+    "ID": "",
+    "ID-selectized": "",
+    "main_add": [
+      "points",
+      "bars"
+    ],
+    "main_error": "None",
+    "main_error-selectized": "",
+    "mainHeight": 10,
+    "mainWidth": 20,
+    "pca_center": true,
+    "pca_cv": "none",
+    "pca_cv-selectized": "",
+    "pca_Height": 20,
+    "pca_hull": false,
+    "pca_labels": true,
+    "pca_method": "svd",
+    "pca_method-selectized": "",
+    "pca_nPC": 2,
+    "pca_pointSize": 5,
+    "pca_scaling": "none",
+    "pca_scaling-selectized": "",
+    "pca_vectors": true,
+    "pca_Width": 20,
+    "rep_remove": null,
+    "rep_remove-selectized": "",
+    "rep_select": null,
+    "rep_select-selectized": "",
+    "sample_remove": null,
+    "sample_remove-selectized": "",
+    "sample_select": null,
+    "sample_select-selectized": "",
+    "showFullMeta": false,
+    "sidebarCollapsed": false,
+    "sidebarItemExpanded": "Visualization",
+    "std_feature": "sample_replicate_technical",
+    "std_feature-selectized": "",
+    "tab": "PCA",
+    "tecRep_average": true,
+    "tecRep_remove": null,
+    "tecRep_remove-selectized": ""
+  },
+  "output": {
+    "heatPlot": {
+      "message": "Please select a dataset first.",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "mainDataTable": [
+      "Please select a dataset first.",
+      "NULL",
+      "c(\"shiny.silent.error\", \"validation\")"
+    ],
+    "mainPlot": {
+      "message": "Please select a dataset first.",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "meanPlotDataTable": [
+      "Please select a dataset first.",
+      "NULL",
+      "c(\"shiny.silent.error\", \"validation\")"
+    ],
+    "metaDataTable": {
+      "x": {
+        "filter": "none",
+        "data": [
+          [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          [
+            "Set B",
+            "Set A",
+            "Set C",
+            "Set D",
+            "Set E"
+          ],
+          [
+            "2020-01-01",
+            "2020-01-01",
+            "2020-01-01",
+            "2020-01-01",
+            "2020-01-01"
+          ],
+          [
+            "complete",
+            "complete",
+            "complete",
+            "complete",
+            "complete"
+          ],
+          [
+            "Douglas",
+            "Marvin",
+            "Simon",
+            "Samantha",
+            "Ivy"
+          ]
+        ],
+        "container": "<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>id<\/th>\n      <th>title<\/th>\n      <th>date_upload<\/th>\n      <th>status<\/th>\n      <th>sample_from<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>",
+        "options": {
+          "orderClasses": true,
+          "pageLength": 10,
+          "order": [
+            0,
+            "desc"
+          ],
+          "scrollX": true,
+          "deferRender": true,
+          "scrollY": 500,
+          "scrollCollapse": true,
+          "columnDefs": [
+            {
+              "className": "dt-right",
+              "targets": 1
+            },
+            {
+              "orderable": false,
+              "targets": 0
+            }
+          ],
+          "autoWidth": false
+        },
+        "selection": {
+          "mode": "single",
+          "selected": 1,
+          "target": "row"
+        }
+      },
+      "evals": [
+
+      ],
+      "jsHooks": [
+
+      ],
+      "deps": [
+        {
+          "name": "dt-core",
+          "version": "1.10.16",
+          "src": {
+            "href": "dt-core-1.10.16"
+          },
+          "meta": null,
+          "script": "js/jquery.dataTables.min.js",
+          "stylesheet": [
+            "css/jquery.dataTables.min.css",
+            "css/jquery.dataTables.extra.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": false
+        },
+        {
+          "name": "jquery",
+          "version": "1.11.3",
+          "src": {
+            "href": "jquery-1.11.3"
+          },
+          "meta": null,
+          "script": "jquery.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "crosstalk",
+          "version": "1.0.0",
+          "src": {
+            "href": "crosstalk-1.0.0"
+          },
+          "meta": null,
+          "script": "js/crosstalk.min.js",
+          "stylesheet": "css/crosstalk.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "pairwiseComparisonsTable": [
+      "Please select a dataset first.",
+      "NULL",
+      "c(\"shiny.silent.error\", \"validation\")"
+    ],
+    "pca_info": {
+      "message": "Please select a dataset first.",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "pca_loadings": {
+      "message": "Please select a dataset first.",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "pca_scores": {
+      "message": "Please select a dataset first.",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    }
+  },
+  "export": {
+
+  }
+}

@@ -11,3 +11,4 @@ tests/GeneralTest-expected
 *.html
 old_Sqlite.db
 Sqlite.db
+packrat/lib*/
