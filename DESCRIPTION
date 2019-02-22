@@ -26,4 +26,6 @@ Depends:
   shinycssloaders,
   shinydashboard,
   shinyjs,
-  pcaMethods
+  pcaMethods,
+  testthat,
+  shinytest
