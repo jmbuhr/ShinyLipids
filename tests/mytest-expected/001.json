@@ -175,6 +175,7 @@
     "std_feature": "sample_replicate_technical",
     "std_feature-selectized": "",
     "tab": "PCA",
+    "tabs": "Mapping",
     "tecRep_average": true,
     "tecRep_remove": null,
     "tecRep_remove-selectized": ""

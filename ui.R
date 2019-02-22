@@ -35,7 +35,6 @@ sidebar <- shinydashboard::dashboardSidebar(
     shinyjs::useShinyjs(), # needed to load java script functions
 
     shinydashboard::sidebarMenu(
-        # * MetaData ---------------------------------------------------------------------------------------------------
         id = "tab",
         selectInput(
             "ID",
@@ -60,9 +59,8 @@ sidebar <- shinydashboard::dashboardSidebar(
     ),
 
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
-    tabsetPanel(type = "pills",
-                tabPanel(
-                    "Mapping",
+    tabsetPanel(type = "pills", id = "tabs",
+                tabPanel(title = "Mapping",
                     selectInput(
                         "aes_x",
                         label       = HTML("Feature to display on x-Axis /<br>use in the PCA"),
@@ -116,10 +114,7 @@ sidebar <- shinydashboard::dashboardSidebar(
                         selected = NULL
                     )
                 ),
-                # tabPanel("Defaults"
-                #          # Future Defaults panel
-                # ),
-                tabPanel("Samples",
+                tabPanel(title = "Samples",
                          selectizeInput(
                              'sample_select',
                              label    = 'Select samples',
@@ -160,8 +155,7 @@ sidebar <- shinydashboard::dashboardSidebar(
                              label    = "average over technical replicates", value = TRUE
                          )
                 ),
-                tabPanel(
-                    "Filters",
+                tabPanel(title = "Filters",
                     actionButton(
                         'filter_apply',
                         label    = "Apply filter",

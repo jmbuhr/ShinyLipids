@@ -1,11 +1,6 @@
-app <- ShinyDriver$new("../")
+app <- ShinyDriver$new("../", loadTimeout = 1e+05)
 app$snapshotInit("mytest")
 
-# Input 'mainDataTable_rows_current' was set, but doesn't have an input binding.
-# Input 'mainDataTable_rows_all' was set, but doesn't have an input binding.
-# Input 'metaDataTable_rows_selected' was set, but doesn't have an input binding.
-# Input 'metaDataTable_row_last_clicked' was set, but doesn't have an input binding.
-# Input 'metaDataTable_cell_clicked' was set, but doesn't have an input binding.
 # Input 'mainDataTable_rows_current' was set, but doesn't have an input binding.
 # Input 'mainDataTable_rows_all' was set, but doesn't have an input binding.
 app$setInputs(tab = "main")
