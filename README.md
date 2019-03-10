@@ -1,6 +1,6 @@
 # ShinyLipids
 
-[![Travis build Status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=dev)](https://travis-ci.com/jannikbuhr/ShinyLipids)
+[![Travis build Status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jannikbuhr/ShinyLipids)
 
 A remake of ShinyLipids with consistent coding and documentation as well as improved functionality.
 
