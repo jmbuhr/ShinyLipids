@@ -1,20 +1,3 @@
-# Preamble --------------------------------------------------------------------------------------------------------
-# Packages
-# install.packages(c("BiocManager", "tidyverse", "RColorBrewer", "shiny",
-#                    "dbplyr", "DT", "ggrepel", "RSQLite", "umap",
-#                    "DT", "shinycssloaders", "shinydashboard", "shinyjs"))
-#
-# BiocManager::install(pkgs = c("pcaMethods"))
-
-## For deployment from RStudio
-# install.packages(c("bitops", "RCurl", "openssl", "rstudioapi"))
-
-# Run this before deployment
-options(repos = c(BiocManager::repositories()))
-
-## If deployment fails, run this:
-# BiocManager::install("rsconnect", update = TRUE, ask = FALSE)
-
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(dbplyr) # only needed for deployment
 library(shiny)
@@ -23,7 +6,6 @@ library(ggplot2)
 library(tidyr)
 library(purrr)
 library(RSQLite)
-
 
 # Database Connection ---------------------------------------------------------------------------------------------
 ## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)

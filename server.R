@@ -825,6 +825,7 @@ function(input, output, session) {
 
     # Log scale, name of y-axis and percent format for standardized data
     if ("log" %in% input$main_add) {
+      # browser()
       if (input$std_feature != "") {
         y_name   <- "amount [ Mol % ], log1p scale"
         y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
