@@ -1,7 +1,7 @@
 # Preamble --------------------------------------------------------------------------------------------------------
 install.packages(c("BiocManager", "tidyverse", "RColorBrewer", "shiny",
-                    "dbplyr", "DT", "ggrepel", "RSQLite", "umap",
-                    "DT", "shinycssloaders", "shinydashboard", "shinyjs"))
+                    "dbplyr", "DT", "ggrepel", "RSQLite",
+                    "DT", "shinycssloaders", "shinydashboard", "shinyjs", "shinyjqui"))
 
 BiocManager::install(pkgs = c("pcaMethods"))
 # For deployment from RStudio

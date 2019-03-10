@@ -21,11 +21,11 @@ Depends:
   DT,
   ggrepel,
   RSQLite,
-  umap,
   DT,
   shinycssloaders,
   shinydashboard,
   shinyjs,
   pcaMethods,
   testthat,
-  shinytest
+  shinytest,
+  shinyjqui
