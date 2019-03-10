@@ -324,22 +324,22 @@ function(input, output, session) {
     }
   )
 
-  # UMAP
-  output$umapSave <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-UMAP", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot   = umap_plt(),
-        width  = input$umapWidth,
-        height = input$umapHeight
-      )
-    }
-  )
+  # # UMAP
+  # output$umapSave <- downloadHandler(
+  #   filename = function() {
+  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+  #     paste0(Sys.Date(), "_", tmp, "-UMAP", ".pdf")
+  #   },
+  #   content = function(file) {
+  #     ggsave(
+  #       file,
+  #       plot   = umap_plt(),
+  #       width  = input$umapWidth,
+  #       height = input$umapHeight
+  #     )
+  #   }
+  # )
 
 
   # Updating filtering options by dataset --------------------------------------------------------

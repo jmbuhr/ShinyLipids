@@ -21,7 +21,6 @@ Depends:
   DT,
   ggrepel,
   RSQLite,
-  umap,
   DT,
   shinycssloaders,
   shinydashboard,

@@ -1,6 +1,6 @@
 # Preamble --------------------------------------------------------------------------------------------------------
 install.packages(c("BiocManager", "tidyverse", "RColorBrewer", "shiny",
-                    "dbplyr", "DT", "ggrepel", "RSQLite", "umap",
+                    "dbplyr", "DT", "ggrepel", "RSQLite",
                     "DT", "shinycssloaders", "shinydashboard", "shinyjs"))
 
 BiocManager::install(pkgs = c("pcaMethods"))
