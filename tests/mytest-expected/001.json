@@ -174,7 +174,7 @@
     "sidebarItemExpanded": "Visualization",
     "std_feature": "sample_replicate_technical",
     "std_feature-selectized": "",
-    "tab": "PCA",
+    "tab": "main",
     "tabs": "Mapping",
     "tecRep_average": true,
     "tecRep_remove": null,
