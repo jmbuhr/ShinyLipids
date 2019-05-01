@@ -11,4 +11,4 @@ install.packages(c("bitops", "RCurl", "openssl", "rstudioapi"))
 options(repos = c(BiocManager::repositories()))
 
 ## If deployment fails, run this:
-BiocManager::install("rsconnect", update = TRUE, ask = FALSE)
+# BiocManager::install("rsconnect", update = TRUE, ask = FALSE)

@@ -153,5 +153,5 @@ options(
 # (.packages())
 # sessionInfo()
 # NCmisc:::list.functions.in.file("./R/global.R")
-# writeLines(capture.output(sessionInfo()), "./docs/sessionInfo.txt")
-# write.table(rsconnect::appDependencies(), "./docs/appDependencies.txt")
+# writelines(capture.output(sessioninfo()), "./docs/sessioninfo.txt")
+# write.table(rsconnect::appdependencies(), "./docs/appdependencies.txt")
