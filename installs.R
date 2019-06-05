@@ -5,7 +5,7 @@ install.packages(c("BiocManager", "tidyverse", "RColorBrewer", "shiny",
 
 BiocManager::install(pkgs = c("pcaMethods"))
 # For deployment from RStudio
-install.packages(c("bitops", "RCurl", "openssl", "rstudioapi"))
+install.packages(c("bitops", "RCurl", "openssl", "rstudioapi", "rsconnect"))
 
 # Run this before deployment
 options(repos = c(BiocManager::repositories()))
