@@ -6,12 +6,12 @@ header <- shinydashboard::dashboardHeader(
                                  icon       = icon("question-circle"),
                                  headerText = "Need Help?",
                                  shinydashboard::notificationItem(text   = "Documentation",
-                                                                  href   = "https://jannikbuhr.github.io/doc/shinylipids/",
+                                                                  href   = "https://jmbuhr.de/project/shinylipids/",
                                                                   icon   = icon("book"),
                                                                   status = "success"
                                  ),
                                  shinydashboard::notificationItem(text   = "Contact author",
-                                                                  href   = "https://jannikbuhr.github.io/#contact",
+                                                                  href   = "https://jmbuhr.de/#contact",
                                                                   status = "success",
                                                                   icon   = icon("envelope")
                                  )
