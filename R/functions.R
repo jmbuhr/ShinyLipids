@@ -195,7 +195,8 @@ filter_rawData <- function(df, input) {
 
 
 
-create_plotData <- function(df, input) {
+create_plotData <- function(.data, input) {
+    df <- .data
     # Averaging over the technical replicates
     if (input$tecRep_average) {
         df <- df %>%
@@ -253,3 +254,23 @@ create_plotData <- function(df, input) {
 
     return(df)
 }
+
+
+summarise_plotData <- function(.data) {
+    df <- .data %>% summarize(
+        SD       = sd(value, na.rm = TRUE),
+        SEM      = sd(value, na.rm = TRUE) / n(),
+        N        = n(),
+        value    = mean(value, na.rm = TRUE),
+        CI_lower = value - safe_qt(1 - (0.05 / 2), N - 1) * SEM,
+        CI_upper = value + safe_qt(1 - (0.05 / 2), N - 1) * SEM
+    ) %>%
+        # assumption: we are 100% sure that no lipid has a value smaller than 0
+        mutate(
+            CI_lower = if_else(CI_lower < 0, 0, CI_lower)
+        )
+
+    return(df)
+}
+
+

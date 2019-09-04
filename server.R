@@ -367,9 +367,8 @@ function(input, output, session) {
       )
     )
 
-  mainData() %>%
-    create_plotData(input)
-
+    mainData() %>%
+      create_plotData(input)
   })
 
 
@@ -377,22 +376,8 @@ function(input, output, session) {
 
   meanPlotData <- reactive({
     req(plotData())
-    df <- plotData()
-
-    df <- df %>% summarize(
-      SD       = sd(value, na.rm = TRUE),
-      SEM      = sd(value, na.rm = TRUE) / n(),
-      N        = n(),
-      value    = mean(value, na.rm = TRUE),
-      CI_lower = value - safe_qt(1 - (0.05 / 2), N - 1) * SEM,
-      CI_upper = value + safe_qt(1 - (0.05 / 2), N - 1) * SEM
-    ) %>%
-      # assumption: we are 100% sure that no lipid has a value smaller than 0
-      mutate(
-        CI_lower = if_else(CI_lower < 0, 0,CI_lower)
-      )
-
-    df
+    plotData() %>%
+      summarise_plotData()
   })
 
 
