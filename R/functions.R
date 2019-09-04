@@ -111,19 +111,19 @@ collect_raw_data <- function(con, query, custom_class_order = class_levels) {
     return(df)
 }
 
-standardize_rawData <- function(df, input) {
+standardize_rawData <- function(df, std_feature, base_sample) {
     # Standardization based on input$std_feature
-    if (input$std_feature != "") {
+    if (std_feature != "") {
         df <- df %>%
-            group_by(id, !!sym(input$std_feature)) %>%
+            group_by(id, !!sym(std_feature)) %>%
             mutate(value = value / sum(value) * 100) %>%
             ungroup()
     }
 
     # Base level substraction
-    if (input$base_sample != "") {
+    if (base_sample != "") {
         baseline <- df %>%
-            filter(sample == input$base_sample) %>%
+            filter(sample == base_sample) %>%
             group_by(lipid) %>%
             summarize(baseline = mean(value, na.rm = TRUE))
         df <- df %>%
@@ -135,3 +135,60 @@ standardize_rawData <- function(df, input) {
     return(df)
 }
 
+filter_rawData <- function(df, input) {
+    # Category
+    if (!is.null(input$filter_cat)) {
+        df <- df %>% filter(category %in% input$filter_cat)
+    }
+    # Class
+    if (!is.null(input$filter_class)) {
+        df <- df %>% filter(class %in% input$filter_class)
+    }
+    # Functional category
+    if (!is.null(input$filter_func)) {
+        df <- df %>% filter(func_cat %in% input$filter_func)
+    }
+    # Total length of sidechains
+    if (!is.null(input$filter_length)) {
+        df <-
+            df %>%
+            filter(length %>% between(input$filter_length[1], input$filter_length[2]))
+    }
+    # Total number of double bounds
+    if (!is.null(input$filter_db)) {
+        df <-
+            df %>%
+            filter(db %>% between(input$filter_db[1], input$filter_db[2]))
+    }
+    # Total number of hydroxyl groups
+    if (!is.null(input$filter_oh)) {
+        df <-
+            df %>%
+            filter(oh %>% between(input$filter_oh[1], input$filter_oh[2]))
+    }
+    # explicitly demanding sample
+    if (!is.null(input$sample_select)) {
+        df <- df %>% filter(sample %in% input$sample_select)
+    }
+    # removing sample
+    if (!is.null(input$sample_remove)) {
+        df <- df %>% filter(!(sample %in% input$sample_remove))
+    }
+    # demanding replicate
+    if (!is.null(input$rep_select)) {
+        df <- df %>% filter(sample_replicate %in% input$rep_select)
+    }
+    # removing replicate
+    if (!is.null(input$rep_remove)) {
+        df <- df %>% filter(!(sample_replicate %in% input$rep_remove))
+    }
+    # removing technical replicate
+    if (!is.null(input$tecRep_remove)) {
+        df <-
+            df %>%
+            filter(!(
+                sample_replicate_technical %in% input$tecRep_remove
+            ))
+    }
+    return(df)
+}

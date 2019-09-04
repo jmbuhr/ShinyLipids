@@ -156,11 +156,11 @@ sidebar <- shinydashboard::dashboardSidebar(
                          )
                 ),
                 tabPanel(title = "Filters",
-                         actionButton(
-                             'filter_apply',
-                             label    = "Apply filter",
-                             icon     = icon("rocket")
-                         ),
+                         # actionButton(
+                         #     'filter_apply',
+                         #     label    = "Apply filter",
+                         #     icon     = icon("rocket")
+                         # ),
                          selectizeInput(
                              'filter_class',
                              label    = "Select classes",
