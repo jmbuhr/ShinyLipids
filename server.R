@@ -383,14 +383,6 @@ function(input, output, session) {
 
   # Pairwise Comparisons --------------------------------------------------------------------------------------------
 
-  test_pairwise <- function(response, group) {
-    pairwise.t.test(
-      x = log(response), g = group,
-      paired = F, alternative = "two.sided"
-    ) %>%
-      broom::tidy()
-  }
-
   pairwiseComparisons <- reactive({
     # req(plotData())
     validate(

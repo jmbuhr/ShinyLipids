@@ -29,3 +29,4 @@ Depends:
   testthat,
   shinytest,
   shinyjqui
+RoxygenNote: 6.1.1

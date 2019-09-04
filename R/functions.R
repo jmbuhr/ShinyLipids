@@ -12,6 +12,12 @@
 # helper functions -------------------------------------------------------------------------------------------------------
 
 # borrowed from plyr (https://github.com/hadley/plyr/):
+#' is.discrete
+#'
+#' @param x
+#'
+#' @return logical
+#' @export
 is.discrete <-
     function(x) {
         is.factor(x) || is.character(x) || is.logical(x)
@@ -51,6 +57,15 @@ stat_chull <- function(mapping       = NULL,
         inherit.aes = inherit.aes,
         params      = list(na.rm = na.rm, ...)
     )
+}
+
+# Pairwiss comparions to get p-valus
+test_pairwise <- function(response, group) {
+    pairwise.t.test(
+        x = log(response), g = group,
+        paired = F, alternative = "two.sided"
+    ) %>%
+        broom::tidy()
 }
 
 # Lipid class order -----------------------------------------------------------------------------------------------
