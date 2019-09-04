@@ -70,7 +70,6 @@ function(input, output, session) {
   mainData <- reactive({
     req(rawData())
 
-    # Temporary dataframe in the scope of this function
     df <- rawData()
 
     # Standardization based on input$std_feature
@@ -94,7 +93,7 @@ function(input, output, session) {
         ungroup()
     }
 
-    input$filter_apply
+    # input$filter_apply
 
     # Filtering
 
