@@ -73,9 +73,7 @@ function(input, output, session) {
     rawData() %>%
       standardize_rawData(std_feature = input$std_feature, base_sample = input$base_sample) %>%
       filter_rawData(input)
-
   })
-
 
   # Download handlers  --------------------------------------------------------------
 
@@ -346,7 +344,6 @@ function(input, output, session) {
   # with apropriate summarize functions based on selecte plot type, standards and aes
   plotData <- reactive({
     req(mainData())
-    df <- mainData()
 
     # Validations, friendly error messages
     validate(
@@ -368,68 +365,11 @@ function(input, output, session) {
         input$aes_x != "",
         "Please select a feature to display on the x-axis"
       )
-      # need(
-      #     input$aes_y != "",
-      #     "Please select a feature to display on the y-axis"
-      # )
     )
 
-    # Averaging over the technical replicates
-    if (input$tecRep_average) {
-      df <- df %>%
-        group_by_at(vars(
-          -sample_identifier,
-          -sample_replicate_technical,
-          -value
-        )) %>%
-        summarize(value = mean(value, na.rm = T)) %>%
-        ungroup()
-    }
+  mainData() %>%
+    create_plotData(input)
 
-    # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
-    df <- df %>% filter(
-      !is.na(!!sym(input$aes_x)),
-      !is.na(value)
-    )
-    if (input$aes_color != "") {
-      df <- df %>% filter(!is.na(!!sym(input$aes_color)))
-    }
-    if (input$aes_facet1 != "") {
-      df <- df %>% filter(!is.na(!!sym(input$aes_facet1)))
-    }
-    if (input$aes_facet2 != "") {
-      df <- df %>% filter(!is.na(!!sym(input$aes_facet2)))
-    }
-
-    # Summation of values within the displayed aesthetics
-    # TODO show individual tec. sample reps.
-    # By features mapped to aesthetics, always by sample rep
-    df <- df %>% ungroup()
-    if (input$aes_x != "") {
-      df <- df %>% group_by(!!sym(input$aes_x), add = TRUE)
-    }
-    if (input$aes_color != "") {
-      df <- df %>% group_by(!!sym(input$aes_color), add = TRUE)
-    }
-    if (input$aes_facet1 != "") {
-      df <- df %>% group_by(!!sym(input$aes_facet1), add = TRUE)
-    }
-    if (input$aes_facet2 != "") {
-      df <- df %>% group_by(!!sym(input$aes_facet2), add = TRUE)
-    }
-    if (input$tecRep_average) {
-      df <- df %>% group_by(sample_replicate, add = TRUE)
-    } else {
-      df <- df %>% group_by(sample_replicate_technical, add = TRUE)
-    }
-
-    # Sums for each group
-    df <- df %>% summarize(value = sum(value, na.rm = TRUE))
-    # This will remove only the last layer of grouping (sample_replicate or sample_replicate_technical)
-    # and keep the other groups, in either case, ase_x will still be a group
-    # this group will then be summarized in meanPlotData
-
-    df
   })
 
 
