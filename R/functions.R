@@ -68,3 +68,22 @@ collect_meta_data <- function(con, query) {
     return(meta)
 }
 
+
+collect_raw_data <- function(con, query, custom_class_order = class_levels) {
+    df <- collect(tbl(con, sql(query))) %>%
+        filter(!is.na(value)) %>%
+        mutate(
+            sample_identifier          = factor(sample_identifier),
+            lipid                      = factor(lipid),
+            func_cat                   = factor(func_cat),
+            class                      = quiet_fct_relevel(class, custom_class_order)$result,
+            category                   = factor(category),
+            sample                     = factor(sample),
+            sample_replicate           = factor(sample_replicate),
+            sample_replicate_technical = factor(sample_replicate_technical),
+            oh                         = if_else(is.na(oh), 0, oh)
+        ) %>%
+        select(id, sample_identifier, lipid, value, everything())
+    return(df)
+}
+

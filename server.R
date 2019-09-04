@@ -21,13 +21,7 @@ function(input, output, session) {
       meta <- metaData()
     } else {
       meta <-
-        metaData()[c(
-          "id",
-          "title",
-          "date_upload",
-          "status",
-          "sample_from"
-        )]
+        metaData()[c( "id", "title", "date_upload", "status", "sample_from")]
     }
     meta
   },
@@ -50,9 +44,9 @@ function(input, output, session) {
     names(choices) <- metaData()$title
     selection <- input$metaDataTable_rows_selected
     updateSelectInput(session,
-      "ID",
-      choices  = choices,
-      selected = choices[selection]
+                      "ID",
+                      choices  = choices,
+                      selected = choices[selection]
     )
   },
   label = "updatingDataSelect")
@@ -66,24 +60,7 @@ function(input, output, session) {
     validate(need(input$ID, "Please select a dataset first."))
 
     query <- sqlQueryData(input$ID)
-    raw <- collect(tbl(database_connection, sql(query)))
-    df <- raw %>%
-      filter(!is.na(value))
-    df <- df %>%
-      mutate(
-        sample_identifier          = factor(sample_identifier),
-        lipid                      = factor(lipid),
-        func_cat                   = factor(func_cat),
-        class                      = quiet_fct_relevel(class, input$custom_class_order_order)$result,
-        category                   = factor(category),
-        sample                     = factor(sample),
-        sample_replicate           = factor(sample_replicate),
-        sample_replicate_technical = factor(sample_replicate_technical),
-        oh                         = if_else(is.na(oh), 0, oh)
-      ) %>%
-      select(id, sample_identifier, lipid, value, everything())
-    df %>%
-      return()
+    collect_raw_data(database_connection, query, custom_class_order = input$custom_class_order_order)
   })
 
 
@@ -340,44 +317,44 @@ function(input, output, session) {
     choices <- rawData()$sample %>%
       unique()
     updateSelectizeInput(session, "sample_select",
-      choices = choices
+                         choices = choices
     )
     updateSelectizeInput(session,
-      "base_sample",
-      choices = choices,
-      selected = ""
+                         "base_sample",
+                         choices = choices,
+                         selected = ""
     )
     sample_IDs <- rawData()$sample_identifier %>% unique()
     updateSelectizeInput(session, "sample_remove",
-      choices = choices
+                         choices = choices
     )
     choices <- rawData()$sample_replicate %>%
       unique()
     updateSelectizeInput(session, "rep_select",
-      choices = choices
+                         choices = choices
     )
     updateSelectizeInput(session, "rep_remove",
-      choices = choices
+                         choices = choices
     )
     choices <- rawData()$sample_replicate_technical %>%
       unique()
     updateSelectizeInput(session, "tecRep_remove",
-      choices = choices
+                         choices = choices
     )
     choices <- rawData()$category %>%
       unique()
     updateSelectizeInput(session, "filter_cat",
-      choices = choices
+                         choices = choices
     )
     choices <- rawData()$func_cat %>%
       unique()
     updateSelectizeInput(session, "filter_func",
-      choices = choices
+                         choices = choices
     )
     choices <- rawData()$class %>%
       unique()
     updateSelectizeInput(session, "filter_class",
-      choices = choices
+                         choices = choices
     )
     ls <- rawData()$length %>%
       range(na.rm = TRUE)
@@ -412,14 +389,14 @@ function(input, output, session) {
   observe({
     if (!is.null(input$sample_select)) {
       updateSelectizeInput(session,
-        "sample_remove",
-        choices = input$sample_select
+                           "sample_remove",
+                           choices = input$sample_select
       )
     }
     if (is.null(input$sample_select)) {
       updateSelectizeInput(session,
-        "sample_remove",
-        choices = unique(rawData()$sample)
+                           "sample_remove",
+                           choices = unique(rawData()$sample)
       )
     }
   })
@@ -550,10 +527,10 @@ function(input, output, session) {
       CI_lower = value - safe_qt(1 - (0.05 / 2), N - 1) * SEM,
       CI_upper = value + safe_qt(1 - (0.05 / 2), N - 1) * SEM
     ) %>%
-    # assumption: we are 100% sure that no lipid has a value smaller than 0
-    mutate(
+      # assumption: we are 100% sure that no lipid has a value smaller than 0
+      mutate(
         CI_lower = if_else(CI_lower < 0, 0,CI_lower)
-    )
+      )
 
     df
   })
@@ -566,7 +543,7 @@ function(input, output, session) {
       x = log(response), g = group,
       paired = F, alternative = "two.sided"
     ) %>%
-    broom::tidy()
+      broom::tidy()
   }
 
   pairwiseComparisons <- reactive({
@@ -954,7 +931,7 @@ function(input, output, session) {
         x    = input$aes_x,
         fill = fill_name
       ) +
-    NULL
+      NULL
 
     # facetting
     if (input$aes_facet1 != "" & input$aes_facet2 != "") {
@@ -986,8 +963,8 @@ function(input, output, session) {
   observe({
     req(pcaData())
     updateSliderInput(session,
-      "pca_nPC",
-      max = min(dim(pcaData()))
+                      "pca_nPC",
+                      max = min(dim(pcaData()))
     )
   })
 
@@ -1092,11 +1069,11 @@ function(input, output, session) {
         )
       ) %>%
       left_join(sample_names(),
-        by = if_else(
-          input$tecRep_average,
-          "sample_replicate",
-          "sample_replicate_technical"
-        )
+                by = if_else(
+                  input$tecRep_average,
+                  "sample_replicate",
+                  "sample_replicate_technical"
+                )
       )
 
     scaler <-
