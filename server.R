@@ -586,7 +586,7 @@ function(input, output, session) {
       ),
       need(
         input$aes_x %in% c("class", "category"),
-        "Comparisons are currently onyl supported for class on the x axis"
+        "Comparisons are only supported for class or category on the x axis"
       ),
       need(
         length(unique(plotData()$sample)) > 1,
@@ -595,14 +595,17 @@ function(input, output, session) {
     )
 
     # Significance
-    plotData() %>%
+    result <- plotData() %>%
       ungroup() %>%
       nest(-!!sym(input$aes_x)) %>%
       mutate(
         pairwise = map(data, ~ test_pairwise(response = .$value, group = .$sample))
       ) %>%
       unnest(pairwise) %>%
-      mutate(p.value = p.adjust(p.value, "BH"))
+      mutate(p.value = p.adjust(p.value, "BH")) %>%
+      select(-data)
+
+    result
   })
 
   output$pairwiseComparisonsTable <- DT::renderDT({
