@@ -55,26 +55,6 @@ features <- c(
 
 
 # Lipid class order -----------------------------------------------------------------------------------------------
-get_lipid_class_order <- function(con) {
-  con <- DBI::dbConnect(RSQLite::SQLite(), con)
-  if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(con)) {
-    res <- collect(tbl(con, "LIPID_CLASS_ORDER_COMPLETE")) %>%
-      arrange(class_order) %>%
-      pull(class)
-  } else {
-    res <- c(
-      "PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE",
-      "PS", "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG", "PA",
-      "PA O-", "LPA", "CL", "MLCL", "Cer", "SM", "HexCer", "SGalCer",
-      "GM3", "Sulf", "diHexCer", "Hex2Cer", "For", "IPC", "MIPC",
-      "M(IP)2C", "Chol", "Desm", "Erg", "CE", "EE", "DAG", "TAG",
-      "PIP", "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi", "PGP", "WE", "FA"
-    )
-  }
-  dbDisconnect(con)
-  return(res)
-}
-
 class_levels <- get_lipid_class_order(database_connection)
 
 # Global theme definition to add to ggplots

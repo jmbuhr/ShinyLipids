@@ -70,30 +70,8 @@ function(input, output, session) {
   mainData <- reactive({
     req(rawData())
 
-    df <- rawData()
-
-    # Standardization based on input$std_feature
-    if (input$std_feature != "") {
-      df <- df %>%
-        group_by(id, !!sym(input$std_feature)) %>%
-        mutate(value = value / sum(value) * 100) %>%
-        ungroup()
-    }
-
-    # Base level substraction
-    if (input$base_sample != "") {
-      baseline <- df %>%
-        filter(sample == input$base_sample) %>%
-        group_by(lipid) %>%
-        summarize(baseline = mean(value, na.rm = TRUE))
-      df <- df %>%
-        left_join(baseline) %>%
-        mutate(baseline = if_else(is.na(baseline), 0, baseline)) %>%
-        mutate(value = value - baseline) %>%
-        ungroup()
-    }
-
-    # input$filter_apply
+    df <- rawData() %>%
+      standardize_rawData(input)
 
     # Filtering
 

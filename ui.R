@@ -61,58 +61,58 @@ sidebar <- shinydashboard::dashboardSidebar(
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills", id = "tabs",
                 tabPanel(title = "Mapping",
-                    selectInput(
-                        "aes_x",
-                        label       = HTML("Feature to display on x-Axis /<br>use in the PCA"),
-                        choices     = features[!features %in% c("value",
-                                                                "sample_replicate",
-                                                                "sample_replicate_technical")],
-                        selected    = "class"),
-                    selectizeInput(
-                        "aes_color",
-                        label    = HTML("Feature to display by color /<br> y-axis of heatmap"),
-                        choices  = features[!features %in% c("lipid",
-                                                             "value",
-                                                             "length",
-                                                             "chains",
-                                                             "chain_sums",
-                                                             "sample_replicate",
-                                                             "sample_replicate_technical")],
-                        selected = "sample"),
-                    selectizeInput(
-                        "aes_facet1",
-                        label    = "Feature to use for facetting in columns",
-                        choices  = features[!features %in% c("lipid",
-                                                             "value",
-                                                             "length",
-                                                             "chains",
-                                                             "chain_sums",
-                                                             "sample_replicate",
-                                                             "sample_replicate_technical")],
-                        selected = NULL),
-                    selectizeInput(
-                        "aes_facet2",
-                        label    = "Feature to use for facetting in rows",
-                        choices  = features[!features %in% c("lipid",
-                                                             "value",
-                                                             "length",
-                                                             "chains",
-                                                             "chain_sums",
-                                                             "sample_replicate",
-                                                             "sample_replicate_technical")],
-                        selected = NULL),
-                    selectizeInput(
-                        "std_feature",
-                        label    = "Standardize to 100% within:",
-                        choices  = features[!features %in% c("value")],
-                        selected = "sample_replicate_technical"
-                    ),
-                    selectizeInput(
-                        "base_sample",
-                        label    = "Substract sample as baseline",
-                        choices  = "",
-                        selected = NULL
-                    )
+                         selectInput(
+                             "aes_x",
+                             label       = HTML("Feature to display on x-Axis /<br>use in the PCA"),
+                             choices     = features[!features %in% c("value",
+                                                                     "sample_replicate",
+                                                                     "sample_replicate_technical")],
+                             selected    = "class"),
+                         selectizeInput(
+                             "aes_color",
+                             label    = HTML("Feature to display by color /<br> y-axis of heatmap"),
+                             choices  = features[!features %in% c("lipid",
+                                                                  "value",
+                                                                  "length",
+                                                                  "chains",
+                                                                  "chain_sums",
+                                                                  "sample_replicate",
+                                                                  "sample_replicate_technical")],
+                             selected = "sample"),
+                         selectizeInput(
+                             "aes_facet1",
+                             label    = "Feature to use for facetting in columns",
+                             choices  = features[!features %in% c("lipid",
+                                                                  "value",
+                                                                  "length",
+                                                                  "chains",
+                                                                  "chain_sums",
+                                                                  "sample_replicate",
+                                                                  "sample_replicate_technical")],
+                             selected = NULL),
+                         selectizeInput(
+                             "aes_facet2",
+                             label    = "Feature to use for facetting in rows",
+                             choices  = features[!features %in% c("lipid",
+                                                                  "value",
+                                                                  "length",
+                                                                  "chains",
+                                                                  "chain_sums",
+                                                                  "sample_replicate",
+                                                                  "sample_replicate_technical")],
+                             selected = NULL),
+                         selectizeInput(
+                             "std_feature",
+                             label    = "Standardize to 100% within:",
+                             choices  = features[!features %in% c("value")],
+                             selected = "sample_replicate_technical"
+                         ),
+                         selectizeInput(
+                             "base_sample",
+                             label    = "Substract sample as baseline",
+                             choices  = "",
+                             selected = NULL
+                         )
                 ),
                 tabPanel(title = "Samples",
                          selectizeInput(
@@ -156,50 +156,50 @@ sidebar <- shinydashboard::dashboardSidebar(
                          )
                 ),
                 tabPanel(title = "Filters",
-                    actionButton(
-                        'filter_apply',
-                        label    = "Apply filter",
-                        icon     = icon("rocket")
-                    ),
-                    selectizeInput(
-                        'filter_class',
-                        label    = "Select classes",
-                        options  = list(placeholder = "empty field means no filtering based on this feature"),
-                        choices  = NULL,
-                        multiple = TRUE
-                    ),
-                    selectizeInput(
-                        'filter_cat',
-                        label    = "Select categories",
-                        options  = list(placeholder = "empty field means no filtering based on this feature"),
-                        choices  = NULL,
-                        multiple = TRUE
-                    ),
-                    selectizeInput(
-                        'filter_func',
-                        label    = "Select functional categories",
-                        options  = list(placeholder = "empty field means no filtering based on this feature"),
-                        choices  = NULL,
-                        multiple = TRUE
-                    ),
-                    sliderInput(
-                        'filter_length',
-                        label    = "Filter length",
-                        min      = 1, max = 100,
-                        value    = c(1,100)
-                    ),
-                    sliderInput(
-                        'filter_db',
-                        label    = "Filter double bonds",
-                        min      = 1, max = 10,
-                        value    = c(1,10)
-                    ),
-                    sliderInput(
-                        'filter_oh',
-                        label    = "Filter hydroxylation",
-                        min      = 1, max = 10,
-                        value    = c(1,10)
-                    )
+                         actionButton(
+                             'filter_apply',
+                             label    = "Apply filter",
+                             icon     = icon("rocket")
+                         ),
+                         selectizeInput(
+                             'filter_class',
+                             label    = "Select classes",
+                             options  = list(placeholder = "empty field means no filtering based on this feature"),
+                             choices  = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'filter_cat',
+                             label    = "Select categories",
+                             options  = list(placeholder = "empty field means no filtering based on this feature"),
+                             choices  = NULL,
+                             multiple = TRUE
+                         ),
+                         selectizeInput(
+                             'filter_func',
+                             label    = "Select functional categories",
+                             options  = list(placeholder = "empty field means no filtering based on this feature"),
+                             choices  = NULL,
+                             multiple = TRUE
+                         ),
+                         sliderInput(
+                             'filter_length',
+                             label    = "Filter length",
+                             min      = 1, max = 100,
+                             value    = c(1,100)
+                         ),
+                         sliderInput(
+                             'filter_db',
+                             label    = "Filter double bonds",
+                             min      = 1, max = 10,
+                             value    = c(1,10)
+                         ),
+                         sliderInput(
+                             'filter_oh',
+                             label    = "Filter hydroxylation",
+                             min      = 1, max = 10,
+                             value    = c(1,10)
+                         )
                 )
     ),
 
@@ -322,12 +322,7 @@ body <- shinydashboard::dashboardBody(
                                                               label = 'Custom Class Order',
                                                               items = class_levels,
                                                               item_class = 'primary',
-                                                              width = '100%') #,
-                                        # shinyjqui::orderInput('custom_sample_order',
-                                        #                       label = 'Custom Sample Order',
-                                        #                       items = letters,
-                                        #                       item_class = 'primary',
-                                        #                       width = '100%')
+                                                              width = '100%')
                                     )
                                 )
         ),
