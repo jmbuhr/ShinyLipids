@@ -10,15 +10,7 @@ function(input, output, session) {
 
   # Reading in table of datasets
   metaData <- reactive({
-    meta <- collect(tbl(database_connection, sql(sqlQueryMeta))) %>%
-      mutate(
-        date_upload     = as.Date(date_upload, format = "%y%m%d"),
-        date_sample     = as.Date(date_sample, format = "%y%m%d"),
-        date_extraction = as.Date(date_extraction, format = "%y%m%d"),
-        date_measured   = as.Date(date_measured, format = "%y%m%d")
-      ) %>%
-      arrange(id)
-    return(meta)
+    collect_meta_data(database_connection, sqlQueryMeta)
   })
 
   # Rendering datasets as a table to send to UI

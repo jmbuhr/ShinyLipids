@@ -56,5 +56,15 @@ stat_chull <- function(mapping       = NULL,
 
 # Data Cleaning Functions -------------------------------------------------
 
-
+collect_meta_data <- function(con, query) {
+    meta <- collect(tbl(con, sql(query))) %>%
+        mutate(
+            date_upload     = as.Date(date_upload, format = "%y%m%d"),
+            date_sample     = as.Date(date_sample, format = "%y%m%d"),
+            date_extraction = as.Date(date_extraction, format = "%y%m%d"),
+            date_measured   = as.Date(date_measured, format = "%y%m%d")
+        ) %>%
+        arrange(id)
+    return(meta)
+}
 
