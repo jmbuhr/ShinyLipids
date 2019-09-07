@@ -1,7 +1,10 @@
+# Debugging options -------------------------------------------------------
+# options(shiny.error = recover)
+
 # Attaching packages ----------------------------------------------------------------------------------------------
 # library(dbplyr) # only needed for deployment
 library(shiny)
-library(dplyr, quietly = TRUE)
+library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(purrr)
@@ -12,26 +15,19 @@ source("./R/functions.R")
 
 # Database Connection ---------------------------------------------------------------------------------------------
 ## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)
-database_connection <- "database/Sqlite_dev.db"
+# database_connection <- "database/Sqlite_dev.db"
+database_connection <- "R/exampleDatabase/exampleDatabase2.db"
 
 ## uncomment this to read from a serverside database (and fill in credentials as necessary)
 # database_connection <- src_postgres(dbname = "ldb",
-#                                    host    = "129.206.154.238",
+#                                    host    = "",
 #                                    port    = 5432,
-#                                    user    = "mathias")
+#                                    user    = "")
 
 ## uncomment this to read from a database on the same server this App is running (and fill in credentials as necessary)
 # database_connection <- src_postgres(dbname = "ldb",
 #                                    host    = "localhost",
-#                                    user    = "mathias")
-
-# SQL queries -----------------------------------------------------------------------------------------------------
-sqlQueryMeta <- paste("SELECT * FROM id_info")
-sqlQueryData <- function(dataset_ID) {
-  query <- paste("SELECT * FROM data2", "WHERE id =", dataset_ID)
-  return(query)
-}
-
+#                                    user    = "")
 
 # ggplot options --------------------------------------------------------------------------------------------------
 
@@ -76,27 +72,3 @@ mainTheme <- list(
   )
 )
 
-# Returns a function that takes an interger and creates a color palette
-getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1")) # [-6]
-
-# Color scale
-mainScale <- function(colorCount) {
-  list(
-    scale_fill_manual(values  = getPalette(colorCount)),
-    scale_color_manual(values = getPalette(colorCount))
-  )
-}
-
-
-# Debugging -------------------------------------------------------------------------------------------------------
-
-options(
-  shiny.fullstacktrace = FALSE,
-  shiny.error = "default"
-)
-
-# (.packages())
-# sessionInfo()
-# NCmisc:::list.functions.in.file("./R/global.R")
-# writelines(capture.output(sessioninfo()), "./docs/sessioninfo.txt")
-# write.table(rsconnect::appdependencies(), "./docs/appdependencies.txt")

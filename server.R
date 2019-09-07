@@ -1,12 +1,5 @@
-# Server function -------------------------------------------------------------------------------------------------
-function(input, output, session) {
+function(input, output, session){
   # Metadata / Datasets -------------------------------------------------------------------------------------------
-
-  ## Debugging code for a reactive database_connection set from the UI
-  # database_connection <- reactive({
-  #     req(input$database_connection)
-  #     src_sqlite(input$database_connection["datapath"] %>% as.character())
-  # })
 
   # Reading in table of datasets
   metaData <- reactive({
@@ -48,13 +41,11 @@ function(input, output, session) {
                       choices  = choices,
                       selected = choices[selection]
     )
-  },
-  label = "updatingDataSelect")
+  }, label = "updatingDataSelect")
 
   # Data ------------------------------------------------------------------------------------------------------------
 
   # * Reading in raw data based on dataset selected -----------------------------------------------------------------
-
   rawData <- reactive({
     # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
@@ -66,7 +57,6 @@ function(input, output, session) {
 
   # * mainData from rawData -------------------------------------------------------------------------
   # standardization, then filtering
-
   mainData <- reactive({
     req(rawData())
 
@@ -75,162 +65,7 @@ function(input, output, session) {
       filter_rawData(input)
   })
 
-  # Download handlers  --------------------------------------------------------------
-
-  # * metadata and raw datasets ------------------------------------------------------------------------------------
-  # Metadata - .csv
-  output$saveMeta <- downloadHandler(
-    filename = function() {
-      paste0("datasets_info.csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = metaData(), path = file)
-    }
-  )
-
-  # Raw Main Data - .csv
-  output$saveRawCSV <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-raw", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = rawData(), path = file)
-    }
-  )
-
-  #  Main Data - .csv
-  output$saveMainCSV <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-filtered", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = mainData(), path = file)
-    }
-  )
-
-
-  # * Plot Data -----------------------------------------------------------------------------------------------------
-  #  Plot Data - .csv
-  output$main_saveData <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-plot", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = plotData(), path = file)
-    }
-  )
-
-  #  Plot mean Data (bars) - .csv
-  output$main_saveMeans <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-means", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(
-        x = meanPlotData() %>% rename(mean = value),
-        path = file
-      )
-    }
-  )
-
-
-  # * Plots ---------------------------------------------------------------------------------------------------------
-
-  # Main Plot
-  output$main_savePlot <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-plot", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot   = mainPlt(),
-        width  = input$mainWidth,
-        height = input$mainHeight
-      )
-    }
-  )
-
-  # Heatmapt
-  output$heatSave <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-heatmap", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot = heatPlt(),
-        width = input$heatWidth,
-        height = input$heatHeight
-      )
-    }
-  )
-
-  # PCA
-  output$pca_saveScores <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-PCA_scores", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot   = pca_ScoresPlt(),
-        width  = input$pca_Width,
-        height = input$pca_Height
-      )
-    }
-  )
-
-  output$pca_saveLoadings <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-PCA_loadings", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot   = pca_LoadingsPlt(),
-        width  = input$pca_Width,
-        height = input$pca_Height
-      )
-    }
-  )
-
-  # # UMAP
-  # output$umapSave <- downloadHandler(
-  #   filename = function() {
-  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-  #     paste0(Sys.Date(), "_", tmp, "-UMAP", ".pdf")
-  #   },
-  #   content = function(file) {
-  #     ggsave(
-  #       file,
-  #       plot   = umap_plt(),
-  #       width  = input$umapWidth,
-  #       height = input$umapHeight
-  #     )
-  #   }
-  # )
-
-
   # Updating filtering options by dataset --------------------------------------------------------
-
   observe({
     choices <- rawData()$sample %>%
       unique()
@@ -337,8 +172,6 @@ function(input, output, session) {
   )
   )
 
-
-
   # plotData from mainData based on sidebar inputs ---------------------------------------------------------------
 
   # with apropriate summarize functions based on selecte plot type, standards and aes
@@ -397,21 +230,14 @@ function(input, output, session) {
       need(
         length(unique(plotData()$sample)) > 1,
         "You need at least 2 samples to compare them"
+      ),
+      need(
+        all_more_than_one_replicate(plotData(), input$aes_x, input$aes_color),
+        "You need more than 1 replicate per sample for everything visible in the plot"
       )
     )
 
-    # Significance
-    result <- plotData() %>%
-      ungroup() %>%
-      nest(-!!sym(input$aes_x)) %>%
-      mutate(
-        pairwise = map(data, ~ test_pairwise(response = .$value, group = .$sample))
-      ) %>%
-      unnest(pairwise) %>%
-      mutate(p.value = p.adjust(p.value, "BH")) %>%
-      select(-data)
-
-    result
+    do_pairwise_comparisons(plotData(), input$aes_x)
   })
 
   output$pairwiseComparisonsTable <- DT::renderDT({
@@ -852,20 +678,18 @@ function(input, output, session) {
 
   # * pcaObject -----------------------------------------------------------------------------------------------------
   pcaObject <- reactive({
-    df <-
-      pcaData() # needs to be a numeric matrix with samples in rows, variables in columns
+    m <- pcaData()
 
     # returns pcaRes object
     pcaMethods::pca(
-      as.matrix(df),
-      method = input$pca_method,
+      m,
+      method = if_else(any(is.na(m)), "nipals", input$pca_method),
       nPcs   = input$pca_nPC,
       center = input$pca_center,
       scale  = input$pca_scaling,
       cv     = input$pca_cv,
       seed   = 123
     )
-
   })
 
 
@@ -894,7 +718,7 @@ function(input, output, session) {
   })
 
   scaled_loadings <- reactive({
-    # req(pcaObject())
+    req(pcaObject())
     loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aes_x)
 
     scores <- pcaObject()@scores %>%
@@ -1039,6 +863,139 @@ function(input, output, session) {
   output$pca_loadings <- renderPlot({
     pca_LoadingsPlt()
   })
+
+  # Download handlers  --------------------------------------------------------------
+
+  # Metadata - .csv
+  output$saveMeta <- downloadHandler(
+    filename = function() {
+      paste0("datasets_info.csv")
+    },
+    content = function(file) {
+      readr::write_csv(x = metaData(), path = file)
+    }
+  )
+
+  # Raw Main Data - .csv
+  output$saveRawCSV <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-raw", ".csv")
+    },
+    content = function(file) {
+      readr::write_csv(x = rawData(), path = file)
+    }
+  )
+
+  #  Main Data - .csv
+  output$saveMainCSV <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-filtered", ".csv")
+    },
+    content = function(file) {
+      readr::write_csv(x = mainData(), path = file)
+    }
+  )
+
+  #  Plot Data - .csv
+  output$main_saveData <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-plot", ".csv")
+    },
+    content = function(file) {
+      readr::write_csv(x = plotData(), path = file)
+    }
+  )
+
+  #  Plot mean Data (bars) - .csv
+  output$main_saveMeans <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-means", ".csv")
+    },
+    content = function(file) {
+      readr::write_csv(
+        x = meanPlotData() %>% rename(mean = value),
+        path = file
+      )
+    }
+  )
+
+  # Main Plot
+  output$main_savePlot <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-plot", ".pdf")
+    },
+    content = function(file) {
+      ggsave(
+        file,
+        plot   = mainPlt(),
+        width  = input$mainWidth,
+        height = input$mainHeight
+      )
+    }
+  )
+
+  # Heatmap
+  output$heatSave <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-heatmap", ".pdf")
+    },
+    content = function(file) {
+      ggsave(
+        file,
+        plot = heatPlt(),
+        width = input$heatWidth,
+        height = input$heatHeight
+      )
+    }
+  )
+
+  # PCA Scors Plot
+  output$pca_saveScores <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-PCA_scores", ".pdf")
+    },
+    content = function(file) {
+      ggsave(
+        file,
+        plot   = pca_ScoresPlt(),
+        width  = input$pca_Width,
+        height = input$pca_Height
+      )
+    }
+  )
+
+  # PCA Loadings Plot
+  output$pca_saveLoadings <- downloadHandler(
+    filename = function() {
+      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, "-PCA_loadings", ".pdf")
+    },
+    content = function(file) {
+      ggsave(
+        file,
+        plot   = pca_LoadingsPlt(),
+        width  = input$pca_Width,
+        height = input$pca_Height
+      )
+    }
+  )
+
+
 
   # End -------------------------------------------------------------------------------------------------------------
   # End session when window is closed

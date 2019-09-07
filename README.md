@@ -28,6 +28,9 @@ the ShinyApp on RStudio-connect, you will need a couple of addictional packages.
 Once all packages are installed, make sure line 31 in `global.R` is active and place an approriate SQLite-database
 file under _/database/Sqlite.db_. This database file needs to contain the two tables "id_info" and "data2"
 (the naming is due to backend compatibility, because I did not touch the original server- and database-structure).
+Of course, you might not have your data in a database-dump file. To
+get your tabular data (preferably .csv) into such a file, you can use the
+script under _./R/createDatabase.R_ if you do not want to use third-party software.
 
 **You should have the following columns in the respective tables:**
 

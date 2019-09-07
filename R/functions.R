@@ -1,32 +1,40 @@
-# Functions
+# SQL queries -----------------------------------------------------------------------------------------------------
+sqlQueryMeta <- paste("SELECT * FROM id_info")
+sqlQueryData <- function(dataset_ID) {
+    query <- paste("SELECT * FROM data2", "WHERE id =", dataset_ID)
+    return(query)
+}
 
-# Libraries loaded in global.R
-# library(shiny)
-# library(dplyr, quietly = TRUE)
-# library(ggplot2)
-# library(tidyr)
-# library(purrr)
-# library(RSQLite)
-
-
-# helper functions -------------------------------------------------------------------------------------------------------
+# helper functions --------------------------------------------------------
 
 # borrowed from plyr (https://github.com/hadley/plyr/):
-#' is.discrete
-#'
-#' @param x
-#'
-#' @return logical
-#' @export
-is.discrete <-
-    function(x) {
-        is.factor(x) || is.character(x) || is.logical(x)
-    }
+is.discrete <- function(x) {
+    is.factor(x) || is.character(x) || is.logical(x)
+}
 
 # Suppress warning that not all factor levels for lipid class order are used:
 quiet_fct_relevel <- purrr::quietly(forcats::fct_relevel)
 
 safe_qt <- possibly(qt, otherwise = NA_real_)
+
+# Returns a function that takes an interger and creates a color palette
+getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1"))
+
+# Color scale
+mainScale <- function(colorCount) {
+    list(
+        scale_fill_manual(values  = getPalette(colorCount)),
+        scale_color_manual(values = getPalette(colorCount))
+    )
+}
+
+all_more_than_one_replicate <- function(df, aes_x, aes_color) {
+    df %>%
+        group_by(!!sym(aes_x), !!sym(aes_color)) %>%
+        count() %>%
+        pull(n) %>%
+        all(. > 1)
+}
 
 # Convex hull for PCA plots
 # borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
@@ -59,16 +67,34 @@ stat_chull <- function(mapping       = NULL,
     )
 }
 
+# Significance Tests ------------------------------------------------------
+
 # Pairwiss comparions to get p-valus
-test_pairwise <- function(response, group) {
+test_pairwise <- function(df) {
+    response <- df$value
+    group <- df$sample
+
     pairwise.t.test(
         x = log(response), g = group,
-        paired = F, alternative = "two.sided"
-    ) %>%
+        paired = FALSE, alternative = "two.sided") %>%
         broom::tidy()
 }
 
-# Lipid class order -----------------------------------------------------------------------------------------------
+do_pairwise_comparisons <- function(df, x_axis) {
+    comparisons <- df %>%
+        group_by(!!sym(x_axis)) %>%
+        nest() %>%
+        mutate(
+            pairwise = map(data, possibly(test_pairwise, tibble()))
+        ) %>%
+        unnest(pairwise)
+
+    comparisons %>%
+        mutate(p.value = p.adjust(p.value, "BH")) %>%
+        select(-data)
+}
+
+# Lipid class order -------------------------------------------------------
 get_lipid_class_order <- function(con) {
     con <- DBI::dbConnect(RSQLite::SQLite(), con)
     if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(con)) {
@@ -90,21 +116,21 @@ get_lipid_class_order <- function(con) {
 }
 
 # Data Cleaning Functions -------------------------------------------------
+make_data <- function(col) {
+    as.Date(col, format = "%y%m%d")
+}
+
 
 collect_meta_data <- function(con, query) {
     con <- DBI::dbConnect(RSQLite::SQLite(), con)
     meta <- collect(tbl(con, sql(query))) %>%
-        mutate(
-            date_upload     = as.Date(date_upload, format = "%y%m%d"),
-            date_sample     = as.Date(date_sample, format = "%y%m%d"),
-            date_extraction = as.Date(date_extraction, format = "%y%m%d"),
-            date_measured   = as.Date(date_measured, format = "%y%m%d")
+        mutate_at(vars(date_upload, date_sample, date_extraction, date_measured),
+                  possibly(make_data, NA_real_)
         ) %>%
         arrange(id)
     dbDisconnect(con)
     return(meta)
 }
-
 
 collect_raw_data <- function(con, query, custom_class_order = class_levels) {
     con <- DBI::dbConnect(RSQLite::SQLite(), con)
@@ -119,7 +145,8 @@ collect_raw_data <- function(con, query, custom_class_order = class_levels) {
             sample                     = factor(sample),
             sample_replicate           = factor(sample_replicate),
             sample_replicate_technical = factor(sample_replicate_technical),
-            oh                         = if_else(is.na(oh), 0, oh)
+            oh                         = as.integer(oh),
+            oh                         = if_else(is.na(oh), 0L, oh)
         ) %>%
         select(id, sample_identifier, lipid, value, everything())
     dbDisconnect(con)
@@ -208,8 +235,6 @@ filter_rawData <- function(df, input) {
     return(df)
 }
 
-
-
 create_plotData <- function(.data, input) {
     df <- .data
     # Averaging over the technical replicates
@@ -269,7 +294,6 @@ create_plotData <- function(.data, input) {
 
     return(df)
 }
-
 
 summarise_plotData <- function(.data) {
     df <- .data %>% summarize(
