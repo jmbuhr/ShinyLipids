@@ -14,3 +14,4 @@ Sqlite.db
 R/exampleData
 R/exampleDatabase
 R/createDatabase
+R/createDatabase.R
