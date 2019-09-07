@@ -11,3 +11,6 @@ tests/GeneralTest-expected
 *.html
 old_Sqlite.db
 Sqlite.db
+R/exampleData
+R/exampleDatabase
+R/createDatabase
