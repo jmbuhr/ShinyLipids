@@ -16,7 +16,6 @@ source("./R/functions.R")
 # Database Connection ---------------------------------------------------------------------------------------------
 ## uncomment this to read from a local file in the folder of this shiny app (outcomment the other line!)
 database_connection <- "database/Sqlite_dev.db"
-# database_connection <- "R/exampleDatabase/exampleDatabase2.db"
 
 ## uncomment this to read from a serverside database (and fill in credentials as necessary)
 # database_connection <- src_postgres(dbname = "ldb",
