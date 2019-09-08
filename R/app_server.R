@@ -468,7 +468,7 @@ app_server <- function(input, output, session) {
         y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
         y_trans  <- "log1p"
       } else {
-        y_name   <- "amount [ µM ], log1p scale"
+        y_name   <- "amount [ \U03BCM ], log1p scale"
         y_labels <- waiver()
         y_trans  <- "log1p"
       }
@@ -478,7 +478,7 @@ app_server <- function(input, output, session) {
         y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
         y_trans  <- "identity"
       } else {
-        y_name   <- "amount [ µM ]"
+        y_name   <- "amount [ \U03BCM ]"
         y_labels <- scales::number_format()
         y_trans  <- "identity"
       }
@@ -570,7 +570,7 @@ app_server <- function(input, output, session) {
     if (input$std_feature != "") {
       fill_name <- "amount [ Mol % ]"
     } else {
-      fill_name <- "amount [ µM ]"
+      fill_name <- "amount [ \U03BCM ]"
     }
     
     # plot
