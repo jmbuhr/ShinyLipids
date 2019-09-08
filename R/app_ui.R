@@ -3,7 +3,7 @@ app_ui <- function() {
   database_connection <- golem::get_golem_options("db")
   # tagList(
   # Leave this function for adding external resources
-  golem_add_external_resources()
+  # golem_add_external_resources()
   # List the first level UI elements here 
   # )
   # Header ----------------------------------------------------------------------------------------------------------
@@ -460,13 +460,7 @@ app_ui <- function() {
     sidebar = sidebar,
     body    = body
   )
-  
 }
-
-
-
-
-
 
 #' @import shiny
 golem_add_external_resources <- function(){

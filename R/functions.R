@@ -1,3 +1,7 @@
+#' @import stats
+NULL
+
+
 # SQL queries -----------------------------------------------------------------------------------------------------
 sqlQueryMeta <- paste("SELECT * FROM id_info")
 
@@ -23,7 +27,7 @@ is.discrete <- function(x) {
 # Suppress warning that not all factor levels for lipid class order are used:
 quiet_fct_relevel <- purrr::quietly(forcats::fct_relevel)
 
-safe_qt <- possibly(qt, otherwise = NA_real_)
+safe_qt <- possibly(stats::qt, otherwise = NA_real_)
 
 # Returns a function that takes an interger and creates a color palette
 getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1"))

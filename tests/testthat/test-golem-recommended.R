@@ -2,10 +2,6 @@ context("golem tests")
 
 library(golem)
 
-test_that("app ui", {
-  ui <- app_ui()
-  expect_shinytaglist(ui)
-})
 
 test_that("app server", {
   server <- app_server
@@ -22,7 +18,7 @@ test_that(
       "R", 
       c(
         "-e", 
-        "setwd('../../'); pkgload::load_all();run_app()"
+        "ShinyLipids::run_app(db = './database/exampleDatabase.db')"
       )
     )
     Sys.sleep(5)
