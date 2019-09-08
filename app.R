@@ -2,6 +2,9 @@
 # To deploy, run: rsconnect::deployApp()
 # Or use the blue button on top of this file
 
+# # install.packages("BiocManager")
+# options(repos = c(BiocManager::repositories()))
+
 ## uncomment this to read from a serverside database (and fill in credentials as necessary)
 # db <- src_postgres(dbname = "ldb",
 #                    host    = "",
@@ -16,4 +19,6 @@
 ## Local Databse Dump
 db <- "database/exampleDatabase.db"
 
-ShinyLipids::run_app(db = db) # add parameters here (if any)
+pkgload::load_all()
+options( "golem.app.prod" = TRUE)
+ShinyLipids::run_app(db = db)

@@ -7,7 +7,6 @@ Description: ShinyLipids is a web-app for visualization of lipidomics mass spect
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-biocViews:
 Imports: 
     pcaMethods,
     shiny,
@@ -36,7 +35,8 @@ Imports:
     ggplot2,
     tidyr,
     purrr,
-    RSQLite
+    RSQLite,
+    BiocManager
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 6.1.1
