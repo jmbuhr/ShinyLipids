@@ -28,16 +28,17 @@ Imports:
     htmltools,
     tibble,
     magrittr,
-    pkgload
-Depends:
-    R (>= 3.3.0),
+    pkgload,
+    dbplyr,
+    stats,
     dplyr,
     forcats,
     ggplot2,
     tidyr,
     purrr,
-    RSQLite,
-    dbplyr
+    RSQLite
+Depends:
+    R (>= 3.3.0)
 RoxygenNote: 6.1.1
 Suggests: 
     testthat

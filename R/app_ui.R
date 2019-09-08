@@ -221,7 +221,7 @@ app_ui <- function() {
       p("Based on the original Shiny Lipids by:"),
       em("Mathias Gerl"),
       br(),
-      em("Manuel Haußmann"),
+      em("Manuel Hau\u00dfmann"),
       br(),
       em("Sebastian Bender")
     )
@@ -462,19 +462,3 @@ app_ui <- function() {
   )
 }
 
-#' @import shiny
-golem_add_external_resources <- function(){
-  
-  addResourcePath(
-    'www', system.file('app/www', package = 'ShinyLipids')
-  )
-  
-  tags$head(
-    golem::activate_js(),
-    golem::favicon()
-    # Add here all the external resources
-    # If you have a custom.css in the inst/app/www
-    # Or for example, you can add shinyalert::useShinyalert() here
-    #tags$link(rel="stylesheet", type="text/css", href="www/custom.css")
-  )
-}

@@ -1,8 +1,3 @@
-## usethis namespace: start
-#' @importFrom tibble tibble
-## usethis namespace: end
-NULL
-
 # ggplot options --------------------------------------------------------------------------------------------------
 
 # Features that can serve as aesthetics (visual mappings, short aes) in plots

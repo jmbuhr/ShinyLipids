@@ -1,4 +1,6 @@
 #' Run the Shiny Application
+#' 
+#' @param db path to your database
 #'
 #' @export
 #' @importFrom shiny shinyApp

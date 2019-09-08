@@ -6,6 +6,9 @@
 \usage{
 run_app(...)
 }
+\arguments{
+\item{db}{path to your database}
+}
 \description{
 Run the Shiny Application
 }

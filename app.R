@@ -16,6 +16,4 @@
 ## Local Databse Dump
 db <- "database/exampleDatabase.db"
 
-pkgload::load_all()
-options( "golem.app.prod" = TRUE)
 ShinyLipids::run_app(db = db) # add parameters here (if any)

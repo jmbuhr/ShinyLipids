@@ -1,4 +1,10 @@
-#' @import stats
+#' @importFrom stats qt
+#' @import dplyr
+#' @import forcats
+#' @import ggplot2
+#' @import tidyr
+#' @import purrr
+#' @import RSQLite
 NULL
 
 
@@ -11,7 +17,6 @@ sqlQueryMeta <- paste("SELECT * FROM id_info")
 #'
 #' @return
 #' SQL Query as a string
-#' @export
 sqlQueryData <- function(dataset_ID) {
     query <- paste("SELECT * FROM data2", "WHERE id =", dataset_ID)
     return(query)
