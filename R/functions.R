@@ -1,5 +1,13 @@
 # SQL queries -----------------------------------------------------------------------------------------------------
 sqlQueryMeta <- paste("SELECT * FROM id_info")
+
+#' Generate SQL Query for the selected dataset
+#'
+#' @param dataset_ID numeric
+#'
+#' @return
+#' SQL Query as a string
+#' @export
 sqlQueryData <- function(dataset_ID) {
     query <- paste("SELECT * FROM data2", "WHERE id =", dataset_ID)
     return(query)
@@ -73,7 +81,7 @@ stat_chull <- function(mapping       = NULL,
 test_pairwise <- function(df) {
     response <- df$value
     group <- df$sample
-
+    
     pairwise.t.test(
         x = log(response), g = group,
         paired = FALSE, alternative = "two.sided") %>%
@@ -88,7 +96,7 @@ do_pairwise_comparisons <- function(df, x_axis) {
             pairwise = map(data, possibly(test_pairwise, tibble()))
         ) %>%
         unnest(pairwise)
-
+    
     comparisons %>%
         mutate(p.value = p.adjust(p.value, "BH")) %>%
         select(-data)
@@ -161,7 +169,7 @@ standardize_rawData <- function(df, std_feature, base_sample) {
             mutate(value = value / sum(value) * 100) %>%
             ungroup()
     }
-
+    
     # Base level substraction
     if (base_sample != "") {
         baseline <- df %>%
@@ -248,7 +256,7 @@ create_plotData <- function(.data, input) {
             summarize(value = mean(value, na.rm = TRUE)) %>%
             ungroup()
     }
-
+    
     # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
     df <- df %>% filter(
         !is.na(!!sym(input$aes_x)),
@@ -263,7 +271,7 @@ create_plotData <- function(.data, input) {
     if (input$aes_facet2 != "") {
         df <- df %>% filter(!is.na(!!sym(input$aes_facet2)))
     }
-
+    
     # Summation of values within the displayed aesthetics
     # TODO show individual tec. sample reps.
     # By features mapped to aesthetics, always by sample rep
@@ -285,13 +293,13 @@ create_plotData <- function(.data, input) {
     } else {
         df <- df %>% group_by(sample_replicate_technical, add = TRUE)
     }
-
+    
     # Sums for each group
     df <- df %>% summarize(value = sum(value, na.rm = TRUE))
     # This will remove only the last layer of grouping (sample_replicate or sample_replicate_technical)
     # and keep the other groups, in either case, ase_x will still be a group
     # this group will then be summarized in meanPlotData
-
+    
     return(df)
 }
 
@@ -308,7 +316,7 @@ summarise_plotData <- function(.data) {
         mutate(
             CI_lower = if_else(CI_lower < 0, 0, CI_lower)
         )
-
+    
     return(df)
 }
 

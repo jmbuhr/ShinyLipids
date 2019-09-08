@@ -1,32 +1,43 @@
 Package: ShinyLipids
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph).
+Title: ShinyLipids
+Version: 2.0.1
+Authors@R: person('Jannik', 'Buhr', email = 'jannik.m.buhr@gmail.com', role = c('cre', 'aut'))
+Description: ShinyLipids is a web-app for visualization of lipidomics mass spectrometry data
+                      that runs in your browser.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 biocViews:
+Imports: 
+    pcaMethods,
+    shiny,
+    golem,
+    readr,
+    scales,
+    shinyjqui,
+    shinydashboard,
+    shinyjs,
+    shinycssloaders,
+    processx,
+    attempt,
+    DT,
+    DBI,
+    broom,
+    ggrepel,
+    glue,
+    htmltools,
+    tibble,
+    magrittr,
+    pkgload
 Depends:
-  shiny,
-  shinytest,
-  BiocManager,
-  tidyverse,
-  RColorBrewer,
-  dbplyr,
-  DT,
-  ggrepel,
-  RSQLite,
-  DT,
-  shinycssloaders,
-  shinydashboard,
-  shinyjs,
-  pcaMethods,
-  testthat,
-  shinytest,
-  shinyjqui
+    R (>= 3.3.0),
+    dplyr,
+    forcats,
+    ggplot2,
+    tidyr,
+    purrr,
+    RSQLite,
+    dbplyr
 RoxygenNote: 6.1.1
+Suggests: 
+    testthat
