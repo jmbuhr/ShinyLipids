@@ -113,7 +113,6 @@ do_pairwise_comparisons <- function(df, x_axis) {
 
 # Lipid class order -------------------------------------------------------
 get_lipid_class_order <- function(con) {
-    con <- DBI::dbConnect(RSQLite::SQLite(), con)
     if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(con)) {
         res <- collect(tbl(con, "LIPID_CLASS_ORDER_COMPLETE")) %>%
             arrange(class_order) %>%
@@ -128,7 +127,6 @@ get_lipid_class_order <- function(con) {
             "PIP", "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi", "PGP", "WE", "FA"
         )
     }
-    dbDisconnect(con)
     return(res)
 }
 
@@ -139,18 +137,15 @@ make_data <- function(col) {
 
 
 collect_meta_data <- function(con, query) {
-    con <- DBI::dbConnect(RSQLite::SQLite(), con)
     meta <- collect(tbl(con, sql(query))) %>%
         mutate_at(vars(date_upload, date_sample, date_extraction, date_measured),
                   possibly(make_data, NA_real_)
         ) %>%
         arrange(id)
-    dbDisconnect(con)
     return(meta)
 }
 
 collect_raw_data <- function(con, query, custom_class_order = class_levels) {
-    con <- DBI::dbConnect(RSQLite::SQLite(), con)
     df <- collect(tbl(con, sql(query))) %>%
         filter(!is.na(value)) %>%
         mutate(
@@ -166,7 +161,6 @@ collect_raw_data <- function(con, query, custom_class_order = class_levels) {
             oh                         = if_else(is.na(oh), 0L, oh)
         ) %>%
         select(id, sample_identifier, lipid, value, everything())
-    dbDisconnect(con)
     return(df)
 }
 

@@ -37,7 +37,8 @@ Imports:
     tidyr,
     purrr,
     RSQLite,
-    BiocManager
+    BiocManager,
+    RPostgres
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 6.1.1
