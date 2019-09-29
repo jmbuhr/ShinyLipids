@@ -1,16 +1,19 @@
 
-#' Title
+#' Create your own database
+#' 
+#' Quickly create your own SQLite database dump from
+#' dataframes without additional software.
 #'
 #' @param path string,
 #' Path to where you want to save the database dump file
 #' 
 #' @param meta_info data.frame
 #' A data.frame with the information about your datasets
-#' See README for the columns it needs.
+#' See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns it needs.
 #' 
 #' @param dataset
 #' A data.frame with the datasets
-#' See README for the columns they need
+#' See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns they need.
 #' 
 #' @return
 #' NULL

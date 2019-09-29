@@ -5,7 +5,7 @@ app_server <- function(input, output, session) {
   
   # Reading in table of datasets
   metaData <- reactive({
-    collect_meta_data(database_connection, sqlQueryMeta)
+    collect_meta_data(database_connection)
   })
   
   # Rendering datasets as a table to send to UI

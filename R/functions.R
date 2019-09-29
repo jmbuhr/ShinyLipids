@@ -8,15 +8,13 @@
 NULL
 
 
-# SQL queries -----------------------------------------------------------------------------------------------------
-sqlQueryMeta <- paste("SELECT * FROM id_info")
-
 #' Generate SQL Query for the selected dataset
 #'
 #' @param dataset_ID numeric
 #'
 #' @return
 #' SQL Query as a string
+#' @export
 sqlQueryData <- function(dataset_ID) {
     query <- paste("SELECT * FROM data2", "WHERE id =", dataset_ID)
     return(query)
@@ -24,7 +22,13 @@ sqlQueryData <- function(dataset_ID) {
 
 # helper functions --------------------------------------------------------
 
-# borrowed from plyr (https://github.com/hadley/plyr/):
+#' Test if x is discrete
+#'
+#' @param x 
+#'
+#' @return boolean
+#' @note 
+#' borrowed from plyr (https://github.com/hadley/plyr/)
 is.discrete <- function(x) {
     is.factor(x) || is.character(x) || is.logical(x)
 }
@@ -37,7 +41,11 @@ safe_qt <- possibly(stats::qt, otherwise = NA_real_)
 # Returns a function that takes an interger and creates a color palette
 getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1"))
 
-# Color scale
+#' Create color scale
+#'
+#' @param colorCount integer
+#'
+#' @return A list with scale_color_ and scale_fill_
 mainScale <- function(colorCount) {
     list(
         scale_fill_manual(values  = getPalette(colorCount)),
@@ -53,17 +61,20 @@ all_more_than_one_replicate <- function(df, aes_x, aes_color) {
         all(. > 1)
 }
 
-# Convex hull for PCA plots
-# borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
-StatChull <- ggproto(
-    "StatChull",
-    Stat,
-    compute_group = function(data, scales) {
-        data[chull(data$x, data$y),, drop = FALSE]
-    },
-    required_aes = c("x", "y")
-)
-
+#' Convex hull for PCA plots
+#'
+#' Borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
+#'
+#' @param mapping 
+#' @param data 
+#' @param geom 
+#' @param position 
+#' @param na.rm 
+#' @param show.legend 
+#' @param inherit.aes 
+#' @param ... 
+#'
+#' @return a state for ggplot
 stat_chull <- function(mapping       = NULL,
                        data        = NULL,
                        geom        = "polygon",
@@ -72,6 +83,14 @@ stat_chull <- function(mapping       = NULL,
                        show.legend = NA,
                        inherit.aes = TRUE,
                        ...) {
+    StatChull <- ggproto(
+        "StatChull",
+        Stat,
+        compute_group = function(data, scales) {
+            data[chull(data$x, data$y),, drop = FALSE]
+        },
+        required_aes = c("x", "y")
+    )
     layer(
         stat        = StatChull,
         data        = data,
@@ -86,17 +105,35 @@ stat_chull <- function(mapping       = NULL,
 
 # Significance Tests ------------------------------------------------------
 
-# Pairwiss comparions to get p-valus
+#' Pairwise t-tests
+#' 
+#' Because people like p-values and little stars.
+#'
+#' @param df a subset of the data
+#'
+#' @return
+#' A tidy representation of the significance
+#' test build with \code{\link{broom::tidy}}
 test_pairwise <- function(df) {
     response <- df$value
-    group <- df$sample
-    
+    group    <- df$sample
     pairwise.t.test(
         x = log(response), g = group,
-        paired = FALSE, alternative = "two.sided") %>%
+        paired = FALSE, alternative = "two.sided"
+    ) %>%
         broom::tidy()
 }
 
+#' Test all possible pairwise t-tests
+#' 
+#' Because people like p-values and little stars.
+#'
+#' @param df the full dataset
+#'
+#' @return
+#' A tidy representation of the significance
+#' tests build with \code{broom::tidy} combinde
+#' into one tibble.
 do_pairwise_comparisons <- function(df, x_axis) {
     comparisons <- df %>%
         group_by(!!sym(x_axis)) %>%
@@ -111,7 +148,17 @@ do_pairwise_comparisons <- function(df, x_axis) {
         select(-data)
 }
 
-# Lipid class order -------------------------------------------------------
+#' Lipid Class Order
+#' 
+#' Get or create the order in which the different lipid
+#' classes are displayed on their axis.
+#'
+#' @param con A database connection
+#' If the databse does not have the table
+#' LIPID_CLASS_ORDER_COMPLETE, the order
+#' is generated here instead.
+#'
+#' @return A vector of lipid classes
 get_lipid_class_order <- function(con) {
     if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(con)) {
         res <- collect(tbl(con, "LIPID_CLASS_ORDER_COMPLETE")) %>%
@@ -131,21 +178,46 @@ get_lipid_class_order <- function(con) {
 }
 
 # Data Cleaning Functions -------------------------------------------------
-make_data <- function(col) {
+#' Make a date
+#'
+#' @param col A character vector 
+#' (Column in a dataframe)
+#' @return
+#' @export
+#'
+#' @examples
+make_date <- function(col) {
     as.Date(col, format = "%y%m%d")
 }
 
-
-collect_meta_data <- function(con, query) {
-    meta <- collect(tbl(con, sql(query))) %>%
+#' Collect metadata from database
+#'
+#' @param con database conncetion object.
+#' Create one yourself with e.g.
+#' \code{DBI::dbConnect(RPostgres::Postgres(), ...)} or
+#' \code{DBI::dbConnect(RSQLite::SQLite(), "<database/exampleDatabase.db>")}
+#' 
+#' @return a tibble with the meta data
+#' @export
+collect_meta_data <- function(con) {
+    meta <- collect(tbl(con, sql("SELECT * FROM id_info"))) %>%
         mutate_at(vars(date_upload, date_sample, date_extraction, date_measured),
-                  possibly(make_data, NA_real_)
+                  possibly(make_date, NA_real_)
         ) %>%
         arrange(id)
     return(meta)
 }
 
-collect_raw_data <- function(con, query, custom_class_order = class_levels) {
+#' Collect raw data from database
+#'
+#' @param con A database connection
+#' @param query The sql query to get the dataset.
+#' Create it yourself with \code{\link{sqlQueryData}}.
+#' @param custom_class_order The order for the lipid classes
+#'
+#' @return Raw data as a tibble
+#' @export
+collect_raw_data <- function(con, query, custom_class_order) {
     df <- collect(tbl(con, sql(query))) %>%
         filter(!is.na(value)) %>%
         mutate(
@@ -164,6 +236,14 @@ collect_raw_data <- function(con, query, custom_class_order = class_levels) {
     return(df)
 }
 
+#' Standardize raw data
+#'
+#' @param df Raw data as a tibble
+#' @param std_feature Feature so standardize on
+#' @param base_sample Sample to use as a baseline
+#'
+#' @return Standardized data as a tibble
+#' @export
 standardize_rawData <- function(df, std_feature, base_sample) {
     # Standardization based on input$std_feature
     if (std_feature != "") {
@@ -172,7 +252,6 @@ standardize_rawData <- function(df, std_feature, base_sample) {
             mutate(value = value / sum(value) * 100) %>%
             ungroup()
     }
-    
     # Base level substraction
     if (base_sample != "") {
         baseline <- df %>%
@@ -188,6 +267,27 @@ standardize_rawData <- function(df, std_feature, base_sample) {
     return(df)
 }
 
+#' Filter raw data
+#'
+#' @param df Data as a tibble 
+#' @param input a list.
+#' This list can contain
+#' strings with the following names,
+#' non existent ones will be ignored:
+#' \itemize{
+#' \item \code{filter_cat}
+#' \item \code{filter_class}
+#' \item \code{filter_func}
+#' \item \code{filter_length}
+#' \item \code{filter_db}
+#' \item \code{filter_oh}
+#' \item \code{sample_select}
+#' \item \code{sample_remove}
+#' \item \code{tecRep_remove}
+#' }
+#'
+#' @return Lovely filtered data
+#' @export
 filter_rawData <- function(df, input) {
     # Category
     if (!is.null(input$filter_cat)) {
@@ -246,8 +346,26 @@ filter_rawData <- function(df, input) {
     return(df)
 }
 
-create_plotData <- function(.data, input) {
-    df <- .data
+#' Create the data ready for plotting
+#' 
+#' Based on the aesthetic mappings.
+#'
+#' @param df Input tibble
+#' @param input a list with the aesthetic mappings.
+#' This list can contain
+#' strings with the following names,
+#' non existent ones will be ignored:
+#' \itemize{
+#' \item \code{tecRep_average}
+#' \item \code{aes_x}
+#' \item \code{aes_color}
+#' \item \code{aes_facet1}
+#' \item \code{aes_facet2}
+#' }
+#' 
+#' @return neat data
+#' @export
+create_plotData <- function(df, input) {
     # Averaging over the technical replicates
     if (input$tecRep_average) {
         df <- df %>%
@@ -259,7 +377,6 @@ create_plotData <- function(.data, input) {
             summarize(value = mean(value, na.rm = TRUE)) %>%
             ungroup()
     }
-    
     # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
     df <- df %>% filter(
         !is.na(!!sym(input$aes_x)),
@@ -276,8 +393,6 @@ create_plotData <- function(.data, input) {
     }
     
     # Summation of values within the displayed aesthetics
-    # TODO show individual tec. sample reps.
-    # By features mapped to aesthetics, always by sample rep
     df <- df %>% ungroup()
     if (input$aes_x != "") {
         df <- df %>% group_by(!!sym(input$aes_x), add = TRUE)
@@ -297,17 +412,21 @@ create_plotData <- function(.data, input) {
         df <- df %>% group_by(sample_replicate_technical, add = TRUE)
     }
     
-    # Sums for each group
     df <- df %>% summarize(value = sum(value, na.rm = TRUE))
     # This will remove only the last layer of grouping (sample_replicate or sample_replicate_technical)
     # and keep the other groups, in either case, ase_x will still be a group
     # this group will then be summarized in meanPlotData
-    
     return(df)
 }
 
-summarise_plotData <- function(.data) {
-    df <- .data %>% summarize(
+#' Summarise the plot data
+#' 
+#' @param df input tibble
+#'
+#' @return data ready for summmary plots like barplots
+#' @export
+summarise_plotData <- function(df) {
+    df <- df %>% summarize(
         SD       = sd(value, na.rm = TRUE),
         SEM      = sd(value, na.rm = TRUE) / n(),
         N        = n(),
@@ -319,8 +438,6 @@ summarise_plotData <- function(.data) {
         mutate(
             CI_lower = if_else(CI_lower < 0, 0, CI_lower)
         )
-    
     return(df)
 }
-
 

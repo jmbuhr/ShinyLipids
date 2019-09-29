@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc.R
 \name{createDatabase}
 \alias{createDatabase}
-\title{Title}
+\title{Create your own database}
 \usage{
 createDatabase(path = "databaseDump.db", meta_info, dataset)
 }
@@ -12,11 +12,12 @@ Path to where you want to save the database dump file}
 
 \item{meta_info}{data.frame
 A data.frame with the information about your datasets
-See README for the columns it needs.}
+See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns it needs.}
 
 \item{dataset}{A data.frame with the datasets
-See README for the columns they need}
+See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns they need.}
 }
 \description{
-Title
+Quickly create your own SQLite database dump from
+dataframes without additional software.
 }
