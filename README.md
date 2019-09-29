@@ -8,7 +8,7 @@
 A remake of ShinyLipids with consistent coding, documentation and
 improved functionality.
 
-## What is Shiny Lipids?
+## What is ShinyLipids?
 
 ShinyLipids is a visualization tool for lipidomcis data built in R with
 the `shiny` package. The original version was developed in 2015 by
@@ -51,33 +51,76 @@ little helper function in ShinyLipids:
 if ( !("readr" %in% installed.packages()) ) install.packages("readr")
 myMedatdata <- readr::read_csv("myMetadata.csv")
 myDataset   <- readr::read_csv("myDataset.csv")
-ShinyLipids::createDatabase("./exampleDatabase.db", myMedatdata, myDataset)
+ShinyLipids::createDatabase("./database/exampleDatabase.db", myMedatdata, myDataset)
 ```
 
 Now you are ready to look at your lipids\! Run this code for a
 quickstart:
 
 ``` r
-db_con <- DBI::dbConnect(RSQLite::SQLite(), "./exampleDatabase.db")
+db_con <- DBI::dbConnect(RSQLite::SQLite(), "./database/exampleDatabase.db")
 ShinyLipids::run_app(db = db_con)
 ```
 
 ### What should my tables look like?
 
-| id | title | date\_upload | status | sample\_from | date\_sample | extracted\_by | date\_extraction | measured\_by | date\_measured | distinct\_samples | data\_lines | file | instruments |
-| -- | ----- | ------------ | ------ | ------------ | ------------ | ------------- | ---------------- | ------------ | -------------- | ----------------- | ----------- | ---- | ----------- |
+**id\_info**
 
-id\_info
+| Column            |
+| :---------------- |
+| id                |
+| title             |
+| date\_upload      |
+| status            |
+| sample\_from      |
+| date\_sample      |
+| extracted\_by     |
+| date\_extraction  |
+| measured\_by      |
+| date\_measured    |
+| distinct\_samples |
+| data\_lines       |
+| file              |
+| instruments       |
 
-| id | sample\_identifier | lipid | category | func\_cat | class | length | db | oh | chains | chain\_sums | sample | sample\_replicate | sample\_replicate\_technical | value |
-| -- | ------------------ | ----- | -------- | --------- | ----- | ------ | -- | -- | ------ | ----------- | ------ | ----------------- | ---------------------------- | ----- |
+**data2**
 
-data2
+| Column                       |
+| :--------------------------- |
+| id                           |
+| sample\_identifier           |
+| lipid                        |
+| category                     |
+| func\_cat                    |
+| class                        |
+| length                       |
+| db                           |
+| oh                           |
+| chains                       |
+| chain\_sums                  |
+| sample                       |
+| sample\_replicate            |
+| sample\_replicate\_technical |
+| value                        |
 
 Optionally, your database can contain a table named
 “LIPID\_CLASS\_ORDER\_COMPLETE” with a numeric *class\_order* column
 associated with a *class* column. You can also reorder your lipid
 classes in the app on bottom of the main plotting page.
+
+## For advanced use
+
+If you want to run ShinyLipids on your own server connceted to a
+database or post your findings to shinyapps.io, you will have to
+download the sourcecode:
+
+``` bash
+git clone https://github.com/jannikbuhr/ShinyLipids.git
+```
+
+Open the file `app.R`, read the comments and uncomment the specified
+lines. Then you will be able to run the app or use the buttons in the
+top right corner of your RStudio code panel.
 
 ## Notes
 

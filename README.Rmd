@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 A remake of ShinyLipids with consistent coding, documentation and improved functionality.
 
-## What is Shiny Lipids?
+## What is ShinyLipids?
 
 ShinyLipids is a visualization tool for lipidomcis data built in R with the `shiny` package. The original
 version was developed in 2015 by _Mathias Gerl_ and further enhanced by _Manuel Haußmann_ and _Sebastian Bender_ until August, 2017.
@@ -66,15 +66,22 @@ ShinyLipids::run_app(db = db_con)
 
 ### What should my tables look like?
 
-Table: id_info
+**id_info**
 
-| id | title | date_upload | status | sample_from | date_sample | extracted_by | date_extraction | measured_by | date_measured | distinct_samples | data_lines | file | instruments |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse, quietly = TRUE)
+c("id" , "title " , "date_upload " , "status " , "sample_from " , "date_sample " , "extracted_by " , "date_extraction " , "measured_by " , "date_measured " , "distinct_samples " , "data_lines " , "file " , "instruments") %>%
+  enframe(name = NULL, value = "Column") %>%
+  knitr::kable()
+```
 
-Table: data2
+**data2**
 
-id | sample_identifier | lipid | category | func_cat | class | length | db | oh | chains | chain_sums | sample | sample_replicate | sample_replicate_technical | value
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+c("id" , "sample_identifier" , "lipid" , "category" , "func_cat" , "class" , "length" , "db" , "oh" , "chains" , "chain_sums" , "sample" , "sample_replicate" , "sample_replicate_technical" , "value") %>%
+  enframe(name = NULL, value = "Column") %>%
+  knitr::kable()
+```
 
 Optionally, your database can contain a table named "LIPID_CLASS_ORDER_COMPLETE" with
 a numeric _class_order_ column associated with a _class_ column.
@@ -89,8 +96,8 @@ or post your findings to shinyapps.io, you will have to download the sourcecode:
 git clone https://github.com/jannikbuhr/ShinyLipids.git
 ```
 
-Then, open the file `app.R`, read the comments and uncomment the specified lines. Then you
-will be able to run the app or use the
+Open the file `app.R`, read the comments and uncomment the specified lines. Then you
+will be able to run the app or use the buttons in the top right corner of your RStudio code panel.
 
 ## Notes
 

@@ -1,5 +1,3 @@
-# ggplot options --------------------------------------------------------------------------------------------------
-
 # Features that can serve as aesthetics (visual mappings, short aes) in plots
 features <- c(
   "",
