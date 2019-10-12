@@ -33,7 +33,7 @@ website](https://jmbuhr.de/project/shinylipids/).
 ## How do I use ShinyLipids?
 
 Make sure you have the latest version of R installed. Then run this
-piece of R code to install ShinyLipds with all it’s dependecies\[1\].
+piece of R code to install ShinyLipds with all it’s dependecies\[1\]
 from github:
 
 ``` r

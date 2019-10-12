@@ -1,5 +1,7 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -15,7 +17,10 @@ knitr::opts_chunk$set(
 
 # ShinyLipids
 
-<!-- [![Travis build Status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jannikbuhr/ShinyLipids) -->
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.org/jannikbuhr/shinylipids.svg?branch=master)](https://travis-ci.org/jannikbuhr/shinylipids)
+<!-- badges: end -->
+
 
 A remake of ShinyLipids with consistent coding, documentation and improved functionality.
 
@@ -37,7 +42,7 @@ for the implementation of new features within the R code. More information can b
 
 Make sure you have the latest version of R installed. 
 Then run this piece of R code to install ShinyLipds with all it's dependecies^[If you want to publish the ShinyApp on RStudio-connect, you will need a couple of addictional packages that
-are listed in `app.R`.]. from github:
+are listed in `app.R`.] from github:
 
 ```{r, eval=FALSE}
 if ( !("devtools" %in% installed.packages()) ) install.packages("devtools")
