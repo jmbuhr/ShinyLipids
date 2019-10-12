@@ -7,7 +7,7 @@
 is.discrete(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{vector}
 }
 \value{
 boolean

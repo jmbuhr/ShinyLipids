@@ -1,6 +1,6 @@
 #' Run the Shiny Application
 #' 
-#' @param db databse connection
+#' @param ... options, currently: db = yourDatabaseConnection
 #'
 #' @export
 #' @importFrom shiny shinyApp

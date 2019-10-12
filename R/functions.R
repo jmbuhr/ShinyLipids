@@ -5,8 +5,22 @@
 #' @import tidyr
 #' @import purrr
 #' @import RSQLite
+#' @importFrom rlang .data
+#' @importFrom grDevices chull
+#' @importFrom graphics title
+#' @importFrom stats p.adjust pairwise.t.test sd
+#' @importFrom utils data
+#' 
 NULL
 
+## quiets concerns of R CMD check re: the .'s that appear in pipelines
+if(getRversion() >= "2.15.1")  utils::globalVariables(
+    c(".",
+      "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category", "class_order",
+      "datasets", "date_extraction", "date_measured", "date_sample", "date_upload", "db", 
+      "func_cat", "lipid", "oh", "p.value", "pairwise", "sample_identifier", "sample_replicate",
+      "sample_replicate_technical", "value")
+)
 
 #' Generate SQL Query for the selected dataset
 #'
@@ -24,7 +38,7 @@ sqlQueryData <- function(dataset_ID) {
 
 #' Test if x is discrete
 #'
-#' @param x 
+#' @param x vector
 #'
 #' @return boolean
 #' @note 
@@ -58,21 +72,21 @@ all_more_than_one_replicate <- function(df, aes_x, aes_color) {
         group_by(!!sym(aes_x), !!sym(aes_color)) %>%
         count() %>%
         pull(n) %>%
-        all(. > 1)
+        {all(. > 1)}
 }
 
 #' Convex hull for PCA plots
 #'
 #' Borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
 #'
-#' @param mapping 
-#' @param data 
-#' @param geom 
-#' @param position 
-#' @param na.rm 
-#' @param show.legend 
-#' @param inherit.aes 
-#' @param ... 
+#' @param mapping aesthetic mapping
+#' @param data data
+#' @param geom geometric element
+#' @param position default = "identity"
+#' @param na.rm remove NAs
+#' @param show.legend show legend
+#' @param inherit.aes inherit aesthetics
+#' @param ... passed to layer
 #'
 #' @return a state for ggplot
 stat_chull <- function(mapping       = NULL,
@@ -113,7 +127,7 @@ stat_chull <- function(mapping       = NULL,
 #'
 #' @return
 #' A tidy representation of the significance
-#' test build with \code{\link{broom::tidy}}
+#' test build with \code{broom::tidy}
 test_pairwise <- function(df) {
     response <- df$value
     group    <- df$sample
@@ -129,6 +143,7 @@ test_pairwise <- function(df) {
 #' Because people like p-values and little stars.
 #'
 #' @param df the full dataset
+#' @param x_axis the feature mapped to the x-axis
 #'
 #' @return
 #' A tidy representation of the significance

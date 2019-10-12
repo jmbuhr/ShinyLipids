@@ -51,7 +51,6 @@ app_server <- function(input, output, session) {
   rawData <- reactive({
     # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
-    
     query <- sqlQueryData(input$ID)
     collect_raw_data(database_connection, query, custom_class_order = input$custom_class_order_order)
   })

@@ -9,21 +9,21 @@ stat_chull(mapping = NULL, data = NULL, geom = "polygon",
   inherit.aes = TRUE, ...)
 }
 \arguments{
-\item{mapping}{}
+\item{mapping}{aesthetic mapping}
 
-\item{data}{}
+\item{data}{data}
 
-\item{geom}{}
+\item{geom}{geometric element}
 
-\item{position}{}
+\item{position}{default = "identity"}
 
-\item{na.rm}{}
+\item{na.rm}{remove NAs}
 
-\item{show.legend}{}
+\item{show.legend}{show legend}
 
-\item{inherit.aes}{}
+\item{inherit.aes}{inherit aesthetics}
 
-\item{...}{}
+\item{...}{passed to layer}
 }
 \value{
 a state for ggplot

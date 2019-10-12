@@ -8,6 +8,8 @@ do_pairwise_comparisons(df, x_axis)
 }
 \arguments{
 \item{df}{the full dataset}
+
+\item{x_axis}{the feature mapped to the x-axis}
 }
 \value{
 A tidy representation of the significance

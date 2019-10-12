@@ -11,7 +11,7 @@ test_pairwise(df)
 }
 \value{
 A tidy representation of the significance
-test build with \code{\link{broom::tidy}}
+test build with \code{broom::tidy}
 }
 \description{
 Because people like p-values and little stars.

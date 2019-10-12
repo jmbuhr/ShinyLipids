@@ -7,7 +7,7 @@
 run_app(...)
 }
 \arguments{
-\item{db}{databse connection}
+\item{...}{options, currently: db = yourDatabaseConnection}
 }
 \description{
 Run the Shiny Application

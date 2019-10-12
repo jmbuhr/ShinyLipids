@@ -25,3 +25,17 @@ createDatabase <- function(path = "databaseDump.db", meta_info, dataset) {
   DBI::dbDisconnect(con)
 }
 
+
+# collect_meta_data(db_con)
+# 
+# read_and_process_data <- function(con, ID,
+#                                   std_feature = "sample_replicate_technical",
+#                                   base_sample = "",
+#                                   input = list()) {
+#   collect_raw_data(con,
+#                    sqlQueryData(ID),
+#                    custom_class_order = get_lipid_class_order(con)) %>% 
+#     standardize_rawData(std_feature, base_sample) %>%
+#     filter_rawData(input)
+# }
+
