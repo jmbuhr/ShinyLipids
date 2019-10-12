@@ -3,7 +3,11 @@
 
 # ShinyLipids
 
-<!-- [![Travis build Status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jannikbuhr/ShinyLipids) -->
+<!-- badges: start -->
+
+![Travis build
+status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)
+<!-- badges: end -->
 
 A remake of ShinyLipids with consistent coding, documentation and
 improved functionality.
