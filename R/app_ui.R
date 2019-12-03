@@ -22,8 +22,18 @@ app_ui <- function() {
                                                                   href   = "https://jmbuhr.de/#contact",
                                                                   status = "success",
                                                                   icon   = icon("envelope")
-                                 )
-    )
+                                 ),
+                                 tags$li(
+                                   a(
+                                     p("Rewritten by", strong("Jannik Buhr")),
+                                     p("Based on the original Shiny Lipids by:"),
+                                     strong("Mathias Gerl"),
+                                     br(),
+                                     strong("Manuel Hau\u00dfmann"),
+                                     br(),
+                                     strong("Sebastian Bender")
+                                 ))
+  )
   )
   
   # Sidebar ---------------------------------------------------------------------------------------------------------
@@ -68,6 +78,12 @@ app_ui <- function() {
     
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills", id = "tabs",
+                tabPanel(title = "Quickoptions",
+                         actionButton(
+                           "species_profile",
+                           label = "Species Profile"
+                         )
+                ),
                 tabPanel(title = "Mapping",
                          selectInput(
                            "aes_x",
@@ -214,21 +230,6 @@ app_ui <- function() {
                            value = TRUE
                          )
                 )
-    ),
-    
-    # * Impressum -----------------------------------------------------------------------------------------------------
-    shinydashboard::menuItem("About ", href = "http://bzh.db-engine.de/default.asp?lfn=2241&fg=4289"),
-    div(
-      strong("ShinyLipids"),
-      p("Rewritten by"),
-      em("Jannik Buhr"),
-      p("SL 2.1.0 -- 2018-10-03"),
-      p("Based on the original Shiny Lipids by:"),
-      em("Mathias Gerl"),
-      br(),
-      em("Manuel Hau\u00dfmann"),
-      br(),
-      em("Sebastian Bender")
     )
   )
   
