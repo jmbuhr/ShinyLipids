@@ -161,9 +161,17 @@ app_server <- function(input, output, session) {
 # Update inputs based on selected default quickoption ---------------------
   
   observeEvent(input$species_profile, {
+    updateSelectInput(session, "aes_facet1", selected = "class")
     updateSelectizeInput(session, "std_feature", selected = "class")
     updateSelectInput(session, "aes_x", selected = "lipid")
     updateSelectizeInput(session, "filter_class", selected = input$custom_class_order_order[[1]])
+  })
+  
+  observeEvent(input$class_profile, {
+    updateSelectInput(session, "aes_facet1", selected = "")
+    updateSelectizeInput(session, "std_feature", selected = "")
+    updateSelectInput(session, "aes_x", selected = "class")
+    updateSelectizeInput(session, "filter_class", selected = "")
   })
   
   # Displaying main Dataset as a table ----------------------------------------------------------------------------

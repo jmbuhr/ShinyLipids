@@ -82,6 +82,10 @@ app_ui <- function() {
                          actionButton(
                            "species_profile",
                            label = "Species Profile"
+                         ),
+                         actionButton(
+                           "class_profile",
+                           label = "Class Profile"
                          )
                 ),
                 tabPanel(title = "Mapping",
@@ -177,6 +181,11 @@ app_ui <- function() {
                          checkboxInput(
                            "tecRep_average",
                            label    = "average over technical replicates", value = TRUE
+                         ),
+                         checkboxInput(
+                           "std_tec_rep",
+                           label = "Standardize within technical replicates",
+                           value = TRUE
                          )
                 ),
                 tabPanel(title = "Filters",
@@ -223,11 +232,6 @@ app_ui <- function() {
                            label    = "Filter hydroxylation",
                            min      = 1, max = 10,
                            value    = c(1,10)
-                         ),
-                         checkboxInput(
-                           "std_tec_rep",
-                           label = "Standardize within technical replicates",
-                           value = TRUE
                          )
                 )
     )
