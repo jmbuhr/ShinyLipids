@@ -112,8 +112,8 @@ app_ui <- function() {
                          selectizeInput(
                            "std_feature",
                            label    = "Standardize to 100% within:",
-                           choices  = features[!features %in% c("value")],
-                           selected = "sample_replicate_technical"
+                           choices  = features[!features %in% c("value", "sample_replicate_technical")]#,
+                           # selected = ""
                          ),
                          selectizeInput(
                            "base_sample",
@@ -207,6 +207,11 @@ app_ui <- function() {
                            label    = "Filter hydroxylation",
                            min      = 1, max = 10,
                            value    = c(1,10)
+                         ),
+                         checkboxInput(
+                           "std_tec_rep",
+                           label = "Standardize within technical replicates",
+                           value = TRUE
                          )
                 )
     ),

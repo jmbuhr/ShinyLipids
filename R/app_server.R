@@ -57,13 +57,15 @@ app_server <- function(input, output, session) {
   
   
   # * mainData from rawData -------------------------------------------------------------------------
-  # standardization, then filtering
+  # filtering, then standardization
   mainData <- reactive({
     req(rawData())
     
     rawData() %>%
-      standardize_rawData(std_feature = input$std_feature, base_sample = input$base_sample) %>%
-      filter_rawData(input)
+      standardize_technical_replicates(input$std_tec_rep) %>% 
+      filter_rawData(input) %>% 
+      standardize_rawData(std_feature = input$std_feature,
+                          base_sample = input$base_sample)
   })
   
   # Updating filtering options by dataset --------------------------------------------------------
@@ -462,7 +464,7 @@ app_server <- function(input, output, session) {
     # Log scale, name of y-axis and percent format for standardized data
     if ("log" %in% input$main_add) {
       # browser()
-      if (input$std_feature != "") {
+      if (input$std_feature != "" || input$std_tec_rep) {
         y_name   <- "amount [ Mol % ], log1p scale"
         y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
         y_trans  <- "log1p"
@@ -472,7 +474,7 @@ app_server <- function(input, output, session) {
         y_trans  <- "log1p"
       }
     } else {
-      if (input$std_feature != "") {
+      if (input$std_feature != "" || input$std_tec_rep) {
         y_name   <- "amount [ Mol % ]"
         y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
         y_trans  <- "identity"

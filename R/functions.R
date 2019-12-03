@@ -251,6 +251,16 @@ collect_raw_data <- function(con, query, custom_class_order) {
     return(df)
 }
 
+standardize_technical_replicates <- function(df, do_it) {
+  if (do_it) {
+    df <- df %>%
+      group_by(id, sample_replicate_technical) %>%
+      mutate(value = value / sum(value) * 100) %>%
+      ungroup()
+  }
+  df
+}
+
 #' Standardize raw data
 #'
 #' @param df Raw data as a tibble
