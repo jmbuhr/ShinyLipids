@@ -9,8 +9,8 @@
 status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)
 <!-- badges: end -->
 
-A remake of ShinyLipids with consistent coding, documentation and
-improved functionality.
+A remake of ShinyLipids with a focus on consistent coding,
+documentation, improved functionality and above all, user-friendlyness.
 
 ## What is ShinyLipids?
 
@@ -36,20 +36,36 @@ website](https://jmbuhr.de/project/shinylipids/).
 
 ## How do I use ShinyLipids?
 
-Make sure you have the latest version of R installed. Then run this
-piece of R code to install ShinyLipds with all it’s dependecies\[1\]
-from github:
+Make sure you have the latest version of R and RStudio installed.+
+
+If you are new to R, just head over to
+
+<https://cran.r-project.org/> and follow the download link suitable for
+your operating system. Then, head over to
+<https://rstudio.com/products/rstudio/download/#download> and install
+RStudio. You can think of R as the engine that runs the Code for
+ShinyLipids and of RStudio as a car with a nice dashboard around the
+engine to help you the raw power. Don’t worry, ther won’t be any coding
+necessary to get startet with your data in ShinyLipids.
+
+Then run this piece of R code to install ShinyLipds with all it’s
+dependecies\[1\] from github:
 
 ``` r
 if ( !("devtools" %in% installed.packages()) ) install.packages("devtools")
 devtools::install_github("jannikbuhr/ShinyLipids")
 ```
 
+(To run the code, copy and paste it into the R console that pops up in
+the bottom right corner when you first open RStudio. Then hit Enter.)
+
 ShinyLipids gets the data it needs from a datbase. This database needs
 to contain at least the two tables **id\_info** and **data2** \[2\]. Of
 course, you might not have your data in a database-dump file. To get
 your tabular data (preferably *.csv*) into such a file, you can use a
-little helper function in ShinyLipids:
+little helper function in ShinyLipids, which you can run from an R
+script. Before you do so, make your your tables contain the columns
+listed in section [What should my tables look like?](#tables).
 
 ``` r
 if ( !("readr" %in% installed.packages()) ) install.packages("readr")
@@ -70,42 +86,46 @@ ShinyLipids::run_app(db = db_con)
 
 **id\_info**
 
-| Column            |
-| :---------------- |
-| id                |
-| title             |
-| date\_upload      |
-| status            |
-| sample\_from      |
-| date\_sample      |
-| extracted\_by     |
-| date\_extraction  |
-| measured\_by      |
-| date\_measured    |
-| distinct\_samples |
-| data\_lines       |
-| file              |
-| instruments       |
+This is `myMetadata.csv`. Not all columns are needed.
+
+| Column            | Description                   |
+| :---------------- | ----------------------------- |
+| id                | whole number:                 |
+| title             | text: title of dataset        |
+| date\_upload      | text: YYYY-MM-DD              |
+| status            | text: e.g. in progress        |
+| sample\_from      | text: owner of sample         |
+| date\_sample      | text: YYYY-MM-DD              |
+| extracted\_by     | text: name                    |
+| date\_extraction  | text: YYYY-MM-DD              |
+| measured\_by      | text: name                    |
+| date\_measured    | text: YYYY-MM-DD              |
+| distinct\_samples | whole number: n of samples    |
+| data\_lines       | whole number: n of datapoints |
+| file              | text: name of raw datafile    |
+| instruments       | text: instruments             |
 
 **data2**
 
-| Column                       |
-| :--------------------------- |
-| id                           |
-| sample\_identifier           |
-| lipid                        |
-| category                     |
-| func\_cat                    |
-| class                        |
-| length                       |
-| db                           |
-| oh                           |
-| chains                       |
-| chain\_sums                  |
-| sample                       |
-| sample\_replicate            |
-| sample\_replicate\_technical |
-| value                        |
+This is `myDataset.csv`.
+
+| Column                       | Description                      |
+| :--------------------------- | -------------------------------- |
+| id                           | whole number: matches metadata   |
+| sample\_identifier           | text: e.g. “1Aa”                 |
+| lipid                        | text: format: “Cer 34:1;2”       |
+| category                     | text: e.g. SP                    |
+| func\_cat                    | text: e.g. SP                    |
+| class                        | text: e.g. SP Cer                |
+| length                       | whole number: 34                 |
+| db                           | whole number: n of double bounds |
+| oh                           | whole number: n of OH groups     |
+| chains                       | text: format: “34:1;2”           |
+| chain\_sums                  | text: format: “34:1;2”           |
+| sample                       | text: e.g. “1 - 0min Stim”       |
+| sample\_replicate            | text: e.g. “1 - 0min Stim\_A”    |
+| sample\_replicate\_technical | text: e.g. “1 - 0min Stim\_A\_a” |
+| value                        | number                           |
 
 Optionally, your database can contain a table named
 “LIPID\_CLASS\_ORDER\_COMPLETE” with a numeric *class\_order* column

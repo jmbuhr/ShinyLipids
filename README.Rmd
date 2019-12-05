@@ -21,8 +21,8 @@ knitr::opts_chunk$set(
 ![Travis build status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)
 <!-- badges: end -->
 
-
-A remake of ShinyLipids with consistent coding, documentation and improved functionality.
+A remake of ShinyLipids with a focus on consistent coding,
+documentation, improved functionality and above all, user-friendlyness.
 
 ## What is ShinyLipids?
 
@@ -34,13 +34,27 @@ upload tools and a version of this App for internal use at the BZH.
 
 ## What changed?
 
-In 2018 I started working on a new version of ShinyLipids. The idea is still very much based on the original,
-but the internal coding and datastructure is designed to be more consistend and host a safer environment
-for the implementation of new features within the R code. More information can be found on [my website](https://jmbuhr.de/project/shinylipids/).
+In 2018 I started working on a new version of ShinyLipids.
+The idea is still very much based on the original,
+but the internal coding and datastructure is designed
+to be more consistend and host a safer environment
+for the implementation of new features within the R code.
+More information can be found on [my website](https://jmbuhr.de/project/shinylipids/).
 
 ## How do I use ShinyLipids?
 
-Make sure you have the latest version of R installed. 
+Make sure you have the latest version of R and RStudio installed.+
+
+If you are new to R, just head over to
+
+[https://cran.r-project.org/](https://cran.r-project.org/)
+and follow the download link suitable for your operating system.
+Then, head over to [https://rstudio.com/products/rstudio/download/#download](https://rstudio.com/products/rstudio/download/#download) and install RStudio. You can think
+of R as the engine that runs the Code for ShinyLipids and of RStudio
+as a car with a nice dashboard around the engine to help you the raw power.
+Don't worry, ther won't be any coding necessary to get startet with your
+data in ShinyLipids.
+
 Then run this piece of R code to install ShinyLipds with all it's dependecies^[If you want to publish the ShinyApp on RStudio-connect, you will need a couple of addictional packages that
 are listed in `app.R`.] from github:
 
@@ -49,11 +63,16 @@ if ( !("devtools" %in% installed.packages()) ) install.packages("devtools")
 devtools::install_github("jannikbuhr/ShinyLipids")
 ```
 
+(To run the code, copy and paste it into the R console that pops up in the
+bottom right corner when you first open RStudio. Then hit Enter.)
+
 ShinyLipids gets the data it needs from a datbase.
 This database needs to contain at least the two tables **id_info** and **data2** ^[the naming is due to backend compatibility].
 Of course, you might not have your data in a database-dump file. To
 get your tabular data (preferably _.csv_) into such a file, you can use a little helper
-function in ShinyLipids:
+function in ShinyLipids, which you can run from an R script.
+Before you do so, make your your tables contain the columns
+listed in section [What should my tables look like?](#tables).
 
 ```{r, eval=FALSE}
 if ( !("readr" %in% installed.packages()) ) install.packages("readr")
@@ -69,24 +88,50 @@ db_con <- DBI::dbConnect(RSQLite::SQLite(), "./database/exampleDatabase.db")
 ShinyLipids::run_app(db = db_con)
 ```
 
-### What should my tables look like?
+### What should my tables look like? {#tables}
 
 **id_info**
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(tidyverse, quietly = TRUE)
-c("id" , "title " , "date_upload " , "status " , "sample_from " , "date_sample " , "extracted_by " , "date_extraction " , "measured_by " , "date_measured " , "distinct_samples " , "data_lines " , "file " , "instruments") %>%
-  enframe(name = NULL, value = "Column") %>%
-  knitr::kable()
-```
+This is `myMetadata.csv`. Not all columns are needed.
+
+|Column           | Description                   |
+|:----------------| -----------                   |
+|id               | whole number:                 |
+|title            | text: title of dataset        |
+|date_upload      | text: YYYY-MM-DD              |
+|status           | text: e.g. in progress        |
+|sample_from      | text: owner of sample         |
+|date_sample      | text: YYYY-MM-DD              |
+|extracted_by     | text: name                    |
+|date_extraction  | text: YYYY-MM-DD              |
+|measured_by      | text: name                    |
+|date_measured    | text: YYYY-MM-DD              |
+|distinct_samples | whole number: n of samples    |
+|data_lines       | whole number: n of datapoints |
+|file             | text: name of raw datafile    |
+|instruments      | text: instruments             |
 
 **data2**
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-c("id" , "sample_identifier" , "lipid" , "category" , "func_cat" , "class" , "length" , "db" , "oh" , "chains" , "chain_sums" , "sample" , "sample_replicate" , "sample_replicate_technical" , "value") %>%
-  enframe(name = NULL, value = "Column") %>%
-  knitr::kable()
-```
+This is `myDataset.csv`.
+
+|Column                     | Description                   |
+|:--------------------------| -----------                   |
+|id                         | whole number: matches metadata|
+|sample_identifier          | text: e.g. "1Aa"|
+|lipid                      | text: format: "Cer 34:1;2"|
+|category                   | text: e.g. SP|
+|func_cat                   | text: e.g. SP|
+|class                      | text: e.g. SP Cer|
+|length                     | whole number: 34|
+|db                         | whole number: n of double bounds|
+|oh                         | whole number: n of OH groups|
+|chains                     | text: format: "34:1;2"|
+|chain_sums                 | text: format: "34:1;2"|
+|sample                     | text: e.g. "1 - 0min Stim"|
+|sample_replicate           | text: e.g. "1 - 0min Stim_A"|
+|sample_replicate_technical | text: e.g. "1 - 0min Stim_A_a"|
+|value                      | number|
 
 Optionally, your database can contain a table named "LIPID_CLASS_ORDER_COMPLETE" with
 a numeric _class_order_ column associated with a _class_ column.
