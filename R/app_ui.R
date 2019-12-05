@@ -79,9 +79,11 @@ app_ui <- function() {
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills", id = "tabs",
                 tabPanel(title = "Quickoptions",
-                         actionButton(
-                           "species_profile",
-                           label = "Species Profile"
+                         selectizeInput(
+                           "quick_class",
+                           label = "Species Profile for:",
+                           selected = "",
+                           choices = c("",get_lipid_class_order(database_connection))
                          ),
                          actionButton(
                            "class_profile",

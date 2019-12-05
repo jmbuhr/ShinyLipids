@@ -52,7 +52,7 @@ app_server <- function(input, output, session) {
     # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
     query <- sqlQueryData(input$ID)
-    collect_raw_data(database_connection, query, custom_class_order = input$custom_class_order_order)
+    collect_raw_data(database_connection, query, custom_class_order = input$custom_class_order)
   })
   
   
@@ -160,11 +160,13 @@ app_server <- function(input, output, session) {
 
 # Update inputs based on selected default quickoption ---------------------
   
-  observeEvent(input$species_profile, {
-    updateSelectInput(session, "aes_facet1", selected = "class")
-    updateSelectizeInput(session, "std_feature", selected = "class")
-    updateSelectInput(session, "aes_x", selected = "lipid")
-    updateSelectizeInput(session, "filter_class", selected = input$custom_class_order_order[[1]])
+  observeEvent(input$quick_class, {
+    if (input$quick_class != "") {
+      updateSelectInput(session, "aes_facet1", selected = "class")
+      updateSelectizeInput(session, "std_feature", selected = "class")
+      updateSelectInput(session, "aes_x", selected = "lipid")
+      updateSelectizeInput(session, "filter_class", selected = input$quick_class)
+    }
   })
   
   observeEvent(input$class_profile, {
