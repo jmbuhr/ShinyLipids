@@ -375,7 +375,8 @@ app_server <- function(input, output, session) {
             "SEM" = value + SEM,
             "CI"  = CI_upper
           )),
-          alpha = .8
+          alpha = .8,
+          color = "black"
         )
     }
     
