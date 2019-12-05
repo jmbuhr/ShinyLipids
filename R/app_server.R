@@ -112,6 +112,10 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(session, "filter_class",
                          choices = choices
     )
+    updateSelectizeInput(session, "quick_class",
+                         choices = choices,
+                         selected = ""
+    )
     ls <- rawData()$length %>%
       range(na.rm = TRUE)
     updateSliderInput(

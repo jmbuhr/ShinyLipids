@@ -79,16 +79,16 @@ app_ui <- function() {
     # * Tables/Plot Options -------------------------------------------------------------------------------------------
     tabsetPanel(type = "pills", id = "tabs",
                 tabPanel(title = "Quickoptions",
-                         selectizeInput(
-                           "quick_class",
-                           label = "Species Profile for:",
-                           selected = "",
-                           choices = c("",get_lipid_class_order(database_connection))
-                         ),
                          actionButton(
                            "class_profile",
                            label = "Class Profile"
-                         )
+                         ),
+                         selectizeInput(
+                           "quick_class",
+                           label = "Species Profile for:",
+                           options  = list(placeholder = "Select a class to automatically filter and display"),
+                           choices  = NULL
+                         ),
                 ),
                 tabPanel(title = "Mapping",
                          selectInput(
