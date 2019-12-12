@@ -4,14 +4,14 @@
 \alias{standardize_rawData}
 \title{Standardize raw data}
 \usage{
-standardize_rawData(df, std_feature, base_sample)
+standardize_rawData(df, base_sample, std_features)
 }
 \arguments{
 \item{df}{Raw data as a tibble}
 
-\item{std_feature}{Feature so standardize on}
-
 \item{base_sample}{Sample to use as a baseline}
+
+\item{...}{Features to standardize on}
 }
 \value{
 Standardized data as a tibble

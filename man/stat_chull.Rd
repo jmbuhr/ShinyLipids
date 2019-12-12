@@ -4,9 +4,16 @@
 \alias{stat_chull}
 \title{Convex hull for PCA plots}
 \usage{
-stat_chull(mapping = NULL, data = NULL, geom = "polygon",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, ...)
+stat_chull(
+  mapping = NULL,
+  data = NULL,
+  geom = "polygon",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+)
 }
 \arguments{
 \item{mapping}{aesthetic mapping}

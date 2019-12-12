@@ -10,6 +10,9 @@ make_date(col)
 \item{col}{A character vector 
 (Column in a dataframe)}
 }
+\value{
+
+}
 \description{
 Make a date
 }

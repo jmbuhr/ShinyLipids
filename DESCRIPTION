@@ -42,6 +42,6 @@ Imports:
     rlang
 Depends:
     R (>= 3.3.0)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Suggests: 
     testthat
