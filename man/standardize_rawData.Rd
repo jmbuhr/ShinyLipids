@@ -11,7 +11,7 @@ standardize_rawData(df, base_sample, std_features)
 
 \item{base_sample}{Sample to use as a baseline}
 
-\item{...}{Features to standardize on}
+\item{std_features}{Features to standardize on}
 }
 \value{
 Standardized data as a tibble

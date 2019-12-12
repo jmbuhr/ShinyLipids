@@ -121,31 +121,38 @@ app_server <- function(input, output, session) {
                          selected = ""
     )
     ls <- rawData()$length %>%
-      range(na.rm = TRUE)
+      range(na.rm = TRUE) %>% 
+      list()
+    minL <- ls[1]
+    maxL <- ls[2]
     updateSliderInput(
       session,
       "filter_length",
-      min = ls[1],
+      min = minL,
       max = ls[2],
-      value = c(ls[1], ls[2])
+      value = c(minL, maxL)
     )
     dbs <- rawData()$db %>%
       range(na.rm = TRUE)
+    minDbs <- dbs[1]
+    maxDbs <- dbs[2]
     updateSliderInput(
       session,
       "filter_db",
-      min = dbs[1],
+      min = minDbs,
       max = dbs[2],
-      value = c(dbs[1], dbs[2])
+      value = c(minDbs, maxDbs)
     )
     ohs <- rawData()$oh %>%
       range(na.rm = TRUE)
+    minOhs <- ohs[1]
+    maxOhs <- ohs[2]
     updateSliderInput(
       session,
       "filter_oh",
       min = 0,
-      max = ohs[2],
-      value = c(ohs[1], ohs[2])
+      max = maxOhs,
+      value = c(minOhs, maxOhs)
     )
   })
   
@@ -160,7 +167,7 @@ app_server <- function(input, output, session) {
     if (!is.null(input$sample_select)) {
       updateSelectizeInput(session,
                            "sample_remove",
-                           choices = input$sample_select
+                           choices = unname(input$sample_select)
       )
     }
   })
@@ -174,7 +181,7 @@ app_server <- function(input, output, session) {
       updateSelectInput(session, "aes_facet2", selected = "")
       updateSelectizeInput(session, "std_feature", selected = c("class", "sample_replicate"))
       updateSelectInput(session, "aes_x", selected = "lipid")
-      updateSelectizeInput(session, "filter_class", selected = input$quick_class)
+      updateSelectizeInput(session, "filter_class", selected = unname(input$quick_class) )
     }
   })
   
@@ -208,7 +215,6 @@ app_server <- function(input, output, session) {
   # with apropriate summarize functions based on selecte plot type, standards and aes
   plotData <- reactive({
     req(mainData())
-    
     # Validations, friendly error messages
     validate(
       need(
@@ -267,7 +273,6 @@ app_server <- function(input, output, session) {
         "You need more than 1 replicate per sample for everything visible in the plot"
       )
     )
-    
     do_pairwise_comparisons(plotData(), input$aes_x)
   })
   
@@ -295,7 +300,7 @@ app_server <- function(input, output, session) {
   mainPlt <- reactive({
     req(plotData())
     req(meanPlotData())
-    
+   
     df <- plotData()
     mean_df <- meanPlotData()
     
@@ -656,15 +661,15 @@ app_server <- function(input, output, session) {
   # update nPCs, they should not exceed the dimensions of the data
   observe({
     req(pcaData())
+    x <- min(dim(pcaData()))
     updateSliderInput(session,
                       "pca_nPC",
-                      max = min(dim(pcaData()))
-    )
+                      max = x )
   })
   
   # * pcaData -------------------------------------------------------------------------------------------------------
   pcaData <- reactive({
-    # req(plotData())
+    req(plotData())
     validate(
       need(
         input$aes_color == "sample",
@@ -685,9 +690,12 @@ app_server <- function(input, output, session) {
       need(
         input$aes_facet2 == "",
         "To perform a PCA, please remove any facetting in the mappings"
+      ),
+      need(
+        length(unique(plotData()[[input$aes_x]])) > 1,
+        "Not enough datapoints to perform PCA"
       )
     )
-    
     plotData() %>%
       ungroup() %>%
       select(
@@ -703,14 +711,11 @@ app_server <- function(input, output, session) {
       spread(key = input$aes_x, value = "value") %>%
       data.frame(row.names = TRUE) %>%
       as.matrix()
-    
-    # df not a dataframe but a matrix in this case
   })
   
   # * pcaObject -----------------------------------------------------------------------------------------------------
   pcaObject <- reactive({
     m <- pcaData()
-    
     # returns pcaRes object
     pcaMethods::pca(
       m,
