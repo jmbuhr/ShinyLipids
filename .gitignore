@@ -12,3 +12,4 @@ tests/GeneralTest-expected
 Sqlite.db
 exampleDatabase.db
 dev
+database/test.db

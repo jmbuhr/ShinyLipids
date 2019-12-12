@@ -64,8 +64,8 @@ app_server <- function(input, output, session) {
     rawData() %>%
       standardize_technical_replicates(input$std_tec_rep) %>% 
       filter_rawData(input) %>% 
-      standardize_rawData(std_feature = input$std_feature,
-                          base_sample = input$base_sample)
+      standardize_rawData(base_sample = input$base_sample,
+                          std_features = input$std_feature)
   })
   
   # Updating filtering options by dataset --------------------------------------------------------
@@ -167,7 +167,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$quick_class, {
     if (input$quick_class != "") {
       updateSelectInput(session, "aes_facet1", selected = "class")
-      updateSelectizeInput(session, "std_feature", selected = "class")
+      updateSelectizeInput(session, "std_feature", selected = c("class", "sample_replicate"))
       updateSelectInput(session, "aes_x", selected = "lipid")
       updateSelectizeInput(session, "filter_class", selected = input$quick_class)
     }

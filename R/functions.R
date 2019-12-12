@@ -261,37 +261,6 @@ standardize_technical_replicates <- function(df, do_it) {
   df
 }
 
-#' Standardize raw data
-#'
-#' @param df Raw data as a tibble
-#' @param std_feature Feature so standardize on
-#' @param base_sample Sample to use as a baseline
-#'
-#' @return Standardized data as a tibble
-#' @export
-standardize_rawData <- function(df, std_feature, base_sample) {
-    # Standardization based on input$std_feature
-    if (std_feature != "") {
-        df <- df %>%
-            group_by(id, !!sym(std_feature)) %>%
-            mutate(value = value / sum(value) * 100) %>%
-            ungroup()
-    }
-    # Base level substraction
-    if (base_sample != "") {
-        baseline <- df %>%
-            filter(sample == base_sample) %>%
-            group_by(lipid) %>%
-            summarize(baseline = mean(value, na.rm = TRUE))
-        df <- df %>%
-            left_join(baseline) %>%
-            mutate(baseline = if_else(is.na(baseline), 0, baseline)) %>%
-            mutate(value = value - baseline) %>%
-            ungroup()
-    }
-    return(df)
-}
-
 #' Filter raw data
 #'
 #' @param df Data as a tibble 
@@ -369,6 +338,38 @@ filter_rawData <- function(df, input) {
             ))
     }
     return(df)
+}
+
+#' Standardize raw data
+#'
+#' @param df Raw data as a tibble
+#' @param base_sample Sample to use as a baseline
+#' @param ... Features to standardize on
+#'
+#' @return Standardized data as a tibble
+#' @export
+standardize_rawData <- function(df, base_sample, std_features) {
+  # Standardization based on input$std_feature
+  if (!is.null(std_features)) {
+    df <- df %>%
+      group_by(id, !!!syms(std_features)  ) %>%
+      mutate(value = value / sum(value) * 100) %>%
+      ungroup()
+  }
+
+  # Base level substraction
+  if (base_sample != "") {
+    baseline <- df %>%
+      filter(sample == base_sample) %>%
+      group_by(lipid) %>%
+      summarize(baseline = mean(value, na.rm = TRUE))
+    df <- df %>%
+      left_join(baseline) %>%
+      mutate(baseline = if_else(is.na(baseline), 0, baseline)) %>%
+      mutate(value = value - baseline) %>%
+      ungroup()
+  }
+  return(df)
 }
 
 #' Create the data ready for plotting

@@ -134,8 +134,9 @@ app_ui <- function() {
                          selectizeInput(
                            "std_feature",
                            label    = "Standardize to 100% within:",
-                           choices  = features[!features %in% c("value", "sample_replicate_technical")]#,
-                           # selected = ""
+                           multiple = TRUE,
+                           choices  = features[!features %in% c("value", "sample_replicate_technical")],
+                           selected = ""
                          ),
                          selectizeInput(
                            "base_sample",
