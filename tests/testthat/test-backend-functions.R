@@ -1,7 +1,6 @@
 context("Backend Functions")
 
 # pkgload::load_all()
-pkgload::load_code()
 
 # test_that(
 #   "Standardization for Species Profile of PC works as intended",

@@ -334,18 +334,26 @@ app_ui <- function() {
                                   width = NULL,
                                   DT::DTOutput("meanPlotDataTable")
                                 )
-                              ),
-                              fluidRow(
-                                shinydashboard::box(
-                                  "Order",
-                                  width = NULL,
-                                  shinyjqui::orderInput('custom_class_order',
-                                                        label = 'Custom Class Order',
-                                                        items = get_lipid_class_order(database_connection),
-                                                        item_class = 'primary',
-                                                        width = '100%')
-                                )
                               )
+                              # ,
+                              # fluidRow(
+                              #   shinydashboard::box(
+                              #     "Order",
+                              #     width = NULL,
+                              #     shinyjqui::orderInput('custom_class_order',
+                              #                           label = 'Custom Class Order',
+                              #                           items = get_lipid_class_order(database_connection),
+                              #                           item_class = 'primary',
+                              #                           width = '100%')
+                              #   ),
+                              #   shinydashboard::box(
+                              #     "Order Output",
+                              #     width = NULL,
+                              #     textOutput(
+                              #       "debug"
+                              #     )
+                              #   )
+                              # )
       ),
       
       # ** PCA -------------------------------------------------------------------------------------

@@ -35,26 +35,31 @@ app_server <- function(input, output, session) {
   ## Update SelectInput for datasets based on sets loaded and row selected
   # select clicked row in table
   observe({
-    choices <- metaData()$id
+    choices <- list(metaData()$id)
     names(choices) <- metaData()$title
     selection <- input$metaDataTable_rows_selected
-    updateSelectInput(session,
-                      "ID",
-                      choices  = choices,
-                      selected = choices[selection]
-    )
-  }, label = "updatingDataSelect")
+    if (!is.null(selection)) {
+      updateSelectInput(session,
+                        "ID",
+                        choices  = choices,
+                        selected = choices[[selection]]
+      )
+    }
+  })
   
   # Data ------------------------------------------------------------------------------------------------------------
-  
+
   # * Reading in raw data based on dataset selected -----------------------------------------------------------------
   rawData <- reactive({
     # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
     query <- sqlQueryData(input$ID)
-    collect_raw_data(database_connection, query, custom_class_order = input$custom_class_order)
+    collect_raw_data(database_connection, query, custom_class_order = get_lipid_class_order(database_connection))
   })
   
+  output$debug <- renderText({
+    cat(input$custom_class_order)
+  })
   
   # * mainData from rawData -------------------------------------------------------------------------
   # filtering, then standardization
@@ -71,7 +76,7 @@ app_server <- function(input, output, session) {
   # Updating filtering options by dataset --------------------------------------------------------
   observe({
     choices <- rawData()$sample %>%
-      unique()
+      levels()
     updateSelectizeInput(session, "sample_select",
                          choices = choices
     )
@@ -80,12 +85,11 @@ app_server <- function(input, output, session) {
                          choices = choices,
                          selected = ""
     )
-    sample_IDs <- rawData()$sample_identifier %>% unique()
     updateSelectizeInput(session, "sample_remove",
                          choices = choices
     )
     choices <- rawData()$sample_replicate %>%
-      unique()
+      levels()
     updateSelectizeInput(session, "rep_select",
                          choices = choices
     )
@@ -93,22 +97,22 @@ app_server <- function(input, output, session) {
                          choices = choices
     )
     choices <- rawData()$sample_replicate_technical %>%
-      unique()
+      levels()
     updateSelectizeInput(session, "tecRep_remove",
                          choices = choices
     )
     choices <- rawData()$category %>%
-      unique()
+      levels()
     updateSelectizeInput(session, "filter_cat",
                          choices = choices
     )
     choices <- rawData()$func_cat %>%
-      unique()
+      levels()
     updateSelectizeInput(session, "filter_func",
                          choices = choices
     )
     choices <- rawData()$class %>%
-      unique()
+      levels()
     updateSelectizeInput(session, "filter_class",
                          choices = choices
     )
@@ -147,16 +151,16 @@ app_server <- function(input, output, session) {
   
   # Updating selectizeOptions of samples based dataset and sample_remove based on selected samples
   observe({
+    if (is.null(input$sample_select)) {
+      updateSelectizeInput(session,
+                           "sample_remove",
+                           choices = levels(rawData()$sample)
+      )
+    }
     if (!is.null(input$sample_select)) {
       updateSelectizeInput(session,
                            "sample_remove",
                            choices = input$sample_select
-      )
-    }
-    if (is.null(input$sample_select)) {
-      updateSelectizeInput(session,
-                           "sample_remove",
-                           choices = unique(rawData()$sample)
       )
     }
   })
@@ -166,7 +170,8 @@ app_server <- function(input, output, session) {
   
   observeEvent(input$quick_class, {
     if (input$quick_class != "") {
-      updateSelectInput(session, "aes_facet1", selected = "class")
+      updateSelectInput(session, "aes_facet1", selected = "")
+      updateSelectInput(session, "aes_facet2", selected = "")
       updateSelectizeInput(session, "std_feature", selected = c("class", "sample_replicate"))
       updateSelectInput(session, "aes_x", selected = "lipid")
       updateSelectizeInput(session, "filter_class", selected = input$quick_class)
