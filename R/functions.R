@@ -344,7 +344,7 @@ filter_rawData <- function(df, input) {
 #'
 #' @param df Raw data as a tibble
 #' @param base_sample Sample to use as a baseline
-#' @param ... Features to standardize on
+#' @param std_features Features to standardize on
 #'
 #' @return Standardized data as a tibble
 #' @export
