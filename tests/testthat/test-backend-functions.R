@@ -6,7 +6,8 @@ context("Backend Functions")
 #   "Standardization for Species Profile of PC works as intended",
 # )
 # 
-database_connection <- DBI::dbConnect(RSQLite::SQLite(), "database/test.db")
+
+database_connection <- DBI::dbConnect(RSQLite::SQLite(), "database/exampleDatabase.db")
 
 input <- list(
   ID = 168,
