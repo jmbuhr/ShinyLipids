@@ -22,7 +22,7 @@
 #                          user= "mathias")
 
 ## Local Databse Dump
-db_con <- DBI::dbConnect(RSQLite::SQLite(), "database/exampleDatabase.db")
+db_con <- DBI::dbConnect(RSQLite::SQLite(), "./database/exampleDatabase.db")
 
 pkgload::load_all()
 options( "golem.app.prod" = TRUE)
