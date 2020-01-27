@@ -174,6 +174,7 @@ do_pairwise_comparisons <- function(df, x_axis) {
 #' is generated here instead.
 #'
 #' @return A vector of lipid classes
+#' @export
 get_lipid_class_order <- function(con) {
     if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(con)) {
         res <- collect(tbl(con, "LIPID_CLASS_ORDER_COMPLETE")) %>%

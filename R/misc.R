@@ -18,10 +18,12 @@
 #' @return
 #' NULL
 #' @export
-createDatabase <- function(path = "databaseDump.db", meta_info, dataset) {
+createDatabase <- function(path = "databaseDump.db",
+                           meta_info, dataset,
+                           overwrite = FALSE) {
   con <- DBI::dbConnect(RSQLite::SQLite(), path)
-  DBI::dbWriteTable(con, "id_info", meta_info)
-  DBI::dbWriteTable(con, "data2", datasets)
+  DBI::dbWriteTable(con, "id_info", meta_info, overwrite = overwrite)
+  DBI::dbWriteTable(con, "data2", dataset, overwrite = overwrite)
   DBI::dbDisconnect(con)
 }
 

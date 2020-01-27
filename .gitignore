@@ -10,6 +10,5 @@ debugging.R
 tests/GeneralTest-expected
 *.html
 Sqlite.db
-exampleDatabase.db
 dev
 database/test.db
