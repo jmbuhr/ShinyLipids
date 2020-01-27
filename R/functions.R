@@ -198,10 +198,8 @@ get_lipid_class_order <- function(con) {
 #'
 #' @param col A character vector 
 #' (Column in a dataframe)
-#' @return
+#' @return A Date vector
 #' @export
-#'
-#' @examples
 make_date <- function(col) {
     as.Date(col, format = "%y%m%d")
 }

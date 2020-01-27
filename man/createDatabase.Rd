@@ -4,7 +4,7 @@
 \alias{createDatabase}
 \title{Create your own database}
 \usage{
-createDatabase(path = "databaseDump.db", meta_info, dataset)
+createDatabase(path = "databaseDump.db", meta_info, dataset, overwrite = FALSE)
 }
 \arguments{
 \item{path}{string,
@@ -16,6 +16,9 @@ See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the co
 
 \item{dataset}{A data.frame with the datasets
 See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns they need.}
+
+\item{overwrite}{Boolean
+Overwrite existing .db file? Default is FALSE.}
 }
 \description{
 Quickly create your own SQLite database dump from

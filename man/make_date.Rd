@@ -11,7 +11,7 @@ make_date(col)
 (Column in a dataframe)}
 }
 \value{
-
+A Date vector
 }
 \description{
 Make a date

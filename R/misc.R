@@ -15,6 +15,9 @@
 #' A data.frame with the datasets
 #' See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns they need.
 #' 
+#' @param overwrite Boolean
+#' Overwrite existing .db file? Default is FALSE.
+#' 
 #' @return
 #' NULL
 #' @export
