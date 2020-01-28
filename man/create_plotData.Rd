@@ -14,7 +14,7 @@ This list can contain
 strings with the following names,
 non existent ones will be ignored:
 \itemize{
-\item \code{tecRep_average}
+\item \code{summariseTechnicalReplicates}
 \item \code{aesX}
 \item \code{aesColor}
 \item \code{aesFacetCol}

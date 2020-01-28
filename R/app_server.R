@@ -161,7 +161,7 @@ app_server <- function(input, output, session) {
     validate(
       need(
         !(
-          input$tecRep_average &
+          input$summariseTechnicalReplicates &
             (
               input$aesColor    == "sample_replicate_technical" |
                 input$aesX      == "sample_replicate_technical" |
@@ -244,7 +244,7 @@ app_server <- function(input, output, session) {
     req(meanPlotData())
    
     df <- plotData()
-    mean_df <- meanPlotData()
+    meanDf <- meanPlotData()
     
     if ("length" %in% names(df)) {
       df <-
@@ -252,8 +252,8 @@ app_server <- function(input, output, session) {
         ungroup() %>%
         mutate(length = factor(length)) %>%
         group_by(length)
-      mean_df <-
-        mean_df %>%
+      meanDf <-
+        meanDf %>%
         ungroup() %>%
         mutate(length = factor(length)) %>%
         group_by(length)
@@ -289,16 +289,16 @@ app_server <- function(input, output, session) {
     }
     
     # Add bars
-    if ("bars" %in% input$main_add) {
+    if ("bars" %in% input$mainPlotAdditionalOptions) {
       plt <- plt +
         geom_col(
-          data     = mean_df,
+          data     = meanDf,
           position = position_dodge2(width = 0.9)
         )
     }
     
     # Add points
-    if ("points" %in% input$main_add) {
+    if ("points" %in% input$mainPlotAdditionalOptions) {
       plt <- plt +
         geom_point(
           position    = position_dodge(width = 0.9),
@@ -310,19 +310,19 @@ app_server <- function(input, output, session) {
     }
     
     # Error bars and mean
-    if (input$main_error != "None") {
+    if (input$errorbarType != "None") {
       plt <- plt +
         geom_errorbar(
-          data = mean_df,
+          data = meanDf,
           position = position_dodge2(width = 0.2, padding = 0.8),
           aes(ymin = switch(
-            input$main_error,
+            input$errorbarType,
             "SD"   = value - SD,
             "SEM"  = value - SEM,
             "CI"   = CI_lower
           ),
           ymax = switch(
-            input$main_error,
+            input$errorbarType,
             "SD"  = value + SD,
             "SEM" = value + SEM,
             "CI"  = CI_upper
@@ -333,10 +333,10 @@ app_server <- function(input, output, session) {
     }
     
     # Hightlight Mean
-    if ("mean" %in% input$main_add) {
+    if ("mean" %in% input$mainPlotAdditionalOptions) {
       plt <- plt +
         geom_errorbar(
-          data = mean_df,
+          data = meanDf,
           aes(ymin = value, ymax = value),
           position = position_dodge2(width = 0.9),
           # color = "black",
@@ -360,16 +360,16 @@ app_server <- function(input, output, session) {
         facet_grid(
           cols   = facet_col,
           rows   = facet_row,
-          scales = if_else("free_y" %in% input$main_add, "free", "free_x"),
+          scales = if_else("free_y" %in% input$mainPlotAdditionalOptions, "free", "free_x"),
           space  = "free_x"
         )
     }
     
     # Display value of means as text
-    if ("values" %in% input$main_add) {
+    if ("values" %in% input$mainPlotAdditionalOptions) {
       plt <- plt +
         geom_text(
-          data = mean_df,
+          data = meanDf,
           aes(label = round(value, 2)),
           vjust     = 0,
           color     = "black",
@@ -378,7 +378,7 @@ app_server <- function(input, output, session) {
     }
     
     # Display value of points as text
-    if ("ind_values" %in% input$main_add) {
+    if ("ind_values" %in% input$mainPlotAdditionalOptions) {
       plt <- plt +
         geom_text(
           aes(label = round(value, 2)),
@@ -389,12 +389,12 @@ app_server <- function(input, output, session) {
     }
     
     # Label points
-    if ("label" %in% input$main_add) {
+    if ("label" %in% input$mainPlotAdditionalOptions) {
       plt <- plt +
         geom_text(
           aes(label = !!sym(
             ifelse(
-              input$tecRep_average,
+              input$summariseTechnicalReplicates,
               "sample_replicate",
               "sample_replicate_technical"
             )
@@ -407,10 +407,10 @@ app_server <- function(input, output, session) {
     }
     
     # Show N
-    if ("N" %in% input$main_add) {
+    if ("N" %in% input$mainPlotAdditionalOptions) {
       plt <- plt +
         geom_text(
-          data = mean_df,
+          data = meanDf,
           aes(y = -Inf, label = N),
           vjust = -1,
           hjust = 0.5,
@@ -438,33 +438,33 @@ app_server <- function(input, output, session) {
       )
     
     # Log scale, name of y-axis and percent format for standardized data
-    if ("log" %in% input$main_add) {
+    if ("log" %in% input$mainPlotAdditionalOptions) {
       if ( !is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
-        y_name   <- "amount [ Mol % ], log1p scale"
-        y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
-        y_trans  <- "log1p"
+        yAxisName   <- "amount [ Mol % ], log1p scale"
+        yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
+        yAxisTransformation  <- "log1p"
       } else {
-        y_name   <- "amount [ \U03BCM ], log1p scale"
-        y_labels <- waiver()
-        y_trans  <- "log1p"
+        yAxisName   <- "amount [ \U03BCM ], log1p scale"
+        yAxisLabels <- waiver()
+        yAxisTransformation  <- "log1p"
       }
     } else {
       if ( !is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
-        y_name   <- "amount [ Mol % ]"
-        y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
-        y_trans  <- "identity"
+        yAxisName   <- "amount [ Mol % ]"
+        yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
+        yAxisTransformation  <- "identity"
       } else {
-        y_name   <- "amount [ \U03BCM ]"
-        y_labels <- scales::number_format()
-        y_trans  <- "identity"
+        yAxisName   <- "amount [ \U03BCM ]"
+        yAxisLabels <- scales::number_format()
+        yAxisTransformation  <- "identity"
       }
     }
     
     plt <- plt +
       scale_y_continuous(
-        name   = y_name,
-        labels = y_labels,
-        trans  = y_trans
+        name   = yAxisName,
+        labels = yAxisLabels,
+        trans  = yAxisTransformation
       )
     
     # Zooming
@@ -472,10 +472,10 @@ app_server <- function(input, output, session) {
       plt + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
     
     # Swap X and Y
-    if ("swap" %in% input$main_add) {
+    if ("swap" %in% input$mainPlotAdditionalOptions) {
       validate(
         need(
-          !("log" %in% input$main_add),
+          !("log" %in% input$mainPlotAdditionalOptions),
           "Swapped X and Y Axis are currently not supported for a logarithmic Y-Axis"
         )
       )
@@ -484,7 +484,7 @@ app_server <- function(input, output, session) {
     }
     
     # Highlite significant hits
-    if ("signif" %in% input$main_add) {
+    if ("signif" %in% input$mainPlotAdditionalOptions) {
       signif <- filter(pairwiseComparisons(), p.value <= 0.05) %>%
         distinct(!!sym(input$aesX))
       if (nrow(signif) > 0) {
@@ -510,14 +510,12 @@ app_server <- function(input, output, session) {
     mainPlt()
   })
   
-  
-  
   # meanPlotDataTable -----------------------------------------------------------------------------------------------
   output$meanPlotDataTable <- DT::renderDT({
     req(meanPlotData())
     
-    df <- meanPlotData()
-    df %>% select(
+    meanPlotData() %>%
+    select(
       Average_value = value,
       !!sym(input$aesX),
       everything()
@@ -603,10 +601,9 @@ app_server <- function(input, output, session) {
   # update nPCs, they should not exceed the dimensions of the data
   observe({
     req(pcaData())
-    x <- min(dim(pcaData()))
     updateSliderInput(session,
-                      "pca_nPC",
-                      max = x )
+                      "pcaNumberPrincipalComponents",
+                      max = min(dim(pcaData())))
   })
   
   # * pcaData -------------------------------------------------------------------------------------------------------
@@ -643,7 +640,7 @@ app_server <- function(input, output, session) {
       select(
         !!sym(
           ifelse(
-            input$tecRep_average,
+            input$summariseTechnicalReplicates,
             "sample_replicate",
             "sample_replicate_technical"
           )
@@ -662,7 +659,7 @@ app_server <- function(input, output, session) {
     pcaMethods::pca(
       m,
       method = if_else(any(is.na(m)), "nipals", input$pca_method),
-      nPcs   = input$pca_nPC,
+      nPcs   = input$pcaNumberPrincipalComponents,
       center = input$pca_center,
       scale  = input$pca_scaling,
       cv     = input$pca_cv,
@@ -673,8 +670,8 @@ app_server <- function(input, output, session) {
   
   # Scaling factor for original data dimension vectors in principal component space
   
-  sample_names <- reactive({
-    if (input$tecRep_average) {
+  sampleNames <- reactive({
+    if (input$summariseTechnicalReplicates) {
       plotData() %>%
         ungroup() %>%
         select(sample, sample_replicate) %>%
@@ -695,21 +692,21 @@ app_server <- function(input, output, session) {
     }
   })
   
-  scaled_loadings <- reactive({
+  scaledLoadings <- reactive({
     req(pcaObject())
     loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aesX)
     
     scores <- pcaObject()@scores %>%
       as_tibble(
         rownames = if_else(
-          input$tecRep_average,
+          input$summariseTechnicalReplicates,
           "sample_replicate",
           "sample_replicate_technical"
         )
       ) %>%
-      left_join(sample_names(),
+      left_join(sampleNames(),
                 by = if_else(
-                  input$tecRep_average,
+                  input$summariseTechnicalReplicates,
                   "sample_replicate",
                   "sample_replicate_technical"
                 )
@@ -727,27 +724,27 @@ app_server <- function(input, output, session) {
   
   # * pcaOutputs ------------------------------------------------------------------------------------------------------
   # Info
-  output$pca_info <- renderPrint({
-    # req(pcaObject())
+  output$pcaInfo <- renderPrint({
+    req(pcaObject())
     pcaObject() %>% summary()
   })
   
   # ** Scores -----------------------------------------------------------------------------------------------------
-  pca_ScoresPlt <- reactive({
-    # req(pcaData(), pcaObject(), sample_names())
+  pcaScoresPlot <- reactive({
+    req(pcaData(), pcaObject(), sampleNames())
     colorCount <- rownames(pcaData()) %>% length()
     scores <- pcaObject()@scores %>%
       as_tibble(
         rownames = if_else(
-          input$tecRep_average,
+          input$summariseTechnicalReplicates,
           "sample_replicate",
           "sample_replicate_technical"
         )
       ) %>%
       left_join(
-        sample_names(),
+        sampleNames(),
         by = if_else(
-          input$tecRep_average,
+          input$summariseTechnicalReplicates,
           "sample_replicate",
           "sample_replicate_technical"
         )
@@ -776,7 +773,7 @@ app_server <- function(input, output, session) {
       plt <- plt +
         ggrepel::geom_text_repel(aes(label = !!sym(
           ifelse(
-            input$tecRep_average,
+            input$summariseTechnicalReplicates,
             "sample_replicate",
             "sample_replicate_technical"
           )
@@ -787,7 +784,7 @@ app_server <- function(input, output, session) {
     if (input$pca_vectors) {
       plt <- plt +
         geom_segment(
-          data = scaled_loadings(),
+          data = scaledLoadings(),
           aes(
             x = 0,
             y = 0,
@@ -800,7 +797,7 @@ app_server <- function(input, output, session) {
           alpha = .3
         ) +
         ggrepel::geom_label_repel(
-          data = scaled_loadings(),
+          data = scaledLoadings(),
           aes(
             x = PC1,
             y = PC2,
@@ -816,13 +813,13 @@ app_server <- function(input, output, session) {
   })
   
   output$pca_scores <- renderPlot({
-    pca_ScoresPlt()
+    pcaScoresPlot()
   })
   
   
   # ** Loadings -----------------------------------------------------------------------------------------------------
   
-  pca_LoadingsPlt <- reactive({
+  pcaLoadingsPlot <- reactive({
     # req(pcaObject())
     loadings <-
       pcaObject()@loadings %>%
@@ -839,11 +836,12 @@ app_server <- function(input, output, session) {
   
   
   output$pca_loadings <- renderPlot({
-    pca_LoadingsPlt()
+    pcaLoadingsPlot()
   })
   
   # Download handlers  --------------------------------------------------------------
-  
+
+ 
   # Metadata - .csv
   output$saveMeta <- downloadHandler(
     filename = function() {
@@ -949,7 +947,7 @@ app_server <- function(input, output, session) {
     content = function(file) {
       ggsave(
         file,
-        plot   = pca_ScoresPlt(),
+        plot   = pcaScoresPlot(),
         width  = input$pca_Width,
         height = input$pca_Height
       )
@@ -966,7 +964,7 @@ app_server <- function(input, output, session) {
     content = function(file) {
       ggsave(
         file,
-        plot   = pca_LoadingsPlt(),
+        plot   = pcaLoadingsPlot(),
         width  = input$pca_Width,
         height = input$pca_Height
       )

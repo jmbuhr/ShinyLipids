@@ -182,7 +182,7 @@ app_ui <- function() {
                            multiple = TRUE
                          ),
                          checkboxInput(
-                           "tecRep_average",
+                           "summariseTechnicalReplicates",
                            label    = "average over technical replicates", value = TRUE
                          ),
                          checkboxInput(
@@ -291,7 +291,7 @@ app_ui <- function() {
                                 shinydashboard::box(
                                   "Options",
                                   width = 3,
-                                  checkboxGroupInput("main_add", label = NULL,
+                                  checkboxGroupInput("mainPlotAdditionalOptions", label = NULL,
                                                      choices = list(
                                                        "Show points"                       = "points",
                                                        "Show bars"                         = "bars",
@@ -307,7 +307,7 @@ app_ui <- function() {
                                                      ),
                                                      selected = list("points", "bars")
                                   ),
-                                  selectInput("main_error", "Type of error bars",
+                                  selectInput("errorbarType", "Type of error bars",
                                               choices = list("SD", "SEM", "CI", "None"),
                                               selected = "None"
                                   )
@@ -377,7 +377,7 @@ app_ui <- function() {
           column(
             width = 6,
             shinydashboard::box(width = NULL,
-                                verbatimTextOutput("pca_info")
+                                verbatimTextOutput("pcaInfo")
             ),
             shinydashboard::box(width = NULL,
                                 downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
@@ -411,7 +411,7 @@ app_ui <- function() {
                                             "cross-validation",
                                             list("none" = "none", "Q2" =  "q2")),
                                 sliderInput(
-                                  "pca_nPC",
+                                  "pcaNumberPrincipalComponents",
                                   label   = "Number of PCs",
                                   min     = 2,
                                   max     = 8,

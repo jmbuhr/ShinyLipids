@@ -12,7 +12,7 @@ test_that(
     lipidClassOrder = collectLipidClassOrder(databaseConnection),
     standardizeWithinTechnicalReplicate        = TRUE,
     standardizationFeatures        = c("class", "sample_replicate"),
-    tecRep_average     = TRUE,
+    summariseTechnicalReplicates     = TRUE,
     baselineSample        = "",
     lipidClassToSelect       = "PC",
     aesX              = "lipid",

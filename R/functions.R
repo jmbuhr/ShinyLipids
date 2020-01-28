@@ -381,7 +381,7 @@ standardizeRawDataWithin <- function(df, baselineSample, standardizationFeatures
 #' strings with the following names,
 #' non existent ones will be ignored:
 #' \itemize{
-#' \item \code{tecRep_average}
+#' \item \code{summariseTechnicalReplicates}
 #' \item \code{aesX}
 #' \item \code{aesColor}
 #' \item \code{aesFacetCol}
@@ -392,7 +392,7 @@ standardizeRawDataWithin <- function(df, baselineSample, standardizationFeatures
 #' @export
 create_plotData <- function(df, input) {
     # Averaging over the technical replicates
-    if (input$tecRep_average) {
+    if (input$summariseTechnicalReplicates) {
         df <- df %>%
             group_by_at(vars(
                 -sample_identifier,
@@ -431,7 +431,7 @@ create_plotData <- function(df, input) {
     if (input$aesFacetRow != "") {
         df <- df %>% group_by(!!sym(input$aesFacetRow), add = TRUE)
     }
-    if (input$tecRep_average) {
+    if (input$summariseTechnicalReplicates) {
         df <- df %>% group_by(sample_replicate, add = TRUE)
     } else {
         df <- df %>% group_by(sample_replicate_technical, add = TRUE)
