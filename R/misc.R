@@ -31,7 +31,7 @@ createDatabase <- function(path = "databaseDump.db",
 }
 
 
-# collect_meta_data(db_con)
+# collectMetaData(databaseConnection)
 # 
 # read_and_process_data <- function(con, ID,
 #                                   std_feature = "sample_replicate_technical",

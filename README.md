@@ -78,8 +78,8 @@ Now you are ready to look at your lipids\! Run this code for a
 quickstart:
 
 ``` r
-db_con <- DBI::dbConnect(RSQLite::SQLite(), "./database/exampleDatabase.db")
-ShinyLipids::run_app(db = db_con)
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./database/exampleDatabase.db")
+ShinyLipids::run_app(db = databaseConnection)
 ```
 
 ### What should my tables look like?

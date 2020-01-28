@@ -1,6 +1,6 @@
 #' @import shiny
 app_ui <- function() {
-  database_connection <- golem::get_golem_options("db")
+  databaseConnection <- golem::get_golem_options("db")
   # tagList(
   # Leave this function for adding external resources
   # golem_add_external_resources()
@@ -342,7 +342,7 @@ app_ui <- function() {
                               #     width = NULL,
                               #     shinyjqui::orderInput('custom_class_order',
                               #                           label = 'Custom Class Order',
-                              #                           items = get_lipid_class_order(database_connection),
+                              #                           items = get_lipid_class_order(databaseConnection),
                               #                           item_class = 'primary',
                               #                           width = '100%')
                               #   ),

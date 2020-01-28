@@ -1,6 +1,6 @@
 context("Backend Functions")
 
-db_con <- DBI::dbConnect(RSQLite::SQLite(), "database/exampleDatabase.db")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "database/exampleDatabase.db")
 
 pkgload::load_all()
 
@@ -9,7 +9,7 @@ test_that(
   {
   input <- list(
     ID                 = 1,
-    custom_class_order = get_lipid_class_order(db_con),
+    custom_class_order = get_lipid_class_order(databaseConnection),
     std_tec_rep        = TRUE,
     std_feature        = c("class", "sample_replicate"),
     tecRep_average     = TRUE,
@@ -22,7 +22,7 @@ test_that(
   )
 
   query <- sqlQueryData(input$ID)
-  rawData <- collect_raw_data(db_con,
+  rawData <- collect_raw_data(databaseConnection,
                               query,
                               custom_class_order = input$custom_class_order)
 

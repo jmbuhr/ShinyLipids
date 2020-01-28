@@ -213,7 +213,7 @@ make_date <- function(col) {
 #' 
 #' @return a tibble with the meta data
 #' @export
-collect_meta_data <- function(con) {
+collectMetaData <- function(con) {
     meta <- collect(tbl(con, sql("SELECT * FROM id_info"))) %>%
         mutate_at(vars(date_upload, date_sample, date_extraction, date_measured),
                   possibly(make_date, NA_real_)

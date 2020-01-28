@@ -1,11 +1,11 @@
 #' @import shiny
 app_server <- function(input, output, session) {
-  database_connection <- golem::get_golem_options("db")
+  databaseConnection <- golem::get_golem_options("db")
   # Metadata / Datasets -------------------------------------------------------------------------------------------
   
   # Reading in table of datasets
   metaData <- reactive({
-    collect_meta_data(database_connection)
+    collectMetaData(databaseConnection)
   })
   
   # Rendering datasets as a table to send to UI
@@ -54,7 +54,7 @@ app_server <- function(input, output, session) {
     # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
     query <- sqlQueryData(input$ID)
-    collect_raw_data(database_connection, query, custom_class_order = get_lipid_class_order(database_connection))
+    collect_raw_data(databaseConnection, query, custom_class_order = get_lipid_class_order(databaseConnection))
   })
   
   output$debug <- renderText({
