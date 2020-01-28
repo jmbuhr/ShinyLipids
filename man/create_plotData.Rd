@@ -15,10 +15,10 @@ strings with the following names,
 non existent ones will be ignored:
 \itemize{
 \item \code{tecRep_average}
-\item \code{aes_x}
-\item \code{aes_color}
-\item \code{aes_facet1}
-\item \code{aes_facet2}
+\item \code{aesX}
+\item \code{aesColor}
+\item \code{aesFacetCol}
+\item \code{aesFacetRow}
 }}
 }
 \value{

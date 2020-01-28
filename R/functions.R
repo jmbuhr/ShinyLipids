@@ -67,9 +67,9 @@ mainScale <- function(colorCount) {
     )
 }
 
-all_more_than_one_replicate <- function(df, aes_x, aes_color) {
+testAllMoreThanOneReplicate <- function(df, aesX, aesColor) {
     df %>%
-        group_by(!!sym(aes_x), !!sym(aes_color)) %>%
+        group_by(!!sym(aesX), !!sym(aesColor)) %>%
         count() %>%
         pull(n) %>%
         {all(. > 1)}
@@ -149,7 +149,7 @@ test_pairwise <- function(df) {
 #' A tidy representation of the significance
 #' tests build with \code{broom::tidy} combinde
 #' into one tibble.
-do_pairwise_comparisons <- function(df, x_axis) {
+doAllPairwiseComparisons <- function(df, x_axis) {
     comparisons <- df %>%
         group_by(!!sym(x_axis)) %>%
         nest() %>%
@@ -382,10 +382,10 @@ standardizeRawDataWithin <- function(df, baselineSample, standardizationFeatures
 #' non existent ones will be ignored:
 #' \itemize{
 #' \item \code{tecRep_average}
-#' \item \code{aes_x}
-#' \item \code{aes_color}
-#' \item \code{aes_facet1}
-#' \item \code{aes_facet2}
+#' \item \code{aesX}
+#' \item \code{aesColor}
+#' \item \code{aesFacetCol}
+#' \item \code{aesFacetRow}
 #' }
 #' 
 #' @return neat data
@@ -404,32 +404,32 @@ create_plotData <- function(df, input) {
     }
     # Filter any NA in features used for aesthetics (x-axis, y-axis, color, facet1, facet2)
     df <- df %>% filter(
-        !is.na(!!sym(input$aes_x)),
+        !is.na(!!sym(input$aesX)),
         !is.na(value)
     )
-    if (input$aes_color != "") {
-        df <- df %>% filter(!is.na(!!sym(input$aes_color)))
+    if (input$aesColor != "") {
+        df <- df %>% filter(!is.na(!!sym(input$aesColor)))
     }
-    if (input$aes_facet1 != "") {
-        df <- df %>% filter(!is.na(!!sym(input$aes_facet1)))
+    if (input$aesFacetCol != "") {
+        df <- df %>% filter(!is.na(!!sym(input$aesFacetCol)))
     }
-    if (input$aes_facet2 != "") {
-        df <- df %>% filter(!is.na(!!sym(input$aes_facet2)))
+    if (input$aesFacetRow != "") {
+        df <- df %>% filter(!is.na(!!sym(input$aesFacetRow)))
     }
     
     # Summation of values within the displayed aesthetics
     df <- df %>% ungroup()
-    if (input$aes_x != "") {
-        df <- df %>% group_by(!!sym(input$aes_x), add = TRUE)
+    if (input$aesX != "") {
+        df <- df %>% group_by(!!sym(input$aesX), add = TRUE)
     }
-    if (input$aes_color != "") {
-        df <- df %>% group_by(!!sym(input$aes_color), add = TRUE)
+    if (input$aesColor != "") {
+        df <- df %>% group_by(!!sym(input$aesColor), add = TRUE)
     }
-    if (input$aes_facet1 != "") {
-        df <- df %>% group_by(!!sym(input$aes_facet1), add = TRUE)
+    if (input$aesFacetCol != "") {
+        df <- df %>% group_by(!!sym(input$aesFacetCol), add = TRUE)
     }
-    if (input$aes_facet2 != "") {
-        df <- df %>% group_by(!!sym(input$aes_facet2), add = TRUE)
+    if (input$aesFacetRow != "") {
+        df <- df %>% group_by(!!sym(input$aesFacetRow), add = TRUE)
     }
     if (input$tecRep_average) {
         df <- df %>% group_by(sample_replicate, add = TRUE)
@@ -450,7 +450,7 @@ create_plotData <- function(df, input) {
 #'
 #' @return data ready for summmary plots like barplots
 #' @export
-summarise_plotData <- function(df) {
+summarisePlotData <- function(df) {
     df <- df %>% summarize(
         SD       = sd(value, na.rm = TRUE),
         SEM      = sd(value, na.rm = TRUE) / n(),

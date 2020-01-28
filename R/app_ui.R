@@ -92,14 +92,14 @@ app_ui <- function() {
                 ),
                 tabPanel(title = "Mapping",
                          selectInput(
-                           "aes_x",
+                           "aesX",
                            label       = HTML("Feature to display on x-Axis /<br>use in the PCA"),
                            choices     = features[!features %in% c("value",
                                                                    "sample_replicate",
                                                                    "sample_replicate_technical")],
                            selected    = "class"),
                          selectizeInput(
-                           "aes_color",
+                           "aesColor",
                            label    = HTML("Feature to display by color /<br> y-axis of heatmap"),
                            choices  = features[!features %in% c("lipid",
                                                                 "value",
@@ -110,7 +110,7 @@ app_ui <- function() {
                                                                 "sample_replicate_technical")],
                            selected = "sample"),
                          selectizeInput(
-                           "aes_facet1",
+                           "aesFacetCol",
                            label    = "Feature to use for facetting in columns",
                            choices  = features[!features %in% c("lipid",
                                                                 "value",
@@ -121,7 +121,7 @@ app_ui <- function() {
                                                                 "sample_replicate_technical")],
                            selected = NULL),
                          selectizeInput(
-                           "aes_facet2",
+                           "aesFacetRow",
                            label    = "Feature to use for facetting in rows",
                            choices  = features[!features %in% c("lipid",
                                                                 "value",

@@ -15,10 +15,10 @@ test_that(
     tecRep_average     = TRUE,
     baselineSample        = "",
     lipidClassToSelect       = "PC",
-    aes_x              = "lipid",
-    aes_facet1         = "class",
-    aes_facet2         = "",
-    aes_color          = "sample"
+    aesX              = "lipid",
+    aesFacetCol         = "class",
+    aesFacetRow         = "",
+    aesColor          = "sample"
   )
 
   query <- createQueryForID(input$ID)

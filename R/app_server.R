@@ -119,18 +119,18 @@ app_server <- function(input, output, session) {
   
   observeEvent(input$quickClassForProfile, {
     if (input$quickClassForProfile != "") {
-      updateSelectInput(session, "aes_facet1", selected = "")
-      updateSelectInput(session, "aes_facet2", selected = "")
+      updateSelectInput(session, "aesFacetCol", selected = "")
+      updateSelectInput(session, "aesFacetRow", selected = "")
       updateSelectizeInput(session, "standardizationFeatures", selected = c("class", "sample_replicate"))
-      updateSelectInput(session, "aes_x", selected = "lipid")
+      updateSelectInput(session, "aesX", selected = "lipid")
       updateSelectizeInput(session, "lipidClassToSelect", selected = unname(input$quickClassForProfile) )
     }
   })
   
   observeEvent(input$class_profile, {
-    updateSelectInput(session, "aes_facet1", selected = "")
+    updateSelectInput(session, "aesFacetCol", selected = "")
     updateSelectizeInput(session, "standardizationFeatures", selected = "")
-    updateSelectInput(session, "aes_x", selected = "class")
+    updateSelectInput(session, "aesX", selected = "class")
     updateSelectizeInput(session, "lipidClassToSelect", selected = "")
   })
   
@@ -163,18 +163,18 @@ app_server <- function(input, output, session) {
         !(
           input$tecRep_average &
             (
-              input$aes_color    == "sample_replicate_technical" |
-                input$aes_x      == "sample_replicate_technical" |
-                # input$aes_y    == "sample_replicate_technical" |
-                input$aes_facet1 == "sample_replicate_technical" |
-                input$aes_facet2 == "sample_replicate_technical"
+              input$aesColor    == "sample_replicate_technical" |
+                input$aesX      == "sample_replicate_technical" |
+                # input$aesY    == "sample_replicate_technical" |
+                input$aesFacetCol == "sample_replicate_technical" |
+                input$aesFacetRow == "sample_replicate_technical"
             )
         ),
         "You are currently averaging over technical replicates (see the samples tab in the sidebar)
                   and thus can't use this feature in your plots."
       ),
       need(
-        input$aes_x != "",
+        input$aesX != "",
         "Please select a feature to display on the x-axis"
       )
     )
@@ -189,7 +189,7 @@ app_server <- function(input, output, session) {
   meanPlotData <- reactive({
     req(plotData())
     plotData() %>%
-      summarise_plotData()
+      summarisePlotData()
   })
   
   
@@ -199,11 +199,11 @@ app_server <- function(input, output, session) {
     # req(plotData())
     validate(
       need(
-        input$aes_color == "sample",
+        input$aesColor == "sample",
         "To compare between samples, chose sample as the color"
       ),
       need(
-        input$aes_x %in% c("class", "category"),
+        input$aesX %in% c("class", "category"),
         "Comparisons are only supported for class or category on the x axis"
       ),
       need(
@@ -211,11 +211,11 @@ app_server <- function(input, output, session) {
         "You need at least 2 samples to compare them"
       ),
       need(
-        all_more_than_one_replicate(plotData(), input$aes_x, input$aes_color),
+        testAllMoreThanOneReplicate(plotData(), input$aesX, input$aesColor),
         "You need more than 1 replicate per sample for everything visible in the plot"
       )
     )
-    do_pairwise_comparisons(plotData(), input$aes_x)
+    doAllPairwiseComparisons(plotData(), input$aesX)
   })
   
   output$pairwiseComparisonsTable <- DT::renderDT({
@@ -266,23 +266,23 @@ app_server <- function(input, output, session) {
     # main plot definition
     plt <- plt +
       aes(
-        x = !!sym(input$aes_x),
+        x = !!sym(input$aesX),
         y = value
       )
     
     # add color/fill if requested
     # number of colors needed, if any
-    if (input$aes_color != "") {
+    if (input$aesColor != "") {
       colorCount <-
-        df[, input$aes_color] %>%
+        df[, input$aesColor] %>%
         unique() %>%
         as_vector() %>%
         length()
       
       plt <- plt +
         aes(
-          color = factor(!!sym(input$aes_color)),
-          fill  = factor(!!sym(input$aes_color))
+          color = factor(!!sym(input$aesColor)),
+          fill  = factor(!!sym(input$aesColor))
         )
     } else {
       colorCount <- 0
@@ -345,14 +345,14 @@ app_server <- function(input, output, session) {
     }
     
     # facetting
-    if (input$aes_facet1 != "" | input$aes_facet2 != "") {
-      facet_col <- vars(!!sym(input$aes_facet1))
-      facet_row <- vars(!!sym(input$aes_facet2))
+    if (input$aesFacetCol != "" | input$aesFacetRow != "") {
+      facet_col <- vars(!!sym(input$aesFacetCol))
+      facet_row <- vars(!!sym(input$aesFacetRow))
       
-      if (input$aes_facet1 == "") {
+      if (input$aesFacetCol == "") {
         facet_col <- NULL
       }
-      if (input$aes_facet2 == "") {
+      if (input$aesFacetRow == "") {
         facet_row <- NULL
       }
       
@@ -427,13 +427,13 @@ app_server <- function(input, output, session) {
         color = guide_legend(
           ncol = 12,
           nrow = as.integer(colorCount / 12) + 1,
-          title = input$aes_color
+          title = input$aesColor
         ),
         # usefull if way to many values of color
         fill = guide_legend(
           ncol = 12,
           nrow = as.integer(colorCount / 12) + 1,
-          title = input$aes_color
+          title = input$aesColor
         )
       )
     
@@ -486,12 +486,12 @@ app_server <- function(input, output, session) {
     # Highlite significant hits
     if ("signif" %in% input$main_add) {
       signif <- filter(pairwiseComparisons(), p.value <= 0.05) %>%
-        distinct(!!sym(input$aes_x))
+        distinct(!!sym(input$aesX))
       if (nrow(signif) > 0) {
         plt <- plt +
           geom_text(
             data = signif,
-            aes(!!sym(input$aes_x), Inf, label = "*", vjust = 1, hjust = 0.5),
+            aes(!!sym(input$aesX), Inf, label = "*", vjust = 1, hjust = 0.5),
             inherit.aes = F,
             size        = 10
           )
@@ -519,7 +519,7 @@ app_server <- function(input, output, session) {
     df <- meanPlotData()
     df %>% select(
       Average_value = value,
-      !!sym(input$aes_x),
+      !!sym(input$aesX),
       everything()
     )
   },
@@ -552,8 +552,8 @@ app_server <- function(input, output, session) {
     # plot
     plt <- ggplot(df) +
       aes(
-        x = factor(!!sym(input$aes_x)),
-        y = factor(!!sym(input$aes_color)),
+        x = factor(!!sym(input$aesX)),
+        y = factor(!!sym(input$aesColor)),
         fill = value
       ) +
       geom_raster() +
@@ -568,24 +568,24 @@ app_server <- function(input, output, session) {
       scale_y_discrete(expand = c(0, 0)) +
       scale_fill_viridis_c(option = input$heatColor) +
       labs(
-        y    = input$aes_color,
-        x    = input$aes_x,
+        y    = input$aesColor,
+        x    = input$aesX,
         fill = fill_name
       ) +
       NULL
     
     # facetting
-    if (input$aes_facet1 != "" & input$aes_facet2 != "") {
+    if (input$aesFacetCol != "" & input$aesFacetRow != "") {
       plt <- plt +
         facet_grid(
-          rows   = vars(!!sym(input$aes_facet1)),
-          cols   = vars(!!sym(input$aes_facet2)),
+          rows   = vars(!!sym(input$aesFacetCol)),
+          cols   = vars(!!sym(input$aesFacetRow)),
           scales = "free"
         )
     }
-    if (input$aes_facet1 != "" & input$aes_facet2 == "") {
+    if (input$aesFacetCol != "" & input$aesFacetRow == "") {
       plt <- plt +
-        facet_wrap(facets = vars(!!sym(input$aes_facet1)), scales = "free")
+        facet_wrap(facets = vars(!!sym(input$aesFacetCol)), scales = "free")
     }
     plt
   })
@@ -614,27 +614,27 @@ app_server <- function(input, output, session) {
     req(plotData())
     validate(
       need(
-        input$aes_color == "sample",
+        input$aesColor == "sample",
         "To perform a PCA, please set color to sample in the mappings"
       ),
       need(
         (
-          input$aes_x != "sample" &
-            input$aes_x != "sample_replicate" &
-            input$aes_x != "sample_replicate_technical"
+          input$aesX != "sample" &
+            input$aesX != "sample_replicate" &
+            input$aesX != "sample_replicate_technical"
         ),
         "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"
       ),
       need(
-        input$aes_facet1 == "",
+        input$aesFacetCol == "",
         "To perform a PCA, please remove any facetting in the mappings"
       ),
       need(
-        input$aes_facet2 == "",
+        input$aesFacetRow == "",
         "To perform a PCA, please remove any facetting in the mappings"
       ),
       need(
-        length(unique(plotData()[[input$aes_x]])) > 1,
+        length(unique(plotData()[[input$aesX]])) > 1,
         "Not enough datapoints to perform PCA"
       )
     )
@@ -648,9 +648,9 @@ app_server <- function(input, output, session) {
             "sample_replicate_technical"
           )
         ),
-        !!sym(input$aes_x), value
+        !!sym(input$aesX), value
       ) %>%
-      spread(key = input$aes_x, value = "value") %>%
+      spread(key = input$aesX, value = "value") %>%
       data.frame(row.names = TRUE) %>%
       as.matrix()
   })
@@ -697,7 +697,7 @@ app_server <- function(input, output, session) {
   
   scaled_loadings <- reactive({
     req(pcaObject())
-    loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aes_x)
+    loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aesX)
     
     scores <- pcaObject()@scores %>%
       as_tibble(
@@ -793,7 +793,7 @@ app_server <- function(input, output, session) {
             y = 0,
             xend = PC1,
             yend = PC2,
-            group = !!sym(input$aes_x)
+            group = !!sym(input$aesX)
           ),
           inherit.aes = FALSE,
           arrow = arrow(),
@@ -804,7 +804,7 @@ app_server <- function(input, output, session) {
           aes(
             x = PC1,
             y = PC2,
-            label = !!sym(input$aes_x)
+            label = !!sym(input$aesX)
           ),
           inherit.aes = FALSE,
           alpha = .3,
@@ -826,13 +826,13 @@ app_server <- function(input, output, session) {
     # req(pcaObject())
     loadings <-
       pcaObject()@loadings %>%
-      as_tibble(rownames = input$aes_x)
+      as_tibble(rownames = input$aesX)
     
     loadings %>%
       ggplot(aes(PC1, PC2)) +
       geom_point(pch = 19, size = input$pca_pointSize / 3) +
       mainTheme +
-      ggrepel::geom_text_repel(aes(label = !!sym(input$aes_x)),
+      ggrepel::geom_text_repel(aes(label = !!sym(input$aesX)),
                                show.legend = FALSE
       )
   })
