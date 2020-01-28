@@ -36,7 +36,7 @@ app_server <- function(input, output, session) {
   # select clicked row in table
   observe({
     choices <- list(metaData()$id)
-    names(choices) <- metaData()$title
+    names(choices) <- paste(metaData()$id, "-", metaData()$title)
     selection <- input$metaDataTable_rows_selected
     if (!is.null(selection)) {
       updateSelectInput(session,
