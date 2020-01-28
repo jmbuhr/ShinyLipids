@@ -67,10 +67,10 @@ app_server <- function(input, output, session) {
     req(rawData())
     
     rawData() %>%
-      standardizeWithinTechnicalReplicatesIf(input$std_tec_rep) %>% 
+      standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>% 
       filterRawDataFor(input) %>% 
-      standardizeRawDataWithin(base_sample = input$base_sample,
-                               std_features = input$std_feature)
+      standardizeRawDataWithin(baselineSample          = input$baselineSample,
+                               standardizationFeatures = input$standardizationFeatures)
   })
   
   # Updating filtering options by dataset --------------------------------------------------------
@@ -81,7 +81,7 @@ app_server <- function(input, output, session) {
                          choices = choices
     )
     updateSelectizeInput(session,
-                         "base_sample",
+                         "baselineSample",
                          choices = choices,
                          selected = ""
     )
@@ -179,7 +179,7 @@ app_server <- function(input, output, session) {
     if (input$quick_class != "") {
       updateSelectInput(session, "aes_facet1", selected = "")
       updateSelectInput(session, "aes_facet2", selected = "")
-      updateSelectizeInput(session, "std_feature", selected = c("class", "sample_replicate"))
+      updateSelectizeInput(session, "standardizationFeatures", selected = c("class", "sample_replicate"))
       updateSelectInput(session, "aes_x", selected = "lipid")
       updateSelectizeInput(session, "filter_class", selected = unname(input$quick_class) )
     }
@@ -187,7 +187,7 @@ app_server <- function(input, output, session) {
   
   observeEvent(input$class_profile, {
     updateSelectInput(session, "aes_facet1", selected = "")
-    updateSelectizeInput(session, "std_feature", selected = "")
+    updateSelectizeInput(session, "standardizationFeatures", selected = "")
     updateSelectInput(session, "aes_x", selected = "class")
     updateSelectizeInput(session, "filter_class", selected = "")
   })
@@ -497,7 +497,7 @@ app_server <- function(input, output, session) {
     
     # Log scale, name of y-axis and percent format for standardized data
     if ("log" %in% input$main_add) {
-      if ( !is.null(input$std_feature) || input$std_tec_rep) {
+      if ( !is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
         y_name   <- "amount [ Mol % ], log1p scale"
         y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
         y_trans  <- "log1p"
@@ -507,7 +507,7 @@ app_server <- function(input, output, session) {
         y_trans  <- "log1p"
       }
     } else {
-      if ( !is.null(input$std_feature) || input$std_tec_rep) {
+      if ( !is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
         y_name   <- "amount [ Mol % ]"
         y_labels <- scales::percent_format(scale = 1, accuracy = NULL)
         y_trans  <- "identity"
@@ -601,7 +601,7 @@ app_server <- function(input, output, session) {
     # df <- plotData()
     df <- meanPlotData()
     
-    if (!is.null(input$std_feature)) {
+    if (!is.null(input$standardizationFeatures)) {
       fill_name <- "amount [ Mol % ]"
     } else {
       fill_name <- "amount [ \U03BCM ]"

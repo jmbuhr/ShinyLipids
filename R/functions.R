@@ -342,24 +342,24 @@ filterRawDataFor <- function(df, input) {
 #' Standardize raw data
 #'
 #' @param df Raw data as a tibble
-#' @param base_sample Sample to use as a baseline
-#' @param std_features Features to standardize on
+#' @param baselineSample Sample to use as a baseline
+#' @param standardizationFeatures Features to standardize on
 #'
 #' @return Standardized data as a tibble
 #' @export
-standardizeRawDataWithin <- function(df, base_sample, std_features) {
-  # Standardization based on input$std_feature
-  if (!is.null(std_features)) {
+standardizeRawDataWithin <- function(df, baselineSample, standardizationFeatures) {
+  # Standardization based on input$standardizationFeatures
+  if (!is.null(standardizationFeatures)) {
     df <- df %>%
-      group_by(id, !!!syms(std_features)  ) %>%
+      group_by(id, !!!syms(standardizationFeatures)  ) %>%
       mutate(value = value / sum(value) * 100) %>%
       ungroup()
   }
 
   # Base level substraction
-  if (base_sample != "") {
+  if (baselineSample != "") {
     baseline <- df %>%
-      filter(sample == base_sample) %>%
+      filter(sample == baselineSample) %>%
       group_by(lipid) %>%
       summarize(baseline = mean(value, na.rm = TRUE))
     df <- df %>%

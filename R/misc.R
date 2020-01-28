@@ -34,13 +34,13 @@ createDatabase <- function(path = "databaseDump.db",
 # collectMetaData(databaseConnection)
 # 
 # read_and_process_data <- function(con, ID,
-#                                   std_feature = "sample_replicate_technical",
-#                                   base_sample = "",
+#                                   standardizationFeatures = "sample_replicate_technical",
+#                                   baselineSample = "",
 #                                   input = list()) {
 #   collectRawData(con,
 #                    createQueryForID(ID),
 #                    lipidClassOrder = collectLipidClassOrder(con)) %>% 
-#     standardizeRawDataWithin(std_feature, base_sample) %>%
+#     standardizeRawDataWithin(standardizationFeatures, baselineSample) %>%
 #     filterRawDataFor(input)
 # }
 

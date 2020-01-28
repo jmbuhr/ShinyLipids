@@ -132,14 +132,14 @@ app_ui <- function() {
                                                                 "sample_replicate_technical")],
                            selected = NULL),
                          selectizeInput(
-                           "std_feature",
+                           "standardizationFeatures",
                            label    = "Standardize to 100% within:",
                            multiple = TRUE,
                            choices  = features[!features %in% c("value", "sample_replicate_technical")],
                            selected = ""
                          ),
                          selectizeInput(
-                           "base_sample",
+                           "baselineSample",
                            label    = "Substract sample as baseline",
                            choices  = "",
                            selected = NULL
@@ -186,7 +186,7 @@ app_ui <- function() {
                            label    = "average over technical replicates", value = TRUE
                          ),
                          checkboxInput(
-                           "std_tec_rep",
+                           "standardizeWithinTechnicalReplicate",
                            label = "Standardize within technical replicates",
                            value = TRUE
                          )
