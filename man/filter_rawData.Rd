@@ -14,15 +14,15 @@ This list can contain
 strings with the following names,
 non existent ones will be ignored:
 \itemize{
-\item \code{filter_cat}
-\item \code{filter_class}
-\item \code{filter_func}
+\item \code{categoryToSelect}
+\item \code{lipidClassToSelect}
+\item \code{functionalCategoryToSelect}
 \item \code{filter_length}
 \item \code{filter_db}
 \item \code{filter_oh}
-\item \code{sample_select}
-\item \code{sample_remove}
-\item \code{tecRep_remove}
+\item \code{samplesToSelect}
+\item \code{samplesToRemove}
+\item \code{technicalReplicatesToRemove}
 }}
 }
 \value{

@@ -268,31 +268,31 @@ standardizeWithinTechnicalReplicatesIf <- function(df, do_it) {
 #' strings with the following names,
 #' non existent ones will be ignored:
 #' \itemize{
-#' \item \code{filter_cat}
-#' \item \code{filter_class}
-#' \item \code{filter_func}
+#' \item \code{categoryToSelect}
+#' \item \code{lipidClassToSelect}
+#' \item \code{functionalCategoryToSelect}
 #' \item \code{filter_length}
 #' \item \code{filter_db}
 #' \item \code{filter_oh}
-#' \item \code{sample_select}
-#' \item \code{sample_remove}
-#' \item \code{tecRep_remove}
+#' \item \code{samplesToSelect}
+#' \item \code{samplesToRemove}
+#' \item \code{technicalReplicatesToRemove}
 #' }
 #'
 #' @return Lovely filtered data
 #' @export
 filterRawDataFor <- function(df, input) {
     # Category
-    if (!is.null(input$filter_cat)) {
-        df <- df %>% filter(category %in% input$filter_cat)
+    if (!is.null(input$categoryToSelect)) {
+        df <- df %>% filter(category %in% input$categoryToSelect)
     }
     # Class
-    if (!is.null(input$filter_class)) {
-        df <- df %>% filter(class %in% input$filter_class)
+    if (!is.null(input$lipidClassToSelect)) {
+        df <- df %>% filter(class %in% input$lipidClassToSelect)
     }
     # Functional category
-    if (!is.null(input$filter_func)) {
-        df <- df %>% filter(func_cat %in% input$filter_func)
+    if (!is.null(input$functionalCategoryToSelect)) {
+        df <- df %>% filter(func_cat %in% input$functionalCategoryToSelect)
     }
     # Total length of sidechains
     if (!is.null(input$filter_length)) {
@@ -313,27 +313,27 @@ filterRawDataFor <- function(df, input) {
             filter(oh %>% between(input$filter_oh[1], input$filter_oh[2]))
     }
     # explicitly demanding sample
-    if (!is.null(input$sample_select)) {
-        df <- df %>% filter(sample %in% input$sample_select)
+    if (!is.null(input$samplesToSelect)) {
+        df <- df %>% filter(sample %in% input$samplesToSelect)
     }
     # removing sample
-    if (!is.null(input$sample_remove)) {
-        df <- df %>% filter(!(sample %in% input$sample_remove))
+    if (!is.null(input$samplesToRemove)) {
+        df <- df %>% filter(!(sample %in% input$samplesToRemove))
     }
     # demanding replicate
-    if (!is.null(input$rep_select)) {
-        df <- df %>% filter(sample_replicate %in% input$rep_select)
+    if (!is.null(input$replicatesToSelect)) {
+        df <- df %>% filter(sample_replicate %in% input$replicatesToSelect)
     }
     # removing replicate
-    if (!is.null(input$rep_remove)) {
-        df <- df %>% filter(!(sample_replicate %in% input$rep_remove))
+    if (!is.null(input$replicatesToRemove)) {
+        df <- df %>% filter(!(sample_replicate %in% input$replicatesToRemove))
     }
     # removing technical replicate
-    if (!is.null(input$tecRep_remove)) {
+    if (!is.null(input$technicalReplicatesToRemove)) {
         df <-
             df %>%
             filter(!(
-                sample_replicate_technical %in% input$tecRep_remove
+                sample_replicate_technical %in% input$technicalReplicatesToRemove
             ))
     }
     return(df)

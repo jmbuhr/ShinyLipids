@@ -77,7 +77,7 @@ app_server <- function(input, output, session) {
   observe({
     choices <- rawData()$sample %>%
       levels()
-    updateSelectizeInput(session, "sample_select",
+    updateSelectizeInput(session, "samplesToSelect",
                          choices = choices
     )
     updateSelectizeInput(session,
@@ -85,38 +85,38 @@ app_server <- function(input, output, session) {
                          choices = choices,
                          selected = ""
     )
-    updateSelectizeInput(session, "sample_remove",
+    updateSelectizeInput(session, "samplesToRemove",
                          choices = choices
     )
     choices <- rawData()$sample_replicate %>%
       levels()
-    updateSelectizeInput(session, "rep_select",
+    updateSelectizeInput(session, "replicatesToSelect",
                          choices = choices
     )
-    updateSelectizeInput(session, "rep_remove",
+    updateSelectizeInput(session, "replicatesToRemove",
                          choices = choices
     )
     choices <- rawData()$sample_replicate_technical %>%
       levels()
-    updateSelectizeInput(session, "tecRep_remove",
+    updateSelectizeInput(session, "technicalReplicatesToRemove",
                          choices = choices
     )
     choices <- rawData()$category %>%
       levels()
-    updateSelectizeInput(session, "filter_cat",
+    updateSelectizeInput(session, "categoryToSelect",
                          choices = choices
     )
     choices <- rawData()$func_cat %>%
       levels()
-    updateSelectizeInput(session, "filter_func",
+    updateSelectizeInput(session, "functionalCategoryToSelect",
                          choices = choices
     )
     choices <- rawData()$class %>%
       levels()
-    updateSelectizeInput(session, "filter_class",
+    updateSelectizeInput(session, "lipidClassToSelect",
                          choices = choices
     )
-    updateSelectizeInput(session, "quick_class",
+    updateSelectizeInput(session, "quickClassForProfile",
                          choices = choices,
                          selected = ""
     )
@@ -156,18 +156,18 @@ app_server <- function(input, output, session) {
     )
   })
   
-  # Updating selectizeOptions of samples based dataset and sample_remove based on selected samples
+  # Updating selectizeOptions of samples based dataset and samplesToRemove based on selected samples
   observe({
-    if (is.null(input$sample_select)) {
+    if (is.null(input$samplesToSelect)) {
       updateSelectizeInput(session,
-                           "sample_remove",
+                           "samplesToRemove",
                            choices = levels(rawData()$sample)
       )
     }
-    if (!is.null(input$sample_select)) {
+    if (!is.null(input$samplesToSelect)) {
       updateSelectizeInput(session,
-                           "sample_remove",
-                           choices = unname(input$sample_select)
+                           "samplesToRemove",
+                           choices = unname(input$samplesToSelect)
       )
     }
   })
@@ -175,13 +175,13 @@ app_server <- function(input, output, session) {
 
 # Update inputs based on selected default quickoption ---------------------
   
-  observeEvent(input$quick_class, {
-    if (input$quick_class != "") {
+  observeEvent(input$quickClassForProfile, {
+    if (input$quickClassForProfile != "") {
       updateSelectInput(session, "aes_facet1", selected = "")
       updateSelectInput(session, "aes_facet2", selected = "")
       updateSelectizeInput(session, "standardizationFeatures", selected = c("class", "sample_replicate"))
       updateSelectInput(session, "aes_x", selected = "lipid")
-      updateSelectizeInput(session, "filter_class", selected = unname(input$quick_class) )
+      updateSelectizeInput(session, "lipidClassToSelect", selected = unname(input$quickClassForProfile) )
     }
   })
   
@@ -189,7 +189,7 @@ app_server <- function(input, output, session) {
     updateSelectInput(session, "aes_facet1", selected = "")
     updateSelectizeInput(session, "standardizationFeatures", selected = "")
     updateSelectInput(session, "aes_x", selected = "class")
-    updateSelectizeInput(session, "filter_class", selected = "")
+    updateSelectizeInput(session, "lipidClassToSelect", selected = "")
   })
   
   # Displaying main Dataset as a table ----------------------------------------------------------------------------

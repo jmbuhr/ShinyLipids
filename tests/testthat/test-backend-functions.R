@@ -14,7 +14,7 @@ test_that(
     standardizationFeatures        = c("class", "sample_replicate"),
     tecRep_average     = TRUE,
     baselineSample        = "",
-    filter_class       = "PC",
+    lipidClassToSelect       = "PC",
     aes_x              = "lipid",
     aes_facet1         = "class",
     aes_facet2         = "",

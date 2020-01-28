@@ -84,7 +84,7 @@ app_ui <- function() {
                            label = "Class Profile"
                          ),
                          selectizeInput(
-                           "quick_class",
+                           "quickClassForProfile",
                            label = "Species Profile for:",
                            options  = list(placeholder = "Select a class to automatically filter and display"),
                            choices  = NULL
@@ -147,35 +147,35 @@ app_ui <- function() {
                 ),
                 tabPanel(title = "Samples",
                          selectizeInput(
-                           'sample_select',
+                           'samplesToSelect',
                            label    = 'Select samples',
                            options  = list(placeholder = "Explicitly demand sample"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'sample_remove',
+                           'samplesToRemove',
                            label    = 'Remove samples',
                            options  = list(placeholder = "Explicitly remove sample"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'rep_select',
+                           'replicatesToSelect',
                            label    = "Select replicates",
                            options  = list(placeholder = "Explicitly demand replicate"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'rep_remove',
+                           'replicatesToRemove',
                            label    = "Remove replicates",
                            options  = list(placeholder = "Explicitly remove replicate"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'tecRep_remove',
+                           'technicalReplicatesToRemove',
                            label    = "Remove technical replicates",
                            options  = list(placeholder = "Explicitly remove tec. replicate"),
                            choices  = NULL,
@@ -198,21 +198,21 @@ app_ui <- function() {
                          #     icon     = icon("rocket")
                          # ),
                          selectizeInput(
-                           'filter_class',
+                           'lipidClassToSelect',
                            label    = "Select classes",
                            options  = list(placeholder = "empty field means no filtering based on this feature"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'filter_cat',
+                           'categoryToSelect',
                            label    = "Select categories",
                            options  = list(placeholder = "empty field means no filtering based on this feature"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'filter_func',
+                           'functionalCategoryToSelect',
                            label    = "Select functional categories",
                            options  = list(placeholder = "empty field means no filtering based on this feature"),
                            choices  = NULL,
