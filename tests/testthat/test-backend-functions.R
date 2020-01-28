@@ -9,7 +9,7 @@ test_that(
   {
   input <- list(
     ID                 = 1,
-    custom_class_order = get_lipid_class_order(databaseConnection),
+    customClassOrder = get_lipid_class_order(databaseConnection),
     std_tec_rep        = TRUE,
     std_feature        = c("class", "sample_replicate"),
     tecRep_average     = TRUE,
@@ -21,10 +21,10 @@ test_that(
     aes_color          = "sample"
   )
 
-  query <- sqlQueryData(input$ID)
-  rawData <- collect_raw_data(databaseConnection,
+  query <- createQueryForID(input$ID)
+  rawData <- collectRawData(databaseConnection,
                               query,
-                              custom_class_order = input$custom_class_order)
+                              customClassOrder = input$customClassOrder)
 
   plotData <- rawData %>%
     standardize_technical_replicates(input$std_tec_rep) %>%

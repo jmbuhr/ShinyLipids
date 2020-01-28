@@ -53,12 +53,12 @@ app_server <- function(input, output, session) {
   rawData <- reactive({
     # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
-    query <- sqlQueryData(input$ID)
-    collect_raw_data(databaseConnection, query, custom_class_order = get_lipid_class_order(databaseConnection))
+    query <- createQueryForID(input$ID)
+    collectRawData(databaseConnection, query, customClassOrder = get_lipid_class_order(databaseConnection))
   })
   
   output$debug <- renderText({
-    cat(input$custom_class_order)
+    cat(input$customClassOrder)
   })
   
   # * mainData from rawData -------------------------------------------------------------------------

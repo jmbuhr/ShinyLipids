@@ -29,7 +29,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(
 #' @return
 #' SQL Query as a string
 #' @export
-sqlQueryData <- function(dataset_ID) {
+createQueryForID <- function(dataset_ID) {
     query <- paste("SELECT * FROM data2", "WHERE id =", dataset_ID)
     return(query)
 }
@@ -226,19 +226,19 @@ collectMetaData <- function(con) {
 #'
 #' @param con A database connection
 #' @param query The sql query to get the dataset.
-#' Create it yourself with \code{\link{sqlQueryData}}.
-#' @param custom_class_order The order for the lipid classes
+#' Create it yourself with \code{\link{createQueryForID}}.
+#' @param customClassOrder The order for the lipid classes
 #'
 #' @return Raw data as a tibble
 #' @export
-collect_raw_data <- function(con, query, custom_class_order) {
+collectRawData <- function(con, query, customClassOrder) {
     df <- collect(tbl(con, sql(query))) %>%
         filter(!is.na(value)) %>%
         mutate(
             sample_identifier          = factor(sample_identifier),
             lipid                      = factor(lipid),
             func_cat                   = factor(func_cat),
-            class                      = quiet_fct_relevel(class, custom_class_order)$result,
+            class                      = quiet_fct_relevel(class, customClassOrder)$result,
             category                   = factor(category),
             sample                     = factor(sample),
             sample_replicate           = factor(sample_replicate),

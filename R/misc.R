@@ -37,9 +37,9 @@ createDatabase <- function(path = "databaseDump.db",
 #                                   std_feature = "sample_replicate_technical",
 #                                   base_sample = "",
 #                                   input = list()) {
-#   collect_raw_data(con,
-#                    sqlQueryData(ID),
-#                    custom_class_order = get_lipid_class_order(con)) %>% 
+#   collectRawData(con,
+#                    createQueryForID(ID),
+#                    customClassOrder = get_lipid_class_order(con)) %>% 
 #     standardize_rawData(std_feature, base_sample) %>%
 #     filter_rawData(input)
 # }
