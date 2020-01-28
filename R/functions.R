@@ -89,7 +89,7 @@ all_more_than_one_replicate <- function(df, aes_x, aes_color) {
 #' @param ... passed to layer
 #'
 #' @return a state for ggplot
-stat_chull <- function(mapping       = NULL,
+stat_chull <- function(mapping     = NULL,
                        data        = NULL,
                        geom        = "polygon",
                        position    = "identity",

@@ -75,88 +75,30 @@ app_server <- function(input, output, session) {
   
   # Updating filtering options by dataset --------------------------------------------------------
   observe({
-    choices <- rawData()$sample %>%
-      levels()
-    updateSelectizeInput(session, "samplesToSelect",
-                         choices = choices
-    )
-    updateSelectizeInput(session,
-                         "baselineSample",
-                         choices = choices,
-                         selected = ""
-    )
-    updateSelectizeInput(session, "samplesToRemove",
-                         choices = choices
-    )
-    choices <- rawData()$sample_replicate %>%
-      levels()
-    updateSelectizeInput(session, "replicatesToSelect",
-                         choices = choices
-    )
-    updateSelectizeInput(session, "replicatesToRemove",
-                         choices = choices
-    )
-    choices <- rawData()$sample_replicate_technical %>%
-      levels()
-    updateSelectizeInput(session, "technicalReplicatesToRemove",
-                         choices = choices
-    )
-    choices <- rawData()$category %>%
-      levels()
-    updateSelectizeInput(session, "categoryToSelect",
-                         choices = choices
-    )
-    choices <- rawData()$func_cat %>%
-      levels()
-    updateSelectizeInput(session, "functionalCategoryToSelect",
-                         choices = choices
-    )
-    choices <- rawData()$class %>%
-      levels()
-    updateSelectizeInput(session, "lipidClassToSelect",
-                         choices = choices
-    )
-    updateSelectizeInput(session, "quickClassForProfile",
-                         choices = choices,
-                         selected = ""
-    )
-    ls <- rawData()$length %>%
-      range(na.rm = TRUE) %>% 
-      list()
-    minL <- ls[1]
-    maxL <- ls[2]
-    updateSliderInput(
-      session,
-      "filter_length",
-      min = minL,
-      max = ls[2],
-      value = c(minL, maxL)
-    )
-    dbs <- rawData()$db %>%
-      range(na.rm = TRUE)
-    minDbs <- dbs[1]
-    maxDbs <- dbs[2]
-    updateSliderInput(
-      session,
-      "filter_db",
-      min = minDbs,
-      max = dbs[2],
-      value = c(minDbs, maxDbs)
-    )
-    ohs <- rawData()$oh %>%
-      range(na.rm = TRUE)
-    minOhs <- ohs[1]
-    maxOhs <- ohs[2]
-    updateSliderInput(
-      session,
-      "filter_oh",
-      min = 0,
-      max = maxOhs,
-      value = c(minOhs, maxOhs)
-    )
+    tribble(
+      ~ inputName,                    ~ choiceColumn,               ~ selectedChoice,
+      "samplesToSelect",              "sample",                     NULL,
+      "baselineSample",               "sample",                     ""  ,
+      "samplesToRemove",              "sample",                     NULL,
+      "replicatesToSelect",           "sample_replicate",           NULL,
+      "replicatesToRemove",           "sample_replicate",           NULL,
+      "technicalReplicatesToRemove",  "sample_replicate_technical", NULL,
+      "categoryToSelect",             "category",                   NULL,
+      "functionalCategoryToSelect",   "func_cat",                   NULL,
+      "lipidClassToSelect",           "class",                      NULL,
+      "quickClassForProfile",         "class",                      ""
+    ) %>% 
+      pwalk(updateAllSelectizeInputs, rawData(), session)
+  
+    tribble(
+      ~ inputName,     ~ choiceColumn, 
+      "filter_length", "length",
+      "filter_db",     "db",
+      "filter_oh",     "oh"
+    ) %>% 
+      pwalk(updateAllRangeInputs, rawData(), session)
   })
   
-  # Updating selectizeOptions of samples based dataset and samplesToRemove based on selected samples
   observe({
     if (is.null(input$samplesToSelect)) {
       updateSelectizeInput(session,
