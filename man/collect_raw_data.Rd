@@ -4,7 +4,7 @@
 \alias{collectRawData}
 \title{Collect raw data from database}
 \usage{
-collectRawData(con, query, customClassOrder)
+collectRawData(con, query, lipidClassOrder)
 }
 \arguments{
 \item{con}{A database connection}
@@ -12,7 +12,7 @@ collectRawData(con, query, customClassOrder)
 \item{query}{The sql query to get the dataset.
 Create it yourself with \code{\link{createQueryForID}}.}
 
-\item{customClassOrder}{The order for the lipid classes}
+\item{lipidClassOrder}{The order for the lipid classes}
 }
 \value{
 Raw data as a tibble

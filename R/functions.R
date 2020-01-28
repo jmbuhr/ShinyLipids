@@ -175,7 +175,7 @@ do_pairwise_comparisons <- function(df, x_axis) {
 #'
 #' @return A vector of lipid classes
 #' @export
-get_lipid_class_order <- function(con) {
+collectLipidClassOrder <- function(con) {
     if ("LIPID_CLASS_ORDER_COMPLETE" %in% DBI::dbListTables(con)) {
         res <- collect(tbl(con, "LIPID_CLASS_ORDER_COMPLETE")) %>%
             arrange(class_order) %>%
@@ -227,18 +227,18 @@ collectMetaData <- function(con) {
 #' @param con A database connection
 #' @param query The sql query to get the dataset.
 #' Create it yourself with \code{\link{createQueryForID}}.
-#' @param customClassOrder The order for the lipid classes
+#' @param lipidClassOrder The order for the lipid classes
 #'
 #' @return Raw data as a tibble
 #' @export
-collectRawData <- function(con, query, customClassOrder) {
+collectRawData <- function(con, query, lipidClassOrder) {
     df <- collect(tbl(con, sql(query))) %>%
         filter(!is.na(value)) %>%
         mutate(
             sample_identifier          = factor(sample_identifier),
             lipid                      = factor(lipid),
             func_cat                   = factor(func_cat),
-            class                      = quiet_fct_relevel(class, customClassOrder)$result,
+            class                      = quiet_fct_relevel(class, lipidClassOrder)$result,
             category                   = factor(category),
             sample                     = factor(sample),
             sample_replicate           = factor(sample_replicate),
@@ -250,7 +250,7 @@ collectRawData <- function(con, query, customClassOrder) {
     return(df)
 }
 
-standardize_technical_replicates <- function(df, do_it) {
+standardizeWithinTechnicalReplicatesIf <- function(df, do_it) {
   if (do_it) {
     df <- df %>%
       group_by(id, sample_replicate_technical) %>%
@@ -281,7 +281,7 @@ standardize_technical_replicates <- function(df, do_it) {
 #'
 #' @return Lovely filtered data
 #' @export
-filter_rawData <- function(df, input) {
+filterRawDataFor <- function(df, input) {
     # Category
     if (!is.null(input$filter_cat)) {
         df <- df %>% filter(category %in% input$filter_cat)
@@ -347,7 +347,7 @@ filter_rawData <- function(df, input) {
 #'
 #' @return Standardized data as a tibble
 #' @export
-standardize_rawData <- function(df, base_sample, std_features) {
+standardizeRawDataWithin <- function(df, base_sample, std_features) {
   # Standardization based on input$std_feature
   if (!is.null(std_features)) {
     df <- df %>%

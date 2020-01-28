@@ -9,7 +9,7 @@ test_that(
   {
   input <- list(
     ID                 = 1,
-    customClassOrder = get_lipid_class_order(databaseConnection),
+    lipidClassOrder = collectLipidClassOrder(databaseConnection),
     std_tec_rep        = TRUE,
     std_feature        = c("class", "sample_replicate"),
     tecRep_average     = TRUE,
@@ -24,12 +24,12 @@ test_that(
   query <- createQueryForID(input$ID)
   rawData <- collectRawData(databaseConnection,
                               query,
-                              customClassOrder = input$customClassOrder)
+                              lipidClassOrder = input$lipidClassOrder)
 
   plotData <- rawData %>%
-    standardize_technical_replicates(input$std_tec_rep) %>%
-    filter_rawData(input) %>%
-    standardize_rawData(base_sample  = input$base_sample,
+    standardizeWithinTechnicalReplicatesIf(input$std_tec_rep) %>%
+    filterRawDataFor(input) %>%
+    standardizeRawDataWithin(base_sample  = input$base_sample,
                         std_features = input$std_feature) %>%
     create_plotData(input)
   

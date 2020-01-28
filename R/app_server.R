@@ -54,11 +54,11 @@ app_server <- function(input, output, session) {
     # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
     query <- createQueryForID(input$ID)
-    collectRawData(databaseConnection, query, customClassOrder = get_lipid_class_order(databaseConnection))
+    collectRawData(databaseConnection, query, lipidClassOrder = collectLipidClassOrder(databaseConnection))
   })
   
   output$debug <- renderText({
-    cat(input$customClassOrder)
+    cat(input$lipidClassOrder)
   })
   
   # * mainData from rawData -------------------------------------------------------------------------
@@ -67,10 +67,10 @@ app_server <- function(input, output, session) {
     req(rawData())
     
     rawData() %>%
-      standardize_technical_replicates(input$std_tec_rep) %>% 
-      filter_rawData(input) %>% 
-      standardize_rawData(base_sample = input$base_sample,
-                          std_features = input$std_feature)
+      standardizeWithinTechnicalReplicatesIf(input$std_tec_rep) %>% 
+      filterRawDataFor(input) %>% 
+      standardizeRawDataWithin(base_sample = input$base_sample,
+                               std_features = input$std_feature)
   })
   
   # Updating filtering options by dataset --------------------------------------------------------

@@ -340,9 +340,9 @@ app_ui <- function() {
                               #   shinydashboard::box(
                               #     "Order",
                               #     width = NULL,
-                              #     shinyjqui::orderInput('customClassOrder',
+                              #     shinyjqui::orderInput('lipidClassOrder',
                               #                           label = 'Custom Class Order',
-                              #                           items = get_lipid_class_order(databaseConnection),
+                              #                           items = collectLipidClassOrder(databaseConnection),
                               #                           item_class = 'primary',
                               #                           width = '100%')
                               #   ),

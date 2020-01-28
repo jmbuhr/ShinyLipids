@@ -39,8 +39,8 @@ createDatabase <- function(path = "databaseDump.db",
 #                                   input = list()) {
 #   collectRawData(con,
 #                    createQueryForID(ID),
-#                    customClassOrder = get_lipid_class_order(con)) %>% 
-#     standardize_rawData(std_feature, base_sample) %>%
-#     filter_rawData(input)
+#                    lipidClassOrder = collectLipidClassOrder(con)) %>% 
+#     standardizeRawDataWithin(std_feature, base_sample) %>%
+#     filterRawDataFor(input)
 # }
 
