@@ -390,14 +390,14 @@ app_server <- function(input, output, session) {
         )
     }
     
-    # Hightlight Average
+    # Hightlight Mean
     if ("mean" %in% input$main_add) {
       plt <- plt +
         geom_errorbar(
           data = mean_df,
           aes(ymin = value, ymax = value),
           position = position_dodge2(width = 0.9),
-          color = "black",
+          # color = "black",
           size = 1.2
         )
     }
