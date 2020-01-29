@@ -315,10 +315,10 @@ app_ui <- function() {
                                 shinydashboard::box(
                                   "Download",
                                   width = 3,
-                                  downloadButton("main_savePlot", label = "Save plot as .pdf"),
+                                  downloadButton("saveMainPlot", label = "Save plot as .pdf"),
                                   br(),
-                                  downloadButton("main_saveData", label = "Save datapoints as .csv"),
-                                  downloadButton("main_saveMeans", label = "Save means as .csv"),
+                                  downloadButton("savePlotData", label = "Save datapoints as .csv"),
+                                  downloadButton("saveMeanPlotData", label = "Save means as .csv"),
                                   numericInput("mainWidth", label = "width", value = 20),
                                   numericInput("mainHeight", label = "height", value = 10)
                                 ),
@@ -380,8 +380,8 @@ app_ui <- function() {
                                 verbatimTextOutput("pcaInfo")
             ),
             shinydashboard::box(width = NULL,
-                                downloadButton("pca_saveScores", label = "Save Score Plot as .pdf"),
-                                downloadButton("pca_saveLoadings", label = "Save Loadings Plot as .pdf"),
+                                downloadButton("savePCAScores", label = "Save Score Plot as .pdf"),
+                                downloadButton("savePCALoadings", label = "Save Loadings Plot as .pdf"),
                                 numericInput("pca_Width", label = "width", value = 20),
                                 numericInput("pca_Height", label = "height", value = 20)
             )
@@ -444,7 +444,7 @@ app_ui <- function() {
                               ),
                               fluidRow(
                                 shinydashboard::box(
-                                  downloadButton("heatSave", label = "Save as .pdf"),
+                                  downloadButton("saveHeatmap", label = "Save as .pdf"),
                                   numericInput("heatWidth", label = "width", value = 20),
                                   numericInput("heatHeight", label = "height", value = 10)
                                 ),

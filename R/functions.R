@@ -390,7 +390,7 @@ standardizeRawDataWithin <- function(df, baselineSample, standardizationFeatures
 #' 
 #' @return neat data
 #' @export
-create_plotData <- function(df, input) {
+createPlotData <- function(df, input) {
     # Averaging over the technical replicates
     if (input$summariseTechnicalReplicates) {
         df <- df %>%

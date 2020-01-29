@@ -31,7 +31,7 @@ test_that(
     filterRawDataFor(input) %>%
     standardizeRawDataWithin(baselineSample  = input$baselineSample,
                         standardizationFeatures = input$standardizationFeatures) %>%
-    create_plotData(input)
+    createPlotData(input)
   
   expected <- c(0.4378872, 12.9379241, 7.1688470, 0.0213048, 3.1023356)
   expect_equal(plotData$value[1:5], expected)

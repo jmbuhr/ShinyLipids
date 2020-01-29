@@ -180,7 +180,7 @@ app_server <- function(input, output, session) {
     )
     
     mainData() %>%
-      create_plotData(input)
+      createPlotData(input)
   })
   
   
@@ -841,6 +841,7 @@ app_server <- function(input, output, session) {
   
   # Download handlers  --------------------------------------------------------------
 
+  # TODO abstraction of downloadHandler makeDownloadHandler <- function()
  
   # Metadata - .csv
   output$saveMeta <- downloadHandler(
@@ -852,59 +853,84 @@ app_server <- function(input, output, session) {
     }
   )
   
+  downloadHandlerFactoryCSV <- function(metaData, dataset, specifier, input) {
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, specifier, ".csv")
+      },
+      content = function(file) {
+        readr::write_csv(x = dataset, path = file)
+      }
+    )
+  }
+    
+  output$saveRawCSV   <- downloadHandlerFactoryCSV(metaData  = metaData(),
+                                                  dataset    = rawData(),
+                                                  specifier  = "-raw",
+                                                  input      = input)
+   
+  output$saveMainCSV  <- downloadHandlerFactoryCSV(metaData  = metaData(),
+                                                  dataset    = mainData(),
+                                                  specifier  = "-filtered",
+                                                  input      = input)
+  
+  output$savePlotData <- downloadHandlerFactoryCSV(metaData  = metaData(),
+                                                 dataset     = plotData(),
+                                                 specifier   = "-plot",
+                                                 input       = input)
+  
   # Raw Main Data - .csv
-  output$saveRawCSV <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-raw", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = rawData(), path = file)
-    }
-  )
+  # output$saveRawCSV <- downloadHandler(
+  #   filename = function() {
+  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+  #     paste0(Sys.Date(), "_", tmp, "-raw", ".csv")
+  #   },
+  #   content = function(file) {
+  #     readr::write_csv(x = rawData(), path = file)
+  #   }
+  # )
   
   #  Main Data - .csv
-  output$saveMainCSV <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-filtered", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = mainData(), path = file)
-    }
-  )
+  # output$saveMainCSV <- downloadHandler(
+  #   filename = function() {
+  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+  #     paste0(Sys.Date(), "_", tmp, "-filtered", ".csv")
+  #   },
+  #   content = function(file) {
+  #     readr::write_csv(x = mainData(), path = file)
+  #   }
+  # )
   
   #  Plot Data - .csv
-  output$main_saveData <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-plot", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = plotData(), path = file)
-    }
-  )
+  # output$savePlotData <- downloadHandler(
+  #   filename = function() {
+  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+  #     paste0(Sys.Date(), "_", tmp, "-plot", ".csv")
+  #   },
+  #   content = function(file) {
+  #     readr::write_csv(x = plotData(), path = file)
+  #   }
+  # )
   
   #  Plot mean Data (bars) - .csv
-  output$main_saveMeans <- downloadHandler(
+  output$saveMeanPlotData <- downloadHandler(
     filename = function() {
       tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
       tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
       paste0(Sys.Date(), "_", tmp, "-means", ".csv")
     },
     content = function(file) {
-      readr::write_csv(
-        x = meanPlotData() %>% rename(mean = value),
-        path = file
-      )
+      readr::write_csv(x = meanPlotData(), path = file)
     }
   )
   
   # Main Plot
-  output$main_savePlot <- downloadHandler(
+  output$saveMainPlot <- downloadHandler(
     filename = function() {
       tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
       tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
@@ -921,7 +947,7 @@ app_server <- function(input, output, session) {
   )
   
   # Heatmap
-  output$heatSave <- downloadHandler(
+  output$saveHeatmap <- downloadHandler(
     filename = function() {
       tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
       tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
@@ -938,7 +964,7 @@ app_server <- function(input, output, session) {
   )
   
   # PCA Scors Plot
-  output$pca_saveScores <- downloadHandler(
+  output$savePCAScores <- downloadHandler(
     filename = function() {
       tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
       tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
@@ -955,7 +981,7 @@ app_server <- function(input, output, session) {
   )
   
   # PCA Loadings Plot
-  output$pca_saveLoadings <- downloadHandler(
+  output$savePCALoadings <- downloadHandler(
     filename = function() {
       tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
       tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
@@ -971,8 +997,7 @@ app_server <- function(input, output, session) {
     }
   )
   
-  
-  
+
   # End -------------------------------------------------------------------------------------------------------------
   # End session when window is closed
   session$onSessionEnded(stopApp)

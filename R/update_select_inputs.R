@@ -1,19 +1,15 @@
-getLevelsFromRawDataColumn <- function(data, col) levels(data[[col]])
-
-getRangeFromRawDataColumn <- function(data, col) range(data[[col]], na.rm = TRUE)
-
 updateAllSelectizeInputs <- function(inputName, choiceColumn, selectedChoice,
                                      data, session) {
   updateSelectizeInput(session,
                        inputName,
-                       choices  = getLevelsFromRawDataColumn(data, choiceColumn),
+                       choices  = levels(data[[choiceColumn]]),
                        selected = selectedChoice
   )
 }
 
 updateAllRangeInputs <- function(inputName, choiceColumn,
                                  data, session) {
-  l <- getRangeFromRawDataColumn(data, choiceColumn)
+  l <- range(data[[choiceColumn]], na.rm = TRUE)
   updateSliderInput(session,
                     inputName,
                     min  = l[1],
