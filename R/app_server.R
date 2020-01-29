@@ -226,8 +226,8 @@ app_server <- function(input, output, session) {
   
   # Ranges for zooming by clicking on the plot
   ranges <- reactiveValues(x = NULL, y = NULL)
-  observeEvent(input$mainPlot_dblclick, {
-    brush <- input$mainPlot_brush
+  observeEvent(input$mainPlotDoubleClick, {
+    brush <- input$mainPlotBrush
     if (!is.null(brush)) {
       ranges$x <- c(brush$xmin, brush$xmax)
       ranges$y <- c(brush$ymin, brush$ymax)
@@ -237,22 +237,19 @@ app_server <- function(input, output, session) {
     }
   })
   
-  
   # * Plot Object ----------------------------------------------------------------------------------------
-  mainPlt <- reactive({
+  mainPlot <- reactive({
     req(plotData())
     req(meanPlotData())
-   
-    createMainPlot(plotData(), meanPlotData())
-
+    createMainPlot(plotData(), meanPlotData(),
+                   rangeX = ranges$x,
+                   rangeY = ranges$y,
+                   input  = input)
   })
   
-  # output$mainPlot_ly <- plotly::renderPlotly(plotly::ggplotly(mainPlt()))
-  
   # ** Plot Render --------------------------------------------------------------------------------------------
-  # create actual rendered plot output from mainPlt
   output$mainPlot <- renderPlot({
-    mainPlt()
+    mainPlot()
   })
   
   # meanPlotDataTable -----------------------------------------------------------------------------------------------
@@ -569,7 +566,7 @@ app_server <- function(input, output, session) {
                                                        id          = input$id)
   
   output$saveMainPlot <- downloadHandlerFactoryPDF(metaData  = metaData(),
-                                                   plot      = mainPlt(),
+                                                   plot      = mainPlot(),
                                                    specifier = "-plot",
                                                    width     = input$mainWidth,
                                                    height    = input$mainHeight, 

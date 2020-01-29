@@ -52,15 +52,19 @@ createHeatmap <- function(data, input) {
 }
 
 
+# TODO preserve width of single bars while not shifting points to others bars
+
 #' Title
 #'
 #' @param plotData data for the plot, pass it from reactive plotData()
 #' @param meanPlotData data of means, pass from reactive meanPlotData()
+#' @param rangeX vector with min and max X
+#' @param rangeY vector with min and max Y
 #' @param input list of inputs from shiny UI
 #'
 #' @return a ggplot object
 #' @export
-createMainPlot <- function(plotData, meanPlotData, input) {
+createMainPlot <- function(plotData, meanPlotData, rangeX, rangeY, input) {
   
   if ("length" %in% names(plotData)) {
     plotData <-
@@ -285,7 +289,7 @@ createMainPlot <- function(plotData, meanPlotData, input) {
   
   # Zooming
   plt <-
-    plt + coord_cartesian(xlim = ranges$x, ylim = ranges$y)
+    plt + coord_cartesian(xlim = rangeX, ylim = rangeY)
   
   # Swap X and Y
   if ("swap" %in% input$mainPlotAdditionalOptions) {

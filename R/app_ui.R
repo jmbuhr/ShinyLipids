@@ -32,8 +32,8 @@ app_ui <- function() {
                                      strong("Manuel Hau\u00dfmann"),
                                      br(),
                                      strong("Sebastian Bender")
-                                 ))
-  )
+                                   ))
+    )
   )
   
   # Sidebar ---------------------------------------------------------------------------------------------------------
@@ -41,17 +41,13 @@ app_ui <- function() {
     
     # * Visual fixes ------------------------------------------------------------------------------------------------
     tags$head(
-      # tags$style(HTML(".sidebar {height: 90vh; overflow-y: auto; }" )
-      # ),
       # As well as moving labels closer to their fields
       tags$style(HTML("label { margin-bottom: 3px; }")),
       tags$style(HTML(".form-group, .selectize-control {margin-bottom: 0px;}"))
     ),
     # This part fixes the issue of having 2 scroll bars on one side :)
     tags$head(tags$style(".wrapper {overflow: visible !important;}")),
-    
-    shinyjs::useShinyjs(), # needed to load java script functions
-    
+    shinyjs::useShinyjs(),
     shinydashboard::sidebarMenu(
       id = "tab",
       selectInput(
@@ -276,15 +272,16 @@ app_ui <- function() {
       shinydashboard::tabItem(tabName = "main",
                               fluidRow(
                                 shinydashboard::box(
-                                  width                                   = 12,
-                                  height                                  = 620,
-                                  status                                  = "primary",
+                                  width  = 12,
+                                  height = 620,
+                                  status = "primary",
                                   plotOutput(
                                     "mainPlot",
                                     height   = 600,
-                                    dblclick = "mainPlot_dblclick",
-                                    brush    = brushOpts(id = "mainPlot_brush", resetOnNew = TRUE)
-                                  ) %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+                                    dblclick = "mainPlotDoubleClick",
+                                    brush    = brushOpts(id = "mainPlotBrush", resetOnNew = TRUE)
+                                  ) %>%
+                                    shinycssloaders::withSpinner(type = 4, color = "#605ca8")
                                 )
                               ),
                               fluidRow(
@@ -335,25 +332,6 @@ app_ui <- function() {
                                   DT::DTOutput("meanPlotDataTable")
                                 )
                               )
-                              # ,
-                              # fluidRow(
-                              #   shinydashboard::box(
-                              #     "Order",
-                              #     width = NULL,
-                              #     shinyjqui::orderInput('lipidClassOrder',
-                              #                           label = 'Custom Class Order',
-                              #                           items = collectLipidClassOrder(databaseConnection),
-                              #                           item_class = 'primary',
-                              #                           width = '100%')
-                              #   ),
-                              #   shinydashboard::box(
-                              #     "Order Output",
-                              #     width = NULL,
-                              #     textOutput(
-                              #       "debug"
-                              #     )
-                              #   )
-                              # )
       ),
       
       # ** PCA -------------------------------------------------------------------------------------
