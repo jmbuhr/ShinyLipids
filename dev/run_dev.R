@@ -9,5 +9,5 @@ golem::detach_all_attached()
 golem::document_and_reload()
 
 # Run the application
-db_con <- DBI::dbConnect(RSQLite::SQLite(), "database/exampleDatabase.db")
+db_con <- DBI::dbConnect(RSQLite::SQLite(), "data/exampleDatabase.db")
 ShinyLipids::run_app(db = db_con)

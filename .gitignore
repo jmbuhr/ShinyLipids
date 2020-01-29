@@ -11,4 +11,3 @@ tests/GeneralTest-expected
 *.html
 Sqlite.db
 dev
-database/test.db

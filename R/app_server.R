@@ -241,7 +241,7 @@ app_server <- function(input, output, session) {
   mainPlot <- reactive({
     req(plotData())
     req(meanPlotData())
-    createMainPlot(plotData(), meanPlotData(),
+    createMainPlot(plotData(), meanPlotData(), pairwiseComparisons(),
                    rangeX = ranges$x,
                    rangeY = ranges$y,
                    input  = input)

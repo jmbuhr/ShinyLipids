@@ -71,14 +71,14 @@ listed in section [What should my tables look like?](#tables).
 if ( !("readr" %in% installed.packages()) ) install.packages("readr")
 myMedatdata <- readr::read_csv("myMetadata.csv")
 myDataset   <- readr::read_csv("myDataset.csv")
-ShinyLipids::createDatabase("./database/exampleDatabase.db", myMedatdata, myDataset)
+ShinyLipids::createDatabase("./inst/extdata/exampleDatabase.db", myMedatdata, myDataset)
 ```
 
 Now you are ready to look at your lipids\! Run this code for a
 quickstart:
 
 ``` r
-databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./database/exampleDatabase.db")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./inst/extdata/exampleDatabase.db")
 ShinyLipids::run_app(db = databaseConnection)
 ```
 

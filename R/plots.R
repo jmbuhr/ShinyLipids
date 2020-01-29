@@ -9,7 +9,7 @@ createHeatmap <- function(data, input) {
   if (!is.null(input$standardizationFeatures)) {
     fillName <- "amount [ Mol % ]"
   } else {
-    fillName <- "amount [ µM ]"
+    fillName <- "amount [ \u00b5M ]"
   }
   
   plt <- ggplot(data) +
@@ -58,13 +58,15 @@ createHeatmap <- function(data, input) {
 #'
 #' @param plotData data for the plot, pass it from reactive plotData()
 #' @param meanPlotData data of means, pass from reactive meanPlotData()
+#' @param pairwiseComparisons a tibble of pairwise t-tests from pairwiseComparisons()
 #' @param rangeX vector with min and max X
 #' @param rangeY vector with min and max Y
 #' @param input list of inputs from shiny UI
 #'
 #' @return a ggplot object
 #' @export
-createMainPlot <- function(plotData, meanPlotData, rangeX, rangeY, input) {
+createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
+                           rangeX, rangeY, input) {
   
   if ("length" %in% names(plotData)) {
     plotData <-
@@ -264,7 +266,7 @@ createMainPlot <- function(plotData, meanPlotData, rangeX, rangeY, input) {
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "log1p"
     } else {
-      yAxisName   <- "amount [ µM ], log1p scale"
+      yAxisName   <- "amount [ \u00b5M ], log1p scale"
       yAxisLabels <- waiver()
       yAxisTransformation  <- "log1p"
     }
@@ -274,7 +276,7 @@ createMainPlot <- function(plotData, meanPlotData, rangeX, rangeY, input) {
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "identity"
     } else {
-      yAxisName   <- "amount [ µM ]"
+      yAxisName   <- "amount [ \u00b5M ]"
       yAxisLabels <- scales::number_format()
       yAxisTransformation  <- "identity"
     }
@@ -305,7 +307,7 @@ createMainPlot <- function(plotData, meanPlotData, rangeX, rangeY, input) {
   
   # Highlite significant hits
   if ("signif" %in% input$mainPlotAdditionalOptions) {
-    signif <- filter(pairwiseComparisons(), p.value <= 0.05) %>%
+    signif <- filter(pairwiseComparisons, p.value <= 0.05) %>%
       distinct(!!sym(input$aesX))
     if (nrow(signif) > 0) {
       plt <- plt +

@@ -10,7 +10,7 @@ collectMetaData(con)
 \item{con}{database conncetion object.
 Create one yourself with e.g.
 \code{DBI::dbConnect(RPostgres::Postgres(), ...)} or
-\code{DBI::dbConnect(RSQLite::SQLite(), "<database/exampleDatabase.db>")}}
+\code{DBI::dbConnect(RSQLite::SQLite(), "<data/exampleDatabase.db>")}}
 }
 \value{
 a tibble with the meta data

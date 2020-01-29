@@ -1,3 +1,6 @@
+pkgload::load_all()
+options( "golem.app.prod" = TRUE)
+
 # Launch the ShinyApp (Do not remove this comment)
 # To deploy, run: rsconnect::deployApp()
 # Or use the blue button on top of this file
@@ -22,8 +25,6 @@
 #                          user= "mathias")
 
 ## Local Databse Dump
-databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./database/exampleDatabase.db")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./inst/extdata/exampleDatabase.db")
 
-pkgload::load_all()
-options( "golem.app.prod" = TRUE)
 ShinyLipids::run_app(db = databaseConnection)
