@@ -370,7 +370,7 @@ app_ui <- function() {
             title  = NULL,
             width  = 6,
             status = "primary",
-            plotOutput("pca_loadings") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+            plotOutput("pcaLoadingsPlot") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
           )
         ),
         fluidRow(
@@ -392,7 +392,7 @@ app_ui <- function() {
                                 checkboxInput("pca_center", "Center", TRUE),
                                 checkboxInput("pca_labels", "Sample Labels", TRUE),
                                 checkboxInput("pca_vectors", "Show original dimensions in principal component space", TRUE),
-                                checkboxInput("pca_hull", "Draw convex hull", FALSE),
+                                checkboxInput("drawPcaConvexHull", "Draw convex hull", FALSE),
                                 selectInput(
                                   "pca_scaling",
                                   "Scale",

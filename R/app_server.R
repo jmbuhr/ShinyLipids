@@ -755,7 +755,7 @@ app_server <- function(input, output, session) {
     plt <- scores %>%
       ggplot(aes(PC1, PC2, fill = sample))
     
-    if (input$pca_hull) {
+    if (input$drawPcaConvexHull) {
       plt <- plt +
         stat_chull(alpha = .15, show.legend = FALSE)
     }
@@ -835,14 +835,11 @@ app_server <- function(input, output, session) {
   })
   
   
-  output$pca_loadings <- renderPlot({
+  output$pcaLoadingsPlot <- renderPlot({
     pcaLoadingsPlot()
   })
   
   # Download handlers  --------------------------------------------------------------
-
-  # TODO abstraction of downloadHandler makeDownloadHandler <- function()
- 
   # Metadata - .csv
   output$saveMeta <- downloadHandler(
     filename = function() {
@@ -853,151 +850,54 @@ app_server <- function(input, output, session) {
     }
   )
   
-  downloadHandlerFactoryCSV <- function(metaData, dataset, specifier, input) {
-    downloadHandler(
-      filename = function() {
-        tmp <- metaData %>% filter(id == input$ID) %>% select(title)
-        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-        paste0(Sys.Date(), "_", tmp, specifier, ".csv")
-      },
-      content = function(file) {
-        readr::write_csv(x = dataset, path = file)
-      }
-    )
-  }
-    
-  output$saveRawCSV   <- downloadHandlerFactoryCSV(metaData  = metaData(),
-                                                  dataset    = rawData(),
-                                                  specifier  = "-raw",
-                                                  input      = input)
-   
-  output$saveMainCSV  <- downloadHandlerFactoryCSV(metaData  = metaData(),
-                                                  dataset    = mainData(),
-                                                  specifier  = "-filtered",
-                                                  input      = input)
+  output$saveRawCSV   <- downloadHandlerFactoryCSV(metaData   = metaData(),
+                                                   dataset    = rawData(),
+                                                   specifier  = "-raw",
+                                                   id         = input$id)
   
-  output$savePlotData <- downloadHandlerFactoryCSV(metaData  = metaData(),
-                                                 dataset     = plotData(),
-                                                 specifier   = "-plot",
-                                                 input       = input)
+  output$saveMainCSV  <- downloadHandlerFactoryCSV(metaData   = metaData(),
+                                                   dataset    = mainData(),
+                                                   specifier  = "-filtered",
+                                                   id         = input$id)
   
-  # Raw Main Data - .csv
-  # output$saveRawCSV <- downloadHandler(
-  #   filename = function() {
-  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-  #     paste0(Sys.Date(), "_", tmp, "-raw", ".csv")
-  #   },
-  #   content = function(file) {
-  #     readr::write_csv(x = rawData(), path = file)
-  #   }
-  # )
+  output$savePlotData <- downloadHandlerFactoryCSV(metaData    = metaData(),
+                                                   dataset     = plotData(),
+                                                   specifier   = "-plot",
+                                                   id          = input$id)
   
-  #  Main Data - .csv
-  # output$saveMainCSV <- downloadHandler(
-  #   filename = function() {
-  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-  #     paste0(Sys.Date(), "_", tmp, "-filtered", ".csv")
-  #   },
-  #   content = function(file) {
-  #     readr::write_csv(x = mainData(), path = file)
-  #   }
-  # )
+  output$saveMeanPlotData <- downloadHandlerFactoryCSV(metaData    = metaData(),
+                                                       dataset     = meanPlotData(),
+                                                       specifier   = "-means",
+                                                       id          = input$id)
   
-  #  Plot Data - .csv
-  # output$savePlotData <- downloadHandler(
-  #   filename = function() {
-  #     tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-  #     tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-  #     paste0(Sys.Date(), "_", tmp, "-plot", ".csv")
-  #   },
-  #   content = function(file) {
-  #     readr::write_csv(x = plotData(), path = file)
-  #   }
-  # )
+  output$saveMainPlot <- downloadHandlerFactoryPDF(metaData  = metaData(),
+                                                   plot      = mainPlt(),
+                                                   specifier = "-plot",
+                                                   width     = input$mainWidth,
+                                                   height    = input$mainHeight, 
+                                                   id        = input$ID)
   
-  #  Plot mean Data (bars) - .csv
-  output$saveMeanPlotData <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-means", ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = meanPlotData(), path = file)
-    }
-  )
+  output$saveHeatmap <- downloadHandlerFactoryPDF(metaData  = metaData(),
+                                                  plot      = heatPlt(),
+                                                  specifier = "-heatmap",
+                                                  width     = input$heatWidth,
+                                                  height    = input$heatHeight, 
+                                                  id        = input$ID)
   
-  # Main Plot
-  output$saveMainPlot <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-plot", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot   = mainPlt(),
-        width  = input$mainWidth,
-        height = input$mainHeight
-      )
-    }
-  )
+  output$savePCAScores <- downloadHandlerFactoryPDF(metaData  = metaData(),
+                                                    plot      = pcaScoresPlot(),
+                                                    specifier = "-PCA_scores",
+                                                    width     = input$pca_Width,
+                                                    height    = input$pca_Height, 
+                                                    id        = input$ID)
   
-  # Heatmap
-  output$saveHeatmap <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-heatmap", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot = heatPlt(),
-        width = input$heatWidth,
-        height = input$heatHeight
-      )
-    }
-  )
+  output$savePCALoadings <- downloadHandlerFactoryPDF(metaData  = metaData(),
+                                                      plot      = pcaLoadingsPlot(),
+                                                      specifier = "-pcaLoadingsPlot",
+                                                      width     = input$pca_Width,
+                                                      height    = input$pca_Height, 
+                                                      id        = input$ID)
   
-  # PCA Scors Plot
-  output$savePCAScores <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-PCA_scores", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot   = pcaScoresPlot(),
-        width  = input$pca_Width,
-        height = input$pca_Height
-      )
-    }
-  )
-  
-  # PCA Loadings Plot
-  output$savePCALoadings <- downloadHandler(
-    filename = function() {
-      tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
-      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
-      paste0(Sys.Date(), "_", tmp, "-PCA_loadings", ".pdf")
-    },
-    content = function(file) {
-      ggsave(
-        file,
-        plot   = pcaLoadingsPlot(),
-        width  = input$pca_Width,
-        height = input$pca_Height
-      )
-    }
-  )
-  
-
   # End -------------------------------------------------------------------------------------------------------------
   # End session when window is closed
   session$onSessionEnded(stopApp)
