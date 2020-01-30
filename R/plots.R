@@ -233,8 +233,8 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
     plt <- plt +
       geom_text(
         data = meanPlotData,
-        aes(y = -Inf, label = N),
-        vjust = -1,
+        aes(y = 0, label = N),
+        vjust = 1.2,
         hjust = 0.5,
         color = "grey10",
         position = position_dodge(width = 0.9)

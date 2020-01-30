@@ -17,9 +17,7 @@ test_that(
       baselineSample        = "",
       lipidClassToSelect       = "PC",
       aesX              = "lipid",
-      aesFacetCol         = "class",
-      aesFacetRow         = "",
-      aesColor          = "sample"
+      aesFacetCol         = %>% %>% %>% %>% %>% %>% %>% %>% %>% %>% e"
     )
     
     query <- createQueryForID(input$ID)
