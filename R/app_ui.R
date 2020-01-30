@@ -76,11 +76,11 @@ app_ui <- function() {
     tabsetPanel(type = "pills", id = "tabs",
                 tabPanel(title = "Quickoptions",
                          actionButton(
-                           "class_profile",
+                           "quickClassProfile",
                            label = "Class Profile"
                          ),
                          selectizeInput(
-                           "quickClassForProfile",
+                           "quickSpeciesProfileClass",
                            label = "Species Profile for:",
                            options  = list(placeholder = "Select a class to automatically filter and display"),
                            choices  = NULL
@@ -215,20 +215,20 @@ app_ui <- function() {
                            multiple = TRUE
                          ),
                          sliderInput(
-                           'filter_length',
+                           'filterLengthRange',
                            label    = "Filter length",
                            min      = 1, max = 100,
                            value    = c(1,100)
                          ),
                          sliderInput(
-                           'filter_db',
+                           'filterDoubleBondsRange',
                            label    = "Filter double bonds",
                            min      = 0,
                            max = 10,
                            value    = c(0,10)
                          ),
                          sliderInput(
-                           'filter_oh',
+                           'filterOhRange',
                            label    = "Filter hydroxylation",
                            min      = 0,
                            max = 10,
@@ -288,7 +288,7 @@ app_ui <- function() {
                               ),
                               fluidRow(
                                 shinydashboard::box(
-                                  "Options",
+                                  title = "Options",
                                   width = 3,
                                   checkboxGroupInput("mainPlotAdditionalOptions", label = NULL,
                                                      choices = list(
@@ -312,24 +312,23 @@ app_ui <- function() {
                                   )
                                 ),
                                 shinydashboard::box(
-                                  "Download",
+                                  title = "Download",
                                   width = 3,
                                   downloadButton("saveMainPlot", label = "Save plot as .pdf"),
-                                  br(),
                                   downloadButton("savePlotData", label = "Save datapoints as .csv"),
                                   downloadButton("saveMeanPlotData", label = "Save means as .csv"),
                                   numericInput("mainWidth", label = "width", value = 20),
                                   numericInput("mainHeight", label = "height", value = 10)
                                 ),
                                 shinydashboard::box(
-                                  "Pairwise Comparisons",
+                                  title = "Pairwise comparisons",
                                   width = 6,
                                   DT::DTOutput("pairwiseComparisonsTable")
                                 )
                               ),
                               fluidRow(
                                 shinydashboard::box(
-                                  "Summary",
+                                  title = "Summary",
                                   width = NULL,
                                   DT::DTOutput("meanPlotDataTable")
                                 )
@@ -344,7 +343,7 @@ app_ui <- function() {
             title  = NULL,
             width  = 6,
             status = "primary",
-            plotOutput("pca_scores") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
+            plotOutput("pcaScoresPlot") %>% shinycssloaders::withSpinner(type = 4, color = "#605ca8")
           ),
           shinydashboard::box(
             title  = NULL,
@@ -359,11 +358,11 @@ app_ui <- function() {
             shinydashboard::box(width = NULL,
                                 verbatimTextOutput("pcaInfo")
             ),
-            shinydashboard::box(width = NULL,
+            shinydashboard::box(width = NULL, title = "Download",
                                 downloadButton("savePCAScores", label = "Save Score Plot as .pdf"),
                                 downloadButton("savePCALoadings", label = "Save Loadings Plot as .pdf"),
-                                numericInput("pca_Width", label = "width", value = 20),
-                                numericInput("pca_Height", label = "height", value = 20)
+                                numericInput("pcaWidth", label = "width", value = 20),
+                                numericInput("pcaHeight", label = "height", value = 20)
             )
           ),
           column(
@@ -374,8 +373,8 @@ app_ui <- function() {
                                 checkboxInput("pca_vectors", "Show original dimensions in principal component space", TRUE),
                                 checkboxInput("drawPcaConvexHull", "Draw convex hull", FALSE),
                                 selectInput(
-                                  "pca_scaling",
-                                  "Scale",
+                                  "pcaScalingMethod",
+                                  "Scaling method",
                                   list(
                                     "none"          = "none",
                                     "unit variance" = "uv",
@@ -387,8 +386,8 @@ app_ui <- function() {
                                   "Method",
                                   pcaMethods::listPcaMethods()[1:7],# The last three don't work for now
                                   selected = "svd"),
-                                selectInput("pca_cv",
-                                            "cross-validation",
+                                selectInput("pcaCrossValidationMethod",
+                                            "Cross validation method",
                                             list("none" = "none", "Q2" =  "q2")),
                                 sliderInput(
                                   "pcaNumberPrincipalComponents",
@@ -400,7 +399,7 @@ app_ui <- function() {
                                   animate = FALSE
                                 ),
                                 sliderInput(
-                                  "pca_pointSize",
+                                  "pcaPointSize",
                                   label   = "Point Size",
                                   min     = 1,
                                   max     = 10,

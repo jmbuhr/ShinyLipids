@@ -1,12 +1,10 @@
-context("Backend Functions")
+context("Data Visualization Pipeline")
 
 pkgload::load_all()
 
 path <- system.file("inst/extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 lipidClassOrder <- collectLipidClassOrder(databaseConnection)
-
-# readRDS(testthat::test_path("inputList.Rds")) %>% dput()
 
 input <- list(
   ID                                         = 1,
@@ -33,30 +31,30 @@ input <- list(
     # "Free y scale for facets"           = "free_y",
     # "Mark groups with significant hits" = "signif"
   ),
-  filter_db = c(0L, 10L),
-  pca_pointSize = 5L,
-  pca_cv = "none",
+  filterDoubleBondsRange = c(0L, 10L),
+  pcaPointSize = 5L,
+  pcaCrossValidationMethod = "none",
   samplesToRemove = NULL,
   sidebarItemExpanded = "Visualization",
-  filter_oh = c(0L,
+  filterOhRange = c(0L,
                 10L),
   showFullMeta = FALSE,
   ID = "",
   tabs = "Quickoptions",
-  class_profile = structure(0L, class = c("integer", "shinyActionButtonValue")),
+  quickClassProfile = structure(0L, class = c("integer", "shinyActionButtonValue")),
   pcaNumberPrincipalComponents = 2L,
-  pca_Width = 20L,
-  pca_Height = 20L,
+  pcaWidth = 20L,
+  pcaHeight = 20L,
   categoryToSelect = NULL,
-  pca_scaling = "none",
+  pcaScalingMethod = "none",
   pca_vectors = TRUE,
   heatWidth = 20L,
   heatLabSize = 9L,
-  quickClassForProfile = "",
+  quickSpeciesProfileClass = "",
   heatHeight = 10L,
   replicatesToSelect = NULL,
   pca_method = "svd",
-  filter_length = c(1L,
+  filterLengthRange = c(1L,
                     100L),
   pca_center = TRUE,
   pca_labels = TRUE,
@@ -73,7 +71,7 @@ input <- list(
 )
 
 test_that(
-  "Data processing steps run",
+  "Default data processing steps run until visualisation",
   {
     query <- createQueryForID(input$ID)
     rawData <- collectRawData(con = databaseConnection,

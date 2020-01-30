@@ -83,15 +83,15 @@ app_server <- function(input, output, session) {
       "categoryToSelect",             "category",                   NULL,
       "functionalCategoryToSelect",   "func_cat",                   NULL,
       "lipidClassToSelect",           "class",                      NULL,
-      "quickClassForProfile",         "class",                      ""
+      "quickSpeciesProfileClass",         "class",                      ""
     ) %>% 
       pwalk(updateAllSelectizeInputs, data = rawData(), session = session)
   
     tribble(
       ~ inputName,     ~ choiceColumn, 
-      "filter_length", "length",
-      "filter_db",     "db",
-      "filter_oh",     "oh"
+      "filterLengthRange", "length",
+      "filterDoubleBondsRange",     "db",
+      "filterOhRange",     "oh"
     ) %>% 
       pwalk(updateAllRangeInputs, data = rawData(), session = session)
   })
@@ -114,17 +114,17 @@ app_server <- function(input, output, session) {
 
 # Update inputs based on selected default quickoption ---------------------
   
-  observeEvent(input$quickClassForProfile, {
-    if (input$quickClassForProfile != "") {
+  observeEvent(input$quickSpeciesProfileClass, {
+    if (input$quickSpeciesProfileClass != "") {
       updateSelectInput(session, "aesFacetCol", selected = "")
       updateSelectInput(session, "aesFacetRow", selected = "")
       updateSelectizeInput(session, "standardizationFeatures", selected = c("class", "sample_replicate"))
       updateSelectInput(session, "aesX", selected = "lipid")
-      updateSelectizeInput(session, "lipidClassToSelect", selected = unname(input$quickClassForProfile) )
+      updateSelectizeInput(session, "lipidClassToSelect", selected = unname(input$quickSpeciesProfileClass) )
     }
   })
   
-  observeEvent(input$class_profile, {
+  observeEvent(input$quickClassProfile, {
     updateSelectInput(session, "aesFacetCol", selected = "")
     updateSelectizeInput(session, "standardizationFeatures", selected = "")
     updateSelectInput(session, "aesX", selected = "class")
@@ -352,8 +352,8 @@ app_server <- function(input, output, session) {
       method = if_else(any(is.na(m)), "nipals", input$pca_method),
       nPcs   = input$pcaNumberPrincipalComponents,
       center = input$pca_center,
-      scale  = input$pca_scaling,
-      cv     = input$pca_cv,
+      scale  = input$pcaScalingMethod,
+      cv     = input$pcaCrossValidationMethod,
       seed   = 123
     )
   })
@@ -455,7 +455,7 @@ app_server <- function(input, output, session) {
       geom_point(
         pch = 21,
         alpha = 1,
-        size = input$pca_pointSize / 2
+        size = input$pcaPointSize / 2
       ) +
       mainTheme +
       mainScale(colorCount = colorCount)
@@ -503,7 +503,7 @@ app_server <- function(input, output, session) {
     plt
   })
   
-  output$pca_scores <- renderPlot({
+  output$pcaScoresPlot <- renderPlot({
     pcaScoresPlot()
   })
   
@@ -518,7 +518,7 @@ app_server <- function(input, output, session) {
     
     loadings %>%
       ggplot(aes(PC1, PC2)) +
-      geom_point(pch = 19, size = input$pca_pointSize / 3) +
+      geom_point(pch = 19, size = input$pcaPointSize / 3) +
       mainTheme +
       ggrepel::geom_text_repel(aes(label = !!sym(input$aesX)),
                                show.legend = FALSE
@@ -577,16 +577,16 @@ app_server <- function(input, output, session) {
   
   output$savePCAScores <- downloadHandlerFactoryPDF(metaData  = metaData(),
                                                     plot      = pcaScoresPlot(),
-                                                    specifier = "-PCA_scores",
-                                                    width     = input$pca_Width,
-                                                    height    = input$pca_Height, 
+                                                    specifier = "-pcaScoresPlot",
+                                                    width     = input$pcaWidth,
+                                                    height    = input$pcaHeight, 
                                                     id        = input$ID)
   
   output$savePCALoadings <- downloadHandlerFactoryPDF(metaData  = metaData(),
                                                       plot      = pcaLoadingsPlot(),
                                                       specifier = "-pcaLoadingsPlot",
-                                                      width     = input$pca_Width,
-                                                      height    = input$pca_Height, 
+                                                      width     = input$pcaWidth,
+                                                      height    = input$pcaHeight, 
                                                       id        = input$ID)
   
   # Write shiny ui input list to file for developement ----------------------

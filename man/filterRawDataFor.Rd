@@ -17,9 +17,9 @@ non existent ones will be ignored:
 \item \code{categoryToSelect}
 \item \code{lipidClassToSelect}
 \item \code{functionalCategoryToSelect}
-\item \code{filter_length}
-\item \code{filter_db}
-\item \code{filter_oh}
+\item \code{filterLengthRange}
+\item \code{filterDoubleBondsRange}
+\item \code{filterOhRange}
 \item \code{samplesToSelect}
 \item \code{samplesToRemove}
 \item \code{technicalReplicatesToRemove}

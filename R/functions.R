@@ -270,9 +270,9 @@ standardizeWithinTechnicalReplicatesIf <- function(df, do_it) {
 #' \item \code{categoryToSelect}
 #' \item \code{lipidClassToSelect}
 #' \item \code{functionalCategoryToSelect}
-#' \item \code{filter_length}
-#' \item \code{filter_db}
-#' \item \code{filter_oh}
+#' \item \code{filterLengthRange}
+#' \item \code{filterDoubleBondsRange}
+#' \item \code{filterOhRange}
 #' \item \code{samplesToSelect}
 #' \item \code{samplesToRemove}
 #' \item \code{technicalReplicatesToRemove}
@@ -294,22 +294,22 @@ filterRawDataFor <- function(df, input) {
         df <- df %>% filter(func_cat %in% input$functionalCategoryToSelect)
     }
     # Total length of sidechains
-    if (!is.null(input$filter_length)) {
+    if (!is.null(input$filterLengthRange)) {
         df <-
             df %>%
-            filter(length %>% between(input$filter_length[1], input$filter_length[2]))
+            filter(length %>% between(input$filterLengthRange[1], input$filterLengthRange[2]))
     }
     # Total number of double bounds
-    if (!is.null(input$filter_db)) {
+    if (!is.null(input$filterDoubleBondsRange)) {
         df <-
             df %>%
-            filter(db %>% between(input$filter_db[1], input$filter_db[2]))
+            filter(db %>% between(input$filterDoubleBondsRange[1], input$filterDoubleBondsRange[2]))
     }
     # Total number of hydroxyl groups
-    if (!is.null(input$filter_oh)) {
+    if (!is.null(input$filterOhRange)) {
         df <-
             df %>%
-            filter(oh %>% between(input$filter_oh[1], input$filter_oh[2]))
+            filter(oh %>% between(input$filterOhRange[1], input$filterOhRange[2]))
     }
     # explicitly demanding sample
     if (!is.null(input$samplesToSelect)) {
