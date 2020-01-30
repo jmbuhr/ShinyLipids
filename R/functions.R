@@ -232,7 +232,7 @@ collectMetaData <- function(con) {
 #' @return Raw data as a tibble
 #' @export
 collectRawData <- function(con, query, lipidClassOrder) {
-    df <- collect(tbl(con, sql(query))) %>%
+    collect(tbl(con, sql(query))) %>%
         filter(!is.na(value)) %>%
         mutate(
             sample_identifier          = factor(sample_identifier),
@@ -247,7 +247,6 @@ collectRawData <- function(con, query, lipidClassOrder) {
             oh                         = if_else(is.na(oh), 0L, oh)
         ) %>%
         select(id, sample_identifier, lipid, value, everything())
-    return(df)
 }
 
 standardizeWithinTechnicalReplicatesIf <- function(df, do_it) {
@@ -348,7 +347,7 @@ filterRawDataFor <- function(df, input) {
 #' @return Standardized data as a tibble
 #' @export
 standardizeRawDataWithin <- function(df, baselineSample, standardizationFeatures) {
-  # Standardization based on input$standardizationFeatures
+  # Standardization
   if (!is.null(standardizationFeatures)) {
     df <- df %>%
       group_by(id, !!!syms(standardizationFeatures)  ) %>%
@@ -368,7 +367,7 @@ standardizeRawDataWithin <- function(df, baselineSample, standardizationFeatures
       mutate(value = value - baseline) %>%
       ungroup()
   }
-  return(df)
+  df
 }
 
 #' Create the data ready for plotting

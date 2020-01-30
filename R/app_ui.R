@@ -223,14 +223,16 @@ app_ui <- function() {
                          sliderInput(
                            'filter_db',
                            label    = "Filter double bonds",
-                           min      = 1, max = 10,
-                           value    = c(1,10)
+                           min      = 0,
+                           max = 10,
+                           value    = c(0,10)
                          ),
                          sliderInput(
                            'filter_oh',
                            label    = "Filter hydroxylation",
-                           min      = 1, max = 10,
-                           value    = c(1,10)
+                           min      = 0,
+                           max = 10,
+                           value    = c(0,10)
                          )
                 )
     )

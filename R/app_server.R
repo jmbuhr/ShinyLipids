@@ -10,7 +10,9 @@ app_server <- function(input, output, session) {
   
   # Rendering datasets as a table to send to UI
   output$metaDataTable <- DT::renderDT({
-    need(req(metaData()), "No metadata loaded")
+    validate(
+      need(req(metaData()), "No metadata loaded")
+    )
     if (input$showFullMeta == TRUE) {
       metaData()
     } else {
@@ -57,9 +59,13 @@ app_server <- function(input, output, session) {
   # * mainData from rawData ----------------------------------------------------
   # filtering, then standardization
   mainData <- reactive({
-    rawData() %>%
+    data <- rawData() %>%
       standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>% 
-      filterRawDataFor(input) %>% 
+      filterRawDataFor(input)
+    
+    validate(need(nrow(data) > 0, "The data was filted in such a way that leaves no data"))
+    
+    data %>% 
       standardizeRawDataWithin(baselineSample          = input$baselineSample,
                                standardizationFeatures = input$standardizationFeatures)
   })
@@ -187,7 +193,6 @@ app_server <- function(input, output, session) {
   # Pairwise Comparisons -------------------------------------------------------
   
   pairwiseComparisons <- reactive({
-    # req(plotData())
     validate(
       need(
         input$aesColor == "sample",
@@ -583,6 +588,11 @@ app_server <- function(input, output, session) {
                                                       width     = input$pca_Width,
                                                       height    = input$pca_Height, 
                                                       id        = input$ID)
+  
+  # Write shiny ui input list to file for developement ----------------------
+  isolate(
+    input %>% reactiveValuesToList() %>% saveRDS(testthat::test_path("inputList.Rds"))
+  )
   
   # End ------------------------------------------------------------------------
   # End session when window is closed
