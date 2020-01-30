@@ -322,6 +322,8 @@ app_ui <- function() {
                                 ),
                                 shinydashboard::box(
                                   title = "Pairwise comparisons",
+                                  footer = "Calculated via t-tests on log-transformed data. \
+                                  P-values corrected with the Benjamini-Hochberg procedure.",
                                   width = 6,
                                   DT::DTOutput("pairwiseComparisonsTable")
                                 )

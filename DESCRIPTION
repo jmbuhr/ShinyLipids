@@ -43,5 +43,7 @@ Imports:
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 7.0.2
-Suggests: 
+Suggests:
+    spelling, 
     testthat (>= 2.1.0)
+Language: en-US

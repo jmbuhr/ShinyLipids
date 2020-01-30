@@ -22,22 +22,22 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 A remake of ShinyLipids with a focus on consistent coding,
-documentation, improved functionality and above all, user-friendlyness.
+documentation, improved functionality and above all, user-friendliness.
 
 ## What is ShinyLipids?
 
-ShinyLipids is a visualization tool for lipidomcis data built in R with the `shiny` package. The original
+ShinyLipids is a visualization tool for lipidomics data built in R with the `shiny` package. The original
 version was developed in 2015 by _Mathias Gerl_ and further enhanced by _Manuel Haußmann_ and _Sebastian Bender_ until August, 2017.
 It serves as the primary visualization dashboard for the [Brügger Lipidomics Group](https://bzh.db-engine.de/default.asp?lfn=2241&fg=4289) at the Heidelberg Biochemistry Center (BZH).
-There is also a great deal of backend infrastructure, built by Mathias, to support a server with a database,
+There is also a great deal of back end infrastructure, built by Mathias, to support a server with a database,
 upload tools and a version of this App for internal use at the BZH.
 
 ## What changed?
 
 In 2018 I started working on a new version of ShinyLipids.
 The idea is still very much based on the original,
-but the internal coding and datastructure is designed
-to be more consistend and host a safer environment
+but the internal coding and data structure is designed
+to be more consistent and host a safer environment
 for the implementation of new features within the R code.
 More information can be found on [my website](https://jmbuhr.de/project/shinylipids/).
 
@@ -52,10 +52,10 @@ and follow the download link suitable for your operating system.
 Then, head over to [https://rstudio.com/products/rstudio/download/#download](https://rstudio.com/products/rstudio/download/#download) and install RStudio. You can think
 of R as the engine that runs the Code for ShinyLipids and of RStudio
 as a car with a nice dashboard around the engine to help you the raw power.
-Don't worry, ther won't be any coding necessary to get startet with your
+Don't worry, there won't be any coding necessary to get started with your
 data in ShinyLipids.
 
-Then run this piece of R code to install ShinyLipds with all it's dependecies^[If you want to publish the ShinyApp on RStudio-connect, you will need a couple of addictional packages that
+Then run this piece of R code to install ShinyLipids with all it's dependencies^[If you want to publish the Shiny App on RStudio-connect, you will need a couple of additional packages that
 are listed in `app.R`.] from github:
 
 ```{r, eval=FALSE}
@@ -66,8 +66,8 @@ devtools::install_github("jannikbuhr/ShinyLipids")
 (To run the code, copy and paste it into the R console that pops up in the
 bottom right corner when you first open RStudio. Then hit Enter.)
 
-ShinyLipids gets the data it needs from a datbase.
-This database needs to contain at least the two tables **id_info** and **data2** ^[the naming is due to backend compatibility].
+ShinyLipids gets the data it needs from a database.
+This database needs to contain at least the two tables **id_info** and **data2** ^[the naming is due to back end compatibility].
 Of course, you might not have your data in a database-dump file. To
 get your tabular data (preferably _.csv_) into such a file, you can use a little helper
 function in ShinyLipids, which you can run from an R script.
@@ -81,7 +81,7 @@ myDataset   <- readr::read_csv("myDataset.csv")
 ShinyLipids::createDatabase("./inst/extdata/exampleDatabase.db", myMedatdata, myDataset)
 ```
 
-Now you are ready to look at your lipids! Run this code for a quickstart:
+Now you are ready to look at your lipids! Run this code for a quick start:
 
 ```{r, eval=FALSE}
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./inst/extdata/exampleDatabase.db")
@@ -139,8 +139,8 @@ You can also reorder your lipid classes in the app on bottom of the main plottin
 
 ## For advanced use
 
-If you want to run ShinyLipids on your own server connceted to a database
-or post your findings to shinyapps.io, you will have to download the sourcecode:
+If you want to run ShinyLipids on your own server connected to a database
+or post your findings to shinyapps.io, you will have to download the source code:
 
 ```{bash, eval=FALSE}
 git clone https://github.com/jannikbuhr/ShinyLipids.git
