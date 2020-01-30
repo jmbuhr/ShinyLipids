@@ -1,7 +1,7 @@
 #' @import shiny
 app_server <- function(input, output, session) {
   databaseConnection <- golem::get_golem_options("db")
-  # Metadata / Datasets -------------------------------------------------------------------------------------------
+  # Metadata / Datasets --------------------------------------------------------
   
   # Reading in table of datasets
   metaData <- reactive({
@@ -10,15 +10,12 @@ app_server <- function(input, output, session) {
   
   # Rendering datasets as a table to send to UI
   output$metaDataTable <- DT::renderDT({
-    req(metaData())
-    
+    need(req(metaData()), "No metadata loaded")
     if (input$showFullMeta == TRUE) {
-      meta <- metaData()
+      metaData()
     } else {
-      meta <-
-        metaData()[c( "id", "title", "date_upload", "status", "sample_from")]
+      metaData()[c( "id", "title", "date_upload", "status", "sample_from")]
     }
-    meta
   },
   server = FALSE, selection = list(mode = "single", selected = 1),
   options = list(
@@ -47,25 +44,19 @@ app_server <- function(input, output, session) {
     }
   })
   
-  # Data ------------------------------------------------------------------------------------------------------------
+  # Data -----------------------------------------------------------------------
 
-  # * Reading in raw data based on dataset selected -----------------------------------------------------------------
+  # * Reading in raw data based on dataset selected ----------------------------
   rawData <- reactive({
-    # Only runs if a dataset is selected
     validate(need(input$ID, "Please select a dataset first."))
     query <- createQueryForID(input$ID)
-    collectRawData(databaseConnection, query, lipidClassOrder = collectLipidClassOrder(databaseConnection))
+    collectRawData(databaseConnection, query,
+                   lipidClassOrder = collectLipidClassOrder(databaseConnection))
   })
   
-  output$debug <- renderText({
-    cat(input$lipidClassOrder)
-  })
-  
-  # * mainData from rawData -------------------------------------------------------------------------
+  # * mainData from rawData ----------------------------------------------------
   # filtering, then standardization
   mainData <- reactive({
-    req(rawData())
-    
     rawData() %>%
       standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>% 
       filterRawDataFor(input) %>% 
@@ -73,7 +64,7 @@ app_server <- function(input, output, session) {
                                standardizationFeatures = input$standardizationFeatures)
   })
   
-  # Updating filtering options by dataset --------------------------------------------------------
+  # Updating filtering options by dataset --------------------------------------
   observe({
     tribble(
       ~ inputName,                    ~ choiceColumn,               ~ selectedChoice,
@@ -88,7 +79,7 @@ app_server <- function(input, output, session) {
       "lipidClassToSelect",           "class",                      NULL,
       "quickClassForProfile",         "class",                      ""
     ) %>% 
-      pwalk(updateAllSelectizeInputs, rawData(), session)
+      pwalk(updateAllSelectizeInputs, data = rawData(), session = session)
   
     tribble(
       ~ inputName,     ~ choiceColumn, 
@@ -96,7 +87,7 @@ app_server <- function(input, output, session) {
       "filter_db",     "db",
       "filter_oh",     "oh"
     ) %>% 
-      pwalk(updateAllRangeInputs, rawData(), session)
+      pwalk(updateAllRangeInputs, data = rawData(), session = session)
   })
   
   observe({
@@ -134,7 +125,7 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(session, "lipidClassToSelect", selected = "")
   })
   
-  # Displaying main Dataset as a table ----------------------------------------------------------------------------
+  # Displaying main Dataset as a table -----------------------------------------
   
   # Rendering selected dataset as a table to send to UI
   output$mainDataTable <- DT::renderDT({
@@ -152,7 +143,7 @@ app_server <- function(input, output, session) {
   )
   )
   
-  # plotData from mainData based on sidebar inputs ---------------------------------------------------------------
+  # plotData from mainData based on sidebar inputs -----------------------------
   
   # with apropriate summarize functions based on selecte plot type, standards and aes
   plotData <- reactive({
@@ -184,7 +175,7 @@ app_server <- function(input, output, session) {
   })
   
   
-  # meanPlotData for bars/averages ----------------------------------------------------------------------------------
+  # meanPlotData for bars/averages ---------------------------------------------
   
   meanPlotData <- reactive({
     req(plotData())
@@ -193,7 +184,7 @@ app_server <- function(input, output, session) {
   })
   
   
-  # Pairwise Comparisons --------------------------------------------------------------------------------------------
+  # Pairwise Comparisons -------------------------------------------------------
   
   pairwiseComparisons <- reactive({
     # req(plotData())
@@ -222,7 +213,7 @@ app_server <- function(input, output, session) {
     pairwiseComparisons()
   })
   
-  # Main Plot output ------------------------------------------------------------------------------------------------
+  # Main Plot output -----------------------------------------------------------
   
   # Ranges for zooming by clicking on the plot
   ranges <- reactiveValues(x = NULL, y = NULL)
@@ -237,7 +228,7 @@ app_server <- function(input, output, session) {
     }
   })
   
-  # * Plot Object ----------------------------------------------------------------------------------------
+  # * Plot Object --------------------------------------------------------------
   mainPlot <- reactive({
     req(plotData())
     req(meanPlotData())
@@ -247,12 +238,12 @@ app_server <- function(input, output, session) {
                    input  = input)
   })
   
-  # ** Plot Render --------------------------------------------------------------------------------------------
+  # ** Plot Render -------------------------------------------------------------
   output$mainPlot <- renderPlot({
     mainPlot()
   })
   
-  # meanPlotDataTable -----------------------------------------------------------------------------------------------
+  # meanPlotDataTable ----------------------------------------------------------
   output$meanPlotDataTable <- DT::renderDT({
     req(meanPlotData())
     
@@ -276,8 +267,8 @@ app_server <- function(input, output, session) {
   )
   
   
-  # Heatmap ---------------------------------------------------------------------------------------------------------
-  # * Plot Object ---------------------------------------------------------------------------------------------------
+  # Heatmap --------------------------------------------------------------------
+  # * Plot Object --------------------------------------------------------------
   heatmapPlot <- reactive({
     # dataframe
     # df <- plotData()
@@ -285,14 +276,14 @@ app_server <- function(input, output, session) {
   })
   
   
-  # * Plot Render ---------------------------------------------------------------------------------------------------
+  # * Plot Render --------------------------------------------------------------
   output$heatPlot <- renderPlot({
     heatmapPlot()
   })
   
-  # PCA -------------------------------------------------------------------------------------------------------------
+  # PCA ------------------------------------------------------------------------
   
-  # ** Updating pca-options --------------------------------------------------------------------------------------------------
+  # ** Updating pca-options ----------------------------------------------------
   # update nPCs, they should not exceed the dimensions of the data
   observe({
     req(pcaData())
@@ -301,7 +292,7 @@ app_server <- function(input, output, session) {
                       max = min(dim(pcaData())))
   })
   
-  # * pcaData -------------------------------------------------------------------------------------------------------
+  # * pcaData ------------------------------------------------------------------
   pcaData <- reactive({
     req(plotData())
     validate(
@@ -347,7 +338,7 @@ app_server <- function(input, output, session) {
       as.matrix()
   })
   
-  # * pcaObject -----------------------------------------------------------------------------------------------------
+  # * pcaObject ----------------------------------------------------------------
   pcaObject <- reactive({
     m <- pcaData()
     # returns pcaRes object
@@ -417,14 +408,14 @@ app_server <- function(input, output, session) {
   })
   
   
-  # * pcaOutputs ------------------------------------------------------------------------------------------------------
+  # * pcaOutputs ---------------------------------------------------------------
   # Info
   output$pcaInfo <- renderPrint({
     req(pcaObject())
     pcaObject() %>% summary()
   })
   
-  # ** Scores -----------------------------------------------------------------------------------------------------
+  # ** Scores ------------------------------------------------------------------
   pcaScoresPlot <- reactive({
     req(pcaData(), pcaObject(), sampleNames())
     colorCount <- rownames(pcaData()) %>% length()
@@ -512,7 +503,7 @@ app_server <- function(input, output, session) {
   })
   
   
-  # ** Loadings -----------------------------------------------------------------------------------------------------
+  # ** Loadings ----------------------------------------------------------------
   
   pcaLoadingsPlot <- reactive({
     # req(pcaObject())
@@ -534,7 +525,7 @@ app_server <- function(input, output, session) {
     pcaLoadingsPlot()
   })
   
-  # Download handlers  --------------------------------------------------------------
+  # Download handlers  ---------------------------------------------------------
   # Metadata - .csv
   output$saveMeta <- downloadHandler(
     filename = function() {
@@ -593,7 +584,7 @@ app_server <- function(input, output, session) {
                                                       height    = input$pca_Height, 
                                                       id        = input$ID)
   
-  # End -------------------------------------------------------------------------------------------------------------
+  # End ------------------------------------------------------------------------
   # End session when window is closed
   session$onSessionEnded(stopApp)
   
