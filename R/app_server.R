@@ -129,7 +129,7 @@ app_server <- function(input, output, session) {
     tribble(
       ~ inputName,                    ~ choiceColumn,               ~ selectedChoice,
       "samplesToSelect",              "sample",                     NULL,
-      "baselineSample",               "sample",                     ""  ,
+      "baselineSample",               "sample",                     "",
       "samplesToRemove",              "sample",                     NULL,
       "replicatesToSelect",           "sample_replicate",           NULL,
       "replicatesToRemove",           "sample_replicate",           NULL,

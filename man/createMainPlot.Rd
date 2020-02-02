@@ -12,12 +12,12 @@ createMainPlot(
   rangeY = NULL,
   aesX = "class",
   aesColor = "sample",
-  aesFacetCol = NULL,
-  aesFacetRow = NULL,
+  aesFacetCol = "",
+  aesFacetRow = "",
   mainPlotAdditionalOptions = list("points", "bars"),
   errorbarType = "None",
   summariseTechnicalReplicates = TRUE,
-  standardizationFeatures = c(""),
+  standardizationFeatures = NULL,
   standardizeWithinTechnicalReplicate = TRUE
 )
 }

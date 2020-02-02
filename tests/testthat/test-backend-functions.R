@@ -16,25 +16,17 @@ test_that(
                               query           = query,
                               lipidClassOrder = lipidClassOrder)
     
-    
-    
     plotData <- rawData %>%
       standardizeWithinTechnicalReplicatesIf(TRUE) %>%
       filterRawDataFor() %>%
-      standardizeRawDataWithin(
-        baselineSample  = input$baselineSample,
-        standardizationFeatures = input$standardizationFeatures
-      ) %>%
+      standardizeRawDataWithin() %>%
       createPlotData()
     
     meanPlotData <- summarisePlotData(plotData)
     
-    plt <- createMainPlot(plotData = plotData,
-                          meanPlotData = meanPlotData,
-                          pairwiseComparisons = NULL,
-                          rangeX = NULL,
-                          rangeY = NULL,
-                          input = input)
+    plt <- createMainPlot(plotData            = plotData,
+                          meanPlotData        = meanPlotData,
+                          pairwiseComparisons = NULL)
     
     expect_is(plt, "ggplot")
   }

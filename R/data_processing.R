@@ -157,7 +157,7 @@ filterRawDataFor <- function(rawData,
 #' @return Standardized data as a tibble
 #' @export
 standardizeRawDataWithin <- function(data,
-                                     baselineSample          = NULL,
+                                     baselineSample          = "",
                                      standardizationFeatures = c("")) {
   # Standardization
   if (!is.null(standardizationFeatures)) {
@@ -191,11 +191,11 @@ standardizeRawDataWithin <- function(data,
 #' @return neat data
 #' @export
 createPlotData <- function(data,
-                           summariseTechnicalReplicates,
-                           aesX,
-                           aesColor,
-                           aesFacetCol,
-                           aesFacetRow) {
+                           summariseTechnicalReplicates = TRUE,
+                           aesX = "class",
+                           aesColor = "sample",
+                           aesFacetCol = NULL,
+                           aesFacetRow = NULL) {
   # Averaging over the technical replicates
   if (summariseTechnicalReplicates) {
     data <- data %>%
@@ -273,15 +273,11 @@ testPairwise <- function(data) {
 #' tests build with \code{broom::tidy} combinde
 #' into one tibble.
 doAllPairwiseComparisons <- function(data, aesX) {
-  comparisons <- data %>%
+  data %>%
     group_by(!!sym(aesX)) %>%
     nest() %>%
-    mutate(
-      pairwise = map(data, possibly(testPairwise, tibble()))
-    ) %>%
-    unnest(pairwise)
-  
-  comparisons %>%
+    mutate(pairwise = map(data, possibly(testPairwise, tibble()))) %>%
+    unnest(pairwise) %>%
     mutate(p.value = p.adjust(p.value, "BH")) %>%
     select(-data)
 }

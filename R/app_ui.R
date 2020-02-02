@@ -108,7 +108,7 @@ app_ui <- function() {
                                                                 "chain_sums",
                                                                 "sample_replicate",
                                                                 "sample_replicate_technical")],
-                           selected = NULL),
+                           selected = ""),
                          selectizeInput(
                            "aesFacetRow",
                            label    = "Feature to use for facetting in rows",
@@ -119,7 +119,7 @@ app_ui <- function() {
                                                                 "chain_sums",
                                                                 "sample_replicate",
                                                                 "sample_replicate_technical")],
-                           selected = NULL),
+                           selected = ""),
                          selectizeInput(
                            "standardizationFeatures",
                            label    = "Standardize to 100% within:",
@@ -131,7 +131,7 @@ app_ui <- function() {
                            "baselineSample",
                            label    = "Substract sample as baseline",
                            choices  = "",
-                           selected = NULL
+                           selected = ""
                          )
                 ),
                 tabPanel(title = "Samples",
