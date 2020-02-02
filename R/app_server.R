@@ -27,22 +27,20 @@ app_server <- function(input, output, session) {
     scrollX        = TRUE,
     deferRender    = TRUE,
     scrollY        = 500,
-    scrollCollapse = TRUE
-  )
+    scrollCollapse = TRUE)
   )
   
   ## Update SelectInput for datasets based on sets loaded and row selected
   # select clicked row in table
   observe({
-    choices <- list(metaData()$id)
+    choices <- metaData()$id
     names(choices) <- paste(metaData()$id, "-", metaData()$title)
     selection <- input$metaDataTable_rows_selected
     if (!is.null(selection)) {
       updateSelectInput(session,
                         "ID",
                         choices  = choices,
-                        selected = choices[[selection]]
-      )
+                        selected = choices[[selection]])
     }
   })
   
@@ -113,14 +111,9 @@ app_server <- function(input, output, session) {
   
 
 # Update inputs based on selected default quickoption ---------------------
-  
   observeEvent(input$quickSpeciesProfileClass, {
     if (input$quickSpeciesProfileClass != "") {
-      updateSelectInput(session, "aesFacetCol", selected = "")
-      updateSelectInput(session, "aesFacetRow", selected = "")
-      updateSelectizeInput(session, "standardizationFeatures", selected = c("class", "sample_replicate"))
-      updateSelectInput(session, "aesX", selected = "lipid")
-      updateSelectizeInput(session, "lipidClassToSelect", selected = unname(input$quickSpeciesProfileClass) )
+      updateInputsForSpeciesProfile(session, input$quickSpeciesProfileClass)
     }
   })
   
@@ -132,7 +125,6 @@ app_server <- function(input, output, session) {
   })
   
   # Displaying main Dataset as a table -----------------------------------------
-  
   # Rendering selected dataset as a table to send to UI
   output$mainDataTable <- DT::renderDT({
     mainData()
@@ -306,11 +298,9 @@ app_server <- function(input, output, session) {
         "To perform a PCA, please set color to sample in the mappings"
       ),
       need(
-        (
-          input$aesX != "sample" &
-            input$aesX != "sample_replicate" &
-            input$aesX != "sample_replicate_technical"
-        ),
+        (input$aesX != "sample" &
+          input$aesX != "sample_replicate" &
+          input$aesX != "sample_replicate_technical"),
         "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"
       ),
       need(
@@ -326,90 +316,31 @@ app_server <- function(input, output, session) {
         "Not enough datapoints to perform PCA"
       )
     )
-    plotData() %>%
-      ungroup() %>%
-      select(
-        !!sym(
-          ifelse(
-            input$summariseTechnicalReplicates,
-            "sample_replicate",
-            "sample_replicate_technical"
-          )
-        ),
-        !!sym(input$aesX), value
-      ) %>%
-      spread(key = input$aesX, value = "value") %>%
-      data.frame(row.names = TRUE) %>%
-      as.matrix()
+    createPcaData(plotData        = plotData(),
+                  aesX            = input$aesX,
+                  summariseTecRep = input$summariseTechnicalReplicates)
   })
   
   # * pcaObject ----------------------------------------------------------------
   pcaObject <- reactive({
-    m <- pcaData()
-    # returns pcaRes object
-    pcaMethods::pca(
-      m,
-      method = if_else(any(is.na(m)), "nipals", input$pca_method),
-      nPcs   = input$pcaNumberPrincipalComponents,
-      center = input$pca_center,
-      scale  = input$pcaScalingMethod,
-      cv     = input$pcaCrossValidationMethod,
-      seed   = 123
-    )
+    createPcaResult(pcaData                      = pcaData(),
+                    pcaMethod                    = input$pcaMethod,
+                    pcaNumberPrincipalComponents = input$pcaNumberPrincipalComponents,
+                    pcaCenter                    = input$pcaCenter,
+                    pcaScalingMethod             = input$pcaScalingMethod,
+                    pcaCrossValidationMethod     = input$pcaCrossValidationMethod)
   })
-  
-  
-  # Scaling factor for original data dimension vectors in principal component space
-  
-  sampleNames <- reactive({
-    if (input$summariseTechnicalReplicates) {
-      plotData() %>%
-        ungroup() %>%
-        select(sample, sample_replicate) %>%
-        distinct() %>%
-        mutate(
-          sample           = as.character(sample),
-          sample_replicate = as.character(sample_replicate)
-        )
-    } else {
-      plotData() %>%
-        ungroup() %>%
-        select(sample, sample_replicate_technical) %>%
-        distinct() %>%
-        mutate(
-          sample                     = as.character(sample),
-          sample_replicate_technical = as.character(sample_replicate_technical)
-        )
-    }
+
+  pcaSampleNames <- reactive({
+    getPcaSampleNames(plotData(), input$summariseTechnicalReplicates)
   })
   
   scaledLoadings <- reactive({
     req(pcaObject())
-    loadings <- pcaObject()@loadings %>% as_tibble(rownames = input$aesX)
-    
-    scores <- pcaObject()@scores %>%
-      as_tibble(
-        rownames = if_else(
-          input$summariseTechnicalReplicates,
-          "sample_replicate",
-          "sample_replicate_technical"
-        )
-      ) %>%
-      left_join(sampleNames(),
-                by = if_else(
-                  input$summariseTechnicalReplicates,
-                  "sample_replicate",
-                  "sample_replicate_technical"
-                )
-      )
-    
-    scaler <-
-      min(
-        max(abs(scores[, "PC1"])) / max(abs(loadings[, "PC1"])),
-        max(abs(scores[, "PC2"])) / max(abs(loadings[, "PC2"]))
-      )
-    loadings[, c("PC1", "PC2")] <- loadings[, c("PC1", "PC2")] * scaler * 0.8
-    loadings
+    pcaScaleLoadings(pcaObject = pcaObject(),
+                     pcaSampleNames = pcaSampleNames(),
+                     aesX = input$aesX,
+                     summariseTechnicalReplicates = input$summariseTechnicalReplicates)
   })
   
   
@@ -422,85 +353,18 @@ app_server <- function(input, output, session) {
   
   # ** Scores ------------------------------------------------------------------
   pcaScoresPlot <- reactive({
-    req(pcaData(), pcaObject(), sampleNames())
-    colorCount <- rownames(pcaData()) %>% length()
-    scores <- pcaObject()@scores %>%
-      as_tibble(
-        rownames = if_else(
-          input$summariseTechnicalReplicates,
-          "sample_replicate",
-          "sample_replicate_technical"
-        )
-      ) %>%
-      left_join(
-        sampleNames(),
-        by = if_else(
-          input$summariseTechnicalReplicates,
-          "sample_replicate",
-          "sample_replicate_technical"
-        )
-      )
+    req(pcaObject())
     
-    scores$sample <- factor(scores$sample)
-    
-    plt <- scores %>%
-      ggplot(aes(PC1, PC2, fill = sample))
-    
-    if (input$drawPcaConvexHull) {
-      plt <- plt +
-        stat_chull(alpha = .15, show.legend = FALSE)
-    }
-    
-    plt <- plt +
-      geom_point(
-        pch = 21,
-        alpha = 1,
-        size = input$pcaPointSize / 2
-      ) +
-      mainTheme +
-      mainScale(colorCount = colorCount)
-    
-    if (input$pca_labels) {
-      plt <- plt +
-        ggrepel::geom_text_repel(aes(label = !!sym(
-          ifelse(
-            input$summariseTechnicalReplicates,
-            "sample_replicate",
-            "sample_replicate_technical"
-          )
-        )), show.legend = FALSE)
-    }
-    
-    # Add scaled orginal vectors as arrows
-    if (input$pca_vectors) {
-      plt <- plt +
-        geom_segment(
-          data = scaledLoadings(),
-          aes(
-            x = 0,
-            y = 0,
-            xend = PC1,
-            yend = PC2,
-            group = !!sym(input$aesX)
-          ),
-          inherit.aes = FALSE,
-          arrow = arrow(),
-          alpha = .3
-        ) +
-        ggrepel::geom_label_repel(
-          data = scaledLoadings(),
-          aes(
-            x = PC1,
-            y = PC2,
-            label = !!sym(input$aesX)
-          ),
-          inherit.aes = FALSE,
-          alpha = .3,
-          show.legend = FALSE
-        )
-    }
-    
-    plt
+    createPcaScoresPlot(pcaData                      = pcaData(),
+                        pcaObject                    = pcaObject(),
+                        pcaSampleNames               = pcaSampleNames(),
+                        scaledLoadings               = scaledLoadings(),
+                        aesX                         = input$aesX,
+                        summariseTechnicalReplicates = input$summariseTechnicalReplicates,
+                        drawPcaConvexHull            = input$drawPcaConvexHull,
+                        pcaPointSize                 = input$pcaPointSize,
+                        pcaLabels                    = input$pcaLabels,
+                        pcaVectors                   = input$pcaVectors)
   })
   
   output$pcaScoresPlot <- renderPlot({
@@ -509,22 +373,11 @@ app_server <- function(input, output, session) {
   
   
   # ** Loadings ----------------------------------------------------------------
-  
   pcaLoadingsPlot <- reactive({
-    # req(pcaObject())
-    loadings <-
-      pcaObject()@loadings %>%
-      as_tibble(rownames = input$aesX)
-    
-    loadings %>%
-      ggplot(aes(PC1, PC2)) +
-      geom_point(pch = 19, size = input$pcaPointSize / 3) +
-      mainTheme +
-      ggrepel::geom_text_repel(aes(label = !!sym(input$aesX)),
-                               show.legend = FALSE
-      )
+    createPcaLoadingsPlot(pcaObject = pcaObject(),
+                          aesX = input$aesX,
+                          pcaPointSize = input$pcaPointSize)
   })
-  
   
   output$pcaLoadingsPlot <- renderPlot({
     pcaLoadingsPlot()
@@ -532,70 +385,73 @@ app_server <- function(input, output, session) {
   
   # Download handlers  ---------------------------------------------------------
   # Metadata - .csv
-  output$saveMeta <- downloadHandler(
-    filename = function() {
-      paste0("datasets_info.csv")
-    },
-    content = function(file) {
-      readr::write_csv(x = metaData(), path = file)
-    }
-  )
+  output$saveMeta <-
+    downloadHandler(
+      filename = function() {
+        paste0("datasets_info.csv")
+      },
+      content = function(file) {
+        readr::write_csv(x = metaData(), path = file)
+      }
+    )
   
-  output$saveRawCSV   <- downloadHandlerFactoryCSV(metaData   = metaData(),
-                                                   dataset    = rawData(),
-                                                   specifier  = "-raw",
-                                                   id         = input$id)
+  output$saveRawCSV <-
+    downloadHandlerFactoryCSV(metaData   = metaData(),
+                              dataset    = rawData(),
+                              specifier  = "-raw",
+                              id         = input$id)
   
-  output$saveMainCSV  <- downloadHandlerFactoryCSV(metaData   = metaData(),
-                                                   dataset    = mainData(),
-                                                   specifier  = "-filtered",
-                                                   id         = input$id)
+  output$saveMainCSV <-
+    downloadHandlerFactoryCSV(metaData   = metaData(),
+                              dataset    = mainData(),
+                              specifier  = "-filtered",
+                              id         = input$id)
   
-  output$savePlotData <- downloadHandlerFactoryCSV(metaData    = metaData(),
-                                                   dataset     = plotData(),
-                                                   specifier   = "-plot",
-                                                   id          = input$id)
+  output$savePlotData <-
+    downloadHandlerFactoryCSV(metaData    = metaData(),
+                              dataset     = plotData(),
+                              specifier   = "-plot",
+                              id          = input$id)
   
-  output$saveMeanPlotData <- downloadHandlerFactoryCSV(metaData    = metaData(),
-                                                       dataset     = meanPlotData(),
-                                                       specifier   = "-means",
-                                                       id          = input$id)
+  output$saveMeanPlotData <-
+    downloadHandlerFactoryCSV(metaData    = metaData(),
+                              dataset     = meanPlotData(),
+                              specifier   = "-means",
+                              id          = input$id)
   
-  output$saveMainPlot <- downloadHandlerFactoryPDF(metaData  = metaData(),
-                                                   plot      = mainPlot(),
-                                                   specifier = "-plot",
-                                                   width     = input$mainWidth,
-                                                   height    = input$mainHeight, 
-                                                   id        = input$ID)
+  output$saveMainPlot <-
+    downloadHandlerFactoryPDF(metaData  = metaData(),
+                              plot      = mainPlot(),
+                              specifier = "-plot",
+                              width     = input$mainWidth,
+                              height    = input$mainHeight, 
+                              id        = input$ID)
   
-  output$saveHeatmap <- downloadHandlerFactoryPDF(metaData  = metaData(),
-                                                  plot      = heatmapPlot(),
-                                                  specifier = "-heatmap",
-                                                  width     = input$heatWidth,
-                                                  height    = input$heatHeight, 
-                                                  id        = input$ID)
+  output$saveHeatmap <-
+    downloadHandlerFactoryPDF(metaData  = metaData(),
+                              plot      = heatmapPlot(),
+                              specifier = "-heatmap",
+                              width     = input$heatWidth,
+                              height    = input$heatHeight, 
+                              id        = input$ID)
   
-  output$savePCAScores <- downloadHandlerFactoryPDF(metaData  = metaData(),
-                                                    plot      = pcaScoresPlot(),
-                                                    specifier = "-pcaScoresPlot",
-                                                    width     = input$pcaWidth,
-                                                    height    = input$pcaHeight, 
-                                                    id        = input$ID)
+  output$savePCAScores <-
+    downloadHandlerFactoryPDF(metaData  = metaData(),
+                              plot      = pcaScoresPlot(),
+                              specifier = "-pcaScoresPlot",
+                              width     = input$pcaWidth,
+                              height    = input$pcaHeight, 
+                              id        = input$ID)
   
-  output$savePCALoadings <- downloadHandlerFactoryPDF(metaData  = metaData(),
-                                                      plot      = pcaLoadingsPlot(),
-                                                      specifier = "-pcaLoadingsPlot",
-                                                      width     = input$pcaWidth,
-                                                      height    = input$pcaHeight, 
-                                                      id        = input$ID)
-  
-  # Write shiny ui input list to file for developement ----------------------
-  isolate(
-    input %>% reactiveValuesToList() %>% saveRDS(testthat::test_path("inputList.Rds"))
-  )
+  output$savePCALoadings <-
+    downloadHandlerFactoryPDF(metaData  = metaData(),
+                              plot      = pcaLoadingsPlot(),
+                              specifier = "-pcaLoadingsPlot",
+                              width     = input$pcaWidth,
+                              height    = input$pcaHeight, 
+                              id        = input$ID)
   
   # End ------------------------------------------------------------------------
   # End session when window is closed
   session$onSessionEnded(stopApp)
-  
 }

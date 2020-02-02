@@ -36,17 +36,6 @@ createQueryForID <- function(dataset_ID) {
 
 # helper functions --------------------------------------------------------
 
-#' Test if x is discrete
-#'
-#' @param x vector
-#'
-#' @return boolean
-#' @note 
-#' borrowed from plyr (https://github.com/hadley/plyr/)
-is.discrete <- function(x) {
-    is.factor(x) || is.character(x) || is.logical(x)
-}
-
 # Suppress warning that not all factor levels for lipid class order are used:
 quiet_fct_relevel <- purrr::quietly(forcats::fct_relevel)
 

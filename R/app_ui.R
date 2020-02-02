@@ -370,9 +370,9 @@ app_ui <- function() {
           column(
             width = 6,
             shinydashboard::box(width = NULL,
-                                checkboxInput("pca_center", "Center", TRUE),
-                                checkboxInput("pca_labels", "Sample Labels", TRUE),
-                                checkboxInput("pca_vectors", "Show original dimensions in principal component space", TRUE),
+                                checkboxInput("pcaCenter", "Center", TRUE),
+                                checkboxInput("pcaLabels", "Sample Labels", TRUE),
+                                checkboxInput("pcaVectors", "Show original dimensions in principal component space", TRUE),
                                 checkboxInput("drawPcaConvexHull", "Draw convex hull", FALSE),
                                 selectInput(
                                   "pcaScalingMethod",
@@ -384,7 +384,7 @@ app_ui <- function() {
                                   )
                                 ),
                                 selectInput(
-                                  "pca_method",
+                                  "pcaMethod",
                                   "Method",
                                   pcaMethods::listPcaMethods()[1:7],# The last three don't work for now
                                   selected = "svd"),

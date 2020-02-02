@@ -17,3 +17,12 @@ updateAllRangeInputs <- function(inputName, choiceColumn,
                     value = l
   )
 }
+
+updateInputsForSpeciesProfile <- function(session, quickSpeciesProfileClass) {
+  updateSelectInput(session, "aesFacetCol", selected = "")
+  updateSelectInput(session, "aesFacetRow", selected = "")
+  updateSelectizeInput(session, "standardizationFeatures", selected = c("class", "sample_replicate"))
+  updateSelectInput(session, "aesX", selected = "lipid")
+  updateSelectizeInput(session, "lipidClassToSelect", selected = unname(quickSpeciesProfileClass))
+}
+
