@@ -4,12 +4,12 @@
 \alias{doAllPairwiseComparisons}
 \title{Test all possible pairwise t-tests}
 \usage{
-doAllPairwiseComparisons(df, x_axis)
+doAllPairwiseComparisons(df, aesX)
 }
 \arguments{
 \item{df}{the full dataset}
 
-\item{x_axis}{the feature mapped to the x-axis}
+\item{aesX}{the feature mapped to the x-axis}
 }
 \value{
 A tidy representation of the significance

@@ -8,9 +8,17 @@ createMainPlot(
   plotData,
   meanPlotData,
   pairwiseComparisons,
-  rangeX,
-  rangeY,
-  input
+  rangeX = NULL,
+  rangeY = NULL,
+  aesX = "class",
+  aesColor = "sample",
+  aesFacetCol = NULL,
+  aesFacetRow = NULL,
+  mainPlotAdditionalOptions = list("points", "bars"),
+  errorbarType = "None",
+  summariseTechnicalReplicates = TRUE,
+  standardizationFeatures = c(""),
+  standardizeWithinTechnicalReplicate = TRUE
 )
 }
 \arguments{
@@ -23,8 +31,6 @@ createMainPlot(
 \item{rangeX}{vector with min and max X}
 
 \item{rangeY}{vector with min and max Y}
-
-\item{input}{list of inputs from shiny UI}
 }
 \value{
 a ggplot object

@@ -1,46 +1,108 @@
+#' @importFrom stats qt
+#' @import dplyr
+#' @import forcats
+#' @import ggplot2
+#' @import tidyr
+#' @import purrr
+#' @import RSQLite
+#' @importFrom rlang .data
+#' @importFrom grDevices chull
+#' @importFrom graphics title
+#' @importFrom stats p.adjust pairwise.t.test sd
+#' @importFrom utils data
+#' 
+NULL
 
-#' Create your own database
-#' 
-#' Quickly create your own SQLite database dump from
-#' dataframes without additional software.
+## quiets concerns of R CMD check re: the .'s that appear in pipelines
+if(getRversion() >= "2.15.1")  utils::globalVariables(
+  c(".",
+    "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category", "class_order",
+    "datasets", "date_extraction", "date_measured", "date_sample", "date_upload", "db", 
+    "func_cat", "lipid", "oh", "p.value", "pairwise", "sample_identifier", "sample_replicate",
+    "sample_replicate_technical", "value")
+)
+
+# helper functions ####
+
+# Suppress warning that not all factor levels for lipid class order are used:
+quiet_fct_relevel <- purrr::quietly(forcats::fct_relevel)
+
+possiblyQt <- possibly(stats::qt, otherwise = NA_real_)
+
+# Returns a function that takes an interger and creates a color palette
+getPalette <- colorRampPalette(RColorBrewer::brewer.pal(n = 9, name = "Set1"))
+
+#' Create color scale
 #'
-#' @param path string,
-#' Path to where you want to save the database dump file
-#' 
-#' @param meta_info data.frame
-#' A data.frame with the information about your datasets
-#' See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns it needs.
-#' 
-#' @param dataset
-#' A data.frame with the datasets
-#' See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns they need.
-#' 
-#' @param overwrite Boolean
-#' Overwrite existing .db file? Default is FALSE.
-#' 
-#' @return
-#' NULL
+#' @param colorCount integer
+#'
+#' @return A list with scale_color_ and scale_fill_
+mainScale <- function(colorCount) {
+  list(
+    scale_fill_manual(values  = getPalette(colorCount)),
+    scale_color_manual(values = getPalette(colorCount))
+  )
+}
+
+testAllMoreThanOneReplicate <- function(data, aesX, aesColor) {
+  data %>%
+    group_by(!!sym(aesX), !!sym(aesColor)) %>%
+    count() %>%
+    pull(n) %>%
+    {all(. > 1)}
+}
+
+#' Convex hull for PCA plots
+#'
+#' Borrowed from https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
+#'
+#' @param mapping aesthetic mapping
+#' @param data data
+#' @param geom geometric element
+#' @param position default = "identity"
+#' @param na.rm remove NAs
+#' @param show.legend show legend
+#' @param inherit.aes inherit aesthetics
+#' @param ... passed to layer
+#'
+#' @return a state for ggplot
+stat_chull <- function(mapping     = NULL,
+                       data        = NULL,
+                       geom        = "polygon",
+                       position    = "identity",
+                       na.rm       = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE,
+                       ...) {
+  StatChull <- ggproto(
+    "StatChull",
+    Stat,
+    compute_group = function(data, scales) {
+      data[chull(data$x, data$y),, drop = FALSE]
+    },
+    required_aes = c("x", "y")
+  )
+  layer(
+    stat        = StatChull,
+    data        = data,
+    mapping     = mapping,
+    geom        = geom,
+    position    = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params      = list(na.rm = na.rm, ...)
+  )
+}
+
+#' Make a date
+#'
+#' @param col A character vector 
+#' (Column in a dataframe)
+#' @return A Date vector
 #' @export
-createDatabase <- function(path = "databaseDump.db",
-                           meta_info, dataset,
-                           overwrite = FALSE) {
-  con <- DBI::dbConnect(RSQLite::SQLite(), path)
-  DBI::dbWriteTable(con, "id_info", meta_info, overwrite = overwrite)
-  DBI::dbWriteTable(con, "data2", dataset, overwrite = overwrite)
-  DBI::dbDisconnect(con)
+parseDate <- function(col) {
+  as.Date(col, format = "%y%m%d")
 }
 
 
-# collectMetaData(databaseConnection)
-# 
-# read_and_process_data <- function(con, ID,
-#                                   standardizationFeatures = "sample_replicate_technical",
-#                                   baselineSample = "",
-#                                   input = list()) {
-#   collectRawData(con,
-#                    createQueryForID(ID),
-#                    lipidClassOrder = collectLipidClassOrder(con)) %>% 
-#     standardizeRawDataWithin(standardizationFeatures, baselineSample) %>%
-#     filterRawDataFor(input)
-# }
 

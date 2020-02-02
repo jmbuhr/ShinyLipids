@@ -4,26 +4,23 @@
 \alias{filterRawDataFor}
 \title{Filter raw data}
 \usage{
-filterRawDataFor(df, input)
+filterRawDataFor(
+  rawData,
+  categoryToSelect = NULL,
+  lipidClassToSelect = NULL,
+  functionalCategoryToSelect = NULL,
+  filterLengthRange = NULL,
+  filterDoubleBondsRange = NULL,
+  filterOhRange = NULL,
+  samplesToSelect = NULL,
+  samplesToRemove = NULL,
+  replicatesToSelect = NULL,
+  replicatesToRemove = NULL,
+  technicalReplicatesToRemove = NULL
+)
 }
 \arguments{
-\item{df}{Data as a tibble}
-
-\item{input}{a list.
-This list can contain
-strings with the following names,
-non existent ones will be ignored:
-\itemize{
-\item \code{categoryToSelect}
-\item \code{lipidClassToSelect}
-\item \code{functionalCategoryToSelect}
-\item \code{filterLengthRange}
-\item \code{filterDoubleBondsRange}
-\item \code{filterOhRange}
-\item \code{samplesToSelect}
-\item \code{samplesToRemove}
-\item \code{technicalReplicatesToRemove}
-}}
+\item{rawData}{Data as a tibble}
 }
 \value{
 Lovely filtered data

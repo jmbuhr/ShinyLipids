@@ -7,57 +7,68 @@
 #' @param pairwiseComparisons a tibble of pairwise t-tests from pairwiseComparisons()
 #' @param rangeX vector with min and max X
 #' @param rangeY vector with min and max Y
-#' @param input list of inputs from shiny UI
 #'
 #' @return a ggplot object
 #' @export
-createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
-                           rangeX, rangeY, input) {
+createMainPlot <- function(plotData,
+                           meanPlotData,
+                           pairwiseComparisons,
+                           rangeX                              = NULL,
+                           rangeY                              = NULL,
+                           aesX                                = "class",
+                           aesColor                            = "sample",
+                           aesFacetCol                         = NULL,
+                           aesFacetRow                         = NULL,
+                           mainPlotAdditionalOptions           = list("points", "bars"),
+                           errorbarType                        = "None",
+                           summariseTechnicalReplicates        = TRUE,
+                           standardizationFeatures             = c(""),
+                           standardizeWithinTechnicalReplicate = TRUE) {
   
   if ("length" %in% names(plotData)) {
-    plotData <-
-      plotData %>%
+    plotData <- plotData %>%
       ungroup() %>%
       mutate(length = factor(length)) %>%
       group_by(length)
-    meanPlotData <-
-      meanPlotData %>%
+    
+    meanPlotData <- meanPlotData %>%
       ungroup() %>%
       mutate(length = factor(length)) %>%
       group_by(length)
   }
   
-  # basic plot object
-  plt <- plotData %>%
-    ggplot()
-  
-  # main plot definition
-  plt <- plt +
-    aes(
-      x = !!sym(input$aesX),
-      y = value
-    )
+  plt <- ggplot(plotData, aes(x = !!sym(aesX), y = value))
   
   # add color/fill if requested
   # number of colors needed, if any
-  if (input$aesColor != "") {
-    colorCount <-
-      plotData[, input$aesColor] %>%
-      unique() %>%
-      as_vector() %>%
+  if (aesColor != "") {
+    colorCount <- plotData[[aesColor]] %>%
+      unique() %>% 
       length()
     
     plt <- plt +
       aes(
-        color = factor(!!sym(input$aesColor)),
-        fill  = factor(!!sym(input$aesColor))
-      )
+        color = factor(!!sym(aesColor)),
+        fill  = factor(!!sym(aesColor)))
   } else {
     colorCount <- 0
   }
   
+  plt <- plt +
+    mainTheme +
+    mainScale(colorCount) +
+    guides(
+      color = guide_legend(ncol = 12,
+                           nrow = as.integer(colorCount / 12) + 1,
+                           title = aesColor),
+      fill = guide_legend(ncol = 12, # usefull with way too many colors
+                          nrow = as.integer(colorCount / 12) + 1,
+                          title = aesColor
+      )
+    )
+  
   # Add bars
-  if ("bars" %in% input$mainPlotAdditionalOptions) {
+  if ("bars" %in% mainPlotAdditionalOptions) {
     plt <- plt +
       geom_col(
         data     = meanPlotData,
@@ -66,31 +77,31 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
   }
   
   # Add points
-  if ("points" %in% input$mainPlotAdditionalOptions) {
+  if ("points" %in% mainPlotAdditionalOptions) {
     plt <- plt +
       geom_point(
         position    = position_dodge(width = 0.9),
         pch         = 21,
         alpha       = 1,
         color       = "black",
-        show.legend = F
+        show.legend = FALSE
       )
   }
   
   # Error bars and mean
-  if (input$errorbarType != "None") {
+  if (errorbarType != "None") {
     plt <- plt +
       geom_errorbar(
         data = meanPlotData,
         position = position_dodge2(width = 0.2, padding = 0.8),
         aes(ymin = switch(
-          input$errorbarType,
+          errorbarType,
           "SD"   = value - SD,
           "SEM"  = value - SEM,
           "CI"   = CI_lower
         ),
         ymax = switch(
-          input$errorbarType,
+          errorbarType,
           "SD"  = value + SD,
           "SEM" = value + SEM,
           "CI"  = CI_upper
@@ -101,26 +112,25 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
   }
   
   # Hightlight Mean
-  if ("mean" %in% input$mainPlotAdditionalOptions) {
+  if ("mean" %in% mainPlotAdditionalOptions) {
     plt <- plt +
       geom_errorbar(
         data = meanPlotData,
         aes(ymin = value, ymax = value),
         position = position_dodge2(width = 0.9),
-        # color = "black",
         size = 1.2
       )
   }
   
   # facetting
-  if (input$aesFacetCol != "" | input$aesFacetRow != "") {
-    facet_col <- vars(!!sym(input$aesFacetCol))
-    facet_row <- vars(!!sym(input$aesFacetRow))
+  if (aesFacetCol != "" | aesFacetRow != "") {
+    facet_col <- vars(!!sym(aesFacetCol))
+    facet_row <- vars(!!sym(aesFacetRow))
     
-    if (input$aesFacetCol == "") {
+    if (aesFacetCol == "") {
       facet_col <- NULL
     }
-    if (input$aesFacetRow == "") {
+    if (aesFacetRow == "") {
       facet_row <- NULL
     }
     
@@ -128,13 +138,13 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
       facet_grid(
         cols   = facet_col,
         rows   = facet_row,
-        scales = if_else("free_y" %in% input$mainPlotAdditionalOptions, "free", "free_x"),
+        scales = if_else("free_y" %in% mainPlotAdditionalOptions, "free", "free_x"),
         space  = "free_x"
       )
   }
   
   # Display value of means as text
-  if ("values" %in% input$mainPlotAdditionalOptions) {
+  if ("values" %in% mainPlotAdditionalOptions) {
     plt <- plt +
       geom_text(
         data = meanPlotData,
@@ -146,7 +156,7 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
   }
   
   # Display value of points as text
-  if ("ind_values" %in% input$mainPlotAdditionalOptions) {
+  if ("ind_values" %in% mainPlotAdditionalOptions) {
     plt <- plt +
       geom_text(
         aes(label = round(value, 2)),
@@ -157,12 +167,12 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
   }
   
   # Label points
-  if ("label" %in% input$mainPlotAdditionalOptions) {
+  if ("label" %in% mainPlotAdditionalOptions) {
     plt <- plt +
       geom_text(
         aes(label = !!sym(
           ifelse(
-            input$summariseTechnicalReplicates,
+            summariseTechnicalReplicates,
             "sample_replicate",
             "sample_replicate_technical"
           )
@@ -175,7 +185,7 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
   }
   
   # Show N
-  if ("N" %in% input$mainPlotAdditionalOptions) {
+  if ("N" %in% mainPlotAdditionalOptions) {
     plt <- plt +
       geom_text(
         data = meanPlotData,
@@ -187,27 +197,9 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
       )
   }
   
-  # add theme and scale (defined in global.R) includes titles and formatting
-  plt <- plt +
-    mainTheme +
-    mainScale(colorCount) +
-    guides(
-      color = guide_legend(
-        ncol = 12,
-        nrow = as.integer(colorCount / 12) + 1,
-        title = input$aesColor
-      ),
-      # usefull if way to many values of color
-      fill = guide_legend(
-        ncol = 12,
-        nrow = as.integer(colorCount / 12) + 1,
-        title = input$aesColor
-      )
-    )
-  
   # Log scale, name of y-axis and percent format for standardized data
-  if ("log" %in% input$mainPlotAdditionalOptions) {
-    if ( !is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
+  if ("log" %in% mainPlotAdditionalOptions) {
+    if ( !is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
       yAxisName   <- "amount [ Mol % ], log1p scale"
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "log1p"
@@ -217,7 +209,7 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
       yAxisTransformation  <- "log1p"
     }
   } else {
-    if ( !is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
+    if ( !is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
       yAxisName   <- "amount [ Mol % ]"
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "identity"
@@ -240,10 +232,10 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
     plt + coord_cartesian(xlim = rangeX, ylim = rangeY)
   
   # Swap X and Y
-  if ("swap" %in% input$mainPlotAdditionalOptions) {
+  if ("swap" %in% mainPlotAdditionalOptions) {
     validate(
       need(
-        !("log" %in% input$mainPlotAdditionalOptions),
+        !("log" %in% mainPlotAdditionalOptions),
         "Swapped X and Y Axis are currently not supported for a logarithmic Y-Axis"
       )
     )
@@ -252,14 +244,14 @@ createMainPlot <- function(plotData, meanPlotData, pairwiseComparisons,
   }
   
   # Highlite significant hits
-  if ("signif" %in% input$mainPlotAdditionalOptions) {
+  if ("signif" %in% mainPlotAdditionalOptions) {
     signif <- filter(pairwiseComparisons, p.value <= 0.05) %>%
-      distinct(!!sym(input$aesX))
+      distinct(!!sym(aesX))
     if (nrow(signif) > 0) {
       plt <- plt +
         geom_text(
           data = signif,
-          aes(!!sym(input$aesX), Inf, label = "*", vjust = 1, hjust = 0.5),
+          aes(!!sym(aesX), Inf, label = "*", vjust = 1, hjust = 0.5),
           inherit.aes = F,
           size        = 10
         )

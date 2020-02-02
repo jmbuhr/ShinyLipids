@@ -1,37 +1,117 @@
 #' @import shiny
 app_server <- function(input, output, session) {
+  # Setup ####
   databaseConnection <- golem::get_golem_options("db")
-  # Metadata / Datasets --------------------------------------------------------
   
-  # Reading in table of datasets
+  # Data ####
+  # * Metadata / list of datasets ####
   metaData <- reactive({
     collectMetaData(databaseConnection)
   })
+
+  # * rawData ####
+  rawData <- reactive({
+    validate(need(input$ID, "Please select a dataset first."))
+    query <- createQueryForID(input$ID)
+    collectRawData(con             = databaseConnection,
+                   query           = query,
+                   lipidClassOrder = collectLipidClassOrder(databaseConnection))
+  })
   
-  # Rendering datasets as a table to send to UI
-  output$metaDataTable <- DT::renderDT({
+  # * filteredData ####
+  filteredData <- reactive({
+    rawData() %>%
+      standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>% 
+      filterRawDataFor(categoryToSelect            = input$categoryToSelect,
+                       lipidClassToSelect          = input$lipidClassToSelect,
+                       functionalCategoryToSelect  = input$functionalCategoryToSelect,
+                       filterLengthRange           = input$filterLengthRange,
+                       filterDoubleBondsRange      = input$filterDoubleBondsRange,
+                       filterOhRange               = input$filterOhRange,
+                       samplesToSelect             = input$samplesToSelect,
+                       samplesToRemove             = input$samplesToRemove,
+                       replicatesToSelect          = input$replicatesToSelect,
+                       replicatesToRemove          = input$replicatesToRemove,
+                       technicalReplicatesToRemove = input$technicalReplicatesToRemove)
+  })
+  
+  # * mainData ####
+  mainData <- reactive({
+    validate(need(nrow(filteredData()) > 0,
+                  "The data was filtered such that there is no data left."))
+    filteredData() %>% 
+      standardizeRawDataWithin(baselineSample          = input$baselineSample,
+                               standardizationFeatures = input$standardizationFeatures)
+  })
+  
+  # * plotData ####
+  # summarised based on
+  # selecte plot type, standards and aes (aesthetics)
+  plotData <- reactive({
+    req(mainData())
     validate(
-      need(req(metaData()), "No metadata loaded")
+      need(
+        !(input$summariseTechnicalReplicates &
+            (input$aesColor    == "sample_replicate_technical" |
+               input$aesX      == "sample_replicate_technical" |
+               # input$aesY    == "sample_replicate_technical" |
+               input$aesFacetCol == "sample_replicate_technical" |
+               input$aesFacetRow == "sample_replicate_technical")
+        ),
+        "You are currently averaging over technical replicates (see the samples tab in the sidebar)
+                  and thus can't use this feature in your plots."
+      ),
+      need(
+        input$aesX != "",
+        "Please select a feature to display on the x-axis"
+      )
     )
-    if (input$showFullMeta == TRUE) {
-      metaData()
-    } else {
-      metaData()[c( "id", "title", "date_upload", "status", "sample_from")]
-    }
-  },
-  server = FALSE, selection = list(mode = "single", selected = 1),
-  options = list(
-    orderClasses   = TRUE,
-    pageLength     = 10,
-    order          = list(0, "desc"),
-    scrollX        = TRUE,
-    deferRender    = TRUE,
-    scrollY        = 500,
-    scrollCollapse = TRUE)
-  )
+    
+    mainData() %>%
+      createPlotData(summariseTechnicalReplicates = input$summariseTechnicalReplicates,
+                     aesX                         = input$aesX,
+                     aesColor                     = input$aesColor,
+                     aesFacetCol                  = input$aesFacetCol,
+                     aesFacetRow                  = input$aesFacetRow)
+  })
   
-  ## Update SelectInput for datasets based on sets loaded and row selected
-  # select clicked row in table
+  # * meanPlotData ####
+  ## for bars/averages
+  meanPlotData <- reactive({
+    req(plotData())
+    plotData() %>%
+      summarisePlotData()
+  })
+  
+  # * PairwiseComparisons ####
+  # from pairwise t-tests on log-transformed data
+  pairwiseComparisons <- reactive({
+    validate(
+      need(
+        input$aesColor == "sample",
+        "To compare between samples, chose sample as the color"
+      ),
+      need(
+        input$aesX %in% c("class", "category"),
+        "Comparisons are only supported for class or category on the x axis"
+      ),
+      need(
+        length(unique(plotData()$sample)) > 1,
+        "You need at least 2 samples to compare them"
+      ),
+      need(
+        testAllMoreThanOneReplicate(plotData(), input$aesX, input$aesColor),
+        "You need more than 1 replicate per sample for everything visible in the plot"
+      )
+    )
+    doAllPairwiseComparisons(plotData(), input$aesX)
+  })
+  
+
+  
+  # Updating input choices ####
+  # * Update SelectInput for datasets
+  # based on sets loaded and row selected select clicked row in table
   observe({
     choices <- metaData()$id
     names(choices) <- paste(metaData()$id, "-", metaData()$title)
@@ -44,31 +124,7 @@ app_server <- function(input, output, session) {
     }
   })
   
-  # Data -----------------------------------------------------------------------
-
-  # * Reading in raw data based on dataset selected ----------------------------
-  rawData <- reactive({
-    validate(need(input$ID, "Please select a dataset first."))
-    query <- createQueryForID(input$ID)
-    collectRawData(databaseConnection, query,
-                   lipidClassOrder = collectLipidClassOrder(databaseConnection))
-  })
-  
-  # * mainData from rawData ----------------------------------------------------
-  # filtering, then standardization
-  mainData <- reactive({
-    data <- rawData() %>%
-      standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>% 
-      filterRawDataFor(input)
-    
-    validate(need(nrow(data) > 0, "The data was filted in such a way that leaves no data"))
-    
-    data %>% 
-      standardizeRawDataWithin(baselineSample          = input$baselineSample,
-                               standardizationFeatures = input$standardizationFeatures)
-  })
-  
-  # Updating filtering options by dataset --------------------------------------
+  # * Updating filtering options by dataset ####
   observe({
     tribble(
       ~ inputName,                    ~ choiceColumn,               ~ selectedChoice,
@@ -109,8 +165,7 @@ app_server <- function(input, output, session) {
     }
   })
   
-
-# Update inputs based on selected default quickoption ---------------------
+  # * Update inputs based on selected default quickoption ####
   observeEvent(input$quickSpeciesProfileClass, {
     if (input$quickSpeciesProfileClass != "") {
       updateInputsForSpeciesProfile(session, input$quickSpeciesProfileClass)
@@ -124,8 +179,30 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(session, "lipidClassToSelect", selected = "")
   })
   
-  # Displaying main Dataset as a table -----------------------------------------
-  # Rendering selected dataset as a table to send to UI
+  # Table Outputs ####
+  # * Metadata table ####
+  output$metaDataTable <- DT::renderDT({
+    validate(
+      need(req(metaData()), "No metadata loaded")
+    )
+    if (input$showFullMeta == TRUE) {
+      metaData()
+    } else {
+      metaData()[c( "id", "title", "date_upload", "status", "sample_from")]
+    }
+  },
+  server = FALSE, selection = list(mode = "single", selected = 1),
+  options = list(
+    orderClasses   = TRUE,
+    pageLength     = 10,
+    order          = list(0, "desc"),
+    scrollX        = TRUE,
+    deferRender    = TRUE,
+    scrollY        = 500,
+    scrollCollapse = TRUE)
+  )
+  
+  # * Main Dataset as a table ####
   output$mainDataTable <- DT::renderDT({
     mainData()
   },
@@ -137,82 +214,37 @@ app_server <- function(input, output, session) {
     order          = list(0, "desc"),
     scrollX        = TRUE,
     deferRender    = TRUE,
-    scrollCollapse = TRUE
+    scrollCollapse = TRUE)
   )
+  
+  # * meanPlotDataTable ####
+  output$meanPlotDataTable <- DT::renderDT({
+    req(meanPlotData())
+    meanPlotData() %>%
+      select(value,
+             !!sym(input$aesX),
+             everything())
+  },
+  filter = "none",
+  rownames = FALSE,
+  options = list(
+    orderClasses   = TRUE,
+    pageLength     = 10,
+    order          = list(0, "desc"),
+    scrollX        = TRUE,
+    deferRender    = TRUE,
+    scrollCollapse = TRUE)
   )
   
-  # plotData from mainData based on sidebar inputs -----------------------------
-  
-  # with apropriate summarize functions based on selecte plot type, standards and aes
-  plotData <- reactive({
-    req(mainData())
-    # Validations, friendly error messages
-    validate(
-      need(
-        !(
-          input$summariseTechnicalReplicates &
-            (
-              input$aesColor    == "sample_replicate_technical" |
-                input$aesX      == "sample_replicate_technical" |
-                # input$aesY    == "sample_replicate_technical" |
-                input$aesFacetCol == "sample_replicate_technical" |
-                input$aesFacetRow == "sample_replicate_technical"
-            )
-        ),
-        "You are currently averaging over technical replicates (see the samples tab in the sidebar)
-                  and thus can't use this feature in your plots."
-      ),
-      need(
-        input$aesX != "",
-        "Please select a feature to display on the x-axis"
-      )
-    )
-    
-    mainData() %>%
-      createPlotData(input)
-  })
-  
-  
-  # meanPlotData for bars/averages ---------------------------------------------
-  
-  meanPlotData <- reactive({
-    req(plotData())
-    plotData() %>%
-      summarisePlotData()
-  })
-  
-  
-  # Pairwise Comparisons -------------------------------------------------------
-  
-  pairwiseComparisons <- reactive({
-    validate(
-      need(
-        input$aesColor == "sample",
-        "To compare between samples, chose sample as the color"
-      ),
-      need(
-        input$aesX %in% c("class", "category"),
-        "Comparisons are only supported for class or category on the x axis"
-      ),
-      need(
-        length(unique(plotData()$sample)) > 1,
-        "You need at least 2 samples to compare them"
-      ),
-      need(
-        testAllMoreThanOneReplicate(plotData(), input$aesX, input$aesColor),
-        "You need more than 1 replicate per sample for everything visible in the plot"
-      )
-    )
-    doAllPairwiseComparisons(plotData(), input$aesX)
-  })
-  
+  # * pairwiseComparisonsTable ####
   output$pairwiseComparisonsTable <- DT::renderDT({
     pairwiseComparisons()
   })
   
-  # Main Plot output -----------------------------------------------------------
+  # Plots ####
+  # * Main Plot ####
   
-  # Ranges for zooming by clicking on the plot
+  # ** Ranges for zooming by clicking on the plot  ####
   ranges <- reactiveValues(x = NULL, y = NULL)
   observeEvent(input$mainPlotDoubleClick, {
     brush <- input$mainPlotBrush
@@ -225,63 +257,46 @@ app_server <- function(input, output, session) {
     }
   })
   
-  # * Plot Object --------------------------------------------------------------
+  # ** Main Plot Object ####
   mainPlot <- reactive({
-    req(plotData())
-    req(meanPlotData())
-    createMainPlot(plotData(), meanPlotData(), pairwiseComparisons(),
-                   rangeX = ranges$x,
-                   rangeY = ranges$y,
-                   input  = input)
+    req(plotData(), meanPlotData())
+    createMainPlot(plotData                            = plotData(),
+                   meanPlotData                        = meanPlotData(),
+                   pairwiseComparisons                 = pairwiseComparisons(),
+                   rangeX                              = ranges$x,
+                   rangeY                              = ranges$y,
+                   aesX                                = input$aesX,
+                   aesColor                            = input$aesColor,
+                   aesFacetCol                         = input$aesFacetCol,
+                   aesFacetRow                         = input$aesFacetRow,
+                   mainPlotAdditionalOptions           = input$mainPlotAdditionalOptions,
+                   errorbarType                        = input$errorbarType,
+                   summariseTechnicalReplicates        = input$summariseTechnicalReplicates,
+                   standardizationFeatures             = input$standardizationFeatures,
+                   standardizeWithinTechnicalReplicate = input$standardizeWithinTechnicalReplicate)
   })
   
-  # ** Plot Render -------------------------------------------------------------
+  # ** Main Plot Render ####
   output$mainPlot <- renderPlot({
     mainPlot()
   })
   
-  # meanPlotDataTable ----------------------------------------------------------
-  output$meanPlotDataTable <- DT::renderDT({
-    req(meanPlotData())
-    
-    meanPlotData() %>%
-    select(
-      Average_value = value,
-      !!sym(input$aesX),
-      everything()
-    )
-  },
-  filter = "none",
-  rownames = FALSE,
-  options = list(
-    orderClasses   = TRUE,
-    pageLength     = 10,
-    order          = list(0, "desc"),
-    scrollX        = TRUE,
-    deferRender    = TRUE,
-    scrollCollapse = TRUE
-  )
-  )
-  
-  
-  # Heatmap --------------------------------------------------------------------
-  # * Plot Object --------------------------------------------------------------
+  # * Heatmap ####
+  # ** Heatmap Object ####
   heatmapPlot <- reactive({
-    # dataframe
-    # df <- plotData()
     createHeatmap(data = meanPlotData(), input = input)
   })
   
-  
-  # * Plot Render --------------------------------------------------------------
+  # ** Heatmap Render ####
   output$heatPlot <- renderPlot({
     heatmapPlot()
   })
   
-  # PCA ------------------------------------------------------------------------
+  # * PCA ####
   
-  # ** Updating pca-options ----------------------------------------------------
-  # update nPCs, they should not exceed the dimensions of the data
+  # ** Updating pca-options ####
+  # update number of principal components,
+  # they should not exceed the dimensions of the data
   observe({
     req(pcaData())
     updateSliderInput(session,
@@ -289,39 +304,30 @@ app_server <- function(input, output, session) {
                       max = min(dim(pcaData())))
   })
   
-  # * pcaData ------------------------------------------------------------------
+  # ** pcaData ####
   pcaData <- reactive({
     req(plotData())
     validate(
-      need(
-        input$aesColor == "sample",
-        "To perform a PCA, please set color to sample in the mappings"
-      ),
-      need(
-        (input$aesX != "sample" &
-          input$aesX != "sample_replicate" &
-          input$aesX != "sample_replicate_technical"),
+      need(input$aesColor == "sample",
+        "To perform a PCA, please set color to sample in the mappings"),
+      need((input$aesX != "sample" &
+              input$aesX != "sample_replicate" &
+              input$aesX != "sample_replicate_technical"),
         "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"
       ),
-      need(
-        input$aesFacetCol == "",
-        "To perform a PCA, please remove any facetting in the mappings"
-      ),
-      need(
-        input$aesFacetRow == "",
-        "To perform a PCA, please remove any facetting in the mappings"
-      ),
-      need(
-        length(unique(plotData()[[input$aesX]])) > 1,
-        "Not enough datapoints to perform PCA"
-      )
+      need(input$aesFacetCol == "",
+        "To perform a PCA, please remove any facetting in the mappings"),
+      need(input$aesFacetRow == "",
+        "To perform a PCA, please remove any facetting in the mappings"),
+      need(length(unique(plotData()[[input$aesX]])) > 1,
+        "Not enough datapoints to perform PCA")
     )
     createPcaData(plotData        = plotData(),
                   aesX            = input$aesX,
                   summariseTecRep = input$summariseTechnicalReplicates)
   })
   
-  # * pcaObject ----------------------------------------------------------------
+  # ** pcaObject ####
   pcaObject <- reactive({
     createPcaResult(pcaData                      = pcaData(),
                     pcaMethod                    = input$pcaMethod,
@@ -344,17 +350,15 @@ app_server <- function(input, output, session) {
   })
   
   
-  # * pcaOutputs ---------------------------------------------------------------
-  # Info
+  # ** pcaInfo ####
   output$pcaInfo <- renderPrint({
     req(pcaObject())
     pcaObject() %>% summary()
   })
   
-  # ** Scores ------------------------------------------------------------------
+  # ** Scores ####
   pcaScoresPlot <- reactive({
     req(pcaObject())
-    
     createPcaScoresPlot(pcaData                      = pcaData(),
                         pcaObject                    = pcaObject(),
                         pcaSampleNames               = pcaSampleNames(),
@@ -372,7 +376,7 @@ app_server <- function(input, output, session) {
   })
   
   
-  # ** Loadings ----------------------------------------------------------------
+  # ** Loadings ####
   pcaLoadingsPlot <- reactive({
     createPcaLoadingsPlot(pcaObject = pcaObject(),
                           aesX = input$aesX,
@@ -383,8 +387,7 @@ app_server <- function(input, output, session) {
     pcaLoadingsPlot()
   })
   
-  # Download handlers  ---------------------------------------------------------
-  # Metadata - .csv
+  # Download handlers ####
   output$saveMeta <-
     downloadHandler(
       filename = function() {
@@ -408,16 +411,16 @@ app_server <- function(input, output, session) {
                               id         = input$id)
   
   output$savePlotData <-
-    downloadHandlerFactoryCSV(metaData    = metaData(),
-                              dataset     = plotData(),
-                              specifier   = "-plot",
-                              id          = input$id)
+    downloadHandlerFactoryCSV(metaData   = metaData(),
+                              dataset    = plotData(),
+                              specifier  = "-plot",
+                              id         = input$id)
   
   output$saveMeanPlotData <-
-    downloadHandlerFactoryCSV(metaData    = metaData(),
-                              dataset     = meanPlotData(),
-                              specifier   = "-means",
-                              id          = input$id)
+    downloadHandlerFactoryCSV(metaData   = metaData(),
+                              dataset    = meanPlotData(),
+                              specifier  = "-means",
+                              id         = input$id)
   
   output$saveMainPlot <-
     downloadHandlerFactoryPDF(metaData  = metaData(),
@@ -451,7 +454,7 @@ app_server <- function(input, output, session) {
                               height    = input$pcaHeight, 
                               id        = input$ID)
   
-  # End ------------------------------------------------------------------------
+  # End ####
   # End session when window is closed
-  session$onSessionEnded(stopApp)
+  session$onSessionEnded(function() {DBI::dbDisconnect(databaseConnection); stopApp()})
 }

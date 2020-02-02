@@ -4,10 +4,10 @@
 \alias{createQueryForID}
 \title{Generate SQL Query for the selected dataset}
 \usage{
-createQueryForID(dataset_ID)
+createQueryForID(datasetID)
 }
 \arguments{
-\item{dataset_ID}{numeric}
+\item{datasetID}{numeric}
 }
 \value{
 SQL Query as a string

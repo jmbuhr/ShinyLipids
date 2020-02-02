@@ -1,59 +1,52 @@
 #' @import shiny
 app_ui <- function() {
-  databaseConnection <- golem::get_golem_options("db")
-  # tagList(
-  # Leave this function for adding external resources
-  # golem_add_external_resources()
-  # List the first level UI elements here 
-  # )
-  # Header ----------------------------------------------------------------------------------------------------------
+  shinyjs::useShinyjs()
+  # Header ####
   header <- shinydashboard::dashboardHeader(
     title = span(tagList(icon("flask"),
                          span("ShinyLipids"))),
-    shinydashboard::dropdownMenu(type       = "notification", badgeStatus = NULL,
-                                 icon       = icon("question-circle"),
-                                 headerText = "Need Help?",
-                                 shinydashboard::notificationItem(text   = "Documentation",
-                                                                  href   = "https://jmbuhr.de/project/shinylipids/",
-                                                                  icon   = icon("book"),
-                                                                  status = "success"
-                                 ),
-                                 shinydashboard::notificationItem(text   = "Contact author",
-                                                                  href   = "https://jmbuhr.de/#contact",
-                                                                  status = "success",
-                                                                  icon   = icon("envelope")
-                                 ),
-                                 tags$li(
-                                   a(
-                                     p("Rewritten by", strong("Jannik Buhr")),
-                                     p("Based on the original Shiny Lipids by:"),
-                                     strong("Mathias Gerl"),
-                                     br(),
-                                     strong("Manuel Hau\u00dfmann"),
-                                     br(),
-                                     strong("Sebastian Bender")
-                                   ))
+    shinydashboard::dropdownMenu(
+      type       = "notification",
+      badgeStatus = NULL,
+      icon       = icon("question-circle"),
+      headerText = "Need Help?",
+      shinydashboard::notificationItem(text   = "Documentation",
+                                       href   = "https://jmbuhr.de/project/shinylipids/",
+                                       icon   = icon("book"),
+                                       status = "success"),
+      shinydashboard::notificationItem(text   = "Contact author",
+                                       href   = "https://jmbuhr.de/#contact",
+                                       status = "success",
+                                       icon   = icon("envelope")),
+      tags$li(
+        a(
+          p("Rewritten by", strong("Jannik Buhr")),
+          p("Based on the original Shiny Lipids by:"),
+          strong("Mathias Gerl"),
+          br(),
+          strong("Manuel Hau\u00dfmann"),
+          br(),
+          strong("Sebastian Bender")
+          )
+        )
     )
   )
   
-  # Sidebar ---------------------------------------------------------------------------------------------------------
+  # Sidebar ####
   sidebar <- shinydashboard::dashboardSidebar(
-    
-    # * Visual fixes ------------------------------------------------------------------------------------------------
+    # * Visual fixes ####
     tags$head(
-      # As well as moving labels closer to their fields
+      # Move labels closer to their fields
       tags$style(HTML("label { margin-bottom: 3px; }")),
       tags$style(HTML(".form-group, .selectize-control {margin-bottom: 0px;}"))
     ),
-    # This part fixes the issue of having 2 scroll bars on one side :)
+    # Fix issue of having 2 scroll bars on one side :)
     tags$head(tags$style(".wrapper {overflow: visible !important;}")),
-    shinyjs::useShinyjs(),
     shinydashboard::sidebarMenu(
       id = "tab",
-      selectInput(
-        "ID",
-        label   = "Select dataset by clicking on the table or use this dropdown list",
-        choices = ""),
+      selectInput("ID",
+                  label   = "Select dataset by clicking on the table or use this dropdown list",
+                  choices = ""),
       shinydashboard::menuItem(
         "Database info",
         tabName       = "metadata",
@@ -61,7 +54,7 @@ app_ui <- function() {
         startExpanded = TRUE
       ),
       
-      # * Visualization ----------------------------------------------------------------------------------------------
+      # * Visualization ####
       shinydashboard::menuItem(
         "Visualization",
         icon = icon("bar-chart"),
@@ -72,7 +65,7 @@ app_ui <- function() {
       )
     ),
     
-    # * Tables/Plot Options -------------------------------------------------------------------------------------------
+    # * Tables/Plot Options ####
     tabsetPanel(type = "pills", id = "tabs",
                 tabPanel(title = "Quickoptions",
                          actionButton(
@@ -132,7 +125,7 @@ app_ui <- function() {
                            label    = "Standardize to 100% within:",
                            multiple = TRUE,
                            choices  = features[!features %in% c("value", "sample_replicate_technical")],
-                           selected = ""
+                           selected = c("")
                          ),
                          selectizeInput(
                            "baselineSample",
@@ -179,7 +172,8 @@ app_ui <- function() {
                          ),
                          checkboxInput(
                            "summariseTechnicalReplicates",
-                           label    = "average over technical replicates", value = TRUE
+                           label    = "average over technical replicates",
+                           value = TRUE
                          ),
                          checkboxInput(
                            "standardizeWithinTechnicalReplicate",
@@ -188,11 +182,6 @@ app_ui <- function() {
                          )
                 ),
                 tabPanel(title = "Filters",
-                         # actionButton(
-                         #     'filter_apply',
-                         #     label    = "Apply filter",
-                         #     icon     = icon("rocket")
-                         # ),
                          selectizeInput(
                            'lipidClassToSelect',
                            label    = "Select classes",
@@ -238,11 +227,9 @@ app_ui <- function() {
     )
   )
   
-  
-  # Body ------------------------------------------------------------------------------------------------------------
+  # Body ####
   body <- shinydashboard::dashboardBody(
-    shinyjs::useShinyjs(),
-    # ** Database Info / Meta ------------------------------------------------------------------------
+    # ** Database Info / Meta ####
     shinydashboard::tabItems(
       shinydashboard::tabItem(
         "metadata",
@@ -259,7 +246,7 @@ app_ui <- function() {
           )
         ),
         
-        # *** Dataset Table ----------------------------------------------------------------------
+        # *** Dataset Table ####
         fluidRow(
           shinydashboard::box(
             title = "Selected Dataset",
@@ -270,7 +257,7 @@ app_ui <- function() {
         )
       ),
       
-      # ** Main plot -------------------------------------------------------------------------------
+      # ** Main plot ####
       shinydashboard::tabItem(tabName = "main",
                               fluidRow(
                                 shinydashboard::box(
@@ -337,7 +324,7 @@ app_ui <- function() {
                               )
       ),
       
-      # ** PCA -------------------------------------------------------------------------------------
+      # ** PCA ####
       shinydashboard::tabItem(
         tabName = "PCA",
         fluidRow(
@@ -414,7 +401,7 @@ app_ui <- function() {
         )
       ),
       
-      # ** heatmap ---------------------------------------------------------------------------------
+      # ** heatmap ####
       shinydashboard::tabItem(tabName = "heatmap",
                               fluidRow(
                                 shinydashboard::box(
@@ -454,7 +441,7 @@ app_ui <- function() {
     )
   )
   
-  # Initiate Dashboard page ----------------------------------------------------------------------------------------------
+  # Initiate Dashboard page ####
   shinydashboard::dashboardPage(
     skin    = "purple",
     title   = "ShinyLipids",

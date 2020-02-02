@@ -1,16 +1,19 @@
+# File to launch the ShinyApp (Do not remove this comment)
+# Setup ####
 pkgload::load_all()
 options( "golem.app.prod" = TRUE)
 
-# Launch the ShinyApp (Do not remove this comment)
+# Deployment ####
 # To deploy, run: rsconnect::deployApp()
-# Or use the blue button on top of this file
+# Or use the blue button in the top right corner
+# of this file in RStudio
 
+# You might need this additional package for deployment
 # # install.packages("BiocManager")
 # options(repos = c(BiocManager::repositories()))
 
-## uncomment this to read from a serverside database (and fill in credentials as necessary)
-# From bash: ssh -L 8080:localhost:5432 -N -T mathias@pc195.bzh.uni-heidelberg.de -p 49200
-# Have your password ready
+# Database connections ####
+## uncomment this to read from a serverside database
 # databaseConnection <- DBI::dbConnect(RPostgres::Postgres(),
 #                          dbname = "ldb",
 #                          host = "localhost",
@@ -24,7 +27,10 @@ options( "golem.app.prod" = TRUE)
 #                          port = 5432,
 #                          user= "mathias")
 
-## Local Databse Dump
-databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./inst/extdata/exampleDatabase.db")
+## Local database file
+path <- "./inst/extdata/exampleDatabase.db"
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
+# Run App ####
 ShinyLipids::run_app(db = databaseConnection)
+
