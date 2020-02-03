@@ -213,7 +213,7 @@ stat_chull <- function(mapping     = NULL,
     "StatChull",
     Stat,
     compute_group = function(data, scales) {
-      data[chull(data$x, data$y),, drop = FALSE]
+      data[chull(data$x, data$y), , drop = FALSE]
     },
     required_aes = c("x", "y")
   )
@@ -228,5 +228,3 @@ stat_chull <- function(mapping     = NULL,
     params      = list(na.rm = na.rm, ...)
   )
 }
-
-

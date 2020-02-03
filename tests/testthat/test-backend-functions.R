@@ -8,8 +8,7 @@ lipidClassOrder <- collectLipidClassOrder(databaseConnection)
 
 
 test_that(
-  "Default data processing steps run until visualisation",
-  {
+  "Default data processing steps run until visualisation", {
     metaData <- collectMetaData(databaseConnection)
     query <- createQueryForID(metaData$id[[1]])
     rawData <- collectRawData(con             = databaseConnection,
@@ -31,8 +30,3 @@ test_that(
     expect_is(plt, "ggplot")
   }
 )
-
-
-
-
-

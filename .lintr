@@ -1,0 +1,27 @@
+linters: with_defaults(
+    object_name_linter = NULL,
+    trailing_whitespace_linter = NULL,
+    line_length_linter = NULL,
+    object_length_linter = NULL,
+    dummy_linter = NULL
+  )
+exclusions: list(
+    "man/collectLipidClassOrder.Rd",
+    "man/collectMetaData.Rd",
+    "man/collectRawData.Rd",
+    "man/createDatabase.Rd",
+    "man/createHeatmap.Rd",
+    "man/createMainPlot.Rd",
+    "man/createPlotData.Rd",
+    "man/createQueryForID.Rd",
+    "man/doAllPairwiseComparisons.Rd",
+    "man/filterRawDataFor.Rd",
+    "man/mainScale.Rd",
+    "man/parseDate.Rd",
+    "man/pipe.Rd",
+    "man/run_app.Rd",
+    "man/standardizeRawDataWithin.Rd",
+    "man/stat_chull.Rd",
+    "man/summarisePlotData.Rd",
+    "man/testPairwise.Rd"
+  )

@@ -1,4 +1,5 @@
 # TODO preserve width of single bars while not shifting points to others bars
+# TODO reduce cyclomatic complexity of createMainPlot
 
 #' Title
 #'
@@ -199,7 +200,7 @@ createMainPlot <- function(plotData,
   
   # Log scale, name of y-axis and percent format for standardized data
   if ("log" %in% mainPlotAdditionalOptions) {
-    if ( !is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
+    if (!is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
       yAxisName   <- "amount [ Mol % ], log1p scale"
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "log1p"
@@ -209,7 +210,7 @@ createMainPlot <- function(plotData,
       yAxisTransformation  <- "log1p"
     }
   } else {
-    if ( !is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
+    if (!is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
       yAxisName   <- "amount [ Mol % ]"
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "identity"

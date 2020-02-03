@@ -21,7 +21,7 @@ app_server <- function(input, output, session) {
   # * filteredData ####
   filteredData <- reactive({
     rawData() %>%
-      standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>% 
+      standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>%
       filterRawDataFor(categoryToSelect            = input$categoryToSelect,
                        lipidClassToSelect          = input$lipidClassToSelect,
                        functionalCategoryToSelect  = input$functionalCategoryToSelect,
@@ -39,7 +39,7 @@ app_server <- function(input, output, session) {
   mainData <- reactive({
     validate(need(nrow(filteredData()) > 0,
                   "The data was filtered such that there is no data left."))
-    filteredData() %>% 
+    filteredData() %>%
       standardizeRawDataWithin(baselineSample          = input$baselineSample,
                                standardizationFeatures = input$standardizationFeatures)
   })
@@ -188,7 +188,7 @@ app_server <- function(input, output, session) {
     if (input$showFullMeta == TRUE) {
       metaData()
     } else {
-      metaData()[c( "id", "title", "date_upload", "status", "sample_from")]
+      metaData()[c("id", "title", "date_upload", "status", "sample_from")]
     }
   },
   server = FALSE, selection = list(mode = "single", selected = 1),
@@ -456,5 +456,7 @@ app_server <- function(input, output, session) {
   
   # End ####
   # End session when window is closed
-  session$onSessionEnded(function() {DBI::dbDisconnect(databaseConnection); stopApp()})
+  session$onSessionEnded(function() {
+    DBI::dbDisconnect(databaseConnection); stopApp()
+    })
 }

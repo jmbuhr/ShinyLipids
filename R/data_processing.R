@@ -4,7 +4,6 @@
 #' Create one yourself with e.g.
 #' \code{DBI::dbConnect(RPostgres::Postgres(), ...)} or
 #' \code{DBI::dbConnect(RSQLite::SQLite(), "<data/exampleDatabase.db>")}
-#' 
 #' @return a tibble with the meta data
 #' @export
 collectMetaData <- function(con) {
@@ -162,7 +161,7 @@ standardizeRawDataWithin <- function(data,
   # Standardization
   if (!is.null(standardizationFeatures)) {
     data <- data %>%
-      group_by(id, !!!syms(standardizationFeatures)  ) %>%
+      group_by(id, !!!syms(standardizationFeatures)) %>%
       mutate(value = value / sum(value) * 100) %>%
       ungroup()
   }
@@ -281,4 +280,3 @@ doAllPairwiseComparisons <- function(data, aesX) {
     mutate(p.value = p.adjust(p.value, "BH")) %>%
     select(-data)
 }
-

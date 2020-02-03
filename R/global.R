@@ -34,6 +34,3 @@ mainTheme <- list(
     strip.text       = element_text(color = "black")
   )
 )
-
-
-

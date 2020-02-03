@@ -136,35 +136,35 @@ app_ui <- function() {
                 ),
                 tabPanel(title = "Samples",
                          selectizeInput(
-                           'samplesToSelect',
-                           label    = 'Select samples',
+                           "samplesToSelect",
+                           label    = "Select samples",
                            options  = list(placeholder = "Explicitly demand sample"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'samplesToRemove',
-                           label    = 'Remove samples',
+                           "samplesToRemove",
+                           label    = "Remove samples",
                            options  = list(placeholder = "Explicitly remove sample"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'replicatesToSelect',
+                           "replicatesToSelect",
                            label    = "Select replicates",
                            options  = list(placeholder = "Explicitly demand replicate"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'replicatesToRemove',
+                           "replicatesToRemove",
                            label    = "Remove replicates",
                            options  = list(placeholder = "Explicitly remove replicate"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'technicalReplicatesToRemove',
+                           "technicalReplicatesToRemove",
                            label    = "Remove technical replicates",
                            options  = list(placeholder = "Explicitly remove tec. replicate"),
                            choices  = NULL,
@@ -183,45 +183,45 @@ app_ui <- function() {
                 ),
                 tabPanel(title = "Filters",
                          selectizeInput(
-                           'lipidClassToSelect',
+                           "lipidClassToSelect",
                            label    = "Select classes",
                            options  = list(placeholder = "empty field means no filtering based on this feature"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'categoryToSelect',
+                           "categoryToSelect",
                            label    = "Select categories",
                            options  = list(placeholder = "empty field means no filtering based on this feature"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          selectizeInput(
-                           'functionalCategoryToSelect',
+                           "functionalCategoryToSelect",
                            label    = "Select functional categories",
                            options  = list(placeholder = "empty field means no filtering based on this feature"),
                            choices  = NULL,
                            multiple = TRUE
                          ),
                          sliderInput(
-                           'filterLengthRange',
+                           "filterLengthRange",
                            label    = "Filter length",
                            min      = 1, max = 100,
-                           value    = c(1,100)
+                           value    = c(1, 100)
                          ),
                          sliderInput(
-                           'filterDoubleBondsRange',
+                           "filterDoubleBondsRange",
                            label    = "Filter double bonds",
                            min      = 0,
                            max = 10,
-                           value    = c(0,10)
+                           value    = c(0, 10)
                          ),
                          sliderInput(
-                           'filterOhRange',
+                           "filterOhRange",
                            label    = "Filter hydroxylation",
                            min      = 0,
                            max = 10,
-                           value    = c(0,10)
+                           value    = c(0, 10)
                          )
                 )
     )
@@ -373,7 +373,7 @@ app_ui <- function() {
                                 selectInput(
                                   "pcaMethod",
                                   "Method",
-                                  pcaMethods::listPcaMethods()[1:7],# The last three don't work for now
+                                  pcaMethods::listPcaMethods()[1:7], # The last three don't work for now
                                   selected = "svd"),
                                 selectInput("pcaCrossValidationMethod",
                                             "Cross validation method",
@@ -450,4 +450,3 @@ app_ui <- function() {
     body    = body
   )
 }
-
