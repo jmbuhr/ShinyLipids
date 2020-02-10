@@ -179,6 +179,11 @@ app_ui <- function() {
                            "standardizeWithinTechnicalReplicate",
                            label = "Standardize within technical replicates",
                            value = TRUE
+                         ),
+                         checkboxInput(
+                           "imputeMissingAs0",
+                           label = "Impute missing values as 0",
+                           value = TRUE
                          )
                 ),
                 tabPanel(title = "Filters",

@@ -15,6 +15,7 @@ app_server <- function(input, output, session) {
   rawData <- reactive({
     validate(need(input$ID, "Please select a dataset first."))
     collectRawData(id = input$ID, con = databaseConnection) %>% 
+      imputeMissingIf(input$imputeMissingAs0) %>% 
       addLipidProperties(lipidClassOrder = collectLipidClassOrder(databaseConnection))
   })
   

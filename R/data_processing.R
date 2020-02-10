@@ -90,28 +90,15 @@ addLipidProperties <- function(data,
                                  "Desm", "Erg", "CE", "EE", "DAG", "TAG", "PIP",
                                  "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi",
                                  "PGP", "WE", "FA")) {
-  # legacy version that relies on columns in the data
-  # data %>% 
-  #   mutate(
-  #     sample_identifier          = factor(sample_identifier),
-  #     lipid                      = factor(lipid),
-  #     func_cat                   = factor(func_cat),
-  #     class                      = quiet_fct_relevel(class, lipidClassOrder)$result,
-  #     category                   = factor(category),
-  #     sample                     = factor(sample),
-  #     sample_replicate           = factor(sample_replicate),
-  #     sample_replicate_technical = factor(sample_replicate_technical),
-  #     oh                         = as.integer(oh),
-  #     oh                         = if_else(is.na(oh), 0L, oh)
-  #   )
   data %>% 
     separate(col = lipid,
              into = c("class", "chains"),
              sep = " ",
              fill = "right",
              remove = FALSE
-    ) %>% 
+    ) %>%
     mutate(
+      class = str_trim(paste0(class, " ", str_replace_na(str_extract(chains, ".-"), ""))),
       class = quiet_fct_relevel(class, lipidClassOrder)$result,
       chains           = replace_na(chains, "0:0"),
       individualChains = str_split(chains, "/"),
@@ -131,6 +118,24 @@ addLipidProperties <- function(data,
     select(-individualChains)
 }
 
+#' Impute implicit missing values as 0
+#'
+#' @param data tibble. rawData
+#' @param doIt 
+#'
+#' @return tibble. imputed data
+#' @export
+imputeMissingIf <- function(data, doIt = TRUE) {
+  if (doIt) {
+    data %>% 
+      complete(id,
+               nesting(lipid, category, func_cat),
+               nesting(sample, sample_replicate, sample_replicate_technical, sample_identifier),
+               fill = list(value = 0))
+  } else {
+    data
+  }
+}
 
 #' Standardize data within technical replicates
 #' 
