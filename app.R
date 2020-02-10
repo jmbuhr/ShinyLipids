@@ -33,3 +33,4 @@ databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
 # Run App ####
 ShinyLipids::run_app(db = databaseConnection)
+  

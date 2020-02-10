@@ -49,26 +49,46 @@ collectLipidClassOrder <- function(con) {
 #'
 #' @param datasetID numeric
 #'
-#' @return
-#' SQL Query as a string
+#' @return string, SQL Query
 #' @export
 createQueryForID <- function(datasetID) {
-  query <- paste("SELECT * FROM data2", "WHERE id =", datasetID)
-  return(query)
+  paste("SELECT * FROM data2", "WHERE id =", datasetID)
 }
 
 #' Collect raw data from database
 #'
 #' @param con A database connection
-#' @param query The sql query to get the dataset.
+#' @param query string, the sql query to get the dataset.
 #' Create it yourself with \code{\link{createQueryForID}}.
 #' @param lipidClassOrder The order for the lipid classes
 #'
-#' @return Raw data as a tibble
+#' @return tibble, Raw data
 #' @export
-collectRawData <- function(con, query, lipidClassOrder) {
-  collect(tbl(con, sql(query))) %>%
-    filter(!is.na(value)) %>%
+collectRawData <- function(id = 1, con) {
+  collect(tbl(con, sql(createQueryForID(id)))) %>%
+    filter(!is.na(value))
+}
+
+#' Add Lipid properties
+#' 
+#' Based on lipid column
+#'
+#' @param data tibble, rawData
+#' @param lipidClassOrder character vector, order of lipid classes
+#'
+#' @return tibble, enhanced data
+#' @export
+addLipidProperties <- function(data,
+                               lipidClassOrder = c(
+                                 "PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE",
+                                 "PS", "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG",
+                                 "PA", "PA O-", "LPA", "CL", "MLCL", "Cer", "SM",
+                                 "HexCer", "SGalCer", "GM3", "Sulf", "diHexCer",
+                                 "Hex2Cer", "For", "IPC", "MIPC", "M(IP)2C", "Chol",
+                                 "Desm", "Erg", "CE", "EE", "DAG", "TAG", "PIP",
+                                 "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi",
+                                 "PGP", "WE", "FA")) {
+  data %>% 
     mutate(
       sample_identifier          = factor(sample_identifier),
       lipid                      = factor(lipid),
@@ -84,6 +104,17 @@ collectRawData <- function(con, query, lipidClassOrder) {
     select(id, sample_identifier, lipid, value, everything())
 }
 
+
+#' Standardize data within technical replicates
+#' 
+#' 
+#'
+#' @param data tibble, data
+#' @param doIt boolean, if TRUE runs standardization,
+#' else returns the data unchanged
+#'
+#' @return tibble, standardized data
+#' @export
 standardizeWithinTechnicalReplicatesIf <- function(data, doIt) {
   if (doIt) {
     group_by(data, id, sample_replicate_technical) %>%
@@ -94,20 +125,42 @@ standardizeWithinTechnicalReplicatesIf <- function(data, doIt) {
   }
 }
 
-filterIfNotNull <- function(data, var, expression) {
+#' Filter if not null
+#' 
+#' Filter data based on condition
+#' only if an input var is not NULL
+#'
+#' @param data tibble, data
+#' @param var character vector | NULL
+#' @param condition an expression to evaluate in
+#' the context of the data
+#'
+#' @return tibble, filtered data
+#' @export
+filterIfNotNull <- function(data, var, condition) {
   if (!is.null(var)) {
-    filter(data, {{ expression }})
+    filter(data, {{condition}})
   } else {
     data
   }
 }
 
-
 #' Filter raw data
 #'
-#' @param rawData Data as a tibble 
+#' @param rawData tibble, rawData
+#' @param categoryToSelect string | NULL
+#' @param lipidClassToSelect string | NULL
+#' @param functionalCategoryToSelect string | NULL
+#' @param filterLengthRange string | NULL
+#' @param filterDoubleBondsRange string | NULL
+#' @param filterOhRange string | NULL
+#' @param samplesToSelect string | NULL
+#' @param samplesToRemove string | NULL
+#' @param replicatesToSelect string | NULL
+#' @param replicatesToRemove string | NULL
+#' @param technicalReplicatesToRemove string | NULL
 #'
-#' @return Lovely filtered data
+#' @return tibble, Lovely filtered data
 #' @export
 filterRawDataFor <- function(rawData,
                              categoryToSelect            = NULL,
@@ -122,38 +175,27 @@ filterRawDataFor <- function(rawData,
                              replicatesToRemove          = NULL,
                              technicalReplicatesToRemove = NULL) {
   rawData %>% 
-    filterIfNotNull(categoryToSelect,
-                    category %in% categoryToSelect) %>% 
-    filterIfNotNull(lipidClassToSelect,
-                    class %in% lipidClassToSelect) %>% 
-    filterIfNotNull(functionalCategoryToSelect,
-                    func_cat %in% functionalCategoryToSelect) %>% 
-    filterIfNotNull(filterLengthRange,
-                    between(length, filterLengthRange[1], filterLengthRange[2])) %>% 
-    filterIfNotNull(filterDoubleBondsRange,
-                    between(db, filterDoubleBondsRange[1], filterDoubleBondsRange[2])) %>% 
-    filterIfNotNull(filterOhRange,
-                    between(oh, filterOhRange[1], filterOhRange[2])) %>% 
-    filterIfNotNull(samplesToSelect,
-                    sample %in% samplesToSelect) %>% 
-    filterIfNotNull(samplesToRemove,
-                    !(sample %in% samplesToRemove)) %>% 
-    filterIfNotNull(replicatesToSelect,
-                    sample_replicate %in% replicatesToSelect) %>% 
-    filterIfNotNull(replicatesToRemove,
-                    !(sample_replicate %in% replicatesToRemove)) %>% 
-    filterIfNotNull(technicalReplicatesToRemove,
-                    !(sample_replicate_technical %in% technicalReplicatesToRemove))
+    filterIfNotNull(categoryToSelect, category %in% categoryToSelect) %>% 
+    filterIfNotNull(lipidClassToSelect, class %in% lipidClassToSelect) %>% 
+    filterIfNotNull(functionalCategoryToSelect, func_cat %in% functionalCategoryToSelect) %>% 
+    filterIfNotNull(filterLengthRange, between(length, filterLengthRange[1], filterLengthRange[2])) %>% 
+    filterIfNotNull(filterDoubleBondsRange, between(db, filterDoubleBondsRange[1], filterDoubleBondsRange[2])) %>% 
+    filterIfNotNull(filterOhRange, between(oh, filterOhRange[1], filterOhRange[2])) %>% 
+    filterIfNotNull(samplesToSelect, sample %in% samplesToSelect) %>% 
+    filterIfNotNull(samplesToRemove, !(sample %in% samplesToRemove)) %>% 
+    filterIfNotNull(replicatesToSelect, sample_replicate %in% replicatesToSelect) %>% 
+    filterIfNotNull(replicatesToRemove, !(sample_replicate %in% replicatesToRemove)) %>% 
+    filterIfNotNull(technicalReplicatesToRemove, !(sample_replicate_technical %in% technicalReplicatesToRemove))
 }
 
 
 #' Standardize raw data
 #'
-#' @param data Raw data as a tibble
-#' @param baselineSample Sample to use as a baseline
-#' @param standardizationFeatures Features to standardize on
+#' @param data tibble, Raw data
+#' @param baselineSample string | "", Sample to use as a baseline
+#' @param standardizationFeatures character vector, Features to standardize on
 #'
-#' @return Standardized data as a tibble
+#' @return tibble, Standardized data
 #' @export
 standardizeRawDataWithin <- function(data,
                                      baselineSample          = "",
@@ -186,8 +228,13 @@ standardizeRawDataWithin <- function(data,
 #' Based on the aesthetic mappings.
 #'
 #' @param data Input tibble
+#' @param summariseTechnicalReplicates boolean
+#' @param aesX string
+#' @param aesColor string
+#' @param aesFacetCol string | NULL
+#' @param aesFacetRow string | NULL
 #' 
-#' @return neat data
+#' @return tibble, neat data
 #' @export
 createPlotData <- function(data,
                            summariseTechnicalReplicates = TRUE,
@@ -209,24 +256,32 @@ createPlotData <- function(data,
                     "sample_replicate", "sample_replicate_technical"))
   cols <- cols[cols != ""]
   
-  # This will remove only the last layer of grouping
-  # (sample_replicate or sample_replicate_technical)
-  # and keep the other groups, in either case, aseX will still be a group
-  # this group will then be summarized as meanPlotData in summarisePlotData
   data %>% 
     filter_at(cols, negate(is.na)) %>% 
     group_by(!!!syms(cols[cols != "value"])) %>% 
-    summarise(value = sum(value, na.rm = TRUE))
+    summarise(value = sum(value, na.rm = TRUE)) %>% 
+    ungroup()
 }
 
 #' Summarise the plot data
 #' 
-#' @param data input tibble
+#' @param data tibble, plotData
+#' @param aesX string
+#' @param aesColor string
+#' @param aesFacetCol string | NULL
+#' @param aesFacetRow string | NULL
 #'
-#' @return data ready for summmary plots like barplots
+#' @return tibble, data ready for summmary plots like barplots
 #' @export
-summarisePlotData <- function(data) {
+summarisePlotData <- function(data,
+                              aesX = "class",
+                              aesColor = "sample",
+                              aesFacetCol = NULL,
+                              aesFacetRow = NULL) {
+  cols <- c(aesX, aesColor, aesFacetCol, aesFacetRow)
+  cols <- cols[cols != ""]
   data %>%
+    group_by(!!!syms(cols)) %>% 
     summarise(
       SD       = sd(value, na.rm = TRUE),
       SEM      = sd(value, na.rm = TRUE) / n(),

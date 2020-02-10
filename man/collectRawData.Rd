@@ -4,7 +4,7 @@
 \alias{collectRawData}
 \title{Collect raw data from database}
 \usage{
-collectRawData(con, query, lipidClassOrder)
+collectRawData(id = 1, con)
 }
 \arguments{
 \item{con}{A database connection}

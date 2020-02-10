@@ -1,3 +1,13 @@
+
+#' Custom update selectize input
+#'
+#' @param inputName string, input to update
+#' @param choiceColumn string, column in the data to get choices from
+#' @param selectedChoice NULL or "" 
+#' @param data rawData
+#' @param session session
+#'
+#' @return IO ()
 updateAllSelectizeInputs <- function(inputName, choiceColumn, selectedChoice,
                                      data, session) {
   updateSelectizeInput(session,
@@ -7,6 +17,14 @@ updateAllSelectizeInputs <- function(inputName, choiceColumn, selectedChoice,
   )
 }
 
+#' Custom update range input
+#'
+#' @param inputName string, input to update
+#' @param choiceColumn string, column in the data to get choices from
+#' @param data rawData
+#' @param session session
+#' 
+#' @return IO ()
 updateAllRangeInputs <- function(inputName, choiceColumn,
                                  data, session) {
   l <- range(data[[choiceColumn]], na.rm = TRUE)
@@ -18,6 +36,12 @@ updateAllRangeInputs <- function(inputName, choiceColumn,
   )
 }
 
+#' Update inputs for species profile
+#' 
+#' @param session session
+#' @param quickSpeciesProfileClass string, lipid class to display as profile
+#' 
+#' @return IO ()
 updateInputsForSpeciesProfile <- function(session, quickSpeciesProfileClass) {
   updateSelectInput(session, "aesFacetCol", selected = "")
   updateSelectInput(session, "aesFacetRow", selected = "")

@@ -21,10 +21,25 @@
 #' NULL
 #' @export
 createDatabase <- function(path = "databaseDump.db",
-                           meta_info, dataset,
+                           meta_info,
+                           dataset,
                            overwrite = FALSE) {
   con <- DBI::dbConnect(RSQLite::SQLite(), path)
   DBI::dbWriteTable(con, "id_info", meta_info, overwrite = overwrite)
   DBI::dbWriteTable(con, "data2", dataset, overwrite = overwrite)
   DBI::dbDisconnect(con)
 }
+
+
+# TODO: explain what the data needs to look like
+# NAs?, 0?s etc.
+
+# µ molar for the value column as info
+
+# NA columns, like func_cat allowed
+
+# lipid as LipidMaps ID
+
+# Reduce dataset2 to lipidomics standard initiative nomenclature
+# and maybe lipid maps
+

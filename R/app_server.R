@@ -12,10 +12,8 @@ app_server <- function(input, output, session) {
   # * rawData ####
   rawData <- reactive({
     validate(need(input$ID, "Please select a dataset first."))
-    query <- createQueryForID(input$ID)
-    collectRawData(con             = databaseConnection,
-                   query           = query,
-                   lipidClassOrder = collectLipidClassOrder(databaseConnection))
+    collectRawData(id = input$ID, con = databaseConnection) %>% 
+      addLipidProperties(lipidClassOrder = collectLipidClassOrder(databaseConnection))
   })
   
   # * filteredData ####
@@ -80,7 +78,10 @@ app_server <- function(input, output, session) {
   meanPlotData <- reactive({
     req(plotData())
     plotData() %>%
-      summarisePlotData()
+      summarisePlotData(aesX        = input$aesX,
+                        aesColor    = input$aesColor,
+                        aesFacetCol = input$aesFacetCol,
+                        aesFacetRow = input$aesFacetRow)
   })
   
   # * PairwiseComparisons ####
@@ -126,28 +127,26 @@ app_server <- function(input, output, session) {
   
   # * Updating filtering options by dataset ####
   observe({
-    tribble(
-      ~ inputName,                    ~ choiceColumn,               ~ selectedChoice,
-      "samplesToSelect",              "sample",                     NULL,
-      "baselineSample",               "sample",                     "",
-      "samplesToRemove",              "sample",                     NULL,
-      "replicatesToSelect",           "sample_replicate",           NULL,
-      "replicatesToRemove",           "sample_replicate",           NULL,
-      "technicalReplicatesToRemove",  "sample_replicate_technical", NULL,
-      "categoryToSelect",             "category",                   NULL,
-      "functionalCategoryToSelect",   "func_cat",                   NULL,
-      "lipidClassToSelect",           "class",                      NULL,
-      "quickSpeciesProfileClass",         "class",                      ""
-    ) %>% 
-      pwalk(updateAllSelectizeInputs, data = rawData(), session = session)
-  
-    tribble(
-      ~ inputName,     ~ choiceColumn, 
-      "filterLengthRange", "length",
-      "filterDoubleBondsRange",     "db",
-      "filterOhRange",     "oh"
-    ) %>% 
-      pwalk(updateAllRangeInputs, data = rawData(), session = session)
+    updateAllSelectizeInputs <- partial(updateAllSelectizeInputs,
+                                        data = rawData(),
+                                        session = session)
+    updateAllSelectizeInputs("samplesToSelect", "sample", NULL)
+    updateAllSelectizeInputs("baselineSample", "sample", "")
+    updateAllSelectizeInputs("samplesToRemove", "sample", NULL)
+    updateAllSelectizeInputs("replicatesToSelect", "sample_replicate", NULL)
+    updateAllSelectizeInputs("replicatesToRemove", "sample_replicate", NULL)
+    updateAllSelectizeInputs("technicalReplicatesToRemove", "sample_replicate_technical", NULL)
+    updateAllSelectizeInputs("categoryToSelect", "category", NULL)
+    updateAllSelectizeInputs("functionalCategoryToSelect", "func_cat", NULL)
+    updateAllSelectizeInputs("lipidClassToSelect", "class", NULL)
+    updateAllSelectizeInputs("quickSpeciesProfileClass", "class", "")
+    
+    updateAllRangeInputs <- partial(updateAllRangeInputs,
+                                    data = rawData(),
+                                    session = session)
+    updateAllRangeInputs("filterLengthRange", "length")
+    updateAllRangeInputs("filterDoubleBondsRange", "db")
+    updateAllRangeInputs("filterOhRange", "oh")
   })
   
   observe({
@@ -225,9 +224,9 @@ app_server <- function(input, output, session) {
              !!sym(input$aesX),
              everything())
   },
-  filter = "none",
-  rownames = FALSE,
-  options = list(
+  filter           = "none",
+  rownames         = FALSE,
+  options          = list(
     orderClasses   = TRUE,
     pageLength     = 10,
     order          = list(0, "desc"),

@@ -3,6 +3,7 @@
 #' @import forcats
 #' @import ggplot2
 #' @import tidyr
+#' @import stringr
 #' @import purrr
 #' @import RSQLite
 #' @importFrom rlang .data
