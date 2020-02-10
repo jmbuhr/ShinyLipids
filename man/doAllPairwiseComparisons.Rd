@@ -7,11 +7,12 @@
 doAllPairwiseComparisons(data, aesX)
 }
 \arguments{
-\item{data}{the full dataset}
+\item{data}{tibble. The full dataset}
 
-\item{aesX}{the feature mapped to the x-axis}
+\item{aesX}{string. the feature mapped to the x-axis}
 }
 \value{
+tibble.
 A tidy representation of the significance
 tests build with \code{broom::tidy} combinde
 into one tibble.

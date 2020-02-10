@@ -4,7 +4,7 @@
 #' Create one yourself with e.g.
 #' \code{DBI::dbConnect(RPostgres::Postgres(), ...)} or
 #' \code{DBI::dbConnect(RSQLite::SQLite(), "<data/exampleDatabase.db>")}
-#' @return a tibble with the meta data
+#' @return tibble. Meta data
 #' @export
 collectMetaData <- function(con) {
   meta <- collect(tbl(con, sql("SELECT * FROM id_info"))) %>%
@@ -47,9 +47,9 @@ collectLipidClassOrder <- function(con) {
 
 #' Generate SQL Query for the selected dataset
 #'
-#' @param datasetID numeric
+#' @param datasetID numeric. ID of the dataset
 #'
-#' @return string, SQL Query
+#' @return string. SQL Query
 #' @export
 createQueryForID <- function(datasetID) {
   paste("SELECT * FROM data2", "WHERE id =", datasetID)
@@ -58,25 +58,27 @@ createQueryForID <- function(datasetID) {
 #' Collect raw data from database
 #'
 #' @param con A database connection
-#' @param query string, the sql query to get the dataset.
-#' Create it yourself with \code{\link{createQueryForID}}.
-#' @param lipidClassOrder The order for the lipid classes
+#' @param id numeric. ID of dataset to collect
 #'
-#' @return tibble, Raw data
+#' @return tibble. Raw data
 #' @export
 collectRawData <- function(id = 1, con) {
   collect(tbl(con, sql(createQueryForID(id)))) %>%
-    filter(!is.na(value))
+    filter(!is.na(value),
+           !is.na(lipid)) %>% 
+    mutate_at(vars(sample_identifier, sample_replicate, sample_replicate_technical,
+                   category, func_cat),
+              replace_na, "other")
 }
 
 #' Add Lipid properties
 #' 
 #' Based on lipid column
 #'
-#' @param data tibble, rawData
+#' @param data tibble. rawData
 #' @param lipidClassOrder character vector, order of lipid classes
 #'
-#' @return tibble, enhanced data
+#' @return tibble. enhanced data
 #' @export
 addLipidProperties <- function(data,
                                lipidClassOrder = c(
@@ -88,20 +90,45 @@ addLipidProperties <- function(data,
                                  "Desm", "Erg", "CE", "EE", "DAG", "TAG", "PIP",
                                  "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi",
                                  "PGP", "WE", "FA")) {
+  # legacy version that relies on columns in the data
+  # data %>% 
+  #   mutate(
+  #     sample_identifier          = factor(sample_identifier),
+  #     lipid                      = factor(lipid),
+  #     func_cat                   = factor(func_cat),
+  #     class                      = quiet_fct_relevel(class, lipidClassOrder)$result,
+  #     category                   = factor(category),
+  #     sample                     = factor(sample),
+  #     sample_replicate           = factor(sample_replicate),
+  #     sample_replicate_technical = factor(sample_replicate_technical),
+  #     oh                         = as.integer(oh),
+  #     oh                         = if_else(is.na(oh), 0L, oh)
+  #   )
   data %>% 
+    separate(col = lipid,
+             into = c("class", "chains"),
+             sep = " ",
+             fill = "right",
+             remove = FALSE
+    ) %>% 
     mutate(
-      sample_identifier          = factor(sample_identifier),
-      lipid                      = factor(lipid),
-      func_cat                   = factor(func_cat),
-      class                      = quiet_fct_relevel(class, lipidClassOrder)$result,
-      category                   = factor(category),
-      sample                     = factor(sample),
-      sample_replicate           = factor(sample_replicate),
-      sample_replicate_technical = factor(sample_replicate_technical),
-      oh                         = as.integer(oh),
-      oh                         = if_else(is.na(oh), 0L, oh)
-    ) %>%
-    select(id, sample_identifier, lipid, value, everything())
+      class = quiet_fct_relevel(class, lipidClassOrder)$result,
+      chains           = replace_na(chains, "0:0"),
+      individualChains = str_split(chains, "/"),
+      length           = str_extract_all(chains, "\\d+(?=:)") %>% 
+        map_int(~ sum(as.integer(.x))),
+      db               = str_extract_all(chains, "(?<=:)\\d+") %>% 
+        map_int(~ sum(as.integer(.x))),
+      oh               = str_extract_all(chains, "(?<=;)\\d+") %>% 
+        map_int(~ sum(as.integer(.x)))
+    ) %>% 
+    mutate(
+      chain_sums = paste0(length, ":", db,
+                          if_else(oh > 0, paste0(";", oh), ""))
+    ) %>% 
+    mutate_if(is.character, factor) %>% 
+    select(id, sample_identifier, lipid, value, everything()) %>% 
+    select(-individualChains)
 }
 
 
@@ -109,13 +136,13 @@ addLipidProperties <- function(data,
 #' 
 #' 
 #'
-#' @param data tibble, data
+#' @param data tibble. data
 #' @param doIt boolean, if TRUE runs standardization,
 #' else returns the data unchanged
 #'
-#' @return tibble, standardized data
+#' @return tibble. standardized data
 #' @export
-standardizeWithinTechnicalReplicatesIf <- function(data, doIt) {
+standardizeWithinTechnicalReplicatesIf <- function(data, doIt = TRUE) {
   if (doIt) {
     group_by(data, id, sample_replicate_technical) %>%
       mutate(value = value / sum(value) * 100) %>%
@@ -130,12 +157,12 @@ standardizeWithinTechnicalReplicatesIf <- function(data, doIt) {
 #' Filter data based on condition
 #' only if an input var is not NULL
 #'
-#' @param data tibble, data
+#' @param data tibble. data
 #' @param var character vector | NULL
 #' @param condition an expression to evaluate in
 #' the context of the data
 #'
-#' @return tibble, filtered data
+#' @return tibble. filtered data
 #' @export
 filterIfNotNull <- function(data, var, condition) {
   if (!is.null(var)) {
@@ -147,7 +174,7 @@ filterIfNotNull <- function(data, var, condition) {
 
 #' Filter raw data
 #'
-#' @param rawData tibble, rawData
+#' @param rawData tibble. rawData
 #' @param categoryToSelect string | NULL
 #' @param lipidClassToSelect string | NULL
 #' @param functionalCategoryToSelect string | NULL
@@ -160,7 +187,7 @@ filterIfNotNull <- function(data, var, condition) {
 #' @param replicatesToRemove string | NULL
 #' @param technicalReplicatesToRemove string | NULL
 #'
-#' @return tibble, Lovely filtered data
+#' @return tibble. Lovely filtered data
 #' @export
 filterRawDataFor <- function(rawData,
                              categoryToSelect            = NULL,
@@ -178,9 +205,9 @@ filterRawDataFor <- function(rawData,
     filterIfNotNull(categoryToSelect, category %in% categoryToSelect) %>% 
     filterIfNotNull(lipidClassToSelect, class %in% lipidClassToSelect) %>% 
     filterIfNotNull(functionalCategoryToSelect, func_cat %in% functionalCategoryToSelect) %>% 
-    filterIfNotNull(filterLengthRange, between(length, filterLengthRange[1], filterLengthRange[2])) %>% 
-    filterIfNotNull(filterDoubleBondsRange, between(db, filterDoubleBondsRange[1], filterDoubleBondsRange[2])) %>% 
-    filterIfNotNull(filterOhRange, between(oh, filterOhRange[1], filterOhRange[2])) %>% 
+    filterIfNotNull(filterLengthRange, between(length, filterLengthRange[1], filterLengthRange[2])) %>%
+    filterIfNotNull(filterDoubleBondsRange, between(db, filterDoubleBondsRange[1], filterDoubleBondsRange[2])) %>%
+    filterIfNotNull(filterOhRange, between(oh, filterOhRange[1], filterOhRange[2])) %>%
     filterIfNotNull(samplesToSelect, sample %in% samplesToSelect) %>% 
     filterIfNotNull(samplesToRemove, !(sample %in% samplesToRemove)) %>% 
     filterIfNotNull(replicatesToSelect, sample_replicate %in% replicatesToSelect) %>% 
@@ -191,11 +218,11 @@ filterRawDataFor <- function(rawData,
 
 #' Standardize raw data
 #'
-#' @param data tibble, Raw data
+#' @param data tibble. Raw data
 #' @param baselineSample string | "", Sample to use as a baseline
 #' @param standardizationFeatures character vector, Features to standardize on
 #'
-#' @return tibble, Standardized data
+#' @return tibble. Standardized data
 #' @export
 standardizeRawDataWithin <- function(data,
                                      baselineSample          = "",
@@ -231,17 +258,17 @@ standardizeRawDataWithin <- function(data,
 #' @param summariseTechnicalReplicates boolean
 #' @param aesX string
 #' @param aesColor string
-#' @param aesFacetCol string | NULL
-#' @param aesFacetRow string | NULL
+#' @param aesFacetCol string | ""
+#' @param aesFacetRow string | ""
 #' 
-#' @return tibble, neat data
+#' @return tibble. neat data
 #' @export
 createPlotData <- function(data,
                            summariseTechnicalReplicates = TRUE,
                            aesX = "class",
                            aesColor = "sample",
-                           aesFacetCol = NULL,
-                           aesFacetRow = NULL) {
+                           aesFacetCol = "",
+                           aesFacetRow = "") {
   # Averaging over the technical replicates
   if (summariseTechnicalReplicates) {
     data <- data %>%
@@ -257,7 +284,6 @@ createPlotData <- function(data,
   cols <- cols[cols != ""]
   
   data %>% 
-    filter_at(cols, negate(is.na)) %>% 
     group_by(!!!syms(cols[cols != "value"])) %>% 
     summarise(value = sum(value, na.rm = TRUE)) %>% 
     ungroup()
@@ -265,19 +291,19 @@ createPlotData <- function(data,
 
 #' Summarise the plot data
 #' 
-#' @param data tibble, plotData
+#' @param data tibble. plotData
 #' @param aesX string
 #' @param aesColor string
-#' @param aesFacetCol string | NULL
-#' @param aesFacetRow string | NULL
+#' @param aesFacetCol string | ""
+#' @param aesFacetRow string | ""
 #'
-#' @return tibble, data ready for summmary plots like barplots
+#' @return tibble. data ready for summmary plots like barplots
 #' @export
 summarisePlotData <- function(data,
                               aesX = "class",
                               aesColor = "sample",
-                              aesFacetCol = NULL,
-                              aesFacetRow = NULL) {
+                              aesFacetCol = "",
+                              aesFacetRow = "") {
   cols <- c(aesX, aesColor, aesFacetCol, aesFacetRow)
   cols <- cols[cols != ""]
   data %>%
@@ -300,7 +326,7 @@ summarisePlotData <- function(data,
 #' 
 #' Because people like p-values and little stars.
 #'
-#' @param data a subset of the data
+#' @param data tibble. a subset of the data
 #'
 #' @return
 #' A tidy representation of the significance
@@ -319,10 +345,10 @@ testPairwise <- function(data) {
 #' 
 #' Because people like p-values and little stars.
 #'
-#' @param data the full dataset
-#' @param aesX the feature mapped to the x-axis
+#' @param data tibble. The full dataset
+#' @param aesX string. the feature mapped to the x-axis
 #'
-#' @return
+#' @return tibble.
 #' A tidy representation of the significance
 #' tests build with \code{broom::tidy} combinde
 #' into one tibble.

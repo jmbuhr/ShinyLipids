@@ -3,6 +3,8 @@ app_server <- function(input, output, session) {
   # Setup ####
   databaseConnection <- golem::get_golem_options("db")
   
+  callModule(profvis_server, "profiler")
+  
   # Data ####
   # * Metadata / list of datasets ####
   metaData <- reactive({

@@ -7,7 +7,7 @@
 testPairwise(data)
 }
 \arguments{
-\item{data}{a subset of the data}
+\item{data}{tibble. a subset of the data}
 }
 \value{
 A tidy representation of the significance

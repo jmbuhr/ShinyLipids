@@ -22,18 +22,36 @@ createMainPlot(
 )
 }
 \arguments{
-\item{plotData}{data for the plot, pass it from reactive plotData()}
+\item{plotData}{tibble. Data for the plot, pass it from reactive plotData()}
 
-\item{meanPlotData}{data of means, pass from reactive meanPlotData()}
+\item{meanPlotData}{tibble. Data of means, pass from reactive meanPlotData()}
 
-\item{pairwiseComparisons}{a tibble of pairwise t-tests from pairwiseComparisons()}
+\item{pairwiseComparisons}{tibble. Pairwise t-tests from pairwiseComparisons()}
 
-\item{rangeX}{vector with min and max X}
+\item{rangeX}{numeric vector | NULL. vector with min and max X}
 
-\item{rangeY}{vector with min and max Y}
+\item{rangeY}{numeric vector | NULL.  vector with min and max Y}
+
+\item{aesX}{string.}
+
+\item{aesColor}{string.}
+
+\item{aesFacetCol}{string.}
+
+\item{aesFacetRow}{string.}
+
+\item{mainPlotAdditionalOptions}{character vector.}
+
+\item{errorbarType}{string. "None" | "SD" | "SEM" | "CI"}
+
+\item{summariseTechnicalReplicates}{boolean.}
+
+\item{standardizationFeatures}{character vector | NULL.}
+
+\item{standardizeWithinTechnicalReplicate}{boolean.}
 }
 \value{
-a ggplot object
+ggplot object
 }
 \description{
 Title

@@ -20,10 +20,32 @@ filterRawDataFor(
 )
 }
 \arguments{
-\item{rawData}{Data as a tibble}
+\item{rawData}{tibble. rawData}
+
+\item{categoryToSelect}{string | NULL}
+
+\item{lipidClassToSelect}{string | NULL}
+
+\item{functionalCategoryToSelect}{string | NULL}
+
+\item{filterLengthRange}{string | NULL}
+
+\item{filterDoubleBondsRange}{string | NULL}
+
+\item{filterOhRange}{string | NULL}
+
+\item{samplesToSelect}{string | NULL}
+
+\item{samplesToRemove}{string | NULL}
+
+\item{replicatesToSelect}{string | NULL}
+
+\item{replicatesToRemove}{string | NULL}
+
+\item{technicalReplicatesToRemove}{string | NULL}
 }
 \value{
-Lovely filtered data
+tibble. Lovely filtered data
 }
 \description{
 Filter raw data

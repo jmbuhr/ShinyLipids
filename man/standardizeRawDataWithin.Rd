@@ -11,14 +11,14 @@ standardizeRawDataWithin(
 )
 }
 \arguments{
-\item{data}{Raw data as a tibble}
+\item{data}{tibble. Raw data}
 
-\item{baselineSample}{Sample to use as a baseline}
+\item{baselineSample}{string | "", Sample to use as a baseline}
 
-\item{standardizationFeatures}{Features to standardize on}
+\item{standardizationFeatures}{character vector, Features to standardize on}
 }
 \value{
-Standardized data as a tibble
+tibble. Standardized data
 }
 \description{
 Standardize raw data

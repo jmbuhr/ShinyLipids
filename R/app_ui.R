@@ -20,7 +20,7 @@ app_ui <- function() {
                                        icon   = icon("envelope")),
       tags$li(
         a(
-          p("Rewritten by", strong("Jannik Buhr")),
+          p("Written by", strong("Jannik Buhr")),
           p("Based on the original Shiny Lipids by:"),
           strong("Mathias Gerl"),
           br(),
@@ -206,22 +206,23 @@ app_ui <- function() {
                          sliderInput(
                            "filterLengthRange",
                            label    = "Filter length",
-                           min      = 1, max = 100,
-                           value    = c(1, 100)
+                           min      = 0L, max = 1L,
+                           step     = 1L,
+                           value    = c(1L, 100L)
                          ),
                          sliderInput(
                            "filterDoubleBondsRange",
                            label    = "Filter double bonds",
-                           min      = 0,
-                           max = 10,
-                           value    = c(0, 10)
+                           min      = 0L, max = 1L,
+                           step     = 1L,
+                           value    = c(0L, 10L)
                          ),
                          sliderInput(
                            "filterOhRange",
                            label    = "Filter hydroxylation",
-                           min      = 0,
-                           max = 10,
-                           value    = c(0, 10)
+                           min      = 0L, max = 1L,
+                           step     = 1L,
+                           value    = c(0L, 10L)
                          )
                 )
     )
@@ -229,6 +230,7 @@ app_ui <- function() {
   
   # Body ####
   body <- shinydashboard::dashboardBody(
+    profvis_ui("profiler"),
     # ** Database Info / Meta ####
     shinydashboard::tabItems(
       shinydashboard::tabItem(

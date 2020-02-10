@@ -7,10 +7,10 @@
 createQueryForID(datasetID)
 }
 \arguments{
-\item{datasetID}{numeric}
+\item{datasetID}{numeric. ID of the dataset}
 }
 \value{
-SQL Query as a string
+string. SQL Query
 }
 \description{
 Generate SQL Query for the selected dataset

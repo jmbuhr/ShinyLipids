@@ -32,5 +32,5 @@ path <- "./inst/extdata/exampleDatabase.db"
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
 # Run App ####
+library(profvis)
 ShinyLipids::run_app(db = databaseConnection)
-  

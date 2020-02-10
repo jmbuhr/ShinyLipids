@@ -10,3 +10,4 @@ $run_dev.*
 ^app\.R$
 ^\.travis\.yml$
 ^\.lintr$
+^\.vscode

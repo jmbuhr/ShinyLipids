@@ -4,13 +4,27 @@
 \alias{summarisePlotData}
 \title{Summarise the plot data}
 \usage{
-summarisePlotData(data)
+summarisePlotData(
+  data,
+  aesX = "class",
+  aesColor = "sample",
+  aesFacetCol = "",
+  aesFacetRow = ""
+)
 }
 \arguments{
-\item{data}{input tibble}
+\item{data}{tibble. plotData}
+
+\item{aesX}{string}
+
+\item{aesColor}{string}
+
+\item{aesFacetCol}{string | ""}
+
+\item{aesFacetRow}{string | ""}
 }
 \value{
-data ready for summmary plots like barplots
+tibble. data ready for summmary plots like barplots
 }
 \description{
 Summarise the plot data

@@ -27,11 +27,12 @@ updateAllSelectizeInputs <- function(inputName, choiceColumn, selectedChoice,
 #' @return IO ()
 updateAllRangeInputs <- function(inputName, choiceColumn,
                                  data, session) {
-  l <- range(data[[choiceColumn]], na.rm = TRUE)
+  l <- range(data[[choiceColumn]], na.rm = TRUE) %>% as.integer()
   updateSliderInput(session,
                     inputName,
                     min  = l[1],
                     max  = l[2],
+                    step = 1L,
                     value = l
   )
 }

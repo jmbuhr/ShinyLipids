@@ -3,13 +3,24 @@
 
 #' Title
 #'
-#' @param plotData data for the plot, pass it from reactive plotData()
-#' @param meanPlotData data of means, pass from reactive meanPlotData()
-#' @param pairwiseComparisons a tibble of pairwise t-tests from pairwiseComparisons()
-#' @param rangeX vector with min and max X
-#' @param rangeY vector with min and max Y
+#' @param plotData tibble. Data for the plot, pass it from reactive plotData()
+#' @param meanPlotData tibble. Data of means, pass from reactive meanPlotData()
+#' @param pairwiseComparisons tibble. Pairwise t-tests from pairwiseComparisons()
+#' @param rangeX numeric vector | NULL. vector with min and max X
+#' @param rangeY numeric vector | NULL.  vector with min and max Y
+#' @param aesX string.
+#' @param aesColor string.
+#' @param aesFacetCol string.
+#' @param aesFacetRow string.
+#' @param mainPlotAdditionalOptions character vector. Options:
+#' list("points", "bars", "mean", "values", "ind_values", "log", 
+#' "N", "label", "swap", "free_y", "signif")
+#' @param errorbarType string. "None" | "SD" | "SEM" | "CI"
+#' @param summariseTechnicalReplicates boolean.
+#' @param standardizationFeatures character vector | NULL.
+#' @param standardizeWithinTechnicalReplicate boolean.
 #'
-#' @return a ggplot object
+#' @return ggplot object
 #' @export
 createMainPlot <- function(plotData,
                            meanPlotData,

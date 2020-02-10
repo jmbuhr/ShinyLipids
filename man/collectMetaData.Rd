@@ -13,7 +13,7 @@ Create one yourself with e.g.
 \code{DBI::dbConnect(RSQLite::SQLite(), "<data/exampleDatabase.db>")}}
 }
 \value{
-a tibble with the meta data
+tibble. Meta data
 }
 \description{
 Collect metadata from database

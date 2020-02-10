@@ -7,15 +7,12 @@
 collectRawData(id = 1, con)
 }
 \arguments{
+\item{id}{numeric. ID of dataset to collect}
+
 \item{con}{A database connection}
-
-\item{query}{The sql query to get the dataset.
-Create it yourself with \code{\link{createQueryForID}}.}
-
-\item{lipidClassOrder}{The order for the lipid classes}
 }
 \value{
-Raw data as a tibble
+tibble. Raw data
 }
 \description{
 Collect raw data from database

@@ -15,7 +15,7 @@
 NULL
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines
-if (getRversion() >= "2.15.1")  utils::globalVariables(
+utils::globalVariables(
   c(".",
     "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category", "class_order",
     "datasets", "date_extraction", "date_measured", "date_sample", "date_upload", "db", 

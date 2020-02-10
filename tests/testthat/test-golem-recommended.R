@@ -11,7 +11,7 @@ test_that("app server", {
   server <- app_server
   expect_is(server, "function")
 })
-%>% %>% %>% 
+
 # Configure this test to fit your need
 test_that(
   "app launches", {

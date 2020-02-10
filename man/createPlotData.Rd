@@ -9,15 +9,25 @@ createPlotData(
   summariseTechnicalReplicates = TRUE,
   aesX = "class",
   aesColor = "sample",
-  aesFacetCol = NULL,
-  aesFacetRow = NULL
+  aesFacetCol = "",
+  aesFacetRow = ""
 )
 }
 \arguments{
 \item{data}{Input tibble}
+
+\item{summariseTechnicalReplicates}{boolean}
+
+\item{aesX}{string}
+
+\item{aesColor}{string}
+
+\item{aesFacetCol}{string | ""}
+
+\item{aesFacetRow}{string | ""}
 }
 \value{
-neat data
+tibble. neat data
 }
 \description{
 Based on the aesthetic mappings.
