@@ -3,7 +3,7 @@ app_server <- function(input, output, session) {
   # Setup ####
   databaseConnection <- golem::get_golem_options("db")
   
-  callModule(profvis_server, "profiler")
+  # callModule(profvis_server, "profiler") # for performance testing
   
   # Data ####
   # * Metadata / list of datasets ####

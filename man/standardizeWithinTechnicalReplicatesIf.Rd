@@ -4,7 +4,7 @@
 \alias{standardizeWithinTechnicalReplicatesIf}
 \title{Standardize data within technical replicates}
 \usage{
-standardizeWithinTechnicalReplicatesIf(data, doIt)
+standardizeWithinTechnicalReplicatesIf(data, doIt = TRUE)
 }
 \arguments{
 \item{data}{tibble. data}

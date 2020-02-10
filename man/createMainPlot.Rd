@@ -40,7 +40,9 @@ createMainPlot(
 
 \item{aesFacetRow}{string.}
 
-\item{mainPlotAdditionalOptions}{character vector.}
+\item{mainPlotAdditionalOptions}{character vector. Options:
+list("points", "bars", "mean", "values", "ind_values", "log", 
+"N", "label", "swap", "free_y", "signif")}
 
 \item{errorbarType}{string. "None" | "SD" | "SEM" | "CI"}
 

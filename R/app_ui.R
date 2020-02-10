@@ -235,7 +235,8 @@ app_ui <- function() {
   
   # Body ####
   body <- shinydashboard::dashboardBody(
-    profvis_ui("profiler"),
+    
+    # profvis_ui("profiler"), # for performance testing
     # ** Database Info / Meta ####
     shinydashboard::tabItems(
       shinydashboard::tabItem(

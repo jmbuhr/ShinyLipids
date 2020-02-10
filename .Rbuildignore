@@ -11,3 +11,4 @@ $run_dev.*
 ^\.travis\.yml$
 ^\.lintr$
 ^\.vscode
+\.Rprof$

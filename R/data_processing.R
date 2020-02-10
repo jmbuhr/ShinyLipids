@@ -121,7 +121,8 @@ addLipidProperties <- function(data,
 #' Impute implicit missing values as 0
 #'
 #' @param data tibble. rawData
-#' @param doIt 
+#' @param doIt boolean. Imputes if TRUE,
+#' else returns input data
 #'
 #' @return tibble. imputed data
 #' @export
