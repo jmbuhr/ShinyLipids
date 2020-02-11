@@ -235,8 +235,10 @@ app_ui <- function() {
   
   # Body ####
   body <- shinydashboard::dashboardBody(
-    
-    # profvis_ui("profiler"), # for performance testing
+    # for performance testing
+    if (!is.null(golem::get_golem_options("debug"))) {
+      profvis::profvis_ui("profiler") # for performance testing
+    },
     # ** Database Info / Meta ####
     shinydashboard::tabItems(
       shinydashboard::tabItem(

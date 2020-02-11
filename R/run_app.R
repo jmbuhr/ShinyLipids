@@ -1,6 +1,7 @@
 #' Run the Shiny Application
 #' 
-#' @param ... options, currently: db = yourDatabaseConnection
+#' @param ... db (databaseConnection) and
+#' debug (Anything not NULL means debug mode For performance testing)
 #'
 #' @export
 #' @importFrom shiny shinyApp

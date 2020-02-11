@@ -3,7 +3,9 @@ app_server <- function(input, output, session) {
   # Setup ####
   databaseConnection <- golem::get_golem_options("db")
   
-  # callModule(profvis_server, "profiler") # for performance testing
+  if (!is.null(golem::get_golem_options("debug"))) {
+  callModule(profvis::profvis_server, "profiler") # for performance testing
+  }
   
   # Data ####
   # * Metadata / list of datasets ####
@@ -55,7 +57,6 @@ app_server <- function(input, output, session) {
         !(input$summariseTechnicalReplicates &
             (input$aesColor    == "sample_replicate_technical" |
                input$aesX      == "sample_replicate_technical" |
-               # input$aesY    == "sample_replicate_technical" |
                input$aesFacetCol == "sample_replicate_technical" |
                input$aesFacetRow == "sample_replicate_technical")
         ),
@@ -108,11 +109,11 @@ app_server <- function(input, output, session) {
         "You need more than 1 replicate per sample for everything visible in the plot"
       )
     )
-    doAllPairwiseComparisons(plotData(), input$aesX)
+    doAllPairwiseComparisons(data = plotData(),
+                             aesX = input$aesX)
   })
   
 
-  
   # Updating input choices ####
   # * Update SelectInput for datasets
   # based on sets loaded and row selected select clicked row in table
