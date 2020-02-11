@@ -235,10 +235,6 @@ app_ui <- function() {
   
   # Body ####
   body <- shinydashboard::dashboardBody(
-    # for performance testing
-    if (!is.null(golem::get_golem_options("debug"))) {
-      profvis::profvis_ui("profiler") # for performance testing
-    },
     # ** Database Info / Meta ####
     shinydashboard::tabItems(
       shinydashboard::tabItem(
@@ -289,17 +285,17 @@ app_ui <- function() {
                                   width = 3,
                                   checkboxGroupInput("mainPlotAdditionalOptions", label = NULL,
                                                      choices = list(
-                                                       "Show points"                       = "points",
-                                                       "Show bars"                         = "bars",
-                                                       "Show average"                      = "mean",
-                                                       "Show value of means"               = "values",
-                                                       "Show value of points"              = "ind_values",
-                                                       "Transform y-axis log1p"            = "log",
-                                                       "Show N per sample"                 = "N",
-                                                       "Label points"                      = "label",
-                                                       "Swap x- and y-axis"                = "swap",
-                                                       "Free y scale for facets"           = "free_y",
-                                                       "Mark groups with significant hits" = "signif"
+                                                       "Show points"                = "points",
+                                                       "Show bars"                  = "bars",
+                                                       "Show average"               = "mean",
+                                                       "Show value of means"        = "values",
+                                                       "Show value of points"       = "ind_values",
+                                                       "Transform y-axis log1p"     = "log",
+                                                       "Show N per sample"          = "N",
+                                                       "Label points"               = "label",
+                                                       "Swap x- and y-axis"         = "swap",
+                                                       "Free y scale for facets"    = "free_y",
+                                                       "Run pairwise t-tests"       = "signif"
                                                      ),
                                                      selected = list("points", "bars")
                                   ),
@@ -311,15 +307,15 @@ app_ui <- function() {
                                 shinydashboard::box(
                                   title = "Download",
                                   width = 3,
-                                  downloadButton("saveMainPlot", label = "Save plot as .pdf"),
-                                  downloadButton("savePlotData", label = "Save datapoints as .csv"),
-                                  downloadButton("saveMeanPlotData", label = "Save means as .csv"),
+                                  downloadButton("saveMainPlot", label = "Save plot (.pdf)"),
+                                  downloadButton("savePlotData", label = "Save points (.csv)"),
+                                  downloadButton("saveMeanPlotData", label = "Save means (.csv)"),
                                   numericInput("mainWidth", label = "width", value = 20),
                                   numericInput("mainHeight", label = "height", value = 10)
                                 ),
                                 shinydashboard::box(
                                   title = "Pairwise comparisons",
-                                  footer = "Calculated via t-tests on log-transformed data. \
+                                  footer = "This table only shows when you tick \"Run pairwise t-tests\" in the plot options next to this. Calculated via t-tests on log-transformed data. \
                                   P-values corrected with the Benjamini-Hochberg procedure.",
                                   width = 6,
                                   DT::DTOutput("pairwiseComparisonsTable")

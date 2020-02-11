@@ -3,10 +3,6 @@ app_server <- function(input, output, session) {
   # Setup ####
   databaseConnection <- golem::get_golem_options("db")
   
-  if (!is.null(golem::get_golem_options("debug"))) {
-  callModule(profvis::profvis_server, "profiler") # for performance testing
-  }
-  
   # Data ####
   # * Metadata / list of datasets ####
   metaData <- reactive({
@@ -241,6 +237,8 @@ app_server <- function(input, output, session) {
   
   # * pairwiseComparisonsTable ####
   output$pairwiseComparisonsTable <- DT::renderDT({
+    validate(need("signif" %in% input$mainPlotAdditionalOptions,
+                  "Option not checked."))
     pairwiseComparisons()
   })
   
