@@ -17,18 +17,22 @@ pkgload::load_all()
 #                          dbname = "ldb",
 #                          host = "localhost",
 #                          port = 8080,
-#                          user= "mathias")
+#                          user = "mathias")
 
 ## uncomment this to read from a database on the same server this App is running
 # databaseConnection <- DBI::dbConnect(RPostgres::Postgres(),
 #                          dbname = "ldb",
 #                          host = "localhost",
 #                          port = 5432,
-#                          user= "mathias")
+#                          user = "mathias")
+# 
+
 
 ## Local database file
-path <- "./inst/extdata/exampleDatabase.db"
-databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
+# path <- "./inst/extdata/exampleDatabase.db"
+# databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
 # Run App ####
 ShinyLipids::run_app(db = databaseConnection)
+
+## TODO: Fix SL on server

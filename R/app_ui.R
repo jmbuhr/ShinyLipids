@@ -1,6 +1,5 @@
 #' @import shiny
 app_ui <- function() {
-  shinyjs::useShinyjs()
   # Header ####
   header <- shinydashboard::dashboardHeader(
     title = span(tagList(icon("flask"),

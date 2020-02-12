@@ -6,7 +6,7 @@ downloadHandlerFactoryCSV <- function(metaData, dataset, specifier, id) {
       paste0(Sys.Date(), "_", tmp, specifier, ".csv")
     },
     content = function(file) {
-      readr::write_csv(x = dataset, path = file)
+      write.csv(x = dataset, file = file)
     }
   )
 }

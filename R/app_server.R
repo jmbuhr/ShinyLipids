@@ -8,7 +8,7 @@ app_server <- function(input, output, session) {
   metaData <- reactive({
     collectMetaData(databaseConnection)
   })
-
+  
   # * rawData ####
   rawData <- reactive({
     validate(need(input$ID, "Please select a dataset first."))
@@ -61,9 +61,7 @@ app_server <- function(input, output, session) {
       ),
       need(
         input$aesX != "",
-        "Please select a feature to display on the x-axis"
-      )
-    )
+        "Please select a feature to display on the x-axis"))
     
     mainData() %>%
       createPlotData(summariseTechnicalReplicates = input$summariseTechnicalReplicates,
@@ -102,14 +100,13 @@ app_server <- function(input, output, session) {
       ),
       need(
         testAllMoreThanOneReplicate(plotData(), input$aesX, input$aesColor),
-        "You need more than 1 replicate per sample for everything visible in the plot"
-      )
-    )
+        "You need more than 1 replicate per sample for everything visible in the plot"))
+    
     doAllPairwiseComparisons(data = plotData(),
                              aesX = input$aesX)
   })
   
-
+  
   # Updating input choices ####
   # * Update SelectInput for datasets
   # based on sets loaded and row selected select clicked row in table
@@ -310,18 +307,18 @@ app_server <- function(input, output, session) {
     req(plotData())
     validate(
       need(input$aesColor == "sample",
-        "To perform a PCA, please set color to sample in the mappings"),
+           "To perform a PCA, please set color to sample in the mappings"),
       need((input$aesX != "sample" &
               input$aesX != "sample_replicate" &
               input$aesX != "sample_replicate_technical"),
-        "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"
+           "To perform a PCA, please select a feature other than sample as your x-axis in the mappings"
       ),
       need(input$aesFacetCol == "",
-        "To perform a PCA, please remove any facetting in the mappings"),
+           "To perform a PCA, please remove any facetting in the mappings"),
       need(input$aesFacetRow == "",
-        "To perform a PCA, please remove any facetting in the mappings"),
+           "To perform a PCA, please remove any facetting in the mappings"),
       need(length(unique(plotData()[[input$aesX]])) > 1,
-        "Not enough datapoints to perform PCA")
+           "Not enough datapoints to perform PCA")
     )
     createPcaData(plotData        = plotData(),
                   aesX            = input$aesX,
@@ -337,7 +334,7 @@ app_server <- function(input, output, session) {
                     pcaScalingMethod             = input$pcaScalingMethod,
                     pcaCrossValidationMethod     = input$pcaCrossValidationMethod)
   })
-
+  
   pcaSampleNames <- reactive({
     getPcaSampleNames(plotData(), input$summariseTechnicalReplicates)
   })
@@ -395,33 +392,33 @@ app_server <- function(input, output, session) {
         paste0("datasets_info.csv")
       },
       content = function(file) {
-        readr::write_csv(x = metaData(), path = file)
+        write.csv(x = metaData(), file = file)
       }
     )
   
   output$saveRawCSV <-
-    downloadHandlerFactoryCSV(metaData   = metaData(),
-                              dataset    = rawData(),
-                              specifier  = "-raw",
-                              id         = input$id)
+    downloadHandlerFactoryCSV(metaData  = metaData(),
+                              dataset   = rawData(),
+                              specifier = "-raw",
+                              id        = input$id)
   
   output$saveMainCSV <-
-    downloadHandlerFactoryCSV(metaData   = metaData(),
-                              dataset    = mainData(),
-                              specifier  = "-filtered",
-                              id         = input$id)
+    downloadHandlerFactoryCSV(metaData  = metaData(),
+                              dataset   = mainData(),
+                              specifier = "-filtered",
+                              id        = input$id)
   
   output$savePlotData <-
-    downloadHandlerFactoryCSV(metaData   = metaData(),
-                              dataset    = plotData(),
-                              specifier  = "-plot",
-                              id         = input$id)
+    downloadHandlerFactoryCSV(metaData  = metaData(),
+                              dataset   = plotData(),
+                              specifier = "-plot",
+                              id        = input$id)
   
   output$saveMeanPlotData <-
-    downloadHandlerFactoryCSV(metaData   = metaData(),
-                              dataset    = meanPlotData(),
-                              specifier  = "-means",
-                              id         = input$id)
+    downloadHandlerFactoryCSV(metaData  = metaData(),
+                              dataset   = meanPlotData(),
+                              specifier = "-means",
+                              id        = input$id)
   
   output$saveMainPlot <-
     downloadHandlerFactoryPDF(metaData  = metaData(),
@@ -459,5 +456,5 @@ app_server <- function(input, output, session) {
   # End session when window is closed
   session$onSessionEnded(function() {
     DBI::dbDisconnect(databaseConnection); stopApp()
-    })
+  })
 }
