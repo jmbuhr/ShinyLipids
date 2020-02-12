@@ -34,5 +34,3 @@ pkgload::load_all()
 
 # Run App ####
 ShinyLipids::run_app(db = databaseConnection)
-
-## TODO: Fix SL on server

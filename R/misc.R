@@ -1,28 +1,3 @@
-#' @importFrom stats qt
-#' @import dplyr
-#' @import forcats
-#' @import ggplot2
-#' @import tidyr
-#' @import stringr
-#' @import purrr
-#' @import RSQLite
-#' @importFrom rlang .data
-#' @importFrom grDevices chull
-#' @importFrom graphics title
-#' @importFrom stats p.adjust pairwise.t.test sd
-#' @importFrom utils data
-#' 
-NULL
-
-## quiets concerns of R CMD check re: the .'s that appear in pipelines
-utils::globalVariables(
-  c(".",
-    "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category", "class_order",
-    "datasets", "date_extraction", "date_measured", "date_sample", "date_upload", "db", 
-    "func_cat", "lipid", "oh", "p.value", "pairwise", "sample_identifier", "sample_replicate",
-    "sample_replicate_technical", "value", "chains", "individualChains")
-)
-
 # helper functions ####
 
 # Suppress warning that not all factor levels for lipid class order are used:

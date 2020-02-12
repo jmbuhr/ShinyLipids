@@ -98,15 +98,17 @@ addLipidProperties <- function(data,
              remove = FALSE
     ) %>%
     mutate(
-      class = str_trim(paste0(class, " ", str_replace_na(str_extract(chains, ".-"), ""))),
+      class = stringr::str_trim(paste0(class,
+                                       " ",
+                                       stringr::str_replace_na(stringr::str_extract(chains, ".-"), ""))),
       class = quiet_fct_relevel(class, lipidClassOrder)$result,
       chains           = replace_na(chains, "0:0"),
-      individualChains = str_split(chains, "/"),
-      length           = str_extract_all(chains, "\\d+(?=:)") %>% 
+      individualChains = stringr::str_split(chains, "/"),
+      length           = stringr::str_extract_all(chains, "\\d+(?=:)") %>% 
         map_int(~ sum(as.integer(.x))),
-      db               = str_extract_all(chains, "(?<=:)\\d+") %>% 
+      db               = stringr::str_extract_all(chains, "(?<=:)\\d+") %>% 
         map_int(~ sum(as.integer(.x))),
-      oh               = str_extract_all(chains, "(?<=;)\\d+") %>% 
+      oh               = stringr::str_extract_all(chains, "(?<=;)\\d+") %>% 
         map_int(~ sum(as.integer(.x)))
     ) %>% 
     mutate(

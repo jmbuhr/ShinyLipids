@@ -23,7 +23,9 @@ Imports:
     pkgload,
     dbplyr,
     stats,
+    utils,
     dplyr,
+    magrittr,
     forcats,
     ggplot2,
     tidyr,
@@ -37,5 +39,6 @@ Depends:
     R (>= 3.3.0)
 RoxygenNote: 7.0.2
 Suggests:
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    processx
 Language: en-US
