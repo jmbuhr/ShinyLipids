@@ -27,7 +27,6 @@ test_that(
     plt <- createMainPlot(plotData            = plotData,
                           meanPlotData        = meanPlotData,
                           pairwiseComparisons = NULL)
-    
     expect_is(plt, "ggplot")
   }
 )

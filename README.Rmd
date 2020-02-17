@@ -26,10 +26,15 @@ documentation, improved functionality and above all, user-friendliness.
 
 ## What is ShinyLipids?
 
-ShinyLipids is a visualization tool for lipidomics data built in R with the `shiny` package. The original
-version was developed in 2015 by _Mathias Gerl_ and further enhanced by _Manuel Haußmann_ and _Sebastian Bender_ until August, 2017.
-It serves as the primary visualization dashboard for the [Brügger Lipidomics Group](https://bzh.db-engine.de/default.asp?lfn=2241&fg=4289) at the Heidelberg Biochemistry Center (BZH).
-There is also a great deal of back end infrastructure, built by Mathias, to support a server with a database,
+ShinyLipids is a visualization tool for lipidomics data built in R with
+the `shiny` package. The original version was developed in 2015
+by _Mathias Gerl_ and further enhanced by _Manuel Haußmann_
+and _Sebastian Bender_ until August, 2017.
+It serves as the primary visualization dashboard for the
+[Brügger Lipidomics Group](https://bzh.db-engine.de/default.asp?lfn=2241&fg=4289)
+at the Heidelberg Biochemistry Center (BZH).
+There is also a great deal of back end infrastructure, built by Mathias,
+to support a server with a database,
 upload tools and a version of this App for internal use at the BZH.
 
 ## What changed?
@@ -39,23 +44,28 @@ The idea is still very much based on the original,
 but the internal coding and data structure is designed
 to be more consistent and host a safer environment
 for the implementation of new features within the R code.
-More information can be found on [my website](https://jmbuhr.de/project/shinylipids/).
+More information can be found on
+[my website](https://jmbuhr.de/project/shinylipids/).
 
 ## How do I use ShinyLipids?
 
-Make sure you have the latest version of R and RStudio installed.+
+Make sure you have the latest version of R and RStudio installed.
 
-If you are new to R, just head over to
+If you are new to R, head over to
 
 [https://cran.r-project.org/](https://cran.r-project.org/)
 and follow the download link suitable for your operating system.
-Then, head over to [https://rstudio.com/products/rstudio/download/#download](https://rstudio.com/products/rstudio/download/#download) and install RStudio. You can think
-of R as the engine that runs the Code for ShinyLipids and of RStudio
+Then, head over to
+[https://rstudio.com/products/rstudio/download/#download](https://rstudio.com/products/rstudio/download/#download)
+and install RStudio. You can think of R as the engine that runs the Code for
+ShinyLipids and of RStudio
 as a car with a nice dashboard around the engine to help you the raw power.
 Don't worry, there won't be any coding necessary to get started with your
 data in ShinyLipids.
 
-Then run this piece of R code to install ShinyLipids with all it's dependencies^[If you want to publish the Shiny App on RStudio-connect, you will need a couple of additional packages that
+Then run this piece of R code to install ShinyLipids with all it's
+dependencies^[If you want to publish the Shiny App on RStudio-connect,
+you will need a couple of additional packages that
 are listed in `app.R`.] from github:
 
 ```{r, eval=FALSE}
@@ -67,7 +77,8 @@ devtools::install_github("jannikbuhr/ShinyLipids")
 bottom right corner when you first open RStudio. Then hit Enter.)
 
 ShinyLipids gets the data it needs from a database.
-This database needs to contain at least the two tables **id_info** and **data2** ^[the naming is due to back end compatibility].
+This database needs to contain at least the two tables **id_info** and **data2**
+^[the naming is due to back end compatibility].
 Of course, you might not have your data in a database-dump file. To
 get your tabular data (preferably _.csv_) into such a file, you can use a little helper
 function in ShinyLipids, which you can run from an R script.
@@ -122,20 +133,16 @@ This is `myDataset.csv`.
 |lipid                      | text: format: "Cer 34:1;2"|
 |category                   | text: e.g. SP|
 |func_cat                   | text: e.g. SP|
-|class                      | text: e.g. SP Cer|
-|length                     | whole number: 34|
-|db                         | whole number: n of double bounds|
-|oh                         | whole number: n of OH groups|
-|chains                     | text: format: "34:1;2"|
-|chain_sums                 | text: format: "34:1;2"|
 |sample                     | text: e.g. "1 - 0min Stim"|
 |sample_replicate           | text: e.g. "1 - 0min Stim_A"|
 |sample_replicate_technical | text: e.g. "1 - 0min Stim_A_a"|
-|value                      | number|
+|value                      | number (assumed to be µM) |
 
-Optionally, your database can contain a table named "LIPID_CLASS_ORDER_COMPLETE" with
+Optionally, your database can contain a table named
+"LIPID_CLASS_ORDER_COMPLETE" with
 a numeric _class_order_ column associated with a _class_ column.
-You can also reorder your lipid classes in the app on bottom of the main plotting page.
+You can also reorder your lipid classes in the app on bottom of
+the main plotting page.
 
 ## For advanced use
 
@@ -146,8 +153,10 @@ or post your findings to shinyapps.io, you will have to download the source code
 git clone https://github.com/jannikbuhr/ShinyLipids.git
 ```
 
-Open the file `app.R`, read the comments and uncomment the specified lines. Then you
-will be able to run the app or use the buttons in the top right corner of your RStudio code panel.
+Open the file `app.R`, read the comments and uncomment the specified lines.
+Then you
+will be able to run the app or use the buttons in the top right corner of
+your RStudio code panel.
 
 ## Notes
 
