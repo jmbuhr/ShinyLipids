@@ -1,4 +1,3 @@
-
 #' Custom update selectize input
 #'
 #' @param inputName string, input to update

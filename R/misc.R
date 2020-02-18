@@ -1,5 +1,6 @@
 #' Create color scale
 #'
+#' @importFrom grDevices colorRampPalette
 #' @param colorCount integer
 #'
 #' @return A list with scale_color_ and scale_fill_

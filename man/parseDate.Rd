@@ -7,11 +7,10 @@
 parseDate(col)
 }
 \arguments{
-\item{col}{A character vector 
-(Column in a dataframe)}
+\item{col}{character vector.}
 }
 \value{
-A Date vector
+date vector.
 }
 \description{
 Make a date

@@ -7,12 +7,12 @@
 createHeatmap(data, input)
 }
 \arguments{
-\item{data}{a tibble, typically plotData()}
+\item{data}{tibble. typically plotData()}
 
 \item{input}{list of inputs from shinys app_ui.R}
 }
 \value{
-a heatmap as a ggplot object
+ggplot. Heatmap
 }
 \description{
 Create a Heatmap from data

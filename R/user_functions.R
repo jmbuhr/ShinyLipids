@@ -6,40 +6,26 @@
 #' @param path string,
 #' Path to where you want to save the database dump file
 #' 
-#' @param meta_info data.frame
+#' @param metaData tibble.
 #' A data.frame with the information about your datasets
 #' See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns it needs.
 #' 
-#' @param dataset
-#' A data.frame with the datasets
+#' @param rawData
+#' tibble. Metadata of the data sets
 #' See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns they need.
 #' 
-#' @param overwrite Boolean
+#' @param overwrite boolean.
 #' Overwrite existing .db file? Default is FALSE.
 #' 
 #' @return
 #' NULL
 #' @export
 createDatabase <- function(path = "databaseDump.db",
-                           meta_info,
-                           dataset,
+                           metaData,
+                           rawData,
                            overwrite = FALSE) {
   con <- DBI::dbConnect(RSQLite::SQLite(), path)
-  DBI::dbWriteTable(con, "id_info", meta_info, overwrite = overwrite)
-  DBI::dbWriteTable(con, "data2", dataset, overwrite = overwrite)
+  DBI::dbWriteTable(con, "id_info", metaData, overwrite = overwrite)
+  DBI::dbWriteTable(con, "data2", rawData, overwrite = overwrite)
   DBI::dbDisconnect(con)
 }
-
-
-# TODO: explain what the data needs to look like
-# NAs?, 0?s etc.
-
-# µ molar for the value column as info
-
-# NA columns, like func_cat allowed
-
-# lipid as LipidMaps ID
-
-# Reduce dataset2 to lipidomics standard initiative nomenclature
-# and maybe lipid maps
-

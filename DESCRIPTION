@@ -33,7 +33,8 @@ Imports:
     BiocManager,
     RPostgres,
     rlang,
-    stringr
+    stringr,
+    RColorBrewer
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 7.0.2
