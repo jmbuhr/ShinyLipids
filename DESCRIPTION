@@ -7,7 +7,6 @@ Description: ShinyLipids is a web-app for visualization of lipidomics
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-biocViews:
 Imports: 
     pcaMethods,
     shiny,

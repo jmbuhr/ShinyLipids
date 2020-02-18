@@ -1,4 +1,3 @@
-source("renv/activate.R")
 options(tidyverse.quiet = TRUE,
         error = rlang::entrace,
         rlang_backtrace_on_error = "branch",
