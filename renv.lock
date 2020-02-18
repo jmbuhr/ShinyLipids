@@ -728,13 +728,6 @@
       "Repository": "CRAN",
       "Hash": "6ca23724bb2c804c1d0b3db4862a39c7"
     },
-    "shinycssloaders": {
-      "Package": "shinycssloaders",
-      "Version": "0.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "5b3c3722d8f548f1b8e095533d0a8e30"
-    },
     "shinydashboard": {
       "Package": "shinydashboard",
       "Version": "0.7.1",

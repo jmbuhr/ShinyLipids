@@ -39,14 +39,10 @@ createMainPlot <- function(plotData,
   
   if ("length" %in% names(plotData)) {
     plotData <- plotData %>%
-      ungroup() %>%
-      mutate(length = factor(length)) %>%
-      group_by(length)
+      mutate(length = factor(length))
     
     meanPlotData <- meanPlotData %>%
-      ungroup() %>%
-      mutate(length = factor(length)) %>%
-      group_by(length)
+      mutate(length = factor(length))
   }
   
   plt <- ggplot(plotData, aes(x = !!sym(aesX), y = value))
@@ -73,7 +69,7 @@ createMainPlot <- function(plotData,
       color = guide_legend(ncol = 12,
                            nrow = as.integer(colorCount / 12) + 1,
                            title = aesColor),
-      fill = guide_legend(ncol = 12, # usefull with way too many colors
+      fill = guide_legend(ncol = 12, # useful for way too many colors
                           nrow = as.integer(colorCount / 12) + 1,
                           title = aesColor
       )
@@ -236,12 +232,8 @@ createMainPlot <- function(plotData,
     scale_y_continuous(
       name   = yAxisName,
       labels = yAxisLabels,
-      trans  = yAxisTransformation
-    )
-  
-  # Zooming
-  plt <-
-    plt + coord_cartesian(xlim = rangeX, ylim = rangeY)
+      trans  = yAxisTransformation) +
+    coord_cartesian(xlim = rangeX, ylim = rangeY)
   
   # Swap X and Y
   if ("swap" %in% mainPlotAdditionalOptions) {

@@ -1,9 +1,9 @@
 #' Create a Heatmap from data
 #'
-#' @param data a tibble, typically plotData()
+#' @param data tibble. typically plotData()
 #' @param input list of inputs from shinys app_ui.R 
 #'
-#' @return a heatmap as a ggplot object
+#' @return ggplot. Heatmap
 #' @export
 createHeatmap <- function(data, input) {
   if (!is.null(input$standardizationFeatures)) {

@@ -1,10 +1,9 @@
-#' @import shiny
 app_server <- function(input, output, session) {
   # Setup ####
   databaseConnection <- golem::get_golem_options("db")
   
   # Data ####
-  # * Metadata / list of datasets ####
+  # * Metadata / list of data sets ####
   metaData <- reactive({
     collectMetaData(databaseConnection)
   })
@@ -44,8 +43,8 @@ app_server <- function(input, output, session) {
   })
   
   # * plotData ####
-  # summarised based on
-  # selecte plot type, standards and aes (aesthetics)
+  # summarized based on
+  # selected plot type, standards and aes (aesthetics)
   plotData <- reactive({
     req(mainData())
     validate(
@@ -108,7 +107,7 @@ app_server <- function(input, output, session) {
   
   
   # Updating input choices ####
-  # * Update SelectInput for datasets
+  # * Update selectInput for data sets
   # based on sets loaded and row selected select clicked row in table
   observe({
     choices <- metaData()$id
@@ -188,14 +187,7 @@ app_server <- function(input, output, session) {
     }
   },
   server = FALSE, selection = list(mode = "single", selected = 1),
-  options = list(
-    orderClasses   = TRUE,
-    pageLength     = 10,
-    order          = list(0, "desc"),
-    scrollX        = TRUE,
-    deferRender    = TRUE,
-    scrollY        = 500,
-    scrollCollapse = TRUE)
+  options = dtOptions
   )
   
   # * Main Dataset as a table ####
@@ -204,13 +196,7 @@ app_server <- function(input, output, session) {
   },
   filter = "none",
   rownames = FALSE,
-  options  = list(
-    orderClasses   = TRUE,
-    pageLength     = 10,
-    order          = list(0, "desc"),
-    scrollX        = TRUE,
-    deferRender    = TRUE,
-    scrollCollapse = TRUE)
+  options  = dtOptions
   )
   
   # * meanPlotDataTable ####
@@ -223,13 +209,7 @@ app_server <- function(input, output, session) {
   },
   filter           = "none",
   rownames         = FALSE,
-  options          = list(
-    orderClasses   = TRUE,
-    pageLength     = 10,
-    order          = list(0, "desc"),
-    scrollX        = TRUE,
-    deferRender    = TRUE,
-    scrollCollapse = TRUE)
+  options          = dtOptions
   )
   
   # * pairwiseComparisonsTable ####
@@ -237,7 +217,7 @@ app_server <- function(input, output, session) {
     validate(need("signif" %in% input$mainPlotAdditionalOptions,
                   "Option not checked."))
     pairwiseComparisons()
-  })
+  }, options = dtOptions)
   
   # Plots ####
   # * Main Plot ####

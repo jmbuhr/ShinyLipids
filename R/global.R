@@ -1,10 +1,11 @@
-#' @importFrom stats qt
+#' @import shiny
 #' @import dplyr
 #' @import forcats
 #' @import ggplot2
 #' @import tidyr
 #' @import purrr
 #' @import RSQLite
+#' @importFrom stats qt
 #' @importFrom rlang .data
 #' @importFrom utils write.csv
 #' @importFrom grDevices chull
@@ -17,31 +18,13 @@ NULL
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines
 utils::globalVariables(
   c(".",
-    "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category", "class_order",
-    "datasets", "date_extraction", "date_measured", "date_sample", "date_upload", "db", 
-    "func_cat", "lipid", "oh", "p.value", "pairwise", "sample_identifier", "sample_replicate",
+    "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category",
+    "class_order", "datasets", "date_extraction", "date_measured",
+    "date_sample", "date_upload", "db", "func_cat", "lipid", "oh",
+    "p.value", "pairwise", "sample_identifier", "sample_replicate",
     "sample_replicate_technical", "value", "chains", "individualChains")
 )
 
-# Features that can serve as aesthetics (visual mappings, short aes) in plots
-features <- c(
-  "",
-  "value",
-  "Sample"                     = "sample",
-  "Sample replicate"           = "sample_replicate",
-  "Sample replicate technical" = "sample_replicate_technical",
-  "Class"                      = "class",
-  "Lipid species"              = "lipid",
-  "Category"                   = "category",
-  "Functional category"        = "func_cat",
-  "Double bonds"               = "db",
-  "Hydroxylation state"        = "oh",
-  "Chain Length"               = "length",
-  "Chains"                     = "chains",
-  "Chain sums"                 = "chain_sums"
-)
-
-# Global theme definition to add to ggplots
 mainTheme <- list(
   theme_minimal(),
   theme(
@@ -59,3 +42,11 @@ mainTheme <- list(
     strip.text       = element_text(color = "black")
   )
 )
+
+dtOptions <- list(
+  orderClasses   = TRUE,
+  pageLength     = 10,
+  order          = list(0, "desc"),
+  scrollX        = TRUE,
+  deferRender    = TRUE,
+  scrollCollapse = TRUE)

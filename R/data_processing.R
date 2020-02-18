@@ -7,12 +7,11 @@
 #' @return tibble. Meta data
 #' @export
 collectMetaData <- function(con) {
-  meta <- collect(tbl(con, sql("SELECT * FROM id_info"))) %>%
+  collect(tbl(con, sql("SELECT * FROM id_info"))) %>%
     mutate_at(vars(date_upload, date_sample, date_extraction, date_measured),
               possibly(parseDate, NA_real_)
     ) %>%
     arrange(id)
-  return(meta)
 }
 
 #' Lipid Class Order
@@ -63,10 +62,13 @@ createQueryForID <- function(datasetID) {
 #' @return tibble. Raw data
 #' @export
 collectRawData <- function(id = 1, con) {
-  collect(tbl(con, sql(createQueryForID(id)))) %>%
+  con %>% 
+    tbl(sql(createQueryForID(id))) %>% 
+    collect() %>%
     filter(!is.na(value),
            !is.na(lipid)) %>% 
-    mutate_at(vars(sample_identifier, sample_replicate, sample_replicate_technical,
+    mutate_at(vars(sample_identifier, sample_replicate,
+                   sample_replicate_technical,
                    category, func_cat),
               replace_na, "other")
 }
@@ -80,16 +82,17 @@ collectRawData <- function(id = 1, con) {
 #'
 #' @return tibble. enhanced data
 #' @export
-addLipidProperties <- function(data,
-                               lipidClassOrder = c(
-                                 "PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE",
-                                 "PS", "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG",
-                                 "PA", "PA O-", "LPA", "CL", "MLCL", "Cer", "SM",
-                                 "HexCer", "SGalCer", "GM3", "Sulf", "diHexCer",
-                                 "Hex2Cer", "For", "IPC", "MIPC", "M(IP)2C", "Chol",
-                                 "Desm", "Erg", "CE", "EE", "DAG", "TAG", "PIP",
-                                 "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi",
-                                 "PGP", "WE", "FA")) {
+addLipidProperties <-
+  function(data,
+           lipidClassOrder = c(
+             "PC", "PC O-", "LPC", "PE", "PE O-", "PE P-", "LPE",
+             "PS", "PS O-", "PI", "PI O-", "PG", "PG O-", "LPG",
+             "PA", "PA O-", "LPA", "CL", "MLCL", "Cer", "SM",
+             "HexCer", "SGalCer", "GM3", "Sulf", "diHexCer",
+             "Hex2Cer", "For", "IPC", "MIPC", "M(IP)2C", "Chol",
+             "Desm", "Erg", "CE", "EE", "DAG", "TAG", "PIP",
+             "PIP2", "PIP3", "GM1Cer", "GD1Cer", "MAG", "Epi",
+             "PGP", "WE", "FA")) {
   data %>% 
     separate(col = lipid,
              into = c("class", "chains"),
@@ -101,7 +104,7 @@ addLipidProperties <- function(data,
       class = stringr::str_trim(paste0(class,
                                        " ",
                                        stringr::str_replace_na(stringr::str_extract(chains, ".-"), ""))),
-      class = quiet_fct_relevel(class, lipidClassOrder)$result,
+      class = quietly(forcats::fct_relevel)(class, lipidClassOrder)$result,
       chains           = replace_na(chains, "0:0"),
       individualChains = stringr::str_split(chains, "/"),
       length           = stringr::str_extract_all(chains, "\\d+(?=:)") %>% 
@@ -312,6 +315,8 @@ summarisePlotData <- function(data,
                               aesColor = "sample",
                               aesFacetCol = "",
                               aesFacetRow = "") {
+  possiblyQt <- possibly(stats::qt, otherwise = NA_real_)
+  
   cols <- c(aesX, aesColor, aesFacetCol, aesFacetRow)
   cols <- cols[cols != ""]
   data %>%
@@ -325,7 +330,8 @@ summarisePlotData <- function(data,
       CI_upper = value + possiblyQt(1 - (0.05 / 2), N - 1) * SEM) %>%
     mutate(
       CI_lower = if_else(CI_lower < 0, 0, CI_lower)
-    )
+    ) %>% 
+    ungroup()
 }
 
 # Significance Tests ####

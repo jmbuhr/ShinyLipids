@@ -1,3 +1,11 @@
+#' Create Download Handler for CSV files
+#'
+#' @param metaData tibble. Meta data.
+#' @param dataset tibble. Data to save.
+#' @param specifier string. Postfix for the file name.
+#' @param id integer. Id of the data set.
+#'
+#' @return download handler for the shiny server function
 downloadHandlerFactoryCSV <- function(metaData, dataset, specifier, id) {
   downloadHandler(
     filename = function() {
@@ -11,6 +19,16 @@ downloadHandlerFactoryCSV <- function(metaData, dataset, specifier, id) {
   )
 }
 
+#' Create Download Handler for PDF files
+#'
+#' @param metaData tibble. Meta data.
+#' @param plot ggplot. Plot to save.
+#' @param specifier string. Postfix for the file name.
+#' @param width numeric. Width in inches.
+#' @param height numeric. Height in inches.
+#' @param id integer. Id of the data set.
+#'
+#' @return download handler for the shiny server function
 downloadHandlerFactoryPDF <- function(metaData, plot, specifier, width, height, id) {
   downloadHandler(
     filename = function() {
