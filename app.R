@@ -28,7 +28,9 @@ options( "golem.app.prod" = TRUE)
 
 
 ## Local database file
-path <- "./inst/extdata/exampleDatabase.db"
+# replace with
+# path <- "path/to/your/data.db"
+path <- system.file("inst/extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
 # Run App ####

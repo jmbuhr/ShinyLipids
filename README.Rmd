@@ -21,8 +21,8 @@ knitr::opts_chunk$set(
 ![Travis build status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)
 <!-- badges: end -->
 
-A remake of ShinyLipids with a focus on consistent coding,
-documentation, improved functionality and above all, user-friendliness.
+An interactive web application for lipidomics data analysis based on
+the R programming language with the shiny framework.
 
 ## What is ShinyLipids?
 
@@ -79,23 +79,26 @@ bottom right corner when you first open RStudio. Then hit Enter.)
 ShinyLipids gets the data it needs from a database.
 This database needs to contain at least the two tables **id_info** and **data2**
 ^[the naming is due to back end compatibility].
-Of course, you might not have your data in a database-dump file. To
-get your tabular data (preferably _.csv_) into such a file, you can use a little helper
+Of course, you might not have your data in a database or
+database-dump file. To get your tabular data (preferably _.csv_)
+into such a file, you can use a little helper
 function in ShinyLipids, which you can run from an R script.
-Before you do so, make your your tables contain the columns
+Before you do so, make sure your tables contain the columns
 listed in section [What should my tables look like?](#tables).
+Then, read them into R and package them up with `ShinyLipids::createDatabase`.
+This could look as follows:
 
 ```{r, eval=FALSE}
 if ( !("readr" %in% installed.packages()) ) install.packages("readr")
 myMedatdata <- readr::read_csv("myMetadata.csv")
 myDataset   <- readr::read_csv("myDataset.csv")
-ShinyLipids::createDatabase("./inst/extdata/exampleDatabase.db", myMedatdata, myDataset)
+ShinyLipids::createDatabase("path/to/your/data.db", myMedatdata, myDataset)
 ```
 
 Now you are ready to look at your lipids! Run this code for a quick start:
 
 ```{r, eval=FALSE}
-databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "./inst/extdata/exampleDatabase.db")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "path/to/your/data.db")
 ShinyLipids::run_app(db = databaseConnection)
 ```
 
@@ -103,11 +106,12 @@ ShinyLipids::run_app(db = databaseConnection)
 
 **id_info**
 
-This is `myMetadata.csv`. Not all columns are needed.
+This is `myMetadata.csv` in the previous example.
+Not all columns are needed but `id` and `title` are essential.
 
 |Column           | Description                   |
 |:----------------| -----------                   |
-|id               | whole number:                 |
+|id               | whole number: unique id per dataset |
 |title            | text: title of dataset        |
 |date_upload      | text: YYYY-MM-DD              |
 |status           | text: e.g. in progress        |
@@ -124,19 +128,37 @@ This is `myMetadata.csv`. Not all columns are needed.
 
 **data2**
 
-This is `myDataset.csv`.
+This is `myDataset.csv`. 
 
 |Column                     | Description                   |
 |:--------------------------| -----------                   |
 |id                         | whole number: matches metadata|
-|sample_identifier          | text: e.g. "1Aa"|
 |lipid                      | text: format: "Cer 34:1;2"|
+|value                      | number:  (assumed to be µM) |
 |category                   | text: e.g. SP|
 |func_cat                   | text: e.g. SP|
+|sample_identifier          | text: e.g. "1Aa"|
 |sample                     | text: e.g. "1 - 0min Stim"|
 |sample_replicate           | text: e.g. "1 - 0min Stim_A"|
 |sample_replicate_technical | text: e.g. "1 - 0min Stim_A_a"|
-|value                      | number (assumed to be µM) |
+
+The lipid column should uniquely identify each measured
+lipid. If you use the nomenclature proposed by Liebisch et al.
+(https://www.ncbi.nlm.nih.gov/pubmed/23549332), `ShinyLipids`
+can extract further information about the lipid from this
+column (such as the length of the chains, the number
+of double bonds, the amount of hydroxylation etc.).
+The Lipid Maps project (https://www.lipidmaps.org/)
+aims to provide a database of known lipids. However,
+since the first mentioned nomenclature is both human- and machine-readable,
+`ShinyLipids` currently prioritizes it over LipidMaps-IDs.
+But the groundwork to read in the database of LipidMaps
+and convert LM-IDs to the Liebisch et al. format inside of ShinyLipids
+has been laid.
+
+The value is expected to be in µM. Using
+different units works but the axis labels will still
+read µM.
 
 Optionally, your database can contain a table named
 "LIPID_CLASS_ORDER_COMPLETE" with

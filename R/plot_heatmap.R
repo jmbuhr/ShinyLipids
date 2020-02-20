@@ -1,12 +1,26 @@
 #' Create a Heatmap from data
 #'
 #' @param data tibble. typically plotData()
-#' @param input list of inputs from shinys app_ui.R 
+#' @param standardizationFeatures NULL | character vector.
+#' @param aesX string.
+#' @param aesColor string.
+#' @param aesFacetCol string.
+#' @param aesFacetRow string.
+#' @param heatLabSize numeric. Size of axis labels
+#' @param heatColor string. Color palette
+#' One of c("viridis", "magma", "plasma", "inferno", "cividis")
 #'
 #' @return ggplot. Heatmap
 #' @export
-createHeatmap <- function(data, input) {
-  if (!is.null(input$standardizationFeatures)) {
+createHeatmap <- function(data,
+                          standardizationFeatures   = NULL,
+                          aesX                      = "class",
+                          aesColor                  = "sample",
+                          aesFacetCol               = "",
+                          aesFacetRow               = "",
+                          heatLabSize               = 9,
+                          heatColor                 = "viridis") {
+  if (!is.null(standardizationFeatures)) {
     fillName <- "amount [ Mol % ]"
   } else {
     fillName <- "amount [ \u00b5M ]"
@@ -14,39 +28,39 @@ createHeatmap <- function(data, input) {
   
   plt <- ggplot(data) +
     aes(
-      x = factor(!!sym(input$aesX)),
-      y = factor(!!sym(input$aesColor)),
+      x = factor(!!sym(aesX)),
+      y = factor(!!sym(aesColor)),
       fill = value
     ) +
     geom_raster() +
     mainTheme +
     theme(
-      axis.text.y      = element_text(size = input$heatLabSize, colour = "black"),
+      axis.text.y      = element_text(size = heatLabSize, colour = "black"),
       plot.background  = element_blank(),
       panel.grid       = element_blank(),
       panel.background = element_rect(colour = NA, fill = "grey80")
     ) +
     scale_x_discrete(expand = c(0, 0)) +
     scale_y_discrete(expand = c(0, 0)) +
-    scale_fill_viridis_c(option = input$heatColor) +
+    scale_fill_viridis_c(option = heatColor) +
     labs(
-      y    = input$aesColor,
-      x    = input$aesX,
+      y    = aesColor,
+      x    = aesX,
       fill = fillName
     )
   
   # facetting
-  if (input$aesFacetCol != "" & input$aesFacetRow != "") {
+  if (aesFacetCol != "" & aesFacetRow != "") {
     plt <- plt +
       facet_grid(
-        rows   = vars(!!sym(input$aesFacetCol)),
-        cols   = vars(!!sym(input$aesFacetRow)),
+        rows   = vars(!!sym(aesFacetRow)),
+        cols   = vars(!!sym(aesFacetRow)),
         scales = "free"
       )
   }
-  if (input$aesFacetCol != "" & input$aesFacetRow == "") {
+  if (aesFacetCol != "" & aesFacetRow == "") {
     plt <- plt +
-      facet_wrap(facets = vars(!!sym(input$aesFacetCol)), scales = "free")
+      facet_wrap(facets = vars(!!sym(aesFacetCol)), scales = "free")
   }
   plt
 }

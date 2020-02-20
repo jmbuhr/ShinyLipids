@@ -45,152 +45,18 @@ createMainPlot <- function(plotData,
       mutate(length = factor(length))
   }
   
-  plt <- ggplot(plotData, aes(x = !!sym(aesX), y = value))
+  plt <- ggplot(plotData, aes(x = !!sym(aesX), y = value)) %>% 
+    mainPlotAddColors(aesColor, plotData) %>% 
+    mainPlotAddBars(mainPlotAdditionalOptions, meanPlotData) %>% 
+    mainPlotAddPoints(mainPlotAdditionalOptions) %>% 
+    mainPlotAddErrorBars(errorbarType, meanPlotData) %>% 
+    mainPlotAddMeans(mainPlotAdditionalOptions, meanPlotData) %>% 
+    mainPlotAddFacets(aesFacetRow, aesFacetCol, mainPlotAdditionalOptions) %>% 
+    mainPlotAddValues(mainPlotAdditionalOptions, meanPlotData) %>% 
+    mainPlotAddPointValues(mainPlotAdditionalOptions) %>% 
+    mainPlotLabelPoints(mainPlotAdditionalOptions, summariseTechnicalReplicates)
   
-  # add color/fill if requested
-  # number of colors needed, if any
-  if (aesColor != "") {
-    colorCount <- plotData[[aesColor]] %>%
-      unique() %>% 
-      length()
-    
-    plt <- plt +
-      aes(
-        color = factor(!!sym(aesColor)),
-        fill  = factor(!!sym(aesColor)))
-  } else {
-    colorCount <- 0
-  }
-  
-  plt <- plt +
-    mainTheme +
-    mainScale(colorCount) +
-    guides(
-      color = guide_legend(ncol = 12,
-                           nrow = as.integer(colorCount / 12) + 1,
-                           title = aesColor),
-      fill = guide_legend(ncol = 12, # useful for way too many colors
-                          nrow = as.integer(colorCount / 12) + 1,
-                          title = aesColor
-      )
-    )
-  
-  # Add bars
-  if ("bars" %in% mainPlotAdditionalOptions) {
-    plt <- plt +
-      geom_col(
-        data     = meanPlotData,
-        position = position_dodge2(width = 0.9)
-      )
-  }
-  
-  # Add points
-  if ("points" %in% mainPlotAdditionalOptions) {
-    plt <- plt +
-      geom_point(
-        position    = position_dodge(width = 0.9),
-        pch         = 21,
-        alpha       = 1,
-        color       = "black",
-        show.legend = FALSE
-      )
-  }
-  
-  # Error bars and mean
-  if (errorbarType != "None") {
-    plt <- plt +
-      geom_errorbar(
-        data = meanPlotData,
-        position = position_dodge2(width = 0.2, padding = 0.8),
-        aes(ymin = switch(
-          errorbarType,
-          "SD"   = value - SD,
-          "SEM"  = value - SEM,
-          "CI"   = CI_lower
-        ),
-        ymax = switch(
-          errorbarType,
-          "SD"  = value + SD,
-          "SEM" = value + SEM,
-          "CI"  = CI_upper
-        )),
-        alpha = .8,
-        color = "black"
-      )
-  }
-  
-  # Hightlight Mean
-  if ("mean" %in% mainPlotAdditionalOptions) {
-    plt <- plt +
-      geom_errorbar(
-        data = meanPlotData,
-        aes(ymin = value, ymax = value),
-        position = position_dodge2(width = 0.9),
-        size = 1.2
-      )
-  }
-  
-  # facetting
-  if (aesFacetCol != "" | aesFacetRow != "") {
-    facet_col <- vars(!!sym(aesFacetCol))
-    facet_row <- vars(!!sym(aesFacetRow))
-    
-    if (aesFacetCol == "") {
-      facet_col <- NULL
-    }
-    if (aesFacetRow == "") {
-      facet_row <- NULL
-    }
-    
-    plt <- plt +
-      facet_grid(
-        cols   = facet_col,
-        rows   = facet_row,
-        scales = if_else("free_y" %in% mainPlotAdditionalOptions, "free", "free_x"),
-        space  = "free_x"
-      )
-  }
-  
-  # Display value of means as text
-  if ("values" %in% mainPlotAdditionalOptions) {
-    plt <- plt +
-      geom_text(
-        data = meanPlotData,
-        aes(label = round(value, 2)),
-        vjust     = 0,
-        color     = "black",
-        position  = position_dodge(width = 0.9)
-      )
-  }
-  
-  # Display value of points as text
-  if ("ind_values" %in% mainPlotAdditionalOptions) {
-    plt <- plt +
-      geom_text(
-        aes(label = round(value, 2)),
-        vjust    = 0,
-        color    = "black",
-        position = position_dodge(width = 0.9)
-      )
-  }
-  
-  # Label points
-  if ("label" %in% mainPlotAdditionalOptions) {
-    plt <- plt +
-      geom_text(
-        aes(label = !!sym(
-          ifelse(
-            summariseTechnicalReplicates,
-            "sample_replicate",
-            "sample_replicate_technical"
-          )
-        )),
-        vjust    = 0,
-        hjust    = 0,
-        color    = "black",
-        position = position_dodge(width = 0.9)
-      )
-  }
+
   
   # Show N
   if ("N" %in% mainPlotAdditionalOptions) {
@@ -262,4 +128,157 @@ createMainPlot <- function(plotData,
     }
   }
   plt
+}
+
+
+mainPlotAddColors <- function(plt, aesColor, plotData) {
+  if (aesColor != "") {
+    colorCount <- plotData[[aesColor]] %>%
+      unique() %>% 
+      length()
+    plt <- plt +
+      aes(
+        color = factor(!!sym(aesColor)),
+        fill  = factor(!!sym(aesColor)))
+  } else {
+    colorCount <- 0
+  }
+  
+  plt +
+    mainTheme +
+    mainScale(colorCount) +
+    guides(
+      color = guide_legend(ncol = 12,
+                           nrow = as.integer(colorCount / 12) + 1,
+                           title = aesColor),
+      fill = guide_legend(ncol = 12, # useful for way too many colors
+                          nrow = as.integer(colorCount / 12) + 1,
+                          title = aesColor
+      )
+    )
+}
+
+  
+mainPlotAddBars <- function(plt, mainPlotAdditionalOptions, meanPlotData) {
+  if ("bars" %in% mainPlotAdditionalOptions) {
+    plt +
+      geom_col(
+        data     = meanPlotData,
+        position = position_dodge2(width = 0.9)
+      )
+  } else plt
+}
+
+
+mainPlotAddPoints <- function(plt, mainPlotAdditionalOptions) {
+  if ("points" %in% mainPlotAdditionalOptions) {
+    plt +
+      geom_point(
+        position    = position_dodge(width = 0.9),
+        pch         = 21,
+        alpha       = 1,
+        color       = "black",
+        show.legend = FALSE
+      )
+  } else plt
+}
+
+mainPlotAddErrorBars <- function(plt, errorbarType, meanPlotData) {
+  if (errorbarType != "None") {
+    plt +
+      geom_errorbar(
+        data = meanPlotData,
+        position = position_dodge2(width = 0.2, padding = 0.8),
+        aes(ymin = switch(
+          errorbarType,
+          "SD"   = value - SD,
+          "SEM"  = value - SEM,
+          "CI"   = CI_lower
+        ),
+        ymax = switch(
+          errorbarType,
+          "SD"  = value + SD,
+          "SEM" = value + SEM,
+          "CI"  = CI_upper
+        )),
+        alpha = .8,
+        color = "black"
+      )
+  } else plt
+}
+
+mainPlotAddMeans <- function(plt, mainPlotAdditionalOptions, meanPlotData) {
+  if ("mean" %in% mainPlotAdditionalOptions) {
+    plt +
+      geom_errorbar(
+        data = meanPlotData,
+        aes(ymin = value, ymax = value),
+        position = position_dodge2(width = 0.9),
+        size = 1.2
+      )
+  } else plt
+}
+
+mainPlotAddFacets <- function(plt, aesFacetRow, aesFacetCol, mainPlotAdditionalOptions) {
+  if (aesFacetCol != "" | aesFacetRow != "") {
+    facet_col <- vars(!!sym(aesFacetCol))
+    facet_row <- vars(!!sym(aesFacetRow))
+    
+    if (aesFacetCol == "") {
+      facet_col <- NULL
+    }
+    if (aesFacetRow == "") {
+      facet_row <- NULL
+    }
+    
+    plt +
+      facet_grid(
+        cols   = facet_col,
+        rows   = facet_row,
+        scales = if_else("free_y" %in% mainPlotAdditionalOptions, "free", "free_x"),
+        space  = "free_x"
+      )
+  } else plt
+}
+
+mainPlotAddValues <- function(plt, mainPlotAdditionalOptions, meanPlotData) {
+  if ("values" %in% mainPlotAdditionalOptions) {
+    plt +
+      geom_text(
+        data = meanPlotData,
+        aes(label = round(value, 2)),
+        vjust     = 0,
+        color     = "black",
+        position  = position_dodge(width = 0.9)
+      )
+  } else plt
+}
+
+mainPlotAddPointValues <- function(plt, mainPlotAdditionalOptions) {
+  if ("ind_values" %in% mainPlotAdditionalOptions) {
+    plt +
+      geom_text(
+        aes(label = round(value, 2)),
+        vjust    = 0,
+        color    = "black",
+        position = position_dodge(width = 0.9)
+      )
+  } else plt
+}
+
+mainPlotLabelPoints <- function(plt, mainPlotAdditionalOptions, summariseTechnicalReplicates) {
+  if ("label" %in% mainPlotAdditionalOptions) {
+    plt +
+      geom_text(aes(label = !!sym(ifelse(
+        summariseTechnicalReplicates,
+        "sample_replicate",
+        "sample_replicate_technical")
+      )
+      ),
+      vjust    = 0,
+      hjust    = 0,
+      color    = "black",
+      position = position_dodge(width = 0.9)
+      )
+  } else plt
 }

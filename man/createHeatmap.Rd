@@ -4,12 +4,34 @@
 \alias{createHeatmap}
 \title{Create a Heatmap from data}
 \usage{
-createHeatmap(data, input)
+createHeatmap(
+  data,
+  standardizationFeatures = NULL,
+  aesX = "class",
+  aesColor = "sample",
+  aesFacetCol = "",
+  aesFacetRow = "",
+  heatLabSize = 9,
+  heatColor = "viridis"
+)
 }
 \arguments{
 \item{data}{tibble. typically plotData()}
 
-\item{input}{list of inputs from shinys app_ui.R}
+\item{standardizationFeatures}{NULL | character vector.}
+
+\item{aesX}{string.}
+
+\item{aesColor}{string.}
+
+\item{aesFacetCol}{string.}
+
+\item{aesFacetRow}{string.}
+
+\item{heatLabSize}{numeric. Size of axis labels}
+
+\item{heatColor}{string. Color palette
+One of c("viridis", "magma", "plasma", "inferno", "cividis")}
 }
 \value{
 ggplot. Heatmap

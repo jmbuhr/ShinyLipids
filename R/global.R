@@ -15,7 +15,8 @@
 #' 
 NULL
 
-## quiets concerns of R CMD check re: the .'s that appear in pipelines
+# quiets concerns of R CMD CHECK re: the .'s that appear in pipelines
+# and also names of tibble columns used in tidy evaluation / NSE.
 utils::globalVariables(
   c(".",
     "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category",
@@ -49,4 +50,5 @@ dtOptions <- list(
   order          = list(0, "desc"),
   scrollX        = TRUE,
   deferRender    = TRUE,
-  scrollCollapse = TRUE)
+  scrollCollapse = TRUE
+)
