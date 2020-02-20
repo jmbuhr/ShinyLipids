@@ -12,5 +12,5 @@ tests/GeneralTest-expected
 Sqlite.db
 dev
 *.Rprof
-
 inst/extdata/originalExampleDatabase.db
+.vscode/
