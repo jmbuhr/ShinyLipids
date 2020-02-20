@@ -12,3 +12,7 @@ $run_dev.*
 ^\.lintr$
 ^\.vscode
 \.Rprof$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^codecov\.yml$
