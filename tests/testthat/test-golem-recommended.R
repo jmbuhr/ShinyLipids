@@ -22,7 +22,7 @@ test_that(
       "R", 
       c(
         "-e", 
-        "setwd('../../'); pkgload::load_all();databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), './inst/extdata/exampleDatabase.db');run_app(databaseConnection)"
+        "options( 'golem.app.prod' = TRUE); path <- system.file('extdata/exampleDatabase.db', package = 'ShinyLipids'); databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path); ShinyLipids::run_app(db = databaseConnection)"
       )
     )
     Sys.sleep(10)

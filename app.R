@@ -1,6 +1,6 @@
 # File to launch the shinyApp (Do not remove this comment)
 # Setup ####
-pkgload::load_all()
+pkgload::load_all() # dev
 options( "golem.app.prod" = TRUE)
 
 # Deployment ####
@@ -30,7 +30,7 @@ options( "golem.app.prod" = TRUE)
 ## Local database file
 # replace with
 # path <- "path/to/your/data.db"
-path <- system.file("inst/extdata/exampleDatabase.db", package = "ShinyLipids")
+path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
 # Run App ####

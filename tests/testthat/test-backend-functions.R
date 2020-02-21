@@ -1,8 +1,6 @@
 context("Data Visualization Pipeline")
 
-pkgload::load_all()
-
-path <- system.file("inst/extdata/exampleDatabase.db", package = "ShinyLipids")
+path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 lipidClassOrder <- collectLipidClassOrder(databaseConnection)
 
