@@ -7,8 +7,6 @@
 
 ![Travis build
 status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)
-[![Codecov test
-coverage](https://codecov.io/gh/jannikbuhr/shinylipids/branch/master/graph/badge.svg)](https://codecov.io/gh/jannikbuhr/shinylipids?branch=master)
 <!-- badges: end -->
 
 An interactive web application for lipidomics data analysis based on the

@@ -4,11 +4,9 @@
 .RData
 .Ruserdata
 rsconnect
-*.html
 *.DS_Store
 debugging.R
 tests/GeneralTest-expected
-*.html
 Sqlite.db
 dev
 *.Rprof
