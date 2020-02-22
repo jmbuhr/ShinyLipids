@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 An interactive web application for lipidomics data analysis based on
 the R programming language with the shiny framework.
 
-![Shiny Lipids main plot](man/figures/Screenshot from 2020-02-22 15-05-53.png)
+![Shiny Lipids main plot](man/figures/sl_main_view.png)
 
 ## What is ShinyLipids?
 

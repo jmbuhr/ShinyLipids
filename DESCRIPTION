@@ -7,6 +7,7 @@ Authors@R: person('Jannik', 'Buhr',
 Description: ShinyLipids is a web-app for visualization of lipidomics
     mass spectrometry data that runs in your browser.
 BugReports: https://github.com/jannikbuhr/ShinyLipids/issues
+URL: https://jmbuhr.de/ShinyLipids/, https://github.com/jannikbuhr/ShinyLipids
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -43,5 +44,6 @@ RoxygenNote: 7.0.2
 Suggests:
     testthat (>= 2.1.0),
     processx,
-    covr
+    covr,
+    rmarkdown
 Language: en-US

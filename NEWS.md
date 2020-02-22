@@ -1,3 +1,9 @@
-# ShinyLipids 2.0.1
+# ShinyLipids (developement version)
 
-* Added a `NEWS.md` file to track changes to the package.
+# ShinyLipids 2.0.0
+
+* Initial public release
+
+# ShinyLipids 1.0.0
+
+* Internal prototype

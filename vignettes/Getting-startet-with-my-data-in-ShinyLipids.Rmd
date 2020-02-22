@@ -1,0 +1,45 @@
+---
+title: "Getting startet with my data in ShinyLipids"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Setup
+
+Before we go ahead and load in your very own data, let us
+test your installation of ShinyLipids with the included
+example dataset. This article assumes that you already
+installed ShinyLipids with
+
+```{r inst-sl, eval=FALSE}
+devtools::install_github("jannikbuhr/ShinyLipids")
+```
+
+If this is the case, go ahead an run
+
+```{r load-example, eval = FALSE}
+path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
+```
+
+To specify the datbase connection to the example
+database dump file. You are now ready to start exploring
+ShinyLipids with
+
+```{r run-ex-sl, eval = FALSE}
+ShinyLipids::run_app(db = databaseConnection)
+```
+
+
+# Loading in your own data
+
+...
+
+# Exploring your data
+
+...

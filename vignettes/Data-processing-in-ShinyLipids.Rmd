@@ -1,0 +1,14 @@
+---
+title: "Data processing in ShinyLipids"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ShinyLipids)
+```

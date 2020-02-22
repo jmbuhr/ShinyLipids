@@ -1,0 +1,58 @@
+destination: docs
+template:
+  params:
+    bootswatch: flatly
+authors:
+  Jannik Buhr:
+    href: "https://jmbuhr.de/"
+reference:
+  - title: "Data processing"
+    desc: |
+      Functions that read in data from the database and process it.
+      This includes filtering, standardization and calculation of
+      summaries.
+    contents: 
+      - collectMetaData
+      - collectLipidClassOrder
+      - createQueryForID
+      - collectRawData
+      - addLipidProperties
+      - imputeMissingIf
+      - standardizeWithinTechnicalReplicatesIf
+      - filterIfNotNull
+      - filterRawDataFor
+      - standardizeRawDataWithin
+      - createPlotData
+      - summarisePlotData
+      - testPairwise
+      - doAllPairwiseComparisons
+  - title: "Main user facing functions"
+    desc: "The main entry points for (new) users"
+    contents:
+      - run_app
+      - createDatabase
+  - title: "Plotting functions"
+    desc: "Functions to generate plots"
+    contents:
+      - run_app
+      - createMainPlot
+      - createHeatmap
+  - title: "Utility functions"
+    desc: "Smaller helper utilities"
+    contents:
+      - downloadHandlerFactoryCSV
+      - downloadHandlerFactoryPDF
+      - updateAllRangeInputs
+      - updateAllSelectizeInputs
+      - updateInputsForSpeciesProfile
+      - mainScale
+      - parseDate
+      - stat_chull
+      - testAllMoreThanOneReplicate
+articles:
+- title: Using ShinyLipids
+  contents:
+  - Getting-startet-with-my-data-in-ShinyLipids
+- title: Behind the scenes
+  contents:
+  - Data-processing-in-ShinyLipids

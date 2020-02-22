@@ -15,11 +15,7 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 An interactive web application for lipidomics data analysis based on the
 R programming language with the shiny framework.
 
-``` r
-knitr::include_graphics("man/figures/Screenshot from 2020-02-22 15-05-53.png")
-```
-
-<img src="man/figures/Screenshot from 2020-02-22 15-05-53.png" width="100%" />
+![Shiny Lipids main plot](man/figures/sl_main_view.png)
 
 ## What is ShinyLipids?
 
