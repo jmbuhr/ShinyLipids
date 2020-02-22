@@ -18,11 +18,15 @@ knitr::opts_chunk$set(
 # ShinyLipids
 
 <!-- badges: start -->
-![Travis build status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)
+[![Travis build status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jannikbuhr/ShinyLipids)
+[![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![codecov](https://codecov.io/gh/jannikbuhr/ShinyLipids/branch/master/graph/badge.svg?token=1cRbNEmkjj)](https://codecov.io/gh/jannikbuhr/ShinyLipids)
 <!-- badges: end -->
 
 An interactive web application for lipidomics data analysis based on
 the R programming language with the shiny framework.
+
+![Shiny Lipids main plot](man/figures/Screenshot from 2020-02-22 15-05-53.png)
 
 ## What is ShinyLipids?
 
@@ -183,6 +187,5 @@ your RStudio code panel.
 ## Notes
 
 Please note that the 'ShinyLipids' project is released with a
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+[Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
-

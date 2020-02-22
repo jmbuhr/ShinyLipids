@@ -1,4 +1,6 @@
 #' Collect metadata from database
+#' 
+#' @
 #'
 #' @param con database conncetion object.
 #' Create one yourself with e.g.

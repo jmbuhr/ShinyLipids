@@ -5,12 +5,21 @@
 
 <!-- badges: start -->
 
-![Travis build
-status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)
+[![Travis build
+status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jannikbuhr/ShinyLipids)
+[![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![codecov](https://codecov.io/gh/jannikbuhr/ShinyLipids/branch/master/graph/badge.svg?token=1cRbNEmkjj)](https://codecov.io/gh/jannikbuhr/ShinyLipids)
 <!-- badges: end -->
 
 An interactive web application for lipidomics data analysis based on the
 R programming language with the shiny framework.
+
+``` r
+knitr::include_graphics("man/figures/Screenshot from 2020-02-22 15-05-53.png")
+```
+
+<img src="man/figures/Screenshot from 2020-02-22 15-05-53.png" width="100%" />
 
 ## What is ShinyLipids?
 
@@ -162,8 +171,8 @@ top right corner of your RStudio code panel.
 ## Notes
 
 Please note that the ‘ShinyLipids’ project is released with a
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to
-this project, you agree to abide by its terms.
+[Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
+contributing to this project, you agree to abide by its terms.
 
 1.  If you want to publish the Shiny App on RStudio-connect, you will
     need a couple of additional packages that are listed in `app.R`.

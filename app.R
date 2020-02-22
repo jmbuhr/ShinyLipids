@@ -1,6 +1,6 @@
 # File to launch the shinyApp (Do not remove this comment)
 # Setup ####
-pkgload::load_all() # dev
+pkgload::load_all() # dev and deployment
 options( "golem.app.prod" = TRUE)
 
 # Deployment ####
