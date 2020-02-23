@@ -81,19 +81,19 @@ uiSidebar <- shinydashboard::dashboardSidebar(
   
   # * Tables/Plot Options ####
   tabsetPanel(type = "pills", id = "tabs",
-              tabPanel(title = "Quickoptions",
+              tabPanel(title = "Quickmenu",
                        actionButton(
                          "quickClassProfile",
-                         label = "Class Profile"
+                         label = "Show class profile"
                        ),
                        selectizeInput(
                          "quickSpeciesProfileClass",
-                         label = "Species Profile for:",
-                         options  = list(placeholder = "Select a class to automatically filter and display"),
+                         label = "Show Species Profile:",
+                         options  = list(placeholder = "Select a class to filter and display"),
                          choices  = NULL
                        ),
               ),
-              tabPanel(title = "Mapping",
+              tabPanel(title = "Features \u2192 Plot",
                        selectInput(
                          "aesX",
                          label       = HTML("Feature to display on x-Axis /<br>use in the PCA"),
@@ -133,7 +133,8 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                                                               "chain_sums",
                                                               "sample_replicate",
                                                               "sample_replicate_technical")],
-                         selected = ""),
+                         selected = "")),
+              tabPanel(title = "Data",
                        selectizeInput(
                          "standardizationFeatures",
                          label    = "Standardize to 100% within:",
@@ -146,6 +147,21 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                          label    = "Substract sample as baseline",
                          choices  = "",
                          selected = ""
+                       ),
+                       checkboxInput(
+                         "standardizeWithinTechnicalReplicate",
+                         label = "Standardize within technical replicates",
+                         value = TRUE
+                       ),
+                       checkboxInput(
+                         "summariseTechnicalReplicates",
+                         label    = "average technical replicates",
+                         value = TRUE
+                       ),
+                       checkboxInput(
+                         "imputeMissingAs0",
+                         label = "Impute missing values as 0",
+                         value = TRUE
                        )
               ),
               tabPanel(title = "Samples",
@@ -183,21 +199,6 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                          options  = list(placeholder = "Explicitly remove tec. replicate"),
                          choices  = NULL,
                          multiple = TRUE
-                       ),
-                       checkboxInput(
-                         "summariseTechnicalReplicates",
-                         label    = "average over technical replicates",
-                         value = TRUE
-                       ),
-                       checkboxInput(
-                         "standardizeWithinTechnicalReplicate",
-                         label = "Standardize within technical replicates",
-                         value = TRUE
-                       ),
-                       checkboxInput(
-                         "imputeMissingAs0",
-                         label = "Impute missing values as 0",
-                         value = TRUE
                        )
               ),
               tabPanel(title = "Filters",

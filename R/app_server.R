@@ -172,6 +172,7 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(session, "standardizationFeatures", selected = "")
     updateSelectInput(session, "aesX", selected = "class")
     updateSelectizeInput(session, "lipidClassToSelect", selected = "")
+    updateSelectizeInput(session, "quickSpeciesProfileClass", selected = "")
   })
   
   # Table Outputs ####
