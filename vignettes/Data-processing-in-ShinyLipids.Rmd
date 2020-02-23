@@ -9,6 +9,82 @@ knitr::opts_chunk$set(
 )
 ```
 
+# So what happens to my data?...
+
+you might rightfully ask yourself when loading a dataset into ShinyLipids.
+Luckily, we expose the internals of ShinyLipids in the form
+of clearly named functions for you to use even outside of
+the app. If you want to learn more about _how exactly_ things
+work underneath the hood, you can click at the
+individual functions to read their documentation or
+have a look at the source code.
+But for now, let's explore the example data together.
+We will follow the steps that ShinyLipids takes and inspect intermediate
+results.
+
+First, we load ShinyLipids
+
 ```{r setup}
 library(ShinyLipids)
 ```
+
+We can get the file path to our example data, given that
+ShinyLipids is installed, and open up a database connection to
+the database dump file
+
+```{r}
+path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
+```
+
+We see, that our example file contains two tables (their names are mandatory).
+
+```{r}
+DBI::dbListTables(databaseConnection)
+```
+
+From this connection, we load in our meta data "id_info" -- information
+about the dataset(s) in the "data2" table:
+
+```{r}
+metaData <- collectMetaData(databaseConnection)
+metaData
+```
+
+We see, that our ownly dataset in the database has id `1`, so
+we  use that id to collect the raw data and inspect the first 6 rows:
+
+```{r}
+rawData <- collectRawData(con = databaseConnection,
+                          id = 1)
+head(rawData)
+```
+
+Next, we run the data processing steps.
+
+```{r}
+plotData <- rawData %>%
+  imputeMissingIf() %>% 
+  addLipidProperties() %>% 
+  standardizeWithinTechnicalReplicatesIf(TRUE) %>%
+  filterRawDataFor() %>%
+  standardizeRawDataWithin() %>%
+  createPlotData()
+
+head(plotData)
+```
+
+```{r}
+meanPlotData <- summarisePlotData(plotData)
+head(meanPlotData)
+```
+
+
+```{r}
+plt <- createMainPlot(plotData            = plotData,
+                      meanPlotData        = meanPlotData,
+                      pairwiseComparisons = NULL)
+
+plt
+```
+

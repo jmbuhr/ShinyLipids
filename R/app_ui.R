@@ -283,8 +283,8 @@ uiBody <- shinydashboard::dashboardBody(
                             fluidRow(
                               shinydashboard::box(
                                 width  = 12,
-                                height = 620,
                                 status = "primary",
+                                footer = "Brush and doubleclick to zoom",
                                 plotOutput(
                                   "mainPlot",
                                   height   = 600,
@@ -314,7 +314,7 @@ uiBody <- shinydashboard::dashboardBody(
                                                    selected = list("points", "bars")
                                 ),
                                 selectInput("errorbarType", "Type of error bars",
-                                            choices = list("SD", "SEM", "CI", "None"),
+                                            choices = list("SD", "SEM",  "95% CI" = "CI", "None"),
                                             selected = "None"
                                 )
                               ),
@@ -330,8 +330,7 @@ uiBody <- shinydashboard::dashboardBody(
                               ),
                               shinydashboard::box(
                                 title = "Pairwise comparisons",
-                                footer = "This table only shows when you tick \"Run pairwise t-tests\" in the plot options next to this. Calculated via t-tests on log-transformed data. \
-                                  P-values corrected with the Benjamini-Hochberg procedure.",
+                                footer = "",
                                 width = 6,
                                 DT::DTOutput("pairwiseComparisonsTable")
                               )

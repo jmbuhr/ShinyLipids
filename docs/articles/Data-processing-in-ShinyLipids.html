@@ -59,6 +59,9 @@
     <li>
       <a href="../articles/Getting-startet-with-my-data-in-ShinyLipids.html">Getting startet with my data in ShinyLipids</a>
     </li>
+    <li>
+      <a href="../articles/Technical-aspects.html">Technical aspects</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -95,11 +98,90 @@
 
     
     
+<div id="so-what-happens-to-my-data" class="section level1">
+<h1 class="hasAnchor">
+<a href="#so-what-happens-to-my-data" class="anchor"></a>So what happens to my data?…</h1>
+<p>you might rightfully ask yourself when loading a dataset into ShinyLipids. Luckily, we expose the internals of ShinyLipids in the form of clearly named functions for you to use even outside of the app. If you want to learn more about <em>how exactly</em> things work underneath the hood, you can click at the individual functions to read their documentation or have a look at the source code. But for now, let’s explore the example data together. We will follow the steps that ShinyLipids takes and inspect intermediate results.</p>
+<p>First, we load ShinyLipids</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ShinyLipids)</span></code></pre></div>
+<p>We can get the file path to our example data, given that ShinyLipids is installed, and open up a database connection to the database dump file</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>path &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/exampleDatabase.db"</span>, <span class="dt">package =</span> <span class="st">"ShinyLipids"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>databaseConnection &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span>(RSQLite<span class="op">::</span><span class="kw"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span>(), path)</span></code></pre></div>
+<p>We see, that our example file contains two tables (their names are mandatory).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>DBI<span class="op">::</span><span class="kw"><a href="https://dbi.r-dbi.org/reference/dbListTables.html">dbListTables</a></span>(databaseConnection)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; [1] "data2"   "id_info"</span></span></code></pre></div>
+<p>From this connection, we load in our meta data “id_info” – information about the dataset(s) in the “data2” table:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>metaData &lt;-<span class="st"> </span><span class="kw"><a href="../reference/collectMetaData.html">collectMetaData</a></span>(databaseConnection)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>metaData</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt; # A tibble: 1 x 14</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt;      id title date_upload status sample_from date_sample extracted_by</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt; 1     1 Exam…          NA in pr… Harry Pott…          NA Albus Dumbl…</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; # … with 7 more variables: date_extraction &lt;dbl&gt;, measured_by &lt;chr&gt;,</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; #   date_measured &lt;dbl&gt;, distinct_samples &lt;int&gt;, data_lines &lt;int&gt;, file &lt;chr&gt;,</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; #   instruments &lt;chr&gt;</span></span></code></pre></div>
+<p>We see, that our ownly dataset in the database has id <code>1</code>, so we use that id to collect the raw data and inspect the first 6 rows:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>rawData &lt;-<span class="st"> </span><span class="kw"><a href="../reference/collectRawData.html">collectRawData</a></span>(<span class="dt">con =</span> databaseConnection,</span>
+<span id="cb5-2"><a href="#cb5-2"></a>                          <span class="dt">id =</span> <span class="dv">1</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(rawData)</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; # A tibble: 6 x 9</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt;      id sample_identifi… lipid   value category func_cat sample sample_replicate</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;           </span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; 1     1 1Aa              Cer … 0.00590 SP       SP       1 - 0… 1 - 0min Stim_A </span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; 2     1 1Aa              Cer … 0.276   SP       SP       1 - 0… 1 - 0min Stim_A </span></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; 3     1 1Aa              Cer … 0.0497  SP       SP       1 - 0… 1 - 0min Stim_A </span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; 4     1 1Aa              Cer … 0.0690  SP       SP       1 - 0… 1 - 0min Stim_A </span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; 5     1 1Aa              Cer … 0.00325 SP       SP       1 - 0… 1 - 0min Stim_A </span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt; 6     1 1Aa              Cer … 0.0219  SP       SP       1 - 0… 1 - 0min Stim_A </span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt; # … with 1 more variable: sample_replicate_technical &lt;chr&gt;</span></span></code></pre></div>
+<p>Next, we run the data processing steps.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>plotData &lt;-<span class="st"> </span>rawData <span class="op">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="st">  </span><span class="kw"><a href="../reference/imputeMissingIf.html">imputeMissingIf</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="st">  </span><span class="kw"><a href="../reference/addLipidProperties.html">addLipidProperties</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="st">  </span><span class="kw"><a href="../reference/standardizeWithinTechnicalReplicatesIf.html">standardizeWithinTechnicalReplicatesIf</a></span>(<span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="st">  </span><span class="kw"><a href="../reference/filterRawDataFor.html">filterRawDataFor</a></span>() <span class="op">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="st">  </span><span class="kw"><a href="../reference/standardizeRawDataWithin.html">standardizeRawDataWithin</a></span>() <span class="op">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="st">  </span><span class="kw"><a href="../reference/createPlotData.html">createPlotData</a></span>()</span>
+<span id="cb6-8"><a href="#cb6-8"></a></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(plotData)</span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; # A tibble: 6 x 4</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt;   class sample         sample_replicate value</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;          &lt;fct&gt;            &lt;dbl&gt;</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; 1 PC    1 - 0min Stim  1 - 0min Stim_A  0.567</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt; 2 PC    1 - 0min Stim  1 - 0min Stim_B  0.420</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; 3 PC    1 - 0min Stim  1 - 0min Stim_C  0.291</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; 4 PC    1 - 0min Stim  1 - 0min Stim_D  1.22 </span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt; 5 PC    2 - 10min Stim 2 - 10min Stim_A 0.235</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; 6 PC    2 - 10min Stim 2 - 10min Stim_B 0.333</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>meanPlotData &lt;-<span class="st"> </span><span class="kw"><a href="../reference/summarisePlotData.html">summarisePlotData</a></span>(plotData)</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(meanPlotData)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; # A tibble: 6 x 8</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt;   class sample            SD    SEM     N value CI_lower CI_upper</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;          &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; 1 PC    1 - 0min Stim  0.412 0.103      4 0.624    0.296    0.952</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; 2 PC    2 - 10min Stim 0.194 0.0484     4 0.425    0.271    0.579</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; 3 PC    3 - 6h Stim    0.129 0.0324     4 0.583    0.480    0.686</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; 4 PC    4 - 18h Stim   0.300 0.0750     4 0.728    0.489    0.967</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt; 5 PC O- 1 - 0min Stim  0.145 0.0363     4 0.333    0.218    0.448</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="co">#&gt; 6 PC O- 2 - 10min Stim 0.311 0.0777     4 0.429    0.181    0.676</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>plt &lt;-<span class="st"> </span><span class="kw"><a href="../reference/createMainPlot.html">createMainPlot</a></span>(<span class="dt">plotData            =</span> plotData,</span>
+<span id="cb8-2"><a href="#cb8-2"></a>                      <span class="dt">meanPlotData        =</span> meanPlotData,</span>
+<span id="cb8-3"><a href="#cb8-3"></a>                      <span class="dt">pairwiseComparisons =</span> <span class="ot">NULL</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a></span>
+<span id="cb8-5"><a href="#cb8-5"></a>plt</span></code></pre></div>
+<p><img src="Data-processing-in-ShinyLipids_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
 
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#so-what-happens-to-my-data">So what happens to my data?…</a></li>
+      </ul>
+</div>
       </div>
 
 </div>

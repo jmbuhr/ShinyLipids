@@ -216,9 +216,10 @@ app_server <- function(input, output, session) {
   # * pairwiseComparisonsTable ####
   output$pairwiseComparisonsTable <- DT::renderDT({
     validate(need("signif" %in% input$mainPlotAdditionalOptions,
-                  "Option not checked."))
+                  "This table only shows when you tick \"Run pairwise t-tests\" in the plot options next to this. "))
     pairwiseComparisons()
-  }, options = dtOptions)
+  }, options = dtOptions, caption = "Calculated via t-tests on log-transformed data. \
+                                  P-values corrected with the Benjamini-Hochberg procedure.")
   
   # Plots ####
   # * Main Plot ####

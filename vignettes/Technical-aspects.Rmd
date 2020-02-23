@@ -1,0 +1,34 @@
+---
+title: "Technical aspects"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Concepts that make ShinyLipids safer
+
+The main reason people switch from spreadsheet software
+such as Microsoft Excel to scripting languages such as
+Python and R is reproducibility, re-usability and the idea
+that code is an important means of communication.
+
+Programming languages offer immense power. But with
+great power comes great responsibility. While analysis
+in code are less error prone to copy-and-paste errors
+as found in Excel and Co., or involuntary conversions
+to dates^[One study found that one 5th of screened genetics papers contained errors due to this behaviour in Excel. [Source](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1044-7)], they can of course contain mistakes nonetheless.
+
+A number of measures have been taken to ensure
+that the code presented here is safe, testable and
+easy to extend.
+
+## Functional programming
+
+## Unit tests
+
+## Other conventions
+

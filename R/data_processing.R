@@ -363,7 +363,7 @@ testPairwise <- function(data) {
 #'
 #' @return tibble.
 #' A tidy representation of the significance
-#' tests build with \code{broom::tidy} combinde
+#' tests build with \code{broom::tidy} combined
 #' into one tibble.
 doAllPairwiseComparisons <- function(data, aesX) {
   data %>%

@@ -20,3 +20,4 @@ $run_dev.*
 ^\.github$
 ^vignettes/Getting-startet-with-my-data-in-ShinyLipids\.Rmd$
 ^vignettes/Data-processing-in-ShinyLipids\.Rmd$
+^vignettes/Technical-aspects\.Rmd$
