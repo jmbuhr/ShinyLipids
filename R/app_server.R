@@ -406,8 +406,24 @@ app_server <- function(input, output, session) {
                               height    = input$mainHeight, 
                               id        = input$ID)
   
+  output$saveMainPlotRDS <-
+    downloadHandlerFactoryRDS(metaData  = metaData(),
+                              plot      = mainPlot(),
+                              specifier = "-plot",
+                              width     = input$mainWidth,
+                              height    = input$mainHeight, 
+                              id        = input$ID)
+  
   output$saveHeatmap <-
     downloadHandlerFactoryPDF(metaData  = metaData(),
+                              plot      = heatmapPlot(),
+                              specifier = "-heatmap",
+                              width     = input$heatWidth,
+                              height    = input$heatHeight, 
+                              id        = input$ID)
+  
+  output$saveHeatmapRDS <-
+    downloadHandlerFactoryRDS(metaData  = metaData(),
                               plot      = heatmapPlot(),
                               specifier = "-heatmap",
                               width     = input$heatWidth,
@@ -430,6 +446,21 @@ app_server <- function(input, output, session) {
                               height    = input$pcaHeight, 
                               id        = input$ID)
   
+  output$savePCAScoresRDS <-
+    downloadHandlerFactoryRDS(metaData  = metaData(),
+                              plot      = pcaScoresPlot(),
+                              specifier = "-pcaScoresPlot",
+                              width     = input$pcaWidth,
+                              height    = input$pcaHeight, 
+                              id        = input$ID)
+  
+  output$savePCALoadingsRDS <-
+    downloadHandlerFactoryRDS(metaData  = metaData(),
+                              plot      = pcaLoadingsPlot(),
+                              specifier = "-pcaLoadingsPlot",
+                              width     = input$pcaWidth,
+                              height    = input$pcaHeight, 
+                              id        = input$ID)
   # End ####
   # End session when window is closed
   session$onSessionEnded(function() {

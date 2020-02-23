@@ -321,9 +321,10 @@ uiBody <- shinydashboard::dashboardBody(
                               shinydashboard::box(
                                 title = "Download",
                                 width = 3,
-                                downloadButton("saveMainPlot", label = "Save plot (.pdf)"),
-                                downloadButton("savePlotData", label = "Save points (.csv)"),
-                                downloadButton("saveMeanPlotData", label = "Save means (.csv)"),
+                                downloadButton("saveMainPlot", label = "Save plot as .pdf"),
+                                downloadButton("saveMainPlotRDS", label = "Save plot as .RDS"),
+                                downloadButton("savePlotData", label = "Save points as .csv"),
+                                downloadButton("saveMeanPlotData", label = "Save means as .csv"),
                                 numericInput("mainWidth", label = "width", value = 20),
                                 numericInput("mainHeight", label = "height", value = 10)
                               ),
@@ -369,7 +370,9 @@ uiBody <- shinydashboard::dashboardBody(
           ),
           shinydashboard::box(width = NULL, title = "Download",
                               downloadButton("savePCAScores", label = "Save Score Plot as .pdf"),
+                              downloadButton("savePCAScoresRDS", label = "Save Score Plot as .RDS"),
                               downloadButton("savePCALoadings", label = "Save Loadings Plot as .pdf"),
+                              downloadButton("savePCALoadingsRDS", label = "Save Loadings Plot as .RDS"),
                               numericInput("pcaWidth", label = "width", value = 20),
                               numericInput("pcaHeight", label = "height", value = 20)
           )
@@ -433,6 +436,7 @@ uiBody <- shinydashboard::dashboardBody(
                             fluidRow(
                               shinydashboard::box(
                                 downloadButton("saveHeatmap", label = "Save as .pdf"),
+                                downloadButton("saveHeatmapRDS", label = "Save as .RDS"),
                                 numericInput("heatWidth", label = "width", value = 20),
                                 numericInput("heatHeight", label = "height", value = 10)
                               ),

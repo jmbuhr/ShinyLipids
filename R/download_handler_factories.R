@@ -41,3 +41,28 @@ downloadHandlerFactoryPDF <- function(metaData, plot, specifier, width, height, 
     }
   )
 }
+
+
+#' Create Download Handler for PDF files
+#'
+#' @param metaData tibble. Meta data.
+#' @param plot ggplot. Plot to save.
+#' @param specifier string. Postfix for the file name.
+#' @param width numeric. Width in inches.
+#' @param height numeric. Height in inches.
+#' @param id integer. Id of the data set.
+#'
+#' @return download handler for the shiny server function
+downloadHandlerFactoryRDS <- function(metaData, plot, specifier, width, height, id) {
+  downloadHandler(
+    filename = function() {
+      tmp <- metaData %>% filter(id == id) %>% select(title)
+      tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+      paste0(Sys.Date(), "_", tmp, specifier, ".rds")
+    },
+    content = function(file) {
+      saveRDS(plot, file)
+    }
+  )
+}
+
