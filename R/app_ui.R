@@ -25,13 +25,13 @@ uiHeader <- shinydashboard::dashboardHeader(
     icon       = icon("question-circle"),
     headerText = "Need Help?",
     shinydashboard::notificationItem(text   = "Documentation",
-                                     href   = "https://jmbuhr.de/project/shinylipids/",
+                                     href   = "https://jmbuhr.de/ShinyLipids/",
                                      icon   = icon("book"),
                                      status = "success"),
-    shinydashboard::notificationItem(text   = "Contact author",
-                                     href   = "https://jmbuhr.de/#contact",
+    shinydashboard::notificationItem(text   = "Report bug",
+                                     href   = "https://github.com/jannikbuhr/ShinyLipids/issues/new",
                                      status = "success",
-                                     icon   = icon("envelope")),
+                                     icon   = icon("bug")),
     tags$li(
       a(
         p("Written by", strong("Jannik Buhr")),
@@ -155,7 +155,7 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                        ),
                        checkboxInput(
                          "summariseTechnicalReplicates",
-                         label    = "average technical replicates",
+                         label    = "Average technical replicates",
                          value = TRUE
                        ),
                        checkboxInput(
