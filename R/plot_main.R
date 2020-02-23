@@ -96,6 +96,7 @@ createMainPlot <- function(plotData,
   
   plt <- plt +
     scale_y_continuous(
+      expand = expand_scale(mult = c(0, 0.05)),
       name   = yAxisName,
       labels = yAxisLabels,
       trans  = yAxisTransformation) +
