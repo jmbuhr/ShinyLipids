@@ -174,7 +174,6 @@ standardizeWithinTechnicalReplicatesIf <- function(data, doIt = TRUE) {
 #' the context of the data
 #'
 #' @return tibble. filtered data
-#' @export
 filterIfNotNull <- function(data, var, condition) {
   if (!is.null(var)) {
     filter(data, {{condition}})

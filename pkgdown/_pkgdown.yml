@@ -14,17 +14,14 @@ reference:
     contents: 
       - collectMetaData
       - collectLipidClassOrder
-      - createQueryForID
       - collectRawData
       - addLipidProperties
       - imputeMissingIf
       - standardizeWithinTechnicalReplicatesIf
-      - filterIfNotNull
       - filterRawDataFor
       - standardizeRawDataWithin
       - createPlotData
       - summarisePlotData
-      - testPairwise
       - doAllPairwiseComparisons
   - title: "Main user facing functions"
     desc: "The main entry points for (new) users"
@@ -34,12 +31,12 @@ reference:
   - title: "Plotting functions"
     desc: "Functions to generate plots"
     contents:
-      - run_app
       - createMainPlot
       - createHeatmap
   - title: "Utility functions"
     desc: "Smaller helper utilities"
     contents:
+      - createQueryForID
       - downloadHandlerFactoryCSV
       - downloadHandlerFactoryPDF
       - updateAllRangeInputs
@@ -49,6 +46,8 @@ reference:
       - parseDate
       - stat_chull
       - testAllMoreThanOneReplicate
+      - filterIfNotNull
+      - testPairwise
 articles:
 - title: Using ShinyLipids
   contents:

@@ -2,18 +2,14 @@ createPcaData <- function(plotData, summariseTecRep, aesX) {
   selectReplicate <- ifelse(summariseTecRep,
                             "sample_replicate",
                             "sample_replicate_technical")
-  
   plotData %>%
     ungroup() %>%
-    select(
-      !!sym(selectReplicate),
-      !!sym(aesX), value
-    ) %>%
+    select(!!sym(selectReplicate),
+           !!sym(aesX), value) %>%
     spread(key = aesX, value = "value") %>%
     data.frame(row.names = TRUE) %>%
     as.matrix() 
 }
-
 
 createPcaResult <- function(pcaData,
                             pcaMethod,
@@ -54,44 +50,20 @@ getPcaSampleNames <- function(plotData, summariseTechnicalReplicates) {
 }
 
 
-pcaScaleLoadings <- function(pcaObject,
-                             pcaSampleNames,
-                             aesX,
-                             summariseTechnicalReplicates) {
-  loadings <- pcaObject@loadings %>% as_tibble(rownames = aesX)
-  scores <- pcaObject@scores %>%
-    as_tibble(
-      rownames = if_else(
-        summariseTechnicalReplicates,
-        "sample_replicate",
-        "sample_replicate_technical"
-      )
-    ) %>%
-    left_join(pcaSampleNames,
-              by = if_else(
-                summariseTechnicalReplicates,
-                "sample_replicate",
-                "sample_replicate_technical"
-              )
-    )
-  # Scaling factor for original data dimension vectors in principal component space
-  scaler <- min(
-      max(abs(scores[, "PC1"])) / max(abs(loadings[, "PC1"])),
-      max(abs(scores[, "PC2"])) / max(abs(loadings[, "PC2"])))
-  loadings[, c("PC1", "PC2")] <- loadings[, c("PC1", "PC2")] * scaler * 0.8
-  loadings
-}
-
 createPcaScoresPlot <- function(pcaData,
                                 pcaObject,
                                 pcaSampleNames,
-                                scaledLoadings,
                                 aesX,
                                 summariseTechnicalReplicates,
                                 drawPcaConvexHull,
                                 pcaPointSize,
                                 pcaLabels,
                                 pcaVectors) {
+  scaledLoadings <- pcaScaleLoadings(pcaObject                    = pcaObject,
+                                     pcaSampleNames               = pcaSampleNames,
+                                     aesX                         = aesX,
+                                     summariseTechnicalReplicates = summariseTechnicalReplicates)
+  
   colorCount <- nrow(pcaData)
   scores <- pcaObject@scores %>%
     as_tibble(
@@ -140,17 +112,16 @@ createPcaScoresPlot <- function(pcaData,
       )), show.legend = FALSE)
   }
   
-  # Add scaled orginal vectors as arrows
+  # Add scaled original vectors as arrows
   if (pcaVectors) {
     plt <- plt +
       geom_segment(
         data = scaledLoadings,
-        aes(
-          x = 0,
-          y = 0,
-          xend = PC1,
-          yend = PC2,
-          group = !!sym(aesX)
+        aes(x     = 0,
+            y     = 0,
+            xend  = PC1,
+            yend  = PC2,
+            group = !!sym(aesX)
         ),
         inherit.aes = FALSE,
         arrow = arrow(),
@@ -171,13 +142,9 @@ createPcaScoresPlot <- function(pcaData,
   plt
 }
 
-
 createPcaLoadingsPlot <- function(pcaObject, aesX, pcaPointSize) {
-  loadings <-
-    pcaObject@loadings %>%
-    as_tibble(rownames = aesX)
-  
-  loadings %>%
+  pcaObject@loadings %>%
+    as_tibble(rownames = aesX) %>% 
     ggplot(aes(PC1, PC2)) +
     geom_point(pch = 19, size = pcaPointSize / 3) +
     mainTheme +
@@ -186,6 +153,32 @@ createPcaLoadingsPlot <- function(pcaObject, aesX, pcaPointSize) {
     )
 }
 
+pcaScaleLoadings <- function(pcaObject,
+                             pcaSampleNames,
+                             aesX,
+                             summariseTechnicalReplicates) {
+  loadings <- as_tibble(pcaObject@loadings, rownames = aesX)
+  scores <- pcaObject@scores %>%
+    as_tibble(
+      rownames = if_else(
+        summariseTechnicalReplicates,
+        "sample_replicate",
+        "sample_replicate_technical"
+      )
+    ) %>%
+    left_join(pcaSampleNames,
+              by = if_else(
+                summariseTechnicalReplicates,
+                "sample_replicate",
+                "sample_replicate_technical"
+              )
+    )
+  # Scaling factor for original data dimension vectors in principal component space
+  scaler <- min(max(abs(scores[, "PC1"])) / max(abs(loadings[, "PC1"])),
+                max(abs(scores[, "PC2"])) / max(abs(loadings[, "PC2"])))
+  loadings[, c("PC1", "PC2")] <- loadings[, c("PC1", "PC2")] * scaler * 0.8
+  loadings
+}
 
 #' Convex hull for PCA plots
 #'

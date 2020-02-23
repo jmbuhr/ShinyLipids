@@ -394,7 +394,7 @@ uiBody <- shinydashboard::dashboardBody(
                                 "pcaMethod",
                                 "Method",
                                 pcaMethods::listPcaMethods()[1:7], # The last three don't work for now
-                                selected = "svd"),
+                                selected = "nipals"),
                               selectInput("pcaCrossValidationMethod",
                                           "Cross validation method",
                                           list("none" = "none", "Q2" =  "q2")),

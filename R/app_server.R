@@ -327,19 +327,10 @@ app_server <- function(input, output, session) {
     getPcaSampleNames(plotData(), input$summariseTechnicalReplicates)
   })
   
-  scaledLoadings <- reactive({
-    req(pcaObject())
-    pcaScaleLoadings(pcaObject = pcaObject(),
-                     pcaSampleNames = pcaSampleNames(),
-                     aesX = input$aesX,
-                     summariseTechnicalReplicates = input$summariseTechnicalReplicates)
-  })
-  
-  
   # ** pcaInfo ####
   output$pcaInfo <- renderPrint({
     req(pcaObject())
-    pcaObject() %>% summary()
+    summary(pcaObject())
   })
   
   # ** Scores ####
@@ -348,7 +339,6 @@ app_server <- function(input, output, session) {
     createPcaScoresPlot(pcaData                      = pcaData(),
                         pcaObject                    = pcaObject(),
                         pcaSampleNames               = pcaSampleNames(),
-                        scaledLoadings               = scaledLoadings(),
                         aesX                         = input$aesX,
                         summariseTechnicalReplicates = input$summariseTechnicalReplicates,
                         drawPcaConvexHull            = input$drawPcaConvexHull,
