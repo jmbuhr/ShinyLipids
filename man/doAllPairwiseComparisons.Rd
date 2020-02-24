@@ -4,7 +4,7 @@
 \alias{doAllPairwiseComparisons}
 \title{Test all possible pairwise t-tests}
 \usage{
-doAllPairwiseComparisons(data, aesX)
+doAllPairwiseComparisons(data, aesX = "class")
 }
 \arguments{
 \item{data}{tibble. The full dataset}
@@ -14,7 +14,7 @@ doAllPairwiseComparisons(data, aesX)
 \value{
 tibble.
 A tidy representation of the significance
-tests build with \code{broom::tidy} combinde
+tests build with \code{broom::tidy} combined
 into one tibble.
 }
 \description{

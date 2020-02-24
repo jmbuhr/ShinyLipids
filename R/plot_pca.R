@@ -1,4 +1,6 @@
-createPcaData <- function(plotData, summariseTecRep, aesX) {
+createPcaData <- function(plotData,
+                          summariseTecRep = TRUE,
+                          aesX = "class") {
   selectReplicate <- ifelse(summariseTecRep,
                             "sample_replicate",
                             "sample_replicate_technical")
@@ -12,11 +14,11 @@ createPcaData <- function(plotData, summariseTecRep, aesX) {
 }
 
 createPcaResult <- function(pcaData,
-                            pcaMethod,
-                            pcaNumberPrincipalComponents,
-                            pcaCenter,
-                            pcaScalingMethod,
-                            pcaCrossValidationMethod) {
+                            pcaMethod = "nipals",
+                            pcaNumberPrincipalComponents = 2,
+                            pcaCenter = TRUE,
+                            pcaScalingMethod = "none",
+                            pcaCrossValidationMethod = "none") {
   pcaMethods::pca(
     pcaData,
     method = if_else(any(is.na(pcaData)), "nipals", pcaMethod),
@@ -27,7 +29,8 @@ createPcaResult <- function(pcaData,
   )
 }
 
-getPcaSampleNames <- function(plotData, summariseTechnicalReplicates) {
+getPcaSampleNames <- function(plotData,
+                              summariseTechnicalReplicates = TRUE) {
   if (summariseTechnicalReplicates) {
     plotData %>%
       ungroup() %>%
@@ -53,12 +56,12 @@ getPcaSampleNames <- function(plotData, summariseTechnicalReplicates) {
 createPcaScoresPlot <- function(pcaData,
                                 pcaObject,
                                 pcaSampleNames,
-                                aesX,
-                                summariseTechnicalReplicates,
-                                drawPcaConvexHull,
-                                pcaPointSize,
-                                pcaLabels,
-                                pcaVectors) {
+                                aesX                         = "class",
+                                summariseTechnicalReplicates = TRUE,
+                                drawPcaConvexHull            = FALSE,
+                                pcaPointSize                 = 5,
+                                pcaLabels                    = FALSE,
+                                pcaVectors                   = TRUE) {
   scaledLoadings <- pcaScaleLoadings(pcaObject                    = pcaObject,
                                      pcaSampleNames               = pcaSampleNames,
                                      aesX                         = aesX,
@@ -142,7 +145,9 @@ createPcaScoresPlot <- function(pcaData,
   plt
 }
 
-createPcaLoadingsPlot <- function(pcaObject, aesX, pcaPointSize) {
+createPcaLoadingsPlot <- function(pcaObject,
+                                  aesX         = "class",
+                                  pcaPointSize = 5) {
   pcaObject@loadings %>%
     as_tibble(rownames = aesX) %>% 
     ggplot(aes(PC1, PC2)) +

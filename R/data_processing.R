@@ -365,7 +365,7 @@ testPairwise <- function(data) {
 #' A tidy representation of the significance
 #' tests build with \code{broom::tidy} combined
 #' into one tibble.
-doAllPairwiseComparisons <- function(data, aesX) {
+doAllPairwiseComparisons <- function(data, aesX = "class") {
   data %>%
     group_by(!!sym(aesX)) %>%
     nest() %>%

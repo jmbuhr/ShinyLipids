@@ -49,18 +49,22 @@ createHeatmap <- function(data,
       fill = fillName
     )
   
-  # facetting
   if (aesFacetCol != "" & aesFacetRow != "") {
     plt <- plt +
       facet_grid(
         rows   = vars(!!sym(aesFacetRow)),
-        cols   = vars(!!sym(aesFacetRow)),
+        cols   = vars(!!sym(aesFacetCol)),
         scales = "free"
       )
-  }
-  if (aesFacetCol != "" & aesFacetRow == "") {
-    plt <- plt +
-      facet_wrap(facets = vars(!!sym(aesFacetCol)), scales = "free")
+  } else {
+    if (aesFacetCol != "") {
+      plt <- plt +
+        facet_wrap(facets = vars(!!sym(aesFacetCol)), scales = "free")
+    }
+    if (aesFacetRow != "") {
+      plt <- plt +
+        facet_wrap(facets = vars(!!sym(aesFacetRow)), scales = "free")
+    }
   }
   plt
 }
