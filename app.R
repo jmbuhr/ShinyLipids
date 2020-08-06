@@ -1,6 +1,7 @@
-# File to launch the shinyApp (Do not remove this comment)
 # Setup ####
-pkgload::load_all() # dev and deployment
+# pkgload::load_all() # dev and deployment
+
+library(ShinyLipids)
 
 # Deployment ####
 # To deploy, run: rsconnect::deployApp()
@@ -32,6 +33,7 @@ pkgload::load_all() # dev and deployment
 ## Local database file
 # replace with
 # path <- "path/to/your/data.db"
+
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 

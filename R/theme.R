@@ -1,3 +1,10 @@
+#' mainTheme
+#' 
+#' Add \code{+ mainTheme()} to ggplots
+#' to apply the theme used in the shiny app.
+#'
+#' @return list. A list to be added to a ggplot object.
+#' @export
 mainTheme <- function() {
   list(
     theme_minimal(),

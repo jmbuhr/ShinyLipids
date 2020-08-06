@@ -19,6 +19,7 @@ createPcaResult <- function(pcaData,
                             pcaCenter = TRUE,
                             pcaScalingMethod = "none",
                             pcaCrossValidationMethod = "none") {
+  # TODO
   pcaMethods::pca(
     pcaData,
     method = if_else(any(is.na(pcaData)), "nipals", pcaMethod),
@@ -27,6 +28,9 @@ createPcaResult <- function(pcaData,
     scale  = pcaScalingMethod,
     cv     = pcaCrossValidationMethod
   )
+  
+  
+  
 }
 
 getPcaSampleNames <- function(plotData,
