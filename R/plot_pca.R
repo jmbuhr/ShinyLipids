@@ -101,7 +101,7 @@ createPcaScoresPlot <- function(pcaData,
       alpha = 1,
       size = pcaPointSize / 2
     ) +
-    mainTheme +
+    mainTheme() +
     mainScale(colorCount = colorCount)
   
   if (pcaLabels) {
@@ -152,7 +152,7 @@ createPcaLoadingsPlot <- function(pcaObject,
     as_tibble(rownames = aesX) %>% 
     ggplot(aes(PC1, PC2)) +
     geom_point(pch = 19, size = pcaPointSize / 3) +
-    mainTheme +
+    mainTheme() +
     ggrepel::geom_text_repel(aes(label = !!sym(aesX)),
                              show.legend = FALSE
     )

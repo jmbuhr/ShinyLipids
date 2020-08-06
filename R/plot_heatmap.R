@@ -20,7 +20,7 @@ createHeatmap <- function(data,
                           aesFacetRow               = "",
                           heatLabSize               = 9,
                           heatColor                 = "viridis") {
-  if (!is.null(standardizationFeatures)) {
+  if (!is.null(standardizationFeatures)) { # TODO check other standardization
     fillName <- "amount [ Mol % ]"
   } else {
     fillName <- "amount [ \u00b5M ]"
@@ -33,7 +33,7 @@ createHeatmap <- function(data,
       fill = value
     ) +
     geom_raster() +
-    mainTheme +
+    mainTheme() +
     theme(
       axis.text.y      = element_text(size = heatLabSize, colour = "black"),
       plot.background  = element_blank(),

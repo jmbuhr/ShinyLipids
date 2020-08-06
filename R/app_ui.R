@@ -150,7 +150,7 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                        ),
                        checkboxInput(
                          "standardizeWithinTechnicalReplicate",
-                         label = "Standardize within technical replicates",
+                         label = "Standardize to 100% within technical replicates",
                          value = TRUE
                        ),
                        checkboxInput(

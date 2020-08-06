@@ -28,7 +28,11 @@ easy to extend.
 
 ## Functional programming
 
+TODO
+
 ## Unit tests
+
+TODO
 
 ## Other conventions
 

@@ -1,21 +1,23 @@
 # File to launch the shinyApp (Do not remove this comment)
 # Setup ####
 pkgload::load_all() # dev and deployment
-options( "golem.app.prod" = TRUE)
 
 # Deployment ####
 # To deploy, run: rsconnect::deployApp()
 # Or use the blue button in the top right corner
 # of this file in RStudio
 
+# For deployment to shinyapps.io,
+# you need to manually install BiocManager:
+# (Run the next line in the terminal)
+# install.packages("BiocManager")
+# And uncomment the next line permanently:
+# options(repos = c(BiocManager::repositories()))
+
 ## Backup for installation on a server with shiny-server
 # remotes::install_github("jannikbuhr/ShinyLipids",
 # auth_token = "b68cfd50c5455a7240807335fc633568634cce78",
 # force = TRUE, dependencies = TRUE, upgrade = TRUE)
-
-# You might need this additional package for deployment
-# # install.packages("BiocManager")
-# options(repos = c(BiocManager::repositories()))
 
 # Database connections ####
 ## uncomment this to read from a database.

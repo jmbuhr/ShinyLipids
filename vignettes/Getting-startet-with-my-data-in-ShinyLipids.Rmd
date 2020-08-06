@@ -38,8 +38,8 @@ ShinyLipids::run_app(db = databaseConnection)
 
 # Loading in your own data
 
-...
+TODO
 
 # Exploring your data
 
-...
+TODO

@@ -96,7 +96,7 @@ createMainPlot <- function(plotData,
   
   plt <- plt +
     scale_y_continuous(
-      expand = expand_scale(mult = c(0, 0.05)),
+      expand = expansion(mult = c(0, 0.05)),
       name   = yAxisName,
       labels = yAxisLabels,
       trans  = yAxisTransformation) +
@@ -146,7 +146,7 @@ mainPlotAddColors <- function(plt, aesColor, plotData) {
   }
   
   plt +
-    mainTheme +
+    mainTheme() +
     mainScale(colorCount) +
     guides(
       color = guide_legend(ncol = 12,
