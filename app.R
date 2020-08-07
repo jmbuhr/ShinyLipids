@@ -15,9 +15,9 @@ library(ShinyLipids)
 # And uncomment the next line permanently:
 # options(repos = c(BiocManager::repositories()))
 
-## Backup for installation on a server with shiny-server
+## For installation on a server with shiny-server
 # remotes::install_github("jannikbuhr/ShinyLipids",
-# auth_token = "b68cfd50c5455a7240807335fc633568634cce78",
+# auth_token = Sys.getenv("GITHUB_PAT_SHINY"),
 # force = TRUE, dependencies = TRUE, upgrade = TRUE)
 
 # Database connections ####
