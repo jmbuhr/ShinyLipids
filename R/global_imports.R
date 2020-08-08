@@ -1,10 +1,12 @@
 #' @import shiny
+#' @import recipes
 #' @import dplyr
 #' @import forcats
 #' @import ggplot2
 #' @import tidyr
 #' @import purrr
 #' @import RSQLite
+#' @importFrom plotly ggplotly
 #' @importFrom stats qt
 #' @importFrom rlang .data
 #' @importFrom utils write.csv

@@ -12,25 +12,15 @@ app_server <- function(input, output, session) {
   rawData <- reactive({
     validate(need(input$ID, "Please select a dataset first."))
     collectRawData(id = input$ID, con = databaseConnection) %>% 
-      imputeMissingIf(input$imputeMissingAs0) %>% 
+      imputeMissingIf(input) %>% 
       addLipidProperties(lipidClassOrder = collectLipidClassOrder(databaseConnection))
   })
   
   # * filteredData ####
   filteredData <- reactive({
     rawData() %>%
-      standardizeWithinTechnicalReplicatesIf(input$standardizeWithinTechnicalReplicate) %>%
-      filterRawDataFor(categoryToSelect            = input$categoryToSelect,
-                       lipidClassToSelect          = input$lipidClassToSelect,
-                       functionalCategoryToSelect  = input$functionalCategoryToSelect,
-                       filterLengthRange           = input$filterLengthRange,
-                       filterDoubleBondsRange      = input$filterDoubleBondsRange,
-                       filterOhRange               = input$filterOhRange,
-                       samplesToSelect             = input$samplesToSelect,
-                       samplesToRemove             = input$samplesToRemove,
-                       replicatesToSelect          = input$replicatesToSelect,
-                       replicatesToRemove          = input$replicatesToRemove,
-                       technicalReplicatesToRemove = input$technicalReplicatesToRemove)
+      standardizeWithinTechnicalReplicatesIf(input) %>%
+      filterRawDataFor(input)
   })
   
   # * mainData ####
@@ -38,8 +28,7 @@ app_server <- function(input, output, session) {
     validate(need(nrow(filteredData()) > 0,
                   "The data was filtered such that there is no data left."))
     filteredData() %>%
-      standardizeRawDataWithin(baselineSample          = input$baselineSample,
-                               standardizationFeatures = input$standardizationFeatures)
+      standardizeRawDataWithin(input)
   })
   
   # * plotData ####
@@ -63,11 +52,7 @@ app_server <- function(input, output, session) {
         "Please select a feature to display on the x-axis"))
     
     mainData() %>%
-      createPlotData(summariseTechnicalReplicates = input$summariseTechnicalReplicates,
-                     aesX                         = input$aesX,
-                     aesColor                     = input$aesColor,
-                     aesFacetCol                  = input$aesFacetCol,
-                     aesFacetRow                  = input$aesFacetRow)
+      createPlotData(input)
   })
   
   # * meanPlotData ####
@@ -75,10 +60,7 @@ app_server <- function(input, output, session) {
   meanPlotData <- reactive({
     req(plotData())
     plotData() %>%
-      summarisePlotData(aesX        = input$aesX,
-                        aesColor    = input$aesColor,
-                        aesFacetCol = input$aesFacetCol,
-                        aesFacetRow = input$aesFacetRow)
+      summarisePlotData(input)
   })
   
   # * PairwiseComparisons ####
@@ -101,8 +83,7 @@ app_server <- function(input, output, session) {
         testAllMoreThanOneReplicate(plotData(), input$aesX, input$aesColor),
         "You need more than 1 replicate per sample for everything visible in the plot"))
     
-    doAllPairwiseComparisons(data = plotData(),
-                             aesX = input$aesX)
+    doAllPairwiseComparisons(data = plotData(), input)
   })
   
   
@@ -245,15 +226,7 @@ app_server <- function(input, output, session) {
                    pairwiseComparisons                 = pairwiseComparisons(),
                    rangeX                              = ranges$x,
                    rangeY                              = ranges$y,
-                   aesX                                = input$aesX,
-                   aesColor                            = input$aesColor,
-                   aesFacetCol                         = input$aesFacetCol,
-                   aesFacetRow                         = input$aesFacetRow,
-                   mainPlotAdditionalOptions           = input$mainPlotAdditionalOptions,
-                   errorbarType                        = input$errorbarType,
-                   summariseTechnicalReplicates        = input$summariseTechnicalReplicates,
-                   standardizationFeatures             = input$standardizationFeatures,
-                   standardizeWithinTechnicalReplicate = input$standardizeWithinTechnicalReplicate)
+                   input)
   })
   
   # ** Main Plot Render ####
@@ -279,7 +252,7 @@ app_server <- function(input, output, session) {
     heatmapPlot()
   })
   
-  # * PCA ####
+  # * Dimensionality reduction ####
   
   # ** Updating pca-options ####
   # update number of principal components,
@@ -309,9 +282,8 @@ app_server <- function(input, output, session) {
       need(length(unique(plotData()[[input$aesX]])) > 1,
            "Not enough datapoints to perform PCA")
     )
-    createPcaData(plotData        = plotData(),
-                  aesX            = input$aesX,
-                  summariseTecRep = input$summariseTechnicalReplicates)
+    createWideData(plotData        = plotData(),
+                  aesX            = input$aesX)
   })
   
   # ** pcaObject ####

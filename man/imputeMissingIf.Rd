@@ -4,17 +4,18 @@
 \alias{imputeMissingIf}
 \title{Impute implicit missing values as 0}
 \usage{
-imputeMissingIf(data, doIt = TRUE)
+imputeMissingIf(data, input)
 }
 \arguments{
 \item{data}{tibble. rawData}
 
-\item{doIt}{boolean. Imputes if TRUE,
-else returns input data}
+\item{input}{list. Input list from shiny ui. Uses
+- input$imputeMissingAs0}
 }
 \value{
 tibble. imputed data
 }
 \description{
-Impute implicit missing values as 0
+Imputes if \code{input$imputeMissingAs0 == TRUE},
+else returns input data.
 }

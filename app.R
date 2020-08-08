@@ -1,19 +1,9 @@
-# Setup ####
-# pkgload::load_all() # dev and deployment
-
-library(ShinyLipids)
+# Setup of the ShinyApp ####
 
 # Deployment ####
 # To deploy, run: rsconnect::deployApp()
 # Or use the blue button in the top right corner
 # of this file in RStudio
-
-# For deployment to shinyapps.io,
-# you need to manually install BiocManager:
-# (Run the next line in the terminal)
-# install.packages("BiocManager")
-# And uncomment the next line permanently:
-# options(repos = c(BiocManager::repositories()))
 
 ## For installation on a server with shiny-server
 # remotes::install_github("jannikbuhr/ShinyLipids",
@@ -29,11 +19,9 @@ library(ShinyLipids)
 #                                      port = 5432,
 #                                      user = "mathias")
 
-
 ## Local database file
 # replace with
 # path <- "path/to/your/data.db"
-
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 

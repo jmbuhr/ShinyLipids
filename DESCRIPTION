@@ -12,7 +12,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    pcaMethods,
     shiny,
     golem,
     scales,
@@ -33,12 +32,13 @@ Imports:
     tidyr,
     purrr,
     RSQLite,
-    BiocManager,
     RPostgres,
     rlang,
     stringr,
     RColorBrewer,
-    here
+    here,
+    recipes,
+    plotly
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 7.1.1

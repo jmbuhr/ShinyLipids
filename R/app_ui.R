@@ -16,7 +16,8 @@ features <- c(
 )
 
 # Header ####
-uiHeader <- shinydashboard::dashboardHeader(
+uiHeader <- function(){
+  shinydashboard::dashboardHeader(
   title = span(tagList(icon("flask"),
                        span("ShinyLipids"))),
   shinydashboard::dropdownMenu(
@@ -44,10 +45,12 @@ uiHeader <- shinydashboard::dashboardHeader(
       )
     )
   )
-)
+)}
 
 # Sidebar ####
-uiSidebar <- shinydashboard::dashboardSidebar(
+uiSidebar <- function() {
+  defaultInput <- generateDefaultInput()
+  shinydashboard::dashboardSidebar(
   # * Visual fixes ####
   tags$head(
     # Move labels closer to their fields
@@ -74,7 +77,7 @@ uiSidebar <- shinydashboard::dashboardSidebar(
       icon = icon("bar-chart"),
       shinydashboard::menuSubItem("Main plot", tabName = "main"),
       shinydashboard::menuSubItem("Heatmap", tabName = "heatmap"),
-      shinydashboard::menuSubItem("PCA", tabName = "PCA"),
+      shinydashboard::menuSubItem("Dimensionality reduction", tabName = "dimensionalityReduction"),
       startExpanded = TRUE
     )
   ),
@@ -100,7 +103,7 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                          choices     = features[!features %in% c("value",
                                                                  "sample_replicate",
                                                                  "sample_replicate_technical")],
-                         selected    = "class"),
+                         selected    = defaultInput$aesX),
                        selectizeInput(
                          "aesColor",
                          label    = HTML("Feature to display by color /<br> y-axis of heatmap"),
@@ -111,7 +114,7 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                                                               "chain_sums",
                                                               "sample_replicate",
                                                               "sample_replicate_technical")],
-                         selected = "sample"),
+                         selected = defaultInput$aesColor),
                        selectizeInput(
                          "aesFacetCol",
                          label    = "Feature to use for facetting in columns",
@@ -122,7 +125,7 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                                                               "chain_sums",
                                                               "sample_replicate",
                                                               "sample_replicate_technical")],
-                         selected = ""),
+                         selected = defaultInput$aesFacetCol),
                        selectizeInput(
                          "aesFacetRow",
                          label    = "Feature to use for facetting in rows",
@@ -133,35 +136,35 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                                                               "chain_sums",
                                                               "sample_replicate",
                                                               "sample_replicate_technical")],
-                         selected = "")),
+                         selected = defaultInput$aesFacetRow)),
               tabPanel(title = "Data",
                        selectizeInput(
                          "standardizationFeatures",
                          label    = "Standardize to 100% within:",
                          multiple = TRUE,
                          choices  = features[!features %in% c("value", "sample_replicate_technical")],
-                         selected = c("")
+                         selected = defaultInput$standardizationFeatures
                        ),
                        selectizeInput(
                          "baselineSample",
                          label    = "Substract sample as baseline",
                          choices  = "",
-                         selected = ""
+                         selected = defaultInput$baselineSample
                        ),
                        checkboxInput(
                          "standardizeWithinTechnicalReplicate",
                          label = "Standardize to 100% within technical replicates",
-                         value = TRUE
+                         value = defaultInput$standardizeWithinTechnicalReplicate
                        ),
                        checkboxInput(
                          "summariseTechnicalReplicates",
                          label    = "Average technical replicates",
-                         value = TRUE
+                         value = defaultInput$summarisetechnicalreplicates
                        ),
                        checkboxInput(
                          "imputeMissingAs0",
                          label = "Impute missing values as 0",
-                         value = TRUE
+                         value = defaultInput$imputeMissingAs0
                        )
               ),
               tabPanel(title = "Samples",
@@ -169,35 +172,35 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                          "samplesToSelect",
                          label    = "Select samples",
                          options  = list(placeholder = "Explicitly demand sample"),
-                         choices  = NULL,
+                         choices  = defaultInput$samplesToSelect,
                          multiple = TRUE
                        ),
                        selectizeInput(
                          "samplesToRemove",
                          label    = "Remove samples",
                          options  = list(placeholder = "Explicitly remove sample"),
-                         choices  = NULL,
+                         choices  = defaultInput$samplesToRemove,
                          multiple = TRUE
                        ),
                        selectizeInput(
                          "replicatesToSelect",
                          label    = "Select replicates",
                          options  = list(placeholder = "Explicitly demand replicate"),
-                         choices  = NULL,
+                         choices  = defaultInput$replicatesToSelect,
                          multiple = TRUE
                        ),
                        selectizeInput(
                          "replicatesToRemove",
                          label    = "Remove replicates",
                          options  = list(placeholder = "Explicitly remove replicate"),
-                         choices  = NULL,
+                         choices  = defaultInput$replicatesToRemove,
                          multiple = TRUE
                        ),
                        selectizeInput(
                          "technicalReplicatesToRemove",
                          label    = "Remove technical replicates",
                          options  = list(placeholder = "Explicitly remove tec. replicate"),
-                         choices  = NULL,
+                         choices  = defaultInput$technicalReplicatesToRemove,
                          multiple = TRUE
                        )
               ),
@@ -206,21 +209,21 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                          "lipidClassToSelect",
                          label    = "Select classes",
                          options  = list(placeholder = "empty field means no filtering based on this feature"),
-                         choices  = NULL,
+                         choices  = defaultInput$lipidClassToSelect,
                          multiple = TRUE
                        ),
                        selectizeInput(
                          "categoryToSelect",
                          label    = "Select categories",
                          options  = list(placeholder = "empty field means no filtering based on this feature"),
-                         choices  = NULL,
+                         choices  = defaultInput$categoryToSelect,
                          multiple = TRUE
                        ),
                        selectizeInput(
                          "functionalCategoryToSelect",
                          label    = "Select functional categories",
                          options  = list(placeholder = "empty field means no filtering based on this feature"),
-                         choices  = NULL,
+                         choices  = defaultInput$functionalCategoryToSelect,
                          multiple = TRUE
                        ),
                        sliderInput(
@@ -228,28 +231,30 @@ uiSidebar <- shinydashboard::dashboardSidebar(
                          label    = "Filter length",
                          min      = 0L, max = 1L,
                          step     = 1L,
-                         value    = c(1L, 100L)
+                         value    = defaultInput$filterLengthRange
                        ),
                        sliderInput(
                          "filterDoubleBondsRange",
                          label    = "Filter double bonds",
                          min      = 0L, max = 1L,
                          step     = 1L,
-                         value    = c(0L, 10L)
+                         value    = defaultInput$filterDoubleBondsRange
                        ),
                        sliderInput(
                          "filterOhRange",
                          label    = "Filter hydroxylation",
                          min      = 0L, max = 1L,
                          step     = 1L,
-                         value    = c(0L, 10L)
+                         value    = defaultInput$filterOhRange
                        )
               )
   )
-)
+)}
 
 # Body ####
-uiBody <- shinydashboard::dashboardBody(
+uiBody <- function() {
+  defaultInput <- generateDefaultInput()
+  shinydashboard::dashboardBody(
   # ** Database Info / Meta ####
   shinydashboard::tabItems(
     shinydashboard::tabItem(
@@ -311,11 +316,11 @@ uiBody <- shinydashboard::dashboardBody(
                                                      "Free y scale for facets"    = "free_y",
                                                      "Run pairwise t-tests"       = "signif"
                                                    ),
-                                                   selected = list("points", "bars")
+                                                   selected = defaultInput$mainPlotAdditionalOptions
                                 ),
                                 selectInput("errorbarType", "Type of error bars",
                                             choices = list("SD", "SEM",  "95% CI" = "CI", "None"),
-                                            selected = "None"
+                                            selected = defaultInput$errorbarType 
                                 )
                               ),
                               shinydashboard::box(
@@ -325,8 +330,8 @@ uiBody <- shinydashboard::dashboardBody(
                                 downloadButton("saveMainPlotRDS", label = "Save plot as .RDS"),
                                 downloadButton("savePlotData", label = "Save points as .csv"),
                                 downloadButton("saveMeanPlotData", label = "Save means as .csv"),
-                                numericInput("mainWidth", label = "width", value = 20),
-                                numericInput("mainHeight", label = "height", value = 10)
+                                numericInput("mainWidth", label = "width", value = defaultInput$mainWidth),
+                                numericInput("mainHeight", label = "height", value = defaultInput$mainHeight)
                               ),
                               shinydashboard::box(
                                 title = "Pairwise comparisons",
@@ -344,9 +349,9 @@ uiBody <- shinydashboard::dashboardBody(
                             )
     ),
     
-    # ** PCA ####
+    # ** Dimensionality reduction ####
     shinydashboard::tabItem(
-      tabName = "PCA",
+      tabName = "dimensionalityReduction",
       fluidRow(
         shinydashboard::box(
           title  = NULL,
@@ -372,8 +377,8 @@ uiBody <- shinydashboard::dashboardBody(
                               downloadButton("savePCAScoresRDS", label = "Save Score Plot as .RDS"),
                               downloadButton("savePCALoadings", label = "Save Loadings Plot as .pdf"),
                               downloadButton("savePCALoadingsRDS", label = "Save Loadings Plot as .RDS"),
-                              numericInput("pcaWidth", label = "width", value = 20),
-                              numericInput("pcaHeight", label = "height", value = 20)
+                              numericInput("pcaWidth", label = "width", value = defaultInput$pcaWidth),
+                              numericInput("pcaHeight", label = "height", value = defaultInput$pcaHeight)
           )
         ),
         column(
@@ -386,11 +391,11 @@ uiBody <- shinydashboard::dashboardBody(
                               selectInput(
                                 "pcaScalingMethod",
                                 "Scaling method",
-                                list(
+                                choices = list(
                                   "none"          = "none",
                                   "unit variance" = "uv",
                                   "pareto"        = "pareto"
-                                )
+                                ), selected = defaultInput$pcaScalingMethod
                               ),
                               selectInput(
                                 "pcaMethod",
@@ -399,13 +404,14 @@ uiBody <- shinydashboard::dashboardBody(
                                 selected = "nipals"),
                               selectInput("pcaCrossValidationMethod",
                                           "Cross validation method",
-                                          list("none" = "none", "Q2" =  "q2")),
+                                          choices = list("none" = "none", "Q2" =  "q2"),
+                                          selected = defaultInput$pcaCrossValidationMethod),
                               sliderInput(
                                 "pcaNumberPrincipalComponents",
                                 label   = "Number of PCs",
                                 min     = 2,
                                 max     = 8,
-                                value   = 2,
+                                value   = defaultInput$pcaNumberPrincipalComponents,
                                 ticks   = TRUE,
                                 animate = FALSE
                               ),
@@ -414,7 +420,7 @@ uiBody <- shinydashboard::dashboardBody(
                                 label   = "Point Size",
                                 min     = 1,
                                 max     = 10,
-                                value   = 5,
+                                value   = defaultInput$pcaPointSize,
                                 ticks   = TRUE,
                                 animate = FALSE
                               )
@@ -436,8 +442,8 @@ uiBody <- shinydashboard::dashboardBody(
                               shinydashboard::box(
                                 downloadButton("saveHeatmap", label = "Save as .pdf"),
                                 downloadButton("saveHeatmapRDS", label = "Save as .RDS"),
-                                numericInput("heatWidth", label = "width", value = 20),
-                                numericInput("heatHeight", label = "height", value = 10)
+                                numericInput("heatWidth", label = "width", value = defaultInput$heatWidth),
+                                numericInput("heatHeight", label = "height", value = defaultInput$heatHeight)
                               ),
                               shinydashboard::box(
                                 selectInput(
@@ -447,14 +453,15 @@ uiBody <- shinydashboard::dashboardBody(
                                                  "magma",
                                                  "plasma",
                                                  "inferno",
-                                                 "cividis")
-                                ),
+                                                 "cividis"),
+                                  selected = defaultInput$heatColor
+                                )),
                                 sliderInput(
                                   "heatLabSize",
                                   label   = "Size of labels",
                                   min     = 1,
                                   max     = 30,
-                                  value   = 9,
+                                  value   = defaultInput$heatLabSize,
                                   ticks   = TRUE,
                                   animate = FALSE
                                 )
@@ -462,14 +469,14 @@ uiBody <- shinydashboard::dashboardBody(
                             )
     )
   )
-)
+}
 
 app_ui <- function() {
   shinydashboard::dashboardPage(
     skin    = "purple",
     title   = "ShinyLipids",
-    header  = uiHeader,
-    sidebar = uiSidebar,
-    body    = uiBody
+    header  = uiHeader(),
+    sidebar = uiSidebar(),
+    body    = uiBody()
   )
 }

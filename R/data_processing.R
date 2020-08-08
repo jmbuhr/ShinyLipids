@@ -124,15 +124,18 @@ addLipidProperties <-
 }
 
 #' Impute implicit missing values as 0
+#' 
+#' Imputes if \code{input$imputeMissingAs0 == TRUE},
+#' else returns input data.
 #'
 #' @param data tibble. rawData
-#' @param doIt boolean. Imputes if TRUE,
-#' else returns input data
+#' @param input list. Input list from shiny ui. Uses
+#' - imputeMissingAs0 :: logical
 #'
 #' @return tibble. imputed data
 #' @export
-imputeMissingIf <- function(data, doIt = TRUE) {
-  if (doIt) {
+imputeMissingIf <- function(data, input) {
+  if (input$imputeMissingAs0) {
     data %>% 
       complete(id,
                nesting(lipid, category, func_cat),
@@ -148,13 +151,13 @@ imputeMissingIf <- function(data, doIt = TRUE) {
 #' 
 #'
 #' @param data tibble. data
-#' @param doIt boolean, if TRUE runs standardization,
-#' else returns the data unchanged
+#' @param input list. Input list from shiny ui. Uses
+#' - standardizeWithinTechnicalReplicate :: logical
 #'
 #' @return tibble. standardized data
 #' @export
-standardizeWithinTechnicalReplicatesIf <- function(data, doIt = TRUE) {
-  if (doIt) {
+standardizeWithinTechnicalReplicatesIf <- function(data, input) {
+  if (input$standardizeWithinTechnicalReplicate) {
     group_by(data, id, sample_replicate_technical) %>%
       mutate(value = value / sum(value) * 100) %>%
       ungroup()
@@ -183,72 +186,62 @@ filterIfNotNull <- function(data, var, condition) {
 }
 
 #' Filter raw data
-#'
-#' @param rawData tibble. rawData
-#' @param categoryToSelect string | NULL
-#' @param lipidClassToSelect string | NULL
-#' @param functionalCategoryToSelect string | NULL
-#' @param filterLengthRange string | NULL
-#' @param filterDoubleBondsRange string | NULL
-#' @param filterOhRange string | NULL
-#' @param samplesToSelect string | NULL
-#' @param samplesToRemove string | NULL
-#' @param replicatesToSelect string | NULL
-#' @param replicatesToRemove string | NULL
-#' @param technicalReplicatesToRemove string | NULL
+#' 
+#' @param rawData :: tibble. rawData
+#' @param input :: list. Input list from shiny ui. Uses
+#' - standardizeWithinTechnicalReplicate
+#' - categoryToSelect :: string | NULL
+#' - lipidClassToSelect :: string | NULL
+#' - functionalCategoryToSelect :: string | NULL
+#' - filterLengthRange :: string | NULL
+#' - filterDoubleBondsRange :: string | NULL
+#' - filterOhRange :: string | NULL
+#' - samplesToSelect :: string | NULL
+#' - samplesToRemove :: string | NULL
+#' - replicatesToSelect :: string | NULL
+#' - replicatesToRemove :: string | NULL
+#' - technicalReplicatesToRemove :: string | NULL
 #'
 #' @return tibble. Lovely filtered data
 #' @export
-filterRawDataFor <- function(rawData,
-                             categoryToSelect            = NULL,
-                             lipidClassToSelect          = NULL,
-                             functionalCategoryToSelect  = NULL,
-                             filterLengthRange           = NULL,
-                             filterDoubleBondsRange      = NULL,
-                             filterOhRange               = NULL,
-                             samplesToSelect             = NULL,
-                             samplesToRemove             = NULL,
-                             replicatesToSelect          = NULL,
-                             replicatesToRemove          = NULL,
-                             technicalReplicatesToRemove = NULL) {
+filterRawDataFor <- function(rawData, input) {
   rawData %>% 
-    filterIfNotNull(categoryToSelect, category %in% categoryToSelect) %>% 
-    filterIfNotNull(lipidClassToSelect, class %in% lipidClassToSelect) %>% 
-    filterIfNotNull(functionalCategoryToSelect, func_cat %in% functionalCategoryToSelect) %>% 
-    filterIfNotNull(filterLengthRange, between(length, filterLengthRange[1], filterLengthRange[2])) %>%
-    filterIfNotNull(filterDoubleBondsRange, between(db, filterDoubleBondsRange[1], filterDoubleBondsRange[2])) %>%
-    filterIfNotNull(filterOhRange, between(oh, filterOhRange[1], filterOhRange[2])) %>%
-    filterIfNotNull(samplesToSelect, sample %in% samplesToSelect) %>% 
-    filterIfNotNull(samplesToRemove, !(sample %in% samplesToRemove)) %>% 
-    filterIfNotNull(replicatesToSelect, sample_replicate %in% replicatesToSelect) %>% 
-    filterIfNotNull(replicatesToRemove, !(sample_replicate %in% replicatesToRemove)) %>% 
-    filterIfNotNull(technicalReplicatesToRemove, !(sample_replicate_technical %in% technicalReplicatesToRemove))
+    filterIfNotNull(input$categoryToSelect, category %in% input$categoryToSelect) %>% 
+    filterIfNotNull(input$lipidClassToSelect, class %in% input$lipidClassToSelect) %>% 
+    filterIfNotNull(input$functionalCategoryToSelect, func_cat %in% input$functionalCategoryToSelect) %>% 
+    filterIfNotNull(input$filterLengthRange, between(length, input$filterLengthRange[1], input$filterLengthRange[2])) %>%
+    filterIfNotNull(input$filterDoubleBondsRange, between(db, input$filterDoubleBondsRange[1], input$filterDoubleBondsRange[2])) %>%
+    filterIfNotNull(input$filterOhRange, between(oh, input$filterOhRange[1], input$filterOhRange[2])) %>%
+    filterIfNotNull(input$samplesToSelect, sample %in% input$samplesToSelect) %>% 
+    filterIfNotNull(input$samplesToRemove, !(sample %in% input$samplesToRemove)) %>% 
+    filterIfNotNull(input$replicatesToSelect, sample_replicate %in% input$replicatesToSelect) %>% 
+    filterIfNotNull(input$replicatesToRemove, !(sample_replicate %in% input$replicatesToRemove)) %>% 
+    filterIfNotNull(input$technicalReplicatesToRemove, !(sample_replicate_technical %in% input$technicalReplicatesToRemove))
 }
 
 
 #' Standardize raw data
 #'
 #' @param data tibble. Raw data
-#' @param baselineSample string | "", Sample to use as a baseline
-#' @param standardizationFeatures character vector, Features to standardize on
+#' @param input list. Input list from shiny ui. Uses
+#' - baselineSample
+#' - standardizationFeatures :: tibble. rawData
 #'
 #' @return tibble. Standardized data
 #' @export
-standardizeRawDataWithin <- function(data,
-                                     baselineSample          = "",
-                                     standardizationFeatures = c("")) {
+standardizeRawDataWithin <- function(data, input) {
   # Standardization
-  if (!is.null(standardizationFeatures)) {
+  if (!is.null(input$standardizationFeatures)) {
     data <- data %>%
-      group_by(id, !!!syms(standardizationFeatures)) %>%
+      group_by(id, !!!syms(input$standardizationFeatures)) %>%
       mutate(value = value / sum(value) * 100) %>%
       ungroup()
   }
   
-  # Base level substraction
-  if (baselineSample != "") {
+  # Base level subtraction
+  if (input$baselineSample != "") {
     baseline <- data %>%
-      filter(sample == baselineSample) %>%
+      filter(sample == input$baselineSample) %>%
       group_by(lipid) %>%
       summarize(baseline = mean(value, na.rm = TRUE))
     data <- data %>%
@@ -264,23 +257,19 @@ standardizeRawDataWithin <- function(data,
 #' 
 #' Based on the aesthetic mappings.
 #'
-#' @param data Input tibble
-#' @param summariseTechnicalReplicates boolean
-#' @param aesX string
-#' @param aesColor string
-#' @param aesFacetCol string | ""
-#' @param aesFacetRow string | ""
+#' @param data :: tibble
+#' @param input :: list. Input list from shiny ui. Uses
+#' - summariseTechnicalReplicates :: boolean
+#' - aesX :: string
+#' - aesColor :: string
+#' - aesFacetCol :: string | ""
+#' - aesFacetRow :: string | ""
 #' 
-#' @return tibble. neat data
+#' @return :: tibble. neat data
 #' @export
-createPlotData <- function(data,
-                           summariseTechnicalReplicates = TRUE,
-                           aesX = "class",
-                           aesColor = "sample",
-                           aesFacetCol = "",
-                           aesFacetRow = "") {
+createPlotData <- function(data, input) {
   # Averaging over the technical replicates
-  if (summariseTechnicalReplicates) {
+  if (input$summariseTechnicalReplicates) {
     data <- data %>%
       group_by_at(vars(-sample_identifier,
                        -sample_replicate_technical,
@@ -288,8 +277,8 @@ createPlotData <- function(data,
       summarize(value = mean(value, na.rm = TRUE))
   }
   
-  cols <- c("value", aesX, aesColor, aesFacetCol, aesFacetRow,
-            if_else(summariseTechnicalReplicates,
+  cols <- c("value", input$aesX, input$aesColor, input$aesFacetCol, input$aesFacetRow,
+            if_else(input$summariseTechnicalReplicates,
                     "sample_replicate", "sample_replicate_technical"))
   cols <- cols[cols != ""]
   
@@ -302,21 +291,18 @@ createPlotData <- function(data,
 #' Summarise the plot data
 #' 
 #' @param data tibble. plotData
-#' @param aesX string
-#' @param aesColor string
-#' @param aesFacetCol string | ""
-#' @param aesFacetRow string | ""
+#' @param input :: list. Input list from shiny ui. Uses
+#' - aesX :: string
+#' - aesColor :: string
+#' - aesFacetCol :: string | ""
+#' - aesFacetRow :: string | ""
 #'
 #' @return tibble. data ready for summmary plots like barplots
 #' @export
-summarisePlotData <- function(data,
-                              aesX = "class",
-                              aesColor = "sample",
-                              aesFacetCol = "",
-                              aesFacetRow = "") {
+summarisePlotData <- function(data, input) {
   possiblyQt <- possibly(stats::qt, otherwise = NA_real_)
   
-  cols <- c(aesX, aesColor, aesFacetCol, aesFacetRow)
+  cols <- c(input$aesX, input$aesColor, input$aesFacetCol, input$aesFacetRow)
   cols <- cols[cols != ""]
   data %>%
     group_by(!!!syms(cols)) %>% 
@@ -359,15 +345,16 @@ testPairwise <- function(data) {
 #' Because people like p-values and little stars.
 #'
 #' @param data tibble. The full dataset
-#' @param aesX string. the feature mapped to the x-axis
+#' @param input :: list. Input list from shiny ui. Uses
+#' - aesX :: string
 #'
-#' @return tibble.
+#' @return :: tibble.
 #' A tidy representation of the significance
 #' tests build with \code{broom::tidy} combined
 #' into one tibble.
-doAllPairwiseComparisons <- function(data, aesX = "class") {
+doAllPairwiseComparisons <- function(data, input) {
   data %>%
-    group_by(!!sym(aesX)) %>%
+    group_by(!!sym(input$aesX)) %>%
     nest() %>%
     mutate(pairwise = map(data, possibly(testPairwise, tibble()))) %>%
     unnest(pairwise) %>%

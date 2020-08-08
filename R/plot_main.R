@@ -3,39 +3,33 @@
 
 #' Title
 #'
+#'
 #' @param plotData tibble. Data for the plot, pass it from reactive plotData()
 #' @param meanPlotData tibble. Data of means, pass from reactive meanPlotData()
 #' @param pairwiseComparisons tibble. Pairwise t-tests from pairwiseComparisons()
 #' @param rangeX numeric vector | NULL. vector with min and max X
 #' @param rangeY numeric vector | NULL.  vector with min and max Y
-#' @param aesX string.
-#' @param aesColor string.
-#' @param aesFacetCol string.
-#' @param aesFacetRow string.
-#' @param mainPlotAdditionalOptions character vector. Options:
+#' @param input list. Input list from shiny ui. Uses
+#' - aesX :: string.
+#' - aesColor :: string.
+#' - aesFacetCol :: string.
+#' - aesFacetRow :: string.
+#' - mainPlotAdditionalOptions :: character vector. Options:
 #' list("points", "bars", "mean", "values", "ind_values", "log", 
 #' "N", "label", "swap", "free_y", "signif")
-#' @param errorbarType string. "None" | "SD" | "SEM" | "CI"
-#' @param summariseTechnicalReplicates boolean.
-#' @param standardizationFeatures character vector | NULL.
-#' @param standardizeWithinTechnicalReplicate boolean.
+#' - errorbarType :: string. "None" | "SD" | "SEM" | "CI"
+#' - summariseTechnicalReplicates :: boolean.
+#' - standardizationFeatures :: character vector | NULL.
+#' - standardizeWithinTechnicalReplicate :: boolean.
 #'
-#' @return ggplot object
+#' @return :: ggplot object
 #' @export
 createMainPlot <- function(plotData,
                            meanPlotData,
                            pairwiseComparisons,
-                           rangeX                              = NULL,
-                           rangeY                              = NULL,
-                           aesX                                = "class",
-                           aesColor                            = "sample",
-                           aesFacetCol                         = "",
-                           aesFacetRow                         = "",
-                           mainPlotAdditionalOptions           = list("points", "bars"),
-                           errorbarType                        = "None",
-                           summariseTechnicalReplicates        = TRUE,
-                           standardizationFeatures             = NULL,
-                           standardizeWithinTechnicalReplicate = TRUE) {
+                           rangeX = NULL,
+                           rangeY = NULL,
+                           input) {
   
   if ("length" %in% names(plotData)) {
     plotData <- plotData %>%
@@ -45,21 +39,20 @@ createMainPlot <- function(plotData,
       mutate(length = factor(length))
   }
   
-  plt <- ggplot(plotData, aes(x = !!sym(aesX), y = value)) %>% 
-    mainPlotAddColors(aesColor, plotData) %>% 
-    mainPlotAddBars(mainPlotAdditionalOptions, meanPlotData) %>% 
-    mainPlotAddPoints(mainPlotAdditionalOptions) %>% 
-    mainPlotAddErrorBars(errorbarType, meanPlotData) %>% 
-    mainPlotAddMeans(mainPlotAdditionalOptions, meanPlotData) %>% 
-    mainPlotAddFacets(aesFacetRow, aesFacetCol, mainPlotAdditionalOptions) %>% 
-    mainPlotAddValues(mainPlotAdditionalOptions, meanPlotData) %>% 
-    mainPlotAddPointValues(mainPlotAdditionalOptions) %>% 
-    mainPlotLabelPoints(mainPlotAdditionalOptions, summariseTechnicalReplicates)
+  plt <- ggplot(plotData, aes(x = !!sym(input$aesX), y = value)) %>% 
+    mainPlotAddColors(input$aesColor, plotData) %>% 
+    mainPlotAddBars(input$mainPlotAdditionalOptions, meanPlotData) %>% 
+    mainPlotAddPoints(input$mainPlotAdditionalOptions) %>% 
+    mainPlotAddErrorBars(input$errorbarType, meanPlotData) %>% 
+    mainPlotAddMeans(input$mainPlotAdditionalOptions, meanPlotData) %>% 
+    mainPlotAddFacets(input$aesFacetRow, input$aesFacetCol, input$mainPlotAdditionalOptions) %>% 
+    mainPlotAddValues(input$mainPlotAdditionalOptions, meanPlotData) %>% 
+    mainPlotAddPointValues(input$mainPlotAdditionalOptions) %>% 
+    mainPlotLabelPoints(input$mainPlotAdditionalOptions, input$summariseTechnicalReplicates)
   
-
   
   # Show N
-  if ("N" %in% mainPlotAdditionalOptions) {
+  if ("N" %in% input$mainPlotAdditionalOptions) {
     plt <- plt +
       geom_text(
         data = meanPlotData,
@@ -72,8 +65,8 @@ createMainPlot <- function(plotData,
   }
   
   # Log scale, name of y-axis and percent format for standardized data
-  if ("log" %in% mainPlotAdditionalOptions) {
-    if (!is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
+  if ("log" %in% input$mainPlotAdditionalOptions) {
+    if (!is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
       yAxisName   <- "amount [ Mol % ], log1p scale"
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "log1p"
@@ -83,7 +76,7 @@ createMainPlot <- function(plotData,
       yAxisTransformation  <- "log1p"
     }
   } else {
-    if (!is.null(standardizationFeatures) || standardizeWithinTechnicalReplicate) {
+    if (!is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
       yAxisName   <- "amount [ Mol % ]"
       yAxisLabels <- scales::percent_format(scale = 1, accuracy = NULL)
       yAxisTransformation  <- "identity"
@@ -103,10 +96,10 @@ createMainPlot <- function(plotData,
     coord_cartesian(xlim = rangeX, ylim = rangeY)
   
   # Swap X and Y
-  if ("swap" %in% mainPlotAdditionalOptions) {
+  if ("swap" %in% input$mainPlotAdditionalOptions) {
     validate(
       need(
-        !("log" %in% mainPlotAdditionalOptions),
+        !("log" %in% input$mainPlotAdditionalOptions),
         "Swapped X and Y Axis are currently not supported for a logarithmic Y-Axis"
       )
     )
@@ -115,14 +108,14 @@ createMainPlot <- function(plotData,
   }
   
   # Highlite significant hits
-  if ("signif" %in% mainPlotAdditionalOptions) {
+  if ("signif" %in% input$mainPlotAdditionalOptions) {
     signif <- filter(pairwiseComparisons, p.value <= 0.05) %>%
-      distinct(!!sym(aesX))
+      distinct(!!sym(input$aesX))
     if (nrow(signif) > 0) {
       plt <- plt +
         geom_text(
           data = signif,
-          aes(!!sym(aesX), Inf, label = "*", vjust = 1, hjust = 0.5),
+          aes(!!sym(input$aesX), Inf, label = "*", vjust = 1, hjust = 0.5),
           inherit.aes = F,
           size        = 10
         )
