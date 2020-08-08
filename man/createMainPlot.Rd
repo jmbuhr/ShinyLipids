@@ -10,15 +10,7 @@ createMainPlot(
   pairwiseComparisons,
   rangeX = NULL,
   rangeY = NULL,
-  aesX = "class",
-  aesColor = "sample",
-  aesFacetCol = "",
-  aesFacetRow = "",
-  mainPlotAdditionalOptions = list("points", "bars"),
-  errorbarType = "None",
-  summariseTechnicalReplicates = TRUE,
-  standardizationFeatures = NULL,
-  standardizeWithinTechnicalReplicate = TRUE
+  input
 )
 }
 \arguments{
@@ -32,28 +24,21 @@ createMainPlot(
 
 \item{rangeY}{numeric vector | NULL.  vector with min and max Y}
 
-\item{aesX}{string.}
-
-\item{aesColor}{string.}
-
-\item{aesFacetCol}{string.}
-
-\item{aesFacetRow}{string.}
-
-\item{mainPlotAdditionalOptions}{character vector. Options:
+\item{input}{list. Input list from shiny ui. Uses
+- aesX :: string.
+- aesColor :: string.
+- aesFacetCol :: string.
+- aesFacetRow :: string.
+- mainPlotAdditionalOptions :: character vector. Options:
 list("points", "bars", "mean", "values", "ind_values", "log", 
-"N", "label", "swap", "free_y", "signif")}
-
-\item{errorbarType}{string. "None" | "SD" | "SEM" | "CI"}
-
-\item{summariseTechnicalReplicates}{boolean.}
-
-\item{standardizationFeatures}{character vector | NULL.}
-
-\item{standardizeWithinTechnicalReplicate}{boolean.}
+"N", "label", "swap", "free_y", "signif")
+- errorbarType :: string. "None" | "SD" | "SEM" | "CI"
+- summariseTechnicalReplicates :: boolean.
+- standardizationFeatures :: character vector | NULL.
+- standardizeWithinTechnicalReplicate :: boolean.}
 }
 \value{
-ggplot object
+:: ggplot object
 }
 \description{
 Title

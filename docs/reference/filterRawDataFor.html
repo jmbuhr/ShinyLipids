@@ -123,71 +123,30 @@
     <p>Filter raw data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>filterRawDataFor</span>(
-  <span class='no'>rawData</span>,
-  <span class='kw'>categoryToSelect</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>lipidClassToSelect</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>functionalCategoryToSelect</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filterLengthRange</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filterDoubleBondsRange</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filterOhRange</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>samplesToSelect</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>samplesToRemove</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>replicatesToSelect</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>replicatesToRemove</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>technicalReplicatesToRemove</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>filterRawDataFor</span>(<span class='no'>rawData</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>rawData</th>
-      <td><p>tibble. rawData</p></td>
+      <td><p>:: tibble. rawData</p></td>
     </tr>
     <tr>
-      <th>categoryToSelect</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>lipidClassToSelect</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>functionalCategoryToSelect</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>filterLengthRange</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>filterDoubleBondsRange</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>filterOhRange</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>samplesToSelect</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>samplesToRemove</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>replicatesToSelect</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>replicatesToRemove</th>
-      <td><p>string | NULL</p></td>
-    </tr>
-    <tr>
-      <th>technicalReplicatesToRemove</th>
-      <td><p>string | NULL</p></td>
+      <th>input</th>
+      <td><p>:: list. Input list from shiny ui. Uses
+- standardizeWithinTechnicalReplicate
+- categoryToSelect :: string | NULL
+- lipidClassToSelect :: string | NULL
+- functionalCategoryToSelect :: string | NULL
+- filterLengthRange :: string | NULL
+- filterDoubleBondsRange :: string | NULL
+- filterOhRange :: string | NULL
+- samplesToSelect :: string | NULL
+- samplesToRemove :: string | NULL
+- replicatesToSelect :: string | NULL
+- replicatesToRemove :: string | NULL
+- technicalReplicatesToRemove :: string | NULL</p></td>
     </tr>
     </table>
 

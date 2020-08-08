@@ -4,13 +4,13 @@
 \alias{standardizeWithinTechnicalReplicatesIf}
 \title{Standardize data within technical replicates}
 \usage{
-standardizeWithinTechnicalReplicatesIf(data, doIt = TRUE)
+standardizeWithinTechnicalReplicatesIf(data, input)
 }
 \arguments{
 \item{data}{tibble. data}
 
-\item{doIt}{boolean, if TRUE runs standardization,
-else returns the data unchanged}
+\item{input}{list. Input list from shiny ui. Uses
+- standardizeWithinTechnicalReplicate :: logical}
 }
 \value{
 tibble. standardized data

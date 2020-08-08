@@ -123,7 +123,7 @@
     <p>Standardize data within technical replicates</p>
     </div>
 
-    <pre class="usage"><span class='fu'>standardizeWithinTechnicalReplicatesIf</span>(<span class='no'>data</span>, <span class='kw'>doIt</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>standardizeWithinTechnicalReplicatesIf</span>(<span class='no'>data</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,9 +133,9 @@
       <td><p>tibble. data</p></td>
     </tr>
     <tr>
-      <th>doIt</th>
-      <td><p>boolean, if TRUE runs standardization,
-else returns the data unchanged</p></td>
+      <th>input</th>
+      <td><p>list. Input list from shiny ui. Uses
+- standardizeWithinTechnicalReplicate :: logical</p></td>
     </tr>
     </table>
 

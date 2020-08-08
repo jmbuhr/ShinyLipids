@@ -16,12 +16,8 @@ dtOptions <- list(
 #' generate the input list normally created by the web interface
 #' with \code{input <- generateDefaultInput()}.
 #'
-#' @param ... 
-#'
 #' @return list. A list of default options to be assigned to \code{input}
 #' @export
-#'
-#' @usage input <- generateDefaultInput()
 generateDefaultInput <- function() {
   list(
     aesX = "class",
@@ -32,9 +28,9 @@ generateDefaultInput <- function() {
     categoryToSelect            = NULL,
     lipidClassToSelect          = NULL,
     functionalCategoryToSelect  = NULL,
-    filterLengthRange           = c(1L, 1000L),
-    filterDoubleBondsRange      = c(0L, 1000L),
-    filterOhRange               = c(0L, 1000L),
+    filterLengthRange           = c(1L, 100L),
+    filterDoubleBondsRange      = c(0L, 100L),
+    filterOhRange               = c(0L, 100L),
     samplesToSelect             = NULL,
     samplesToRemove             = NULL,
     replicatesToSelect          = NULL,
@@ -65,13 +61,14 @@ generateDefaultInput <- function() {
     heatColor = "viridis",
     heatLabSize = 9,
     # Dimensionality reduction
-    pcaScalingMethod = "none",
     pcaCrossValidationMethod = "none",
     pcaNumberPrincipalComponents = 2,
     pcaCenter = TRUE,
     pcaScale = TRUE,
+    pcaLabels = FALSE,
     drawPcaConvexHull = TRUE,
-    pcaPointSize = 5
+    pcaPointSize = 5,
+    pcaVectors = TRUE
   )
 }
 

@@ -36,9 +36,9 @@ Imports:
     rlang,
     stringr,
     RColorBrewer,
-    here,
     recipes,
-    plotly
+    plotly,
+    tidytext
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 7.1.1

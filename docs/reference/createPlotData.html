@@ -123,47 +123,29 @@
     <p>Based on the aesthetic mappings.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createPlotData</span>(
-  <span class='no'>data</span>,
-  <span class='kw'>summariseTechnicalReplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>aesX</span> <span class='kw'>=</span> <span class='st'>"class"</span>,
-  <span class='kw'>aesColor</span> <span class='kw'>=</span> <span class='st'>"sample"</span>,
-  <span class='kw'>aesFacetCol</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>aesFacetRow</span> <span class='kw'>=</span> <span class='st'>""</span>
-)</pre>
+    <pre class="usage"><span class='fu'>createPlotData</span>(<span class='no'>data</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Input tibble</p></td>
+      <td><p>:: tibble</p></td>
     </tr>
     <tr>
-      <th>summariseTechnicalReplicates</th>
-      <td><p>boolean</p></td>
-    </tr>
-    <tr>
-      <th>aesX</th>
-      <td><p>string</p></td>
-    </tr>
-    <tr>
-      <th>aesColor</th>
-      <td><p>string</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetCol</th>
-      <td><p>string | ""</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetRow</th>
-      <td><p>string | ""</p></td>
+      <th>input</th>
+      <td><p>:: list. Input list from shiny ui. Uses
+- summariseTechnicalReplicates :: boolean
+- aesX :: string
+- aesColor :: string
+- aesFacetCol :: string | ""
+- aesFacetRow :: string | ""</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>tibble. neat data</p>
+    <p>:: tibble. neat data</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

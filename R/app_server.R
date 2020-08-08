@@ -258,14 +258,14 @@ app_server <- function(input, output, session) {
   # update number of principal components,
   # they should not exceed the dimensions of the data
   observe({
-    req(pcaData())
+    req(wideData())
     updateSliderInput(session,
                       "pcaNumberPrincipalComponents",
-                      max = min(dim(pcaData())))
+                      max = min(dim(wideData())))
   })
   
-  # ** pcaData ####
-  pcaData <- reactive({
+  # ** data for dimensionality reduction ####
+  wideData <- reactive({
     req(plotData())
     validate(
       need(input$aesColor == "sample",
@@ -282,54 +282,36 @@ app_server <- function(input, output, session) {
       need(length(unique(plotData()[[input$aesX]])) > 1,
            "Not enough datapoints to perform PCA")
     )
-    createWideData(plotData        = plotData(),
-                  aesX            = input$aesX)
+    createWideData(plotData = plotData(), input)
   })
   
-  # ** pcaObject ####
-  pcaObject <- reactive({
-    createPcaResult(pcaData                      = pcaData(),
-                    pcaMethod                    = input$pcaMethod,
-                    pcaNumberPrincipalComponents = input$pcaNumberPrincipalComponents,
-                    pcaCenter                    = input$pcaCenter,
-                    pcaScalingMethod             = input$pcaScalingMethod,
-                    pcaCrossValidationMethod     = input$pcaCrossValidationMethod)
+  # ** pcaPrep ####
+  pcaPrep <- reactive({
+    createPcaPrep(wideData(), input)
   })
   
-  pcaSampleNames <- reactive({
-    getPcaSampleNames(plotData(), input$summariseTechnicalReplicates)
-  })
+  pcaTidy <- reactive( tidy(pcaPrep(), id = "pca") )
+  pcaJuice <- reactive( juice(pcaPrep()) )
   
   # ** pcaInfo ####
   output$pcaInfo <- renderPrint({
-    req(pcaObject())
-    summary(pcaObject())
+    req(pcaPrep())
+    summary(pcaPrep())
   })
   
   # ** Scores ####
   pcaScoresPlot <- reactive({
-    req(pcaObject())
-    createPcaScoresPlot(pcaData                      = pcaData(),
-                        pcaObject                    = pcaObject(),
-                        pcaSampleNames               = pcaSampleNames(),
-                        aesX                         = input$aesX,
-                        summariseTechnicalReplicates = input$summariseTechnicalReplicates,
-                        drawPcaConvexHull            = input$drawPcaConvexHull,
-                        pcaPointSize                 = input$pcaPointSize,
-                        pcaLabels                    = input$pcaLabels,
-                        pcaVectors                   = input$pcaVectors)
+    req(pcaJuice())
+    createPcaScoresPlot(pcaJuice = pcaJuice(), pcaTidy = pcaTidy(), input)
   })
   
   output$pcaScoresPlot <- renderPlot({
     pcaScoresPlot()
   })
   
-  
   # ** Loadings ####
   pcaLoadingsPlot <- reactive({
-    createPcaLoadingsPlot(pcaObject = pcaObject(),
-                          aesX = input$aesX,
-                          pcaPointSize = input$pcaPointSize)
+    createPcaLoadingsPlot(pcaTidy = pcaTidy(), input)
   })
   
   output$pcaLoadingsPlot <- renderPlot({

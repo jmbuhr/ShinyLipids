@@ -4,18 +4,14 @@
 \alias{standardizeRawDataWithin}
 \title{Standardize raw data}
 \usage{
-standardizeRawDataWithin(
-  data,
-  baselineSample = "",
-  standardizationFeatures = c("")
-)
+standardizeRawDataWithin(data, input)
 }
 \arguments{
 \item{data}{tibble. Raw data}
 
-\item{baselineSample}{string | "", Sample to use as a baseline}
-
-\item{standardizationFeatures}{character vector, Features to standardize on}
+\item{input}{list. Input list from shiny ui. Uses
+- baselineSample
+- standardizationFeatures :: tibble. rawData}
 }
 \value{
 tibble. Standardized data

@@ -23,6 +23,8 @@ reference:
       - createPlotData
       - summarisePlotData
       - doAllPairwiseComparisons
+      - createPcaPrep
+      - createWideData
   - title: "Main user facing functions"
     desc: "The main entry points for (new) users"
     contents:
@@ -33,18 +35,20 @@ reference:
     contents:
       - createMainPlot
       - createHeatmap
+      - mainTheme
   - title: "Utility functions"
     desc: "Smaller helper utilities"
     contents:
+      - generateDefaultInput
       - createQueryForID
       - downloadHandlerFactoryCSV
+      - downloadHandlerFactoryRDS
       - downloadHandlerFactoryPDF
       - updateAllRangeInputs
       - updateAllSelectizeInputs
       - updateInputsForSpeciesProfile
       - mainScale
       - parseDate
-      - stat_chull
       - testAllMoreThanOneReplicate
       - filterIfNotNull
       - testPairwise

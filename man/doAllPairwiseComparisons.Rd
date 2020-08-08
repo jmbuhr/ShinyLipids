@@ -4,15 +4,16 @@
 \alias{doAllPairwiseComparisons}
 \title{Test all possible pairwise t-tests}
 \usage{
-doAllPairwiseComparisons(data, aesX = "class")
+doAllPairwiseComparisons(data, input)
 }
 \arguments{
 \item{data}{tibble. The full dataset}
 
-\item{aesX}{string. the feature mapped to the x-axis}
+\item{input}{:: list. Input list from shiny ui. Uses
+- aesX :: string}
 }
 \value{
-tibble.
+:: tibble.
 A tidy representation of the significance
 tests build with \code{broom::tidy} combined
 into one tibble.

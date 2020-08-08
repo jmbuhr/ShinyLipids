@@ -1,4 +1,5 @@
 # Setup of the ShinyApp ####
+pkgload::load_all()
 
 # Deployment ####
 # To deploy, run: rsconnect::deployApp()

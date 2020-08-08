@@ -4,30 +4,20 @@
 \alias{createPlotData}
 \title{Create the data ready for plotting}
 \usage{
-createPlotData(
-  data,
-  summariseTechnicalReplicates = TRUE,
-  aesX = "class",
-  aesColor = "sample",
-  aesFacetCol = "",
-  aesFacetRow = ""
-)
+createPlotData(data, input)
 }
 \arguments{
-\item{data}{Input tibble}
+\item{data}{:: tibble}
 
-\item{summariseTechnicalReplicates}{boolean}
-
-\item{aesX}{string}
-
-\item{aesColor}{string}
-
-\item{aesFacetCol}{string | ""}
-
-\item{aesFacetRow}{string | ""}
+\item{input}{:: list. Input list from shiny ui. Uses
+- summariseTechnicalReplicates :: boolean
+- aesX :: string
+- aesColor :: string
+- aesFacetCol :: string | ""
+- aesFacetRow :: string | ""}
 }
 \value{
-tibble. neat data
+:: tibble. neat data
 }
 \description{
 Based on the aesthetic mappings.

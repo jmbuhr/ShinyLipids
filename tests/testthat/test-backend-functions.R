@@ -1,5 +1,7 @@
 context("Full data processing pipeline until main plot")
 
+input <- generateDefaultInput()
+
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
@@ -31,18 +33,19 @@ test_that(
     rawData <- collectRawData(con = databaseConnection, id = 1)
     
     plotData <- rawData %>%
-      imputeMissingIf() %>% 
+      imputeMissingIf(input) %>% 
       addLipidProperties() %>% 
-      standardizeWithinTechnicalReplicatesIf() %>%
-      filterRawDataFor() %>%
-      standardizeRawDataWithin() %>%
-      createPlotData()
+      standardizeWithinTechnicalReplicatesIf(input) %>%
+      filterRawDataFor(input) %>%
+      standardizeRawDataWithin(input) %>%
+      createPlotData(input)
     
-    meanPlotData <- summarisePlotData(plotData)
+    meanPlotData <- summarisePlotData(plotData, input)
     
     plt <- createMainPlot(plotData            = plotData,
                           meanPlotData        = meanPlotData,
-                          pairwiseComparisons = NULL)
+                          pairwiseComparisons = NULL,
+                          input = input)
     expect_is(plt, "ggplot")
   }
 )

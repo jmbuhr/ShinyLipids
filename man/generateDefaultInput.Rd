@@ -4,10 +4,7 @@
 \alias{generateDefaultInput}
 \title{Generate list of default options}
 \usage{
-input <- generateDefaultInput()
-}
-\arguments{
-\item{...}{}
+generateDefaultInput()
 }
 \value{
 list. A list of default options to be assigned to \code{input}

@@ -4,45 +4,24 @@
 \alias{filterRawDataFor}
 \title{Filter raw data}
 \usage{
-filterRawDataFor(
-  rawData,
-  categoryToSelect = NULL,
-  lipidClassToSelect = NULL,
-  functionalCategoryToSelect = NULL,
-  filterLengthRange = NULL,
-  filterDoubleBondsRange = NULL,
-  filterOhRange = NULL,
-  samplesToSelect = NULL,
-  samplesToRemove = NULL,
-  replicatesToSelect = NULL,
-  replicatesToRemove = NULL,
-  technicalReplicatesToRemove = NULL
-)
+filterRawDataFor(rawData, input)
 }
 \arguments{
-\item{rawData}{tibble. rawData}
+\item{rawData}{:: tibble. rawData}
 
-\item{categoryToSelect}{string | NULL}
-
-\item{lipidClassToSelect}{string | NULL}
-
-\item{functionalCategoryToSelect}{string | NULL}
-
-\item{filterLengthRange}{string | NULL}
-
-\item{filterDoubleBondsRange}{string | NULL}
-
-\item{filterOhRange}{string | NULL}
-
-\item{samplesToSelect}{string | NULL}
-
-\item{samplesToRemove}{string | NULL}
-
-\item{replicatesToSelect}{string | NULL}
-
-\item{replicatesToRemove}{string | NULL}
-
-\item{technicalReplicatesToRemove}{string | NULL}
+\item{input}{:: list. Input list from shiny ui. Uses
+- standardizeWithinTechnicalReplicate
+- categoryToSelect :: string | NULL
+- lipidClassToSelect :: string | NULL
+- functionalCategoryToSelect :: string | NULL
+- filterLengthRange :: string | NULL
+- filterDoubleBondsRange :: string | NULL
+- filterOhRange :: string | NULL
+- samplesToSelect :: string | NULL
+- samplesToRemove :: string | NULL
+- replicatesToSelect :: string | NULL
+- replicatesToRemove :: string | NULL
+- technicalReplicatesToRemove :: string | NULL}
 }
 \value{
 tibble. Lovely filtered data

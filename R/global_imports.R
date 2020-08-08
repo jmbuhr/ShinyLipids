@@ -6,7 +6,7 @@
 #' @import tidyr
 #' @import purrr
 #' @import RSQLite
-#' @importFrom plotly ggplotly
+#' @importFrom plotly ggplotly plotlyOutput renderPlotly
 #' @importFrom stats qt
 #' @importFrom rlang .data
 #' @importFrom utils write.csv
@@ -21,6 +21,7 @@ NULL
 # and also names of tibble columns used in tidy evaluation / NSE.
 utils::globalVariables(
   c(".",
+    "component", "terms",
     "CI_lower", "CI_upper", "N", "PC1", "PC2", "SD", "SEM", "category",
     "class_order", "datasets", "date_extraction", "date_measured",
     "date_sample", "date_upload", "db", "func_cat", "lipid", "oh",

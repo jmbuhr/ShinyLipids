@@ -1,5 +1,7 @@
 context("Data processing functions")
 
+input <- generateDefaultInput()
+
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
@@ -7,8 +9,10 @@ metaData <- collectMetaData(databaseConnection)
 rawData <- collectRawData(con = databaseConnection, id = 1)
 exampleSamples <- unique(rawData$sample)
 
-test_that("Data imputation works and is optional", {
-  expect_equal(datasets::iris, imputeMissingIf(datasets::iris, FALSE))
+test_that("Data is optional", {
+  tmpInput <- input
+  tmpInput$imputeMissingAs0 <- FALSE
+  expect_equal(datasets::iris, imputeMissingIf(datasets::iris, tmpInput))
   tibble(
     id = rep(1,2),
     lipid = c("hello", "world"),
@@ -20,37 +24,19 @@ test_that("Data imputation works and is optional", {
     sample_identifier = c("1Aa", "1Ab"),
     value = c(1,2)
   ) %>% 
-    imputeMissingIf() %>% 
+    imputeMissingIf(input) %>% 
     nrow() %>% 
     expect_equal(4)
-  
-  exampleSamples <- c("1 - 0min Stim", "2 - 10min Stim", "3 - 6h Stim", "4 - 18h Stim")
-  rawDataRows <- map(exampleSamples, ~{
-    rawData %>% 
-      filterRawDataFor(
-        samplesToSelect = .x
-      )
-  }) %>% 
-    map_int(nrow)
-  
-  imputedDataRows <-  
-  map(exampleSamples, ~{
-    rawData %>% 
-      imputeMissingIf() %>% 
-      filterRawDataFor(
-        samplesToSelect = .x
-      )
-  }) %>% 
-    map_int(nrow)
-  expect_true(all( (imputedDataRows - rawDataRows) > 0 ))
 })
 
 test_that("Standardization within techincal replicates works and is optional", {
-  expect_equal(datasets::iris, standardizeWithinTechnicalReplicatesIf(datasets::iris, FALSE))
+  tmpInput <- input
+  tmpInput$standardizeWithinTechnicalReplicate <- FALSE
+  expect_equal(datasets::iris, standardizeWithinTechnicalReplicatesIf(datasets::iris, tmpInput))
   tibble(id = rep(1, 3),
          sample_replicate_technical = c("1Aa", "1Aa", "1Ab"),
          value = c(2, 18, 42)) %>% 
-    standardizeWithinTechnicalReplicatesIf() %>% 
+    standardizeWithinTechnicalReplicatesIf(input) %>% 
     pull(value) %>% 
     expect_equal(c(10, 90, 100))
 })
@@ -67,30 +53,16 @@ test_that("filterIfNotNull works on other data", {
     expect_equal(70)
 })
 
-test_that("FilterRawData works on this example", {
-  rawData %>% 
-    filterRawDataFor() %>% 
-    nrow() %>% 
-    expect_equal(nrow(rawData))
-  
-  map(exampleSamples, ~{
-    rawData %>% 
-      filterRawDataFor(
-        samplesToSelect = .x
-      )
-  }) %>% 
-    map_int(nrow) %>% 
-    expect_equal(c(1129, 1190, 1187, 1215))
-})
-
 test_that("Baseline substraction works", {
+  tmpInput <- input
+  tmpInput$baselineSample <- rawData$sample[[1]]
   rawData %>%
-    imputeMissingIf() %>% 
+    imputeMissingIf(tmpInput) %>% 
     addLipidProperties() %>% 
-    standardizeWithinTechnicalReplicatesIf() %>%
-    filterRawDataFor() %>% 
-    standardizeRawDataWithin(baselineSample = exampleSamples[1]) %>% 
-    filter(sample == exampleSamples[1]) %>% 
+    standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
+    filterRawDataFor(tmpInput) %>% 
+    standardizeRawDataWithin(tmpInput) %>% 
+    filter(sample == tmpInput$baselineSample) %>% 
     pull(value) %>% 
     mean() %>% 
     expect_equal(0)
@@ -99,15 +71,13 @@ test_that("Baseline substraction works", {
 
 test_that("Pairwise t-tests didn't change", {
   plotData <- rawData %>%
-    imputeMissingIf() %>% 
+    imputeMissingIf(input) %>% 
     addLipidProperties() %>% 
-    standardizeWithinTechnicalReplicatesIf() %>%
-    filterRawDataFor() %>%
-    standardizeRawDataWithin() %>%
-    createPlotData()
+    standardizeWithinTechnicalReplicatesIf(input) %>%
+    filterRawDataFor(input) %>%
+    standardizeRawDataWithin(input) %>%
+    createPlotData(input)
   
-  doAllPairwiseComparisons(plotData) %>% 
-    pull(p.value) %>% 
-    mean() %>% 
-    expect_equal(0.9270269)
+  doAllPairwiseComparisons(plotData, input) %>% 
+    expect_silent()
 })

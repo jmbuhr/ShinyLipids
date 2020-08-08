@@ -384,28 +384,12 @@ uiBody <- function() {
         column(
           width = 6,
           shinydashboard::box(width = NULL,
-                              checkboxInput("pcaCenter", "Center", TRUE),
-                              checkboxInput("pcaLabels", "Sample Labels", TRUE),
-                              checkboxInput("pcaVectors", "Show original dimensions in principal component space", TRUE),
+                              checkboxInput("pcaCenter", "Center",  defaultInput$pcaCenter),
+                              checkboxInput("pcaScale", "Scale dimensions before pca", defaultInput$pcaScale),
+                              checkboxInput("pcaLabels", "Sample Labels", defaultInput$pcaLabels),
+                              checkboxInput("pcaVectors", "Show original dimensions in principal component space",
+                                            defaultInput$pcaVectors),
                               checkboxInput("drawPcaConvexHull", "Draw convex hull", FALSE),
-                              selectInput(
-                                "pcaScalingMethod",
-                                "Scaling method",
-                                choices = list(
-                                  "none"          = "none",
-                                  "unit variance" = "uv",
-                                  "pareto"        = "pareto"
-                                ), selected = defaultInput$pcaScalingMethod
-                              ),
-                              selectInput(
-                                "pcaMethod",
-                                "Method",
-                                pcaMethods::listPcaMethods()[1:7], # The last three don't work for now
-                                selected = "nipals"),
-                              selectInput("pcaCrossValidationMethod",
-                                          "Cross validation method",
-                                          choices = list("none" = "none", "Q2" =  "q2"),
-                                          selected = defaultInput$pcaCrossValidationMethod),
                               sliderInput(
                                 "pcaNumberPrincipalComponents",
                                 label   = "Number of PCs",

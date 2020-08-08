@@ -1,79 +1,71 @@
 context("Plots")
 
+input <- generateDefaultInput()
+tmpInput <- input
+
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 rawData <- collectRawData(con = databaseConnection, id = 1)
 
-allPlotOptions <- list(
-  "Show points"                = "points",
-  "Show bars"                  = "bars",
-  "Show average"               = "mean",
-  "Show value of means"        = "values",
-  "Show value of points"       = "ind_values",
-  "Transform y-axis log1p"     = "log",
-  "Show N per sample"          = "N",
-  "Label points"               = "label",
-  # "Swap x- and y-axis"         = "swap",
-  "Free y scale for facets"    = "free_y",
-  "Run pairwise t-tests"       = "signif")
-
 plotData <- rawData %>%
-  imputeMissingIf() %>% 
+  imputeMissingIf(input) %>% 
   addLipidProperties() %>% 
-  standardizeWithinTechnicalReplicatesIf() %>%
-  filterRawDataFor() %>%
-  standardizeRawDataWithin() %>%
-  createPlotData()
-
+  standardizeWithinTechnicalReplicatesIf(input) %>%
+  filterRawDataFor(input) %>%
+  standardizeRawDataWithin(input) %>%
+  createPlotData(input)
 
 test_that("Plot with all options except swapped x and y work", {
   plt <- createMainPlot(plotData = plotData,
-                        meanPlotData = summarisePlotData(plotData),
-                        pairwiseComparisons = doAllPairwiseComparisons(plotData),
-                        mainPlotAdditionalOptions = allPlotOptions,
-                        errorbarType = "CI")
+                        meanPlotData = summarisePlotData(plotData, tmpInput),
+                        pairwiseComparisons = doAllPairwiseComparisons(plotData, tmpInput),
+                        input = input)
   
   expect_is(plt, "ggplot")
 })
 
 test_that("Main Plot works with facets", {
+  tmpInput <- input
+  tmpInput$aesFacetCol <- "category"
   data <- rawData %>%
-    imputeMissingIf() %>% 
+    imputeMissingIf(input) %>% 
     addLipidProperties() %>% 
-    standardizeWithinTechnicalReplicatesIf() %>%
-    filterRawDataFor() %>%
-    standardizeRawDataWithin()
-  
+    standardizeWithinTechnicalReplicatesIf(input) %>%
+    filterRawDataFor(input) %>%
+    standardizeRawDataWithin(input)
+
   plotData <- data %>%
-    standardizeRawDataWithin() %>%
-    createPlotData(aesFacetCol = "category")
+    standardizeRawDataWithin(tmpInput) %>%
+    createPlotData(tmpInput)
   
   plt <- createMainPlot(plotData = plotData,
-                        meanPlotData = summarisePlotData(plotData),
-                        pairwiseComparisons = doAllPairwiseComparisons(plotData),
-                        aesFacetCol = "category")
+                        meanPlotData = summarisePlotData(plotData, tmpInput),
+                        pairwiseComparisons = doAllPairwiseComparisons(plotData, tmpInput),
+                        input = tmpInput)
   expect_is(plt, "ggplot")
 
   plotData <- data %>%
-    standardizeRawDataWithin() %>%
-    createPlotData(aesFacetRow = "category")
+    standardizeRawDataWithin(tmpInput) %>%
+    createPlotData(tmpInput)
   
   plt <- createMainPlot(plotData = plotData,
-                        meanPlotData = summarisePlotData(plotData),
-                        pairwiseComparisons = doAllPairwiseComparisons(plotData),
-                        aesFacetRow = "category")
+                        meanPlotData = summarisePlotData(plotData, tmpInput),
+                        pairwiseComparisons = doAllPairwiseComparisons(plotData, tmpInput),
+                        input = tmpInput)
   expect_is(plt, "ggplot")
   
+  tmpInput <- input
+  tmpInput$aesFacetCol = "category"
+  tmpInput$aesFacetRow = "oh"
+
   plotData <- data %>%
-    standardizeRawDataWithin() %>%
-    createPlotData(aesFacetCol = "category",
-                   aesFacetRow = "oh")
+    standardizeRawDataWithin(tmpInput) %>%
+    createPlotData(tmpInput)
   
   plt <- createMainPlot(plotData = plotData,
-                        meanPlotData = summarisePlotData(plotData),
-                        pairwiseComparisons = doAllPairwiseComparisons(plotData),
-                        aesFacetCol = "category",
-                        aesFacetRow = "oh")
+                        meanPlotData = summarisePlotData(plotData, input = tmpInput),
+                        pairwiseComparisons = doAllPairwiseComparisons(plotData, tmpInput),
+                        input = tmpInput)
   expect_is(plt, "ggplot")
   
 })
@@ -84,41 +76,40 @@ test_that("Heatmap works with defaults", {
 })
 
 test_that("Heatmap works with facets", {
+  tmpInput <- input
+  tmpInput$aesFacetCol = "category"
   data <- rawData %>%
-    imputeMissingIf() %>% 
+    imputeMissingIf(tmpInput) %>% 
     addLipidProperties() %>% 
-    standardizeWithinTechnicalReplicatesIf() %>%
-    filterRawDataFor() %>%
-    standardizeRawDataWithin() 
+    standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
+    filterRawDataFor(tmpInput) %>%
+    standardizeRawDataWithin(tmpInput) 
   
   plt <- data %>%
-    standardizeRawDataWithin() %>%
-    createPlotData(aesFacetCol = "category") %>% 
-    createHeatmap(aesFacetCol = "category")
+    standardizeRawDataWithin(tmpInput) %>%
+    createPlotData(tmpInput) %>% 
+    createHeatmap(tmpInput)
   expect_is(plt, "ggplot")
   
-  plt <- data %>%
-    createPlotData(aesFacetRow = "category") %>% 
-    createHeatmap(aesFacetRow = "category")
-  expect_is(plt, "ggplot")
+  tmpInput <- input
+  input$aesFacetRow = "category"
   
   plt <- data %>%
-    createPlotData(aesFacetRow = "category",
-                   aesFacetCol = "func_cat") %>% 
-    createHeatmap(aesFacetRow = "category",
-                  aesFacetCol = "func_cat")
+    createPlotData(tmpInput) %>% 
+    createHeatmap(tmpInput)
+  expect_is(plt, "ggplot")
+  
+  tmpInput <- input
+  input$aesFacetRow = "category"
+  input$aesFacetCol = "func_cat"
+  
+  plt <- data %>%
+    createPlotData(tmpInput) %>% 
+    createHeatmap(tmpInput)
   expect_is(plt, "ggplot")
 })
 
-test_that("Default PCA works", {
-  pcaData <- createPcaData(plotData)
-  pcaObject <- createPcaResult(pcaData = pcaData)
-  pcaSampleNames <- getPcaSampleNames(plotData)
-  scoresPlt <- createPcaScoresPlot(pcaData = pcaData,
-                                   pcaObject = pcaObject,
-                                   pcaSampleNames = pcaSampleNames)
-  expect_is(scoresPlt, "ggplot")
-  
-  loadingsPlt <- createPcaLoadingsPlot(pcaObject = pcaObject)
-  expect_is(loadingsPlt, "ggplot")
-})
+# TODO
+# test_that("Default PCA works", {
+#   
+# })

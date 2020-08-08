@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Impute implicit missing values as 0 — imputeMissingIf • ShinyLipids</title>
+<title>Create wide data — createWideData • ShinyLipids</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="Impute implicit missing values as 0 — imputeMissingIf" />
-<meta property="og:description" content="Imputes if input$imputeMissingAs0 == TRUE,
-else returns input data." />
+<meta property="og:title" content="Create wide data — createWideData" />
+<meta property="og:description" content="Create data in wide format for dimensionality reduction workflows
+with tidymodels." />
 
 
 
@@ -115,35 +115,35 @@ else returns input data." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Impute implicit missing values as 0</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jannikbuhr/ShinyLipids/blob/master/R/data_processing.R'><code>R/data_processing.R</code></a></small>
-    <div class="hidden name"><code>imputeMissingIf.Rd</code></div>
+    <h1>Create wide data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jannikbuhr/ShinyLipids/blob/master/R/dimensionality_reduction.R'><code>R/dimensionality_reduction.R</code></a></small>
+    <div class="hidden name"><code>createWideData.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Imputes if <code>input$imputeMissingAs0 == TRUE</code>,
-else returns input data.</p>
+    <p>Create data in wide format for dimensionality reduction workflows
+with tidymodels.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>imputeMissingIf</span>(<span class='no'>data</span>, <span class='no'>input</span>)</pre>
+    <pre class="usage"><span class='fu'>createWideData</span>(<span class='no'>plotData</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>tibble. rawData</p></td>
+      <th>plotData</th>
+      <td><p>:: tibble.</p></td>
     </tr>
     <tr>
       <th>input</th>
-      <td><p>list. Input list from shiny ui. Uses
-- imputeMissingAs0 :: logical</p></td>
+      <td><p>:: list. Uses:
+- aesX :: String</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>tibble. imputed data</p>
+    <p>:: tibble.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -73,8 +73,8 @@ you will need a couple of additional packages that
 are listed in `app.R`.] from github:
 
 ```{r, eval=FALSE}
-if ( !("devtools" %in% installed.packages()) ) install.packages("devtools")
-devtools::install_github("jannikbuhr/ShinyLipids")
+if ( !("remotes" %in% installed.packages()) ) install.packages("remotes")
+remotes::install_github("jannikbuhr/ShinyLipids")
 ```
 
 (To run the code, copy and paste it into the R console that pops up in the

@@ -123,7 +123,7 @@
     <p>Because people like p-values and little stars.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>doAllPairwiseComparisons</span>(<span class='no'>data</span>, <span class='kw'>aesX</span> <span class='kw'>=</span> <span class='st'>"class"</span>)</pre>
+    <pre class="usage"><span class='fu'>doAllPairwiseComparisons</span>(<span class='no'>data</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,14 +133,15 @@
       <td><p>tibble. The full dataset</p></td>
     </tr>
     <tr>
-      <th>aesX</th>
-      <td><p>string. the feature mapped to the x-axis</p></td>
+      <th>input</th>
+      <td><p>:: list. Input list from shiny ui. Uses
+- aesX :: string</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>tibble.
+    <p>:: tibble.
 A tidy representation of the significance
 tests build with <code><a href='https://broom.tidymodels.org/reference/reexports.html'>broom::tidy</a></code> combined
 into one tibble.</p>

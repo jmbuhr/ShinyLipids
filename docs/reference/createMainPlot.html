@@ -129,15 +129,7 @@
   <span class='no'>pairwiseComparisons</span>,
   <span class='kw'>rangeX</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>rangeY</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>aesX</span> <span class='kw'>=</span> <span class='st'>"class"</span>,
-  <span class='kw'>aesColor</span> <span class='kw'>=</span> <span class='st'>"sample"</span>,
-  <span class='kw'>aesFacetCol</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>aesFacetRow</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>mainPlotAdditionalOptions</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"points"</span>, <span class='st'>"bars"</span>),
-  <span class='kw'>errorbarType</span> <span class='kw'>=</span> <span class='st'>"None"</span>,
-  <span class='kw'>summariseTechnicalReplicates</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>standardizationFeatures</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>standardizeWithinTechnicalReplicate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='no'>input</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -164,48 +156,25 @@
       <td><p>numeric vector | NULL.  vector with min and max Y</p></td>
     </tr>
     <tr>
-      <th>aesX</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>aesColor</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetCol</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetRow</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>mainPlotAdditionalOptions</th>
-      <td><p>character vector. Options:
+      <th>input</th>
+      <td><p>list. Input list from shiny ui. Uses
+- aesX :: string.
+- aesColor :: string.
+- aesFacetCol :: string.
+- aesFacetRow :: string.
+- mainPlotAdditionalOptions :: character vector. Options:
 list("points", "bars", "mean", "values", "ind_values", "log", 
-"N", "label", "swap", "free_y", "signif")</p></td>
-    </tr>
-    <tr>
-      <th>errorbarType</th>
-      <td><p>string. "None" | "SD" | "SEM" | "CI"</p></td>
-    </tr>
-    <tr>
-      <th>summariseTechnicalReplicates</th>
-      <td><p>boolean.</p></td>
-    </tr>
-    <tr>
-      <th>standardizationFeatures</th>
-      <td><p>character vector | NULL.</p></td>
-    </tr>
-    <tr>
-      <th>standardizeWithinTechnicalReplicate</th>
-      <td><p>boolean.</p></td>
+"N", "label", "swap", "free_y", "signif")
+- errorbarType :: string. "None" | "SD" | "SEM" | "CI"
+- summariseTechnicalReplicates :: boolean.
+- standardizationFeatures :: character vector | NULL.
+- standardizeWithinTechnicalReplicate :: boolean.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>ggplot object</p>
+    <p>:: ggplot object</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

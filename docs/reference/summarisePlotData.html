@@ -123,13 +123,7 @@
     <p>Summarise the plot data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>summarisePlotData</span>(
-  <span class='no'>data</span>,
-  <span class='kw'>aesX</span> <span class='kw'>=</span> <span class='st'>"class"</span>,
-  <span class='kw'>aesColor</span> <span class='kw'>=</span> <span class='st'>"sample"</span>,
-  <span class='kw'>aesFacetCol</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>aesFacetRow</span> <span class='kw'>=</span> <span class='st'>""</span>
-)</pre>
+    <pre class="usage"><span class='fu'>summarisePlotData</span>(<span class='no'>data</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,20 +133,12 @@
       <td><p>tibble. plotData</p></td>
     </tr>
     <tr>
-      <th>aesX</th>
-      <td><p>string</p></td>
-    </tr>
-    <tr>
-      <th>aesColor</th>
-      <td><p>string</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetCol</th>
-      <td><p>string | ""</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetRow</th>
-      <td><p>string | ""</p></td>
+      <th>input</th>
+      <td><p>:: list. Input list from shiny ui. Uses
+- aesX :: string
+- aesColor :: string
+- aesFacetCol :: string | ""
+- aesFacetRow :: string | ""</p></td>
     </tr>
     </table>
 

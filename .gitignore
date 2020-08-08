@@ -12,3 +12,4 @@ dev
 *.Rprof
 inst/extdata/originalExampleDatabase.db
 .vscode/
+rsconnect/

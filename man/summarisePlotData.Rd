@@ -4,24 +4,16 @@
 \alias{summarisePlotData}
 \title{Summarise the plot data}
 \usage{
-summarisePlotData(
-  data,
-  aesX = "class",
-  aesColor = "sample",
-  aesFacetCol = "",
-  aesFacetRow = ""
-)
+summarisePlotData(data, input)
 }
 \arguments{
 \item{data}{tibble. plotData}
 
-\item{aesX}{string}
-
-\item{aesColor}{string}
-
-\item{aesFacetCol}{string | ""}
-
-\item{aesFacetRow}{string | ""}
+\item{input}{:: list. Input list from shiny ui. Uses
+- aesX :: string
+- aesColor :: string
+- aesFacetCol :: string | ""
+- aesFacetRow :: string | ""}
 }
 \value{
 tibble. data ready for summmary plots like barplots

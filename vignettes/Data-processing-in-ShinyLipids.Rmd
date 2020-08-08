@@ -26,6 +26,8 @@ First, we load ShinyLipids
 
 ```{r setup}
 library(ShinyLipids)
+
+input <- generateDefaultInput()
 ```
 
 We can get the file path to our example data, given that
@@ -64,18 +66,18 @@ Next, we run the data processing steps.
 
 ```{r}
 plotData <- rawData %>%
-  imputeMissingIf() %>% 
+  imputeMissingIf(input) %>% 
   addLipidProperties() %>% 
-  standardizeWithinTechnicalReplicatesIf(TRUE) %>%
-  filterRawDataFor() %>%
-  standardizeRawDataWithin() %>%
-  createPlotData()
+  standardizeWithinTechnicalReplicatesIf(input) %>%
+  filterRawDataFor(input) %>%
+  standardizeRawDataWithin(input) %>%
+  createPlotData(input)
 
 head(plotData)
 ```
 
 ```{r}
-meanPlotData <- summarisePlotData(plotData)
+meanPlotData <- summarisePlotData(plotData, input)
 head(meanPlotData)
 ```
 
@@ -83,7 +85,8 @@ head(meanPlotData)
 ```{r}
 plt <- createMainPlot(plotData            = plotData,
                       meanPlotData        = meanPlotData,
-                      pairwiseComparisons = NULL)
+                      pairwiseComparisons = NULL,
+                      input = input)
 
 plt
 ```
