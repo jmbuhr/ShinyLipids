@@ -11,7 +11,7 @@ URL: https://jmbuhr.de/ShinyLipids/, https://github.com/jannikbuhr/ShinyLipids
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Imports:
     shiny,
     golem,
     scales,

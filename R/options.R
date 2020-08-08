@@ -57,7 +57,7 @@ generateDefaultInput <- function() {
     pcaHeight = 10,
     # heatmap
     heatWidth = 20,
-    heatheight = 10,
+    heatHeight = 10,
     heatColor = "viridis",
     heatLabSize = 9,
     # Dimensionality reduction

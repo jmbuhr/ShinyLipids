@@ -1,7 +1,6 @@
 context("Plots")
 
 input <- generateDefaultInput()
-tmpInput <- input
 
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
@@ -15,24 +14,40 @@ plotData <- rawData %>%
   standardizeRawDataWithin(input) %>%
   createPlotData(input)
 
+allPlotOptions <- list(
+  "Show points"                = "points",
+  "Show bars"                  = "bars",
+  "Show average"               = "mean",
+  "Show value of means"        = "values",
+  "Show value of points"       = "ind_values",
+  "Transform y-axis log1p"     = "log",
+  "Show N per sample"          = "N",
+  "Label points"               = "label",
+  # "Swap x- and y-axis"         = "swap",
+  "Free y scale for facets"    = "free_y",
+  "Run pairwise t-tests"       = "signif")
+
 test_that("Plot with all options except swapped x and y work", {
+  tmpInput <- input
+  tmpInput$mainPlotAdditionalOptions <- allPlotOptions
   plt <- createMainPlot(plotData = plotData,
                         meanPlotData = summarisePlotData(plotData, tmpInput),
                         pairwiseComparisons = doAllPairwiseComparisons(plotData, tmpInput),
                         input = input)
-  
   expect_is(plt, "ggplot")
 })
 
 test_that("Main Plot works with facets", {
   tmpInput <- input
   tmpInput$aesFacetCol <- "category"
+  tmpInput$errorbarType <- "SD"
+  
   data <- rawData %>%
-    imputeMissingIf(input) %>% 
+    imputeMissingIf(tmpInput) %>% 
     addLipidProperties() %>% 
-    standardizeWithinTechnicalReplicatesIf(input) %>%
-    filterRawDataFor(input) %>%
-    standardizeRawDataWithin(input)
+    standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
+    filterRawDataFor(tmpInput) %>%
+    standardizeRawDataWithin(tmpInput)
 
   plotData <- data %>%
     standardizeRawDataWithin(tmpInput) %>%
@@ -55,8 +70,11 @@ test_that("Main Plot works with facets", {
   expect_is(plt, "ggplot")
   
   tmpInput <- input
-  tmpInput$aesFacetCol = "category"
-  tmpInput$aesFacetRow = "oh"
+  tmpInput$aesFacetCol <- "category"
+  tmpInput$aesFacetRow <- "oh"
+  tmpInput$mainPlotAdditionalOptions <- list(
+    "points", "bars", "swap"
+  )
 
   plotData <- data %>%
     standardizeRawDataWithin(tmpInput) %>%
@@ -67,15 +85,29 @@ test_that("Main Plot works with facets", {
                         pairwiseComparisons = doAllPairwiseComparisons(plotData, tmpInput),
                         input = tmpInput)
   expect_is(plt, "ggplot")
-  
 })
 
 test_that("Heatmap works with defaults", {
-  plt <- createHeatmap(data = plotData)
+  plt <- createHeatmap(data = plotData, input)
   expect_is(plt, "ggplot")
 })
 
+
 test_that("Heatmap works with facets", {
+  tmpInput <- input
+  data <- rawData %>%
+    imputeMissingIf(tmpInput) %>% 
+    addLipidProperties() %>% 
+    standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
+    filterRawDataFor(tmpInput) %>%
+    standardizeRawDataWithin(tmpInput) 
+  
+  plt <- data %>%
+    standardizeRawDataWithin(tmpInput) %>%
+    createPlotData(tmpInput) %>% 
+    createHeatmap(tmpInput)
+  expect_is(plt, "ggplot")
+  
   tmpInput <- input
   tmpInput$aesFacetCol = "category"
   data <- rawData %>%
@@ -110,6 +142,17 @@ test_that("Heatmap works with facets", {
 })
 
 # TODO
-# test_that("Default PCA works", {
-#   
-# })
+test_that("Default PCA works", {
+  
+  wideData <- createWideData(plotData = plotData, input)
+  pcaPrep <- createPcaPrep(wideData, input)
+  
+  pcaTidy <- tidy(pcaPrep, id = "pca")
+  pcaJuice <- juice(pcaPrep)
+  
+  plt1 <- createPcaScoresPlot(pcaJuice, pcaTidy, input)
+  plt2 <- createPcaLoadingsPlot(pcaTidy, input)
+  
+  expect_is(plt1, "ggplot")
+  expect_is(plt2, "ggplot")
+})
