@@ -27,7 +27,7 @@ First, we load ShinyLipids
 ```{r setup}
 library(ShinyLipids)
 
-input <- generateDefaultInput()
+input <- defaultInput()
 ```
 
 We can get the file path to our example data, given that

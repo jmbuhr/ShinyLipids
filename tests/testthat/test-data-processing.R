@@ -1,6 +1,6 @@
 context("Data processing functions")
 
-input <- generateDefaultInput()
+input <- defaultInput()
 
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)

@@ -90,7 +90,7 @@
 <p>First, we load ShinyLipids</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ShinyLipids</span>)
 
-<span class="no">input</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/generateDefaultInput.html">generateDefaultInput</a></span>()</pre></body></html></div>
+<span class="no">input</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/defaultInput.html">defaultInput</a></span>()</pre></body></html></div>
 <p>We can get the file path to our example data, given that ShinyLipids is installed, and open up a database connection to the database dump file</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/exampleDatabase.db"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"ShinyLipids"</span>)
 <span class="no">databaseConnection</span> <span class="kw">&lt;-</span> <span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span>(<span class="kw pkg">RSQLite</span><span class="kw ns">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span>(), <span class="no">path</span>)</pre></body></html></div>

@@ -39,7 +39,7 @@ reference:
   - title: "Utility functions"
     desc: "Smaller helper utilities"
     contents:
-      - generateDefaultInput
+      - defaultInput
       - createQueryForID
       - downloadHandlerFactoryCSV
       - downloadHandlerFactoryRDS

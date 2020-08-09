@@ -49,7 +49,7 @@ uiHeader <- function(){
 
 # Sidebar ####
 uiSidebar <- function() {
-  defaultInput <- generateDefaultInput()
+  defaultInput <- defaultInput()
   shinydashboard::dashboardSidebar(
   # * Visual fixes ####
   tags$head(
@@ -83,7 +83,8 @@ uiSidebar <- function() {
   ),
   
   # * Tables/Plot Options ####
-  tabsetPanel(type = "pills", id = "tabs",
+  tabsetPanel(type = "pills",
+              id = "tabs",
               tabPanel(title = "Quickmenu",
                        actionButton(
                          "quickClassProfile",
@@ -95,15 +96,19 @@ uiSidebar <- function() {
                          options  = list(placeholder = "Select a class to filter and display"),
                          choices  = NULL
                        ),
+                       actionButton(
+                         "resetEverything",
+                         "Reset everything"
+                       )
               ),
               tabPanel(title = "Features \u2192 Plot",
                        selectInput(
                          "aesX",
-                         label       = HTML("Feature to display on x-Axis /<br>use in the PCA"),
-                         choices     = features[!features %in% c("value",
-                                                                 "sample_replicate",
-                                                                 "sample_replicate_technical")],
-                         selected    = defaultInput$aesX),
+                         label    = HTML("Feature to display on x-Axis /<br>use in the PCA"),
+                         choices  = features[!features %in% c("value",
+                                                              "sample_replicate",
+                                                              "sample_replicate_technical")],
+                         selected = defaultInput$aesX),
                        selectizeInput(
                          "aesColor",
                          label    = HTML("Feature to display by color /<br> y-axis of heatmap"),
@@ -159,7 +164,7 @@ uiSidebar <- function() {
                        checkboxInput(
                          "summariseTechnicalReplicates",
                          label    = "Average technical replicates",
-                         value = defaultInput$summarisetechnicalreplicates
+                         value = defaultInput$summariseTechnicalReplicates
                        ),
                        checkboxInput(
                          "imputeMissingAs0",
@@ -253,8 +258,9 @@ uiSidebar <- function() {
 
 # Body ####
 uiBody <- function() {
-  defaultInput <- generateDefaultInput()
+  defaultInput <- defaultInput()
   shinydashboard::dashboardBody(
+  shinyjs::useShinyjs(),
   # ** Database Info / Meta ####
   shinydashboard::tabItems(
     shinydashboard::tabItem(

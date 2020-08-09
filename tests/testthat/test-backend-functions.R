@@ -1,6 +1,6 @@
 context("Full data processing pipeline until main plot")
 
-input <- generateDefaultInput()
+input <- defaultInput()
 
 path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)

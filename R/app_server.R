@@ -90,6 +90,14 @@ app_server <- function(input, output, session) {
   # Updating input choices ####
   # * Update selectInput for data sets
   # based on sets loaded and row selected select clicked row in table
+  
+  # Reset button, using shinyjs
+  observeEvent(input$resetEverything, {
+    inputs <- names(defaultInput()) %>% 
+      c("quickSpeciesProfileClass")
+    walk(inputs, shinyjs::reset)
+  })
+  
   observe({
     choices <- metaData()$id
     names(choices) <- paste(metaData()$id, "-", metaData()$title)

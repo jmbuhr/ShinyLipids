@@ -49,3 +49,4 @@ updateInputsForSpeciesProfile <- function(session, quickSpeciesProfileClass) {
   updateSelectInput(session, "aesX", selected = "lipid")
   updateSelectizeInput(session, "lipidClassToSelect", selected = unname(quickSpeciesProfileClass))
 }
+

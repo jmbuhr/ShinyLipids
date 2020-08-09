@@ -11,14 +11,14 @@ dtOptions <- list(
 #' Generate list of default options
 #' 
 #' When runninng the shiny app, create the global variable
-#' \code{defaultInput <- generateDefaultInput()}. When running
+#' \code{defaultInput <- defaultInput()}. When running
 #' functions from ShinyLipids outside of the Shiny app,
 #' generate the input list normally created by the web interface
-#' with \code{input <- generateDefaultInput()}.
+#' with \code{input <- defaultInput()}.
 #'
 #' @return list. A list of default options to be assigned to \code{input}
 #' @export
-generateDefaultInput <- function() {
+defaultInput <- function() {
   list(
     aesX = "class",
     aesColor = "sample",
