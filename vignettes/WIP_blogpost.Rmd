@@ -1,0 +1,156 @@
+---
+title: "WIP blogpost"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This document provides a quick outline of the internal data structure of the new Shiny Lipids as well as some thoughts
+behind the UI-Changes.
+
+## User Interface
+
+The user interface is based on the popular R-package `shinydashboard`. It features:
+
+- Header
+- Sidebar
+- Contains most of the control elements that affect all outputs
+- Divided into tabs: _Datasets_ opens the datasets-tab in the body,
+_Visualization_ hosts the tabs for the main plot, a principal component analysis (PCA) and a heatmap
+- Body
+- contains the main elements. Plots are always at the top of each panel with additional options below.
+
+## Usage
+
+### Filtering
+
+If you just loaded your dataset into ShinyLipids^[following the
+[readme on github](https://github.com/jannikbuhr/ShinyLipids)] (or received a link to the app on shinyapps.io), you will
+see the content of the tab _Database Info_. This is your central hub for downloading your raw or filtered dataset
+in the standardized comma-separated-values (csv) format^[German _excel_-users beware: German csv-files
+are actually semicolon-separated due to the German use of "," as the decimal separator and your excel installation might
+expect those while the data you download here is proper _comma_-separated]. If already know that you only want to
+look at a subset of your data, have a look in the sidebar and filter your data with the _Filters_ and _Samples_ tabs.
+These tabs can of course be accessed while looking at your graphs as well.
+
+### Plotting | Mapping
+
+Now have a look at the most exciting panels: The main plot, PCA and heatmap, coupled with the tab _Mapping_.
+"Mapping" refers to a term from the grammar of graphics originally invented by Leland Wilkinson [@Wilkinson.2005] and
+adapted for plotting in the R-programming-language by Hadley Wickam [@Wickham.2010]. The term refers to the way
+that features of your data (e.g. the length of a lipid, its class, its hydroxylation state etc.) are mapped onto
+aesthetic features of your plot (e.g. the x-/y-position, the color, size etc.). Apart from that there is
+also the option to separate different slices of your data into windows -- so called "facets" -- , standardize the sum of 
+all values within a specific feature to 100% (e.g.) and subtract the values of one sample from all others as a baseline.
+
+The only aesthetic mapping fixed in place is the measured value: it is always mapped to the y-axis for the main plot or 
+the color value in the heatmap. Apart from that, you are free to explore different visualizations. Try for example,
+to select a subset of your samples in the _Samples_ tab, then map e.g. the class to the x-axis, the functional category
+to the color and facet by samples to see them side by side.
+
+Once you are happy with the graph, export it to pdf with the buttons below and safe the underlying data as .csv to
+revisit it at a later time or do your own calculations.
+
+### Obvious changes to the old ShinyLipids
+
+Most changes happened under the hood and you can read about those below, but for you as a user there where also a couple
+of major changes:
+
+For the new workflow to get the plot you desire, read paragraph [Plotting | Mapping](#plotting-mapping-1).
+
+If you were
+a user of the old ShinyLipids, you may miss the color gradient for the heatmap. It has been deprecated in favor
+of the [viridis colormap](https://bids.github.io/colormap/). To understand, why the choice of color for heat maps is
+important and why the viridis color map is better suited for scientific visualizations,
+I highly recommend [this video](https://www.youtube.com/watch?v=xAoljeRJ3lU) by the original authors.
+
+The original version also enabled the user to perform a t-test if a subset of two samples was selected. This feature
+was omitted on purpose in the new version. For a number of reasons, a t-test was not the optimal choice. I consider
+ShinyLipids a tool for exploratory data analysis, but if you do wish to perform a test for statistical significance,
+here are a few things to consider when working with the downloaded data:
+
+- The t-test is a parametric test and assumes your data is (roughly) normal distributed, which will apply to most lipidomics data only after _log-transformation_.
+- Looking at your data is a form of comparison! Even if you then perform only one t-test, you need to correct
+the p-value for [multiple comparisons](https://www.statisticsdonewrong.com/p-value.html#multiple-comparisons), unless
+you clearly stated a hypothesis before the fact.
+
+## The internals
+
+Shiny Lipid _alpha_ makes full use of `shiny`'s reactive functions. Those keep track of their status and only update if
+they find themselves outdated.
+The overwriting of global variables from inside observer-functions as it was the case in previous versions was abandoned
+for the sake of a cleaner data-structure (and more elegant code).
+
+## global.R
+
+Only a handful of global variables and functions are used:
+
+- `database_connection` points to the local `src_sqlite("database/Sqlite.db")` database but could be changed to point
+to a database on the server
+- `features` is a list of features present in the data and is used to populate the choices for selectInputs in _ui.R_
+- SQL-Queries to retrieve the list of data sets and one specific dataset from the database
+- Definitions for a `mainTheme` and `mainScale(<number of colors>)` to add to ggplots
+- the helper function `is.discrete()` borrowed from the `plyr`-package
+
+## ui.R
+
+Mostly explained in [User Interface](#User-Interface). For more documentation see comments in the code.
+
+## server.R
+
+This is where the magic happens.
+
+## Reactive dependencies
+
+The flowchart ^\@ref(fig:flowchart)^ below was created with [mermaid.js](https://mermaidjs.github.io/).
+
+```{r flowchart, eval=TRUE}
+library(DiagrammeR)
+mermaid("
+graph TB
+subgraph Datasets
+M[metaData] -->|output| MT(metaDataTable)
+MT-->|update selectInput|ID(ID)
+MT -->saveMeta(( saveMeta))
+end
+subgraph mainData
+ID-->|select ID|RD(rawData)
+RD-->SR((saveRawCSV))
+RD -->|stanndardization and filtering|MD(mainData)
+MD-->saveMainCSV((saveMainCSV))
+FI{filter_/sample_}--> |filtering| MD
+MD-->|output|mDT((mainDataTable))
+end
+subgraph main Plot
+MD-->|summarize|PD(plotData)
+AES{input$aes_}-->|define|PD
+PD-->|average replicates|mPD(meanPlotData)
+AES{input$aes_}-->|define|mP
+PD-->|ggplot|mP(mainPlt)
+mPD-->|ggplot|mP(mainPlt)
+mP-->|outout|mPL((mainPlot))
+mPL-->|click/brush|ranges
+ranges-->|update|mP
+end
+subgraph PCA
+PD-->|spread to matrix|pcaDATA
+AES-->|define|pcaDATA
+pcaDATA -->|calculate|pcaObject
+pcaObject -->|output summary|PCAI((pca_info))
+pcaObject -->|ggplot|pca_scores
+pcaObject -->|ggplot|pca_loadings
+pca_scores -->|render plot|PCAS((pca_scores))
+pca_loadings -->|render plot|PCAL((pca_loadings))
+end
+subgraph heatmap
+AES-->|define|HP(heatPlt)
+PD-->|ggplot|HP
+HP-->|output|HPO((heatPlot))
+end
+")
+```
+
