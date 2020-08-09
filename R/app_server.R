@@ -72,10 +72,6 @@ app_server <- function(input, output, session) {
         "To compare between samples, chose sample as the color"
       ),
       need(
-        input$aesX %in% c("class", "category"),
-        "Comparisons are only supported for class or category on the x axis"
-      ),
-      need(
         length(unique(plotData()$sample)) > 1,
         "You need at least 2 samples to compare them"
       ),
@@ -155,7 +151,6 @@ app_server <- function(input, output, session) {
       shinyjs::reset("aesColor")
       shinyjs::reset("aesFacetRow")
       shinyjs::reset("aesFacetCol")
-      shinyjs::reset("mainPlotAdditionalOptions")
       shinyjs::reset("categoryToSelect")
       shinyjs::reset("functionalCategoryToSelect")
       
@@ -172,7 +167,6 @@ app_server <- function(input, output, session) {
     shinyjs::reset("aesFacetRow")
     shinyjs::reset("aesFacetCol")
     shinyjs::reset("technicalReplicatesToRemove")
-    shinyjs::reset("mainPlotAdditionalOptions")
     shinyjs::reset("standardizationFeatures")
     shinyjs::reset("categoryToSelect")
     shinyjs::reset("lipidClassToSelect")
