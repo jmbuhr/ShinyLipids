@@ -35,18 +35,3 @@ updateAllRangeInputs <- function(inputName, choiceColumn,
                     value = l
   )
 }
-
-#' Update inputs for species profile
-#' 
-#' @param session session
-#' @param quickSpeciesProfileClass string, lipid class to display as profile
-#' 
-#' @return IO ()
-updateInputsForSpeciesProfile <- function(session, quickSpeciesProfileClass) {
-  updateSelectInput(session, "aesFacetCol", selected = "")
-  updateSelectInput(session, "aesFacetRow", selected = "")
-  updateSelectizeInput(session, "standardizationFeatures", selected = c("class", "sample_replicate"))
-  updateSelectInput(session, "aesX", selected = "lipid")
-  updateSelectizeInput(session, "lipidClassToSelect", selected = unname(quickSpeciesProfileClass))
-}
-

@@ -16,7 +16,7 @@ dtOptions <- list(
 #' generate the input list normally created by the web interface
 #' with \code{input <- defaultInput()}.
 #'
-#' @return list. A list of default options to be assigned to \code{input}
+#' @return :: list. A list of default options to be assigned to \code{input}
 #' @export
 defaultInput <- function() {
   list(
@@ -47,7 +47,6 @@ defaultInput <- function() {
     samplesToRemove = NULL,
     replicatesToSelect = NULL,
     replicatesToRemove = NULL,
-    technicalReplicatesToRemove = NULL,
     # Plotting, main plot
     errorbarType = "None",
     mainPlotAdditionalOptions = list("points", "bars"),

@@ -10,7 +10,9 @@ doAllPairwiseComparisons(data, input)
 \item{data}{tibble. The full dataset}
 
 \item{input}{:: list. Input list from shiny ui. Uses
-- aesX :: string}
+\itemize{
+\item aesX :: string
+}}
 }
 \value{
 :: tibble.

@@ -10,8 +10,10 @@ standardizeRawDataWithin(data, input)
 \item{data}{tibble. Raw data}
 
 \item{input}{list. Input list from shiny ui. Uses
-- baselineSample
-- standardizationFeatures :: tibble. rawData}
+\itemize{
+\item baselineSample
+\item standardizationFeatures :: tibble. rawData
+}}
 }
 \value{
 tibble. Standardized data

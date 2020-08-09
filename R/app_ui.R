@@ -103,7 +103,7 @@ uiSidebar <- function() {
               ),
               tabPanel(title = "Features \u2192 Plot",
                        selectInput(
-                         "aesX",
+                         inputId = "aesX",
                          label    = HTML("Feature to display on x-Axis /<br>use in the PCA"),
                          choices  = features[!features %in% c("value",
                                                               "sample_replicate",

@@ -10,7 +10,9 @@ standardizeWithinTechnicalReplicatesIf(data, input)
 \item{data}{tibble. data}
 
 \item{input}{list. Input list from shiny ui. Uses
-- standardizeWithinTechnicalReplicate :: logical}
+\itemize{
+\item standardizeWithinTechnicalReplicate :: logical
+}}
 }
 \value{
 tibble. standardized data

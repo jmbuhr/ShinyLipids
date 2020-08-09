@@ -10,11 +10,13 @@ createPlotData(data, input)
 \item{data}{:: tibble}
 
 \item{input}{:: list. Input list from shiny ui. Uses
-- summariseTechnicalReplicates :: boolean
-- aesX :: string
-- aesColor :: string
-- aesFacetCol :: string | ""
-- aesFacetRow :: string | ""}
+\itemize{
+\item summariseTechnicalReplicates :: boolean
+\item aesX :: string
+\item aesColor :: string
+\item aesFacetCol :: string | ""
+\item aesFacetRow :: string | ""
+}}
 }
 \value{
 :: tibble. neat data

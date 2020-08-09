@@ -10,18 +10,20 @@ filterRawDataFor(rawData, input)
 \item{rawData}{:: tibble. rawData}
 
 \item{input}{:: list. Input list from shiny ui. Uses
-- standardizeWithinTechnicalReplicate
-- categoryToSelect :: string | NULL
-- lipidClassToSelect :: string | NULL
-- functionalCategoryToSelect :: string | NULL
-- filterLengthRange :: string | NULL
-- filterDoubleBondsRange :: string | NULL
-- filterOhRange :: string | NULL
-- samplesToSelect :: string | NULL
-- samplesToRemove :: string | NULL
-- replicatesToSelect :: string | NULL
-- replicatesToRemove :: string | NULL
-- technicalReplicatesToRemove :: string | NULL}
+\itemize{
+\item standardizeWithinTechnicalReplicate
+\item categoryToSelect :: string | NULL
+\item lipidClassToSelect :: string | NULL
+\item functionalCategoryToSelect :: string | NULL
+\item filterLengthRange :: string | NULL
+\item filterDoubleBondsRange :: string | NULL
+\item filterOhRange :: string | NULL
+\item samplesToSelect :: string | NULL
+\item samplesToRemove :: string | NULL
+\item replicatesToSelect :: string | NULL
+\item replicatesToRemove :: string | NULL
+\item technicalReplicatesToRemove :: string | NULL
+}}
 }
 \value{
 tibble. Lovely filtered data

@@ -10,11 +10,13 @@ createPcaPrep(wideData, input)
 \item{wideData}{:: tibble.}
 
 \item{input}{:: list. Uses:
-- summariseTechnicalReplicates :: logical
-- aesColor
-- pcaScale
-- pcaCenter
-- pcaNumberPrincipalComponents}
+\itemize{
+\item summariseTechnicalReplicates :: logical
+\item aesColor
+\item pcaScale
+\item pcaCenter
+\item pcaNumberPrincipalComponents
+}}
 }
 \value{
 :: prepped recipe

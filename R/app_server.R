@@ -93,9 +93,9 @@ app_server <- function(input, output, session) {
   
   # Reset button, using shinyjs
   observeEvent(input$resetEverything, {
-    inputs <- names(defaultInput()) %>% 
-      c("quickSpeciesProfileClass")
-    walk(inputs, shinyjs::reset)
+    names(defaultInput()) %>% 
+      c("quickSpeciesProfileClass") %>%
+      walk(shinyjs::reset)
   })
   
   observe({
@@ -152,16 +152,33 @@ app_server <- function(input, output, session) {
   # * Update inputs based on selected default quickoption ####
   observeEvent(input$quickSpeciesProfileClass, {
     if (input$quickSpeciesProfileClass != "") {
-      updateInputsForSpeciesProfile(session, input$quickSpeciesProfileClass)
+      shinyjs::reset("aesColor")
+      shinyjs::reset("aesFacetRow")
+      shinyjs::reset("aesFacetCol")
+      shinyjs::reset("mainPlotAdditionalOptions")
+      shinyjs::reset("categoryToSelect")
+      shinyjs::reset("functionalCategoryToSelect")
+      
+      updateSelectInput(session, "aesX", selected = "lipid")
+      updateSelectizeInput(session, "standardizationFeatures",
+                           selected = c("class", "sample_replicate"))
+      updateSelectizeInput(session, "lipidClassToSelect",
+                           selected = unname(input$quickSpeciesProfileClass))
     }
   })
   
   observeEvent(input$quickClassProfile, {
-    updateSelectInput(session, "aesFacetCol", selected = "")
-    updateSelectizeInput(session, "standardizationFeatures", selected = "")
+    shinyjs::reset("aesColor")
+    shinyjs::reset("aesFacetRow")
+    shinyjs::reset("aesFacetCol")
+    shinyjs::reset("technicalReplicatesToRemove")
+    shinyjs::reset("mainPlotAdditionalOptions")
+    shinyjs::reset("standardizationFeatures")
+    shinyjs::reset("categoryToSelect")
+    shinyjs::reset("lipidClassToSelect")
+    shinyjs::reset("functionalCategoryToSelect")
+      
     updateSelectInput(session, "aesX", selected = "class")
-    updateSelectizeInput(session, "lipidClassToSelect", selected = "")
-    updateSelectizeInput(session, "quickSpeciesProfileClass", selected = "")
   })
   
   # Table Outputs ####

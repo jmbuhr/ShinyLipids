@@ -7,7 +7,7 @@
 defaultInput()
 }
 \value{
-list. A list of default options to be assigned to \code{input}
+:: list. A list of default options to be assigned to \code{input}
 }
 \description{
 When runninng the shiny app, create the global variable

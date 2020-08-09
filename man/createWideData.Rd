@@ -10,7 +10,9 @@ createWideData(plotData, input)
 \item{plotData}{:: tibble.}
 
 \item{input}{:: list. Uses:
-- aesX :: String}
+\itemize{
+\item aesX :: String
+}}
 }
 \value{
 :: tibble.

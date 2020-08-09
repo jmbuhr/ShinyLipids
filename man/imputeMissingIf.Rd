@@ -10,7 +10,9 @@ imputeMissingIf(data, input)
 \item{data}{tibble. rawData}
 
 \item{input}{list. Input list from shiny ui. Uses
-- imputeMissingAs0 :: logical}
+\itemize{
+\item imputeMissingAs0 :: logical
+}}
 }
 \value{
 tibble. imputed data
