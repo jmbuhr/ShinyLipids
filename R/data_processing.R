@@ -281,6 +281,7 @@ createPlotData <- function(data, input) {
             if_else(input$summariseTechnicalReplicates,
                     "sample_replicate", "sample_replicate_technical"))
   cols <- cols[cols != ""]
+  cols <- unique(cols)
   
   data %>% 
     group_by(!!!syms(cols[cols != "value"])) %>% 
@@ -304,6 +305,8 @@ summarisePlotData <- function(data, input) {
   
   cols <- c(input$aesX, input$aesColor, input$aesFacetCol, input$aesFacetRow)
   cols <- cols[cols != ""]
+  cols <- unique(cols)
+  
   data %>%
     group_by(!!!syms(cols)) %>% 
     summarise(
