@@ -350,31 +350,31 @@ app_server <- function(input, output, session) {
   output$saveRawCSV <-
     downloadHandlerFactoryCSV(metaData  = metaData(),
                               dataset   = rawData(),
-                              specifier = "-raw",
+                              specifier = "_raw_data",
                               id        = input$id)
   
   output$saveMainCSV <-
     downloadHandlerFactoryCSV(metaData  = metaData(),
                               dataset   = mainData(),
-                              specifier = "-filtered",
+                              specifier = "_filtered_data",
                               id        = input$id)
   
   output$savePlotData <-
     downloadHandlerFactoryCSV(metaData  = metaData(),
                               dataset   = plotData(),
-                              specifier = "-plot",
+                              specifier = "_plot_data",
                               id        = input$id)
   
   output$saveMeanPlotData <-
     downloadHandlerFactoryCSV(metaData  = metaData(),
                               dataset   = meanPlotData(),
-                              specifier = "-means",
+                              specifier = "_means",
                               id        = input$id)
   
   output$saveMainPlot <-
     downloadHandlerFactoryPDF(metaData  = metaData(),
                               plot      = mainPlot(),
-                              specifier = "-plot",
+                              specifier = "_plot",
                               width     = input$mainWidth,
                               height    = input$mainHeight, 
                               id        = input$ID)
@@ -382,7 +382,7 @@ app_server <- function(input, output, session) {
   output$saveMainPlotRDS <-
     downloadHandlerFactoryRDS(metaData  = metaData(),
                               plot      = mainPlot(),
-                              specifier = "-plot",
+                              specifier = "_plot",
                               width     = input$mainWidth,
                               height    = input$mainHeight, 
                               id        = input$ID)
@@ -390,7 +390,7 @@ app_server <- function(input, output, session) {
   output$saveHeatmap <-
     downloadHandlerFactoryPDF(metaData  = metaData(),
                               plot      = heatmapPlot(),
-                              specifier = "-heatmap",
+                              specifier = "_heatmap",
                               width     = input$heatWidth,
                               height    = input$heatHeight, 
                               id        = input$ID)
@@ -398,7 +398,7 @@ app_server <- function(input, output, session) {
   output$saveHeatmapRDS <-
     downloadHandlerFactoryRDS(metaData  = metaData(),
                               plot      = heatmapPlot(),
-                              specifier = "-heatmap",
+                              specifier = "_heatmap",
                               width     = input$heatWidth,
                               height    = input$heatHeight, 
                               id        = input$ID)
@@ -406,7 +406,7 @@ app_server <- function(input, output, session) {
   output$savePCAScores <-
     downloadHandlerFactoryPDF(metaData  = metaData(),
                               plot      = pcaScoresPlot(),
-                              specifier = "-pcaScoresPlot",
+                              specifier = "_pcaScoresPlot",
                               width     = input$pcaWidth,
                               height    = input$pcaHeight, 
                               id        = input$ID)
@@ -414,7 +414,7 @@ app_server <- function(input, output, session) {
   output$savePCALoadings <-
     downloadHandlerFactoryPDF(metaData  = metaData(),
                               plot      = pcaLoadingsPlot(),
-                              specifier = "-pcaLoadingsPlot",
+                              specifier = "_pcaLoadingsPlot",
                               width     = input$pcaWidth,
                               height    = input$pcaHeight, 
                               id        = input$ID)
@@ -422,7 +422,7 @@ app_server <- function(input, output, session) {
   output$savePCAScoresRDS <-
     downloadHandlerFactoryRDS(metaData  = metaData(),
                               plot      = pcaScoresPlot(),
-                              specifier = "-pcaScoresPlot",
+                              specifier = "_pcaScoresPlot",
                               width     = input$pcaWidth,
                               height    = input$pcaHeight, 
                               id        = input$ID)
@@ -430,7 +430,7 @@ app_server <- function(input, output, session) {
   output$savePCALoadingsRDS <-
     downloadHandlerFactoryRDS(metaData  = metaData(),
                               plot      = pcaLoadingsPlot(),
-                              specifier = "-pcaLoadingsPlot",
+                              specifier = "_pcaLoadingsPlot",
                               width     = input$pcaWidth,
                               height    = input$pcaHeight, 
                               id        = input$ID)
