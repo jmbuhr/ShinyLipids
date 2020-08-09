@@ -39,7 +39,8 @@ Imports:
     RColorBrewer,
     recipes,
     plotly,
-    tidytext
+    tidytext,
+    rintrojs
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 7.1.1
@@ -48,5 +49,6 @@ Suggests:
     testthat (>= 2.1.0),
     processx,
     covr,
-    rmarkdown
+    rmarkdown,
+    DiagrammeR
 Language: en-US

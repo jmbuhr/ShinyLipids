@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create wide data — createWideData • ShinyLipids</title>
+<title>Generate list of default options — defaultInput • ShinyLipids</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,12 @@
 
 
 
-<meta property="og:title" content="Create wide data — createWideData" />
-<meta property="og:description" content="Create data in wide format for dimensionality reduction workflows
-with tidymodels." />
+<meta property="og:title" content="Generate list of default options — defaultInput" />
+<meta property="og:description" content="When runninng the shiny app, create the global variable
+defaultInput &amp;lt;- defaultInput(). When running
+functions from ShinyLipids outside of the Shiny app,
+generate the input list normally created by the web interface
+with input &amp;lt;- defaultInput()." />
 
 
 
@@ -115,36 +118,25 @@ with tidymodels." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create wide data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jannikbuhr/ShinyLipids/blob/master/R/dimensionality_reduction.R'><code>R/dimensionality_reduction.R</code></a></small>
-    <div class="hidden name"><code>createWideData.Rd</code></div>
+    <h1>Generate list of default options</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jannikbuhr/ShinyLipids/blob/master/R/defaults.R'><code>R/defaults.R</code></a></small>
+    <div class="hidden name"><code>defaultInput.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create data in wide format for dimensionality reduction workflows
-with tidymodels.</p>
+    <p>When runninng the shiny app, create the global variable
+<code>defaultInput &lt;- defaultInput()</code>. When running
+functions from ShinyLipids outside of the Shiny app,
+generate the input list normally created by the web interface
+with <code>input &lt;- defaultInput()</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createWideData</span>(<span class='no'>plotData</span>, <span class='no'>input</span>)</pre>
+    <pre class="usage"><span class='fu'>defaultInput</span>()</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>plotData</th>
-      <td><p>:: tibble.</p></td>
-    </tr>
-    <tr>
-      <th>input</th>
-      <td><p>:: list. Uses:</p><ul>
-<li><p>aesX :: String</p></li>
-</ul></td>
-    </tr>
-    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>:: tibble.</p>
+    <p>:: list. A list of default options to be assigned to <code>input</code></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

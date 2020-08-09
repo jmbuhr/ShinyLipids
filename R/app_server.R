@@ -153,7 +153,7 @@ app_server <- function(input, output, session) {
       shinyjs::reset("aesFacetCol")
       shinyjs::reset("categoryToSelect")
       shinyjs::reset("functionalCategoryToSelect")
-      
+
       updateSelectInput(session, "aesX", selected = "lipid")
       updateSelectizeInput(session, "standardizationFeatures",
                            selected = c("class", "sample_replicate"))
@@ -171,7 +171,7 @@ app_server <- function(input, output, session) {
     shinyjs::reset("categoryToSelect")
     shinyjs::reset("lipidClassToSelect")
     shinyjs::reset("functionalCategoryToSelect")
-      
+
     updateSelectInput(session, "aesX", selected = "class")
   })
   

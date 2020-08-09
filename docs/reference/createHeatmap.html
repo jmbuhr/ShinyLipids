@@ -123,16 +123,7 @@
     <p>Create a Heatmap from data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createHeatmap</span>(
-  <span class='no'>data</span>,
-  <span class='kw'>standardizationFeatures</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>aesX</span> <span class='kw'>=</span> <span class='st'>"class"</span>,
-  <span class='kw'>aesColor</span> <span class='kw'>=</span> <span class='st'>"sample"</span>,
-  <span class='kw'>aesFacetCol</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>aesFacetRow</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>heatLabSize</span> <span class='kw'>=</span> <span class='fl'>9</span>,
-  <span class='kw'>heatColor</span> <span class='kw'>=</span> <span class='st'>"viridis"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>createHeatmap</span>(<span class='no'>data</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,33 +133,17 @@
       <td><p>tibble. typically plotData()</p></td>
     </tr>
     <tr>
-      <th>standardizationFeatures</th>
-      <td><p>NULL | character vector.</p></td>
-    </tr>
-    <tr>
-      <th>aesX</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>aesColor</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetCol</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>aesFacetRow</th>
-      <td><p>string.</p></td>
-    </tr>
-    <tr>
-      <th>heatLabSize</th>
-      <td><p>numeric. Size of axis labels</p></td>
-    </tr>
-    <tr>
-      <th>heatColor</th>
-      <td><p>string. Color palette
-One of c("viridis", "magma", "plasma", "inferno", "cividis")</p></td>
+      <th>input</th>
+      <td><p>:: list. Uses:</p><ul>
+<li><p>standardizationFeatures NULL | character vector.</p></li>
+<li><p>aesX :: string.</p></li>
+<li><p>aesColor :: string.</p></li>
+<li><p>aesFacetCol :: string.</p></li>
+<li><p>aesFacetRow :: string.</p></li>
+<li><p>heatLabSize :: numeric. Size of axis labels</p></li>
+<li><p>heatColor :: string. Color palette
+One of c("viridis", "magma", "plasma", "inferno", "cividis")</p></li>
+</ul></td>
     </tr>
     </table>
 
