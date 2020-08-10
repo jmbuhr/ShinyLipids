@@ -11,7 +11,7 @@ reference:
       Functions that read in data from the database and process it.
       This includes filtering, standardization and calculation of
       summaries.
-    contents: 
+    contents:
       - collectMetaData
       - collectLipidClassOrder
       - collectRawData
@@ -46,7 +46,6 @@ reference:
       - downloadHandlerFactoryPDF
       - updateAllRangeInputs
       - updateAllSelectizeInputs
-      - updateInputsForSpeciesProfile
       - mainScale
       - parseDate
       - testAllMoreThanOneReplicate
@@ -60,3 +59,4 @@ articles:
   contents:
   - Data-processing-in-ShinyLipids
   - Technical-aspects
+  - WIP_blogpost

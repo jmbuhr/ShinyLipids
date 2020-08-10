@@ -1,5 +1,12 @@
 ---
-title: "Getting startet with my data in ShinyLipids"
+title: "Getting startet with your data in ShinyLipids"
+description: >
+  Learn how to get your very own data into ShinyLipids.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting startet with your data in ShinyLipids}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

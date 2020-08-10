@@ -302,8 +302,8 @@ app_server <- function(input, output, session) {
     createPcaPrep(wideData(), input)
   })
   
-  pcaTidy <- reactive( tidy(pcaPrep(), id = "pca") )
-  pcaJuice <- reactive( juice(pcaPrep()) )
+  pcaTidy <- reactive(tidy(pcaPrep(), id = "pca"))
+  pcaJuice <- reactive(juice(pcaPrep()))
   
   # ** pcaInfo ####
   output$pcaInfo <- renderPrint({

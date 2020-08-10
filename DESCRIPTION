@@ -50,5 +50,7 @@ Suggests:
     processx,
     covr,
     rmarkdown,
-    DiagrammeR
+    DiagrammeR,
+    knitr
 Language: en-US
+VignetteBuilder: knitr

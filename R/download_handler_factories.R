@@ -65,4 +65,3 @@ downloadHandlerFactoryRDS <- function(metaData, plot, specifier, width, height, 
     }
   )
 }
-

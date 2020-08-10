@@ -13,3 +13,4 @@ dev
 inst/extdata/originalExampleDatabase.db
 .vscode/
 rsconnect/
+inst/doc

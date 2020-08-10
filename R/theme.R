@@ -24,5 +24,3 @@ mainTheme <- function() {
     )
   )
 }
-
-

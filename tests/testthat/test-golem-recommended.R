@@ -19,9 +19,9 @@ if (interactive()) {
       skip_on_ci()
       skip_on_travis()
       x <- processx::process$new(
-        'R',
+        "R",
         c(
-          '-e',
+          "-e",
           'path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids"); databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path); ShinyLipids::run_app(db = databaseConnection)'
         ),
         stdout = "myLog.txt",
@@ -33,4 +33,3 @@ if (interactive()) {
     }
   )
 }
-

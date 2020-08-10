@@ -1,5 +1,12 @@
 ---
 title: "WIP blogpost"
+description: >
+  Learn ...
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{WIP blogpost}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

@@ -70,5 +70,3 @@ defaultInput <- function() {
     pcaVectors = TRUE
   )
 }
-
-

@@ -20,9 +20,9 @@ test_that("testAllMoreThanOneReplicate catches bad data", {
   tbl %>%
     group_by(!!sym(aesX), !!sym(aesColor)) %>%
     count() %>%
-    pull(n) %>% {
-      all(. > 1)
-    }
+    pull(n) %>%
+    all(. > 1)
+ 
   expect_true(testAllMoreThanOneReplicate(tbl, aesX, aesColor))
   expect_false(testAllMoreThanOneReplicate(bind_rows(tbl, list(x = "l3", col = "A")), aesX, aesColor))
 })

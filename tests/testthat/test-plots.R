@@ -109,7 +109,7 @@ test_that("Heatmap works with facets", {
   expect_is(plt, "ggplot")
   
   tmpInput <- input
-  tmpInput$aesFacetCol = "category"
+  tmpInput$aesFacetCol <- "category"
   data <- rawData %>%
     imputeMissingIf(tmpInput) %>% 
     addLipidProperties() %>% 
@@ -124,7 +124,7 @@ test_that("Heatmap works with facets", {
   expect_is(plt, "ggplot")
   
   tmpInput <- input
-  input$aesFacetRow = "category"
+  input$aesFacetRow <- "category"
   
   plt <- data %>%
     createPlotData(tmpInput) %>% 
@@ -132,8 +132,8 @@ test_that("Heatmap works with facets", {
   expect_is(plt, "ggplot")
   
   tmpInput <- input
-  input$aesFacetRow = "category"
-  input$aesFacetCol = "func_cat"
+  input$aesFacetRow <- "category"
+  input$aesFacetCol <- "func_cat"
   
   plt <- data %>%
     createPlotData(tmpInput) %>% 

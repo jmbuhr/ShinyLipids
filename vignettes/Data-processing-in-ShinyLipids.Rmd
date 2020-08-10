@@ -1,5 +1,12 @@
 ---
 title: "Data processing in ShinyLipids"
+description: >
+  Learn how to your data gets processed in ShinyLipids.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data processing in ShinyLipids}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

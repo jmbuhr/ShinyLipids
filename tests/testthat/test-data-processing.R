@@ -14,7 +14,7 @@ test_that("Data is optional", {
   tmpInput$imputeMissingAs0 <- FALSE
   expect_equal(datasets::iris, imputeMissingIf(datasets::iris, tmpInput))
   tibble(
-    id = rep(1,2),
+    id = rep(1, 2),
     lipid = c("hello", "world"),
     category = rep("test", 2),
     func_cat = rep("test", 2),
@@ -22,7 +22,7 @@ test_that("Data is optional", {
     sample_replicate = c("First sample A", "First sample A"),
     sample_replicate_technical = c("First sample A a", "First sample A b"),
     sample_identifier = c("1Aa", "1Ab"),
-    value = c(1,2)
+    value = c(1, 2)
   ) %>% 
     imputeMissingIf(input) %>% 
     nrow() %>% 

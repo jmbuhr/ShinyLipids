@@ -16,7 +16,7 @@ features <- c(
 )
 
 # Header ####
-uiHeader <- function(){
+uiHeader <- function() {
   shinydashboard::dashboardHeader(
   title = span(tagList(icon("flask"),
                        span("ShinyLipids"))),

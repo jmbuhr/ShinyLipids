@@ -25,9 +25,8 @@ testAllMoreThanOneReplicate <- function(data, aesX, aesColor) {
   data %>%
     group_by(!!sym(aesX), !!sym(aesColor)) %>%
     count() %>%
-    pull(n) %>% {
-      all(. > 1)
-    }
+    pull(n) %>% 
+    all(. > 1)
 }
 
 

@@ -17,13 +17,13 @@ createWideData <- function(plotData,
 }
 
 pcaScaleIf <- function(rec, doIt = TRUE) {
-  if (doIt) {step_scale(rec, all_predictors())}
-  else {rec}
+  if (doIt) step_scale(rec, all_predictors())
+  else rec
 }
 
 pcaCenterIf <- function(rec, doIt = TRUE) {
-  if (doIt) {step_center(rec, all_predictors())}
-  else {rec}
+  if (doIt) step_center(rec, all_predictors())
+  else rec
 }
 
 #' Create prepped pca recipe
@@ -55,15 +55,7 @@ createPcaPrep <- function(wideData, input) {
 
 
 createPcaLoadingsPlot <- function(pcaTidy, input) {
-  # plt <- pcaTidy %>%
-  #   filter(component %in% paste0("PC", 1:input$pcaNumberPrincipalComponents)) %>%
-  #   mutate(component = fct_inorder(component)) %>%
-  #   ggplot(aes(value, terms, fill = terms)) +
-  #   geom_col(show.legend = FALSE) +
-  #   facet_wrap(~component, nrow = 1) +
-  #   labs(y = NULL)
-  
-  plt <- pcaTidy %>%
+  pcaTidy %>%
     filter(component %in% paste0("PC", 1:input$pcaNumberPrincipalComponents)) %>%
     group_by(component) %>%
     top_n(10, abs(value)) %>%
@@ -77,8 +69,6 @@ createPcaLoadingsPlot <- function(pcaTidy, input) {
       x = "Absolute value of contribution",
       y = NULL, fill = "Positive?"
     )
-  
-  plt
 }
 
 
@@ -93,7 +83,7 @@ createPcaScoresPlot <- function(pcaJuice, pcaTidy, input) {
     combinedData <- map_dfr(splitData, ~ .x[chull(.x$PC1, .x$PC2), ])
     plt <- plt +
       geom_polygon(data = combinedData,  
-                   alpha = 1/2, show.legend = FALSE)
+                   alpha = 1 / 2, show.legend = FALSE)
   }
   
   if (input$pcaVectors) {

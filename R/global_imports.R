@@ -28,4 +28,3 @@ utils::globalVariables(
     "p.value", "pairwise", "sample_identifier", "sample_replicate",
     "sample_replicate_technical", "value", "chains", "individualChains")
 )
-
