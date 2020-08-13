@@ -224,27 +224,12 @@ app_server <- function(input, output, session) {
   # Plots ####
   # * Main Plot ####
   
-  # ** Ranges for zooming by clicking on the plot  ####
-  ranges <- reactiveValues(x = NULL, y = NULL)
-  observeEvent(input$mainPlotDoubleClick, {
-    brush <- input$mainPlotBrush
-    if (!is.null(brush)) {
-      ranges$x <- c(brush$xmin, brush$xmax)
-      ranges$y <- c(brush$ymin, brush$ymax)
-    } else {
-      ranges$x <- NULL
-      ranges$y <- NULL
-    }
-  })
-  
   # ** Main Plot Object ####
   mainPlot <- reactive({
     req(plotData(), meanPlotData())
     createMainPlot(plotData                            = plotData(),
                    meanPlotData                        = meanPlotData(),
                    pairwiseComparisons                 = pairwiseComparisons(),
-                   rangeX                              = ranges$x,
-                   rangeY                              = ranges$y,
                    input)
   })
   

@@ -8,8 +8,6 @@
 #' @param plotData :: tibble. Data for the plot, pass it from reactive plotData()
 #' @param meanPlotData :: tibble. Data of means, pass from reactive meanPlotData()
 #' @param pairwiseComparisons :: tibble. Pairwise t-tests from pairwiseComparisons()
-#' @param rangeX :: numeric vector | NULL. vector with min and max X
-#' @param rangeY :: numeric vector | NULL.  vector with min and max Y
 #' @param input :: list. Input list from shiny ui. Uses
 #' - aesX :: string.
 #' - aesColor :: string.
@@ -28,8 +26,6 @@
 createMainPlot <- function(plotData,
                            meanPlotData,
                            pairwiseComparisons,
-                           rangeX = NULL,
-                           rangeY = NULL,
                            input) {
   
   if ("length" %in% names(plotData)) {
@@ -93,8 +89,7 @@ createMainPlot <- function(plotData,
       expand = expansion(mult = c(0, 0.05)),
       name   = yAxisName,
       labels = yAxisLabels,
-      trans  = yAxisTransformation) +
-    coord_cartesian(xlim = rangeX, ylim = rangeY)
+      trans  = yAxisTransformation)
   
   # Swap X and Y
   if ("swap" %in% input$mainPlotAdditionalOptions) {
