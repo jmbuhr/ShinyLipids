@@ -28,7 +28,7 @@ defaultInput <- function() {
     categoryToSelect            = NULL,
     lipidClassToSelect          = NULL,
     functionalCategoryToSelect  = NULL,
-    filterLengthRange           = c(1L, 100L),
+    filterLengthRange           = c(0L, 100L),
     filterDoubleBondsRange      = c(0L, 100L),
     filterOhRange               = c(0L, 100L),
     samplesToSelect             = NULL,
