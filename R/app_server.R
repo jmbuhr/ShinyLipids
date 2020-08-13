@@ -264,7 +264,7 @@ app_server <- function(input, output, session) {
   # * Heatmap ####
   # ** Heatmap Object ####
   heatmapPlot <- reactive({
-    createHeatmap(data = meanPlotData(), input)
+    createHeatmap(plotData = meanPlotData(), input)
   })
   
   # ** Heatmap Render ####

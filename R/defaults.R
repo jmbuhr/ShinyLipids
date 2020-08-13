@@ -58,6 +58,7 @@ defaultInput <- function() {
     heatWidth = 20,
     heatHeight = 10,
     heatColor = "viridis",
+    heatLogScale = FALSE,
     heatLabSize = 9,
     # Dimensionality reduction
     pcaCrossValidationMethod = "none",

@@ -1,6 +1,6 @@
 #' Create a Heatmap from data
 #'
-#' @param data tibble. typically plotData()
+#' @param plotData tibble. typically meanPlotData()
 #' @param input :: list. Uses:
 #' - standardizationFeatures NULL | character vector.
 #' - aesX :: string.
@@ -10,17 +10,28 @@
 #' - heatLabSize :: numeric. Size of axis labels
 #' - heatColor :: string. Color palette
 #'   One of c("viridis", "magma", "plasma", "inferno", "cividis")
+#' - heatLogScale :: logical.
 #'
 #' @return ggplot. Heatmap
 #' @export
-createHeatmap <- function(data, input) {
-  if (!is.null(input$standardizationFeatures)) { # TODO check other standardization
-    fillName <- "amount [ Mol % ]"
+createHeatmap <- function(plotData, input) {
+  # Log scale, name of y-axis and percent format for standardized data
+  if (input$heatLogScale) {
+    plotData$value <- log1p(plotData$value)
+    if (!is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
+      fillName   <- "log1 apmount [ Mol % ]"
+    } else {
+      fillName  <- "log1p amount [ \u00b5M ]"
+    }
   } else {
-    fillName <- "amount [ \u00b5M ]"
+    if (!is.null(input$standardizationFeatures) || input$standardizeWithinTechnicalReplicate) {
+      fillName   <- "amount [ Mol % ]"
+    } else {
+      fillName   <- "amount [ \u00b5M ]"
+    }
   }
   
-  plt <- ggplot(data) +
+  plt <- ggplot(plotData) +
     aes(
       x = factor(!!sym(input$aesX)),
       y = factor(!!sym(input$aesColor)),
