@@ -88,7 +88,7 @@ test_that("Main Plot works with facets", {
 })
 
 test_that("Heatmap works with defaults", {
-  plt <- createHeatmap(data = plotData, input)
+  plt <- createHeatmap(plotData = plotData, input)
   expect_is(plt, "ggplot")
 })
 

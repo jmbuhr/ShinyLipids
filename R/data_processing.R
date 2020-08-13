@@ -128,8 +128,8 @@ addLipidProperties <-
 #' Imputes if \code{input$imputeMissingAs0 == TRUE},
 #' else returns input data.
 #'
-#' @param data tibble. rawData
-#' @param input list. Input list from shiny ui. Uses
+#' @param data :: tibble. rawData
+#' @param input :: list. Input list from shiny ui. Uses
 #' - imputeMissingAs0 :: logical
 #'
 #' @return tibble. imputed data
@@ -150,8 +150,8 @@ imputeMissingIf <- function(data, input) {
 #' 
 #' 
 #'
-#' @param data tibble. data
-#' @param input list. Input list from shiny ui. Uses
+#' @param data :: tibble. data
+#' @param input :: list. Input list from shiny ui. Uses
 #' - standardizeWithinTechnicalReplicate :: logical
 #'
 #' @return tibble. standardized data
@@ -171,9 +171,9 @@ standardizeWithinTechnicalReplicatesIf <- function(data, input) {
 #' Filter data based on condition
 #' only if an input var is not NULL
 #'
-#' @param data tibble. data
-#' @param var character vector | NULL
-#' @param condition an expression to evaluate in
+#' @param data :: tibble. data
+#' @param var :: character vector | NULL
+#' @param condition :: an expression to evaluate in
 #' the context of the data
 #'
 #' @return tibble. filtered data

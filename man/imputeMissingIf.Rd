@@ -7,9 +7,9 @@
 imputeMissingIf(data, input)
 }
 \arguments{
-\item{data}{tibble. rawData}
+\item{data}{:: tibble. rawData}
 
-\item{input}{list. Input list from shiny ui. Uses
+\item{input}{:: list. Input list from shiny ui. Uses
 \itemize{
 \item imputeMissingAs0 :: logical
 }}

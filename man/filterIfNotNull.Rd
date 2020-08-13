@@ -7,11 +7,11 @@
 filterIfNotNull(data, var, condition)
 }
 \arguments{
-\item{data}{tibble. data}
+\item{data}{:: tibble. data}
 
-\item{var}{character vector | NULL}
+\item{var}{:: character vector | NULL}
 
-\item{condition}{an expression to evaluate in
+\item{condition}{:: an expression to evaluate in
 the context of the data}
 }
 \value{

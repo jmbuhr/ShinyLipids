@@ -7,9 +7,9 @@
 standardizeWithinTechnicalReplicatesIf(data, input)
 }
 \arguments{
-\item{data}{tibble. data}
+\item{data}{:: tibble. data}
 
-\item{input}{list. Input list from shiny ui. Uses
+\item{input}{:: list. Input list from shiny ui. Uses
 \itemize{
 \item standardizeWithinTechnicalReplicate :: logical
 }}

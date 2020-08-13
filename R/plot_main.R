@@ -86,7 +86,8 @@ createMainPlot <- function(plotData,
   
   plt <- plt +
     scale_y_continuous(
-      expand = expansion(mult = c(0, 0.05)),
+      expand = expansion(mult = c(
+        if_else("N" %in% input$mainPlotAdditionalOptions, 0.05, 0), 0.05)),
       name   = yAxisName,
       labels = yAxisLabels,
       trans  = yAxisTransformation)

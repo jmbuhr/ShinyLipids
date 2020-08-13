@@ -2,29 +2,18 @@
 % Please edit documentation in R/plot_main.R
 \name{createMainPlot}
 \alias{createMainPlot}
-\title{Title}
+\title{Creat the main plot}
 \usage{
-createMainPlot(
-  plotData,
-  meanPlotData,
-  pairwiseComparisons,
-  rangeX = NULL,
-  rangeY = NULL,
-  input
-)
+createMainPlot(plotData, meanPlotData, pairwiseComparisons, input)
 }
 \arguments{
-\item{plotData}{tibble. Data for the plot, pass it from reactive plotData()}
+\item{plotData}{:: tibble. Data for the plot, pass it from reactive plotData()}
 
-\item{meanPlotData}{tibble. Data of means, pass from reactive meanPlotData()}
+\item{meanPlotData}{:: tibble. Data of means, pass from reactive meanPlotData()}
 
-\item{pairwiseComparisons}{tibble. Pairwise t-tests from pairwiseComparisons()}
+\item{pairwiseComparisons}{:: tibble. Pairwise t-tests from pairwiseComparisons()}
 
-\item{rangeX}{numeric vector | NULL. vector with min and max X}
-
-\item{rangeY}{numeric vector | NULL.  vector with min and max Y}
-
-\item{input}{list. Input list from shiny ui. Uses
+\item{input}{:: list. Input list from shiny ui. Uses
 \itemize{
 \item aesX :: string.
 \item aesColor :: string.
@@ -43,5 +32,5 @@ list("points", "bars", "mean", "values", "ind_values", "log",
 :: ggplot object
 }
 \description{
-Title
+Uses ggplot2.
 }

@@ -4,10 +4,10 @@
 \alias{createHeatmap}
 \title{Create a Heatmap from data}
 \usage{
-createHeatmap(data, input)
+createHeatmap(plotData, input)
 }
 \arguments{
-\item{data}{tibble. typically plotData()}
+\item{plotData}{tibble. typically meanPlotData()}
 
 \item{input}{:: list. Uses:
 \itemize{
@@ -19,6 +19,7 @@ createHeatmap(data, input)
 \item heatLabSize :: numeric. Size of axis labels
 \item heatColor :: string. Color palette
 One of c("viridis", "magma", "plasma", "inferno", "cividis")
+\item heatLogScale :: logical.
 }}
 }
 \value{
