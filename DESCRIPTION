@@ -22,7 +22,6 @@ Imports:
     broom,
     ggrepel,
     tibble,
-    pkgload,
     dbplyr,
     stats,
     utils,
@@ -52,6 +51,7 @@ Suggests:
     rmarkdown,
     DiagrammeR,
     knitr,
+    pkgload,
     qpdf
 Language: en-US
 VignetteBuilder: knitr

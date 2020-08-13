@@ -296,11 +296,11 @@ uiBody <- function() {
                                 width  = 12,
                                 status = "primary",
                                 footer = "Brush and doubleclick to zoom",
-                                plotOutput(
+                                plotly::plotlyOutput(
                                   "mainPlot",
-                                  height   = 600,
-                                  dblclick = "mainPlotDoubleClick",
-                                  brush    = brushOpts(id = "mainPlotBrush", resetOnNew = TRUE)
+                                  height   = 600
+                                  # dblclick = "mainPlotDoubleClick",
+                                  # brush    = brushOpts(id = "mainPlotBrush", resetOnNew = TRUE)
                                 )
                               )
                             ),
@@ -312,7 +312,7 @@ uiBody <- function() {
                                                    choices = list(
                                                      "Show points"                = "points",
                                                      "Show bars"                  = "bars",
-                                                     "Show average"               = "mean",
+                                                     "Show mean as line"          = "mean",
                                                      "Show value of means"        = "values",
                                                      "Show value of points"       = "ind_values",
                                                      "Transform y-axis log1p"     = "log",
@@ -332,8 +332,8 @@ uiBody <- function() {
                               shinydashboard::box(
                                 title = "Download",
                                 width = 3,
-                                downloadButton("saveMainPlot", label = "Save plot as .pdf"),
-                                downloadButton("saveMainPlotRDS", label = "Save plot as .RDS"),
+                                downloadButton("saveMainPlot", label = "Save ggplot as .pdf"),
+                                downloadButton("saveMainPlotRDS", label = "Save ggplot as .RDS"),
                                 downloadButton("savePlotData", label = "Save points as .csv"),
                                 downloadButton("saveMeanPlotData", label = "Save means as .csv"),
                                 numericInput("mainWidth", label = "width", value = defaultInput$mainWidth),

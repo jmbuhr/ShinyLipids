@@ -1,15 +1,16 @@
 # TODO preserve width of single bars while not shifting points to others bars
 # TODO reduce cyclomatic complexity of createMainPlot
 
-#' Title
+#' Creat the main plot
+#' 
+#' Uses ggplot2.
 #'
-#'
-#' @param plotData tibble. Data for the plot, pass it from reactive plotData()
-#' @param meanPlotData tibble. Data of means, pass from reactive meanPlotData()
-#' @param pairwiseComparisons tibble. Pairwise t-tests from pairwiseComparisons()
-#' @param rangeX numeric vector | NULL. vector with min and max X
-#' @param rangeY numeric vector | NULL.  vector with min and max Y
-#' @param input list. Input list from shiny ui. Uses
+#' @param plotData :: tibble. Data for the plot, pass it from reactive plotData()
+#' @param meanPlotData :: tibble. Data of means, pass from reactive meanPlotData()
+#' @param pairwiseComparisons :: tibble. Pairwise t-tests from pairwiseComparisons()
+#' @param rangeX :: numeric vector | NULL. vector with min and max X
+#' @param rangeY :: numeric vector | NULL.  vector with min and max Y
+#' @param input :: list. Input list from shiny ui. Uses
 #' - aesX :: string.
 #' - aesColor :: string.
 #' - aesFacetCol :: string.

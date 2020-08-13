@@ -153,7 +153,7 @@ app_server <- function(input, output, session) {
       shinyjs::reset("aesFacetCol")
       shinyjs::reset("categoryToSelect")
       shinyjs::reset("functionalCategoryToSelect")
-
+      
       updateSelectInput(session, "aesX", selected = "lipid")
       updateSelectizeInput(session, "standardizationFeatures",
                            selected = c("class", "sample_replicate"))
@@ -171,7 +171,7 @@ app_server <- function(input, output, session) {
     shinyjs::reset("categoryToSelect")
     shinyjs::reset("lipidClassToSelect")
     shinyjs::reset("functionalCategoryToSelect")
-
+    
     updateSelectInput(session, "aesX", selected = "class")
   })
   
@@ -251,6 +251,14 @@ app_server <- function(input, output, session) {
   # ** Main Plot Render ####
   output$mainPlot <- renderPlot({
     mainPlot()
+  })
+  
+  # ** Main Plot Render with plotly ####
+  output$mainPlot <- plotly::renderPlotly({
+    plotly::ggplotly(mainPlot()) %>% 
+      plotly::layout(legend = list(
+        orientation = "h"
+      ))
   })
   
   # * Heatmap ####
@@ -342,92 +350,156 @@ app_server <- function(input, output, session) {
     )
   
   output$saveRawCSV <-
-    downloadHandlerFactoryCSV(metaData  = metaData(),
-                              dataset   = rawData(),
-                              specifier = "_raw_data",
-                              id        = input$id)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_raw_data.csv")
+      },
+      content = function(file) {
+        write.csv(x = rawData(), file = file)
+      }
+    )
   
   output$saveMainCSV <-
-    downloadHandlerFactoryCSV(metaData  = metaData(),
-                              dataset   = mainData(),
-                              specifier = "_filtered_data",
-                              id        = input$id)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_filtered_data.csv")
+      },
+      content = function(file) {
+        write.csv(x = mainData(), file = file)
+      }
+    )
   
   output$savePlotData <-
-    downloadHandlerFactoryCSV(metaData  = metaData(),
-                              dataset   = plotData(),
-                              specifier = "_plot_data",
-                              id        = input$id)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_plot_data.csv")
+      },
+      content = function(file) {
+        write.csv(x = mainData(), file = file)
+      }
+    )
   
   output$saveMeanPlotData <-
-    downloadHandlerFactoryCSV(metaData  = metaData(),
-                              dataset   = meanPlotData(),
-                              specifier = "_means",
-                              id        = input$id)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_means.csv")
+      },
+      content = function(file) {
+        write.csv(x = meanPlotData(), file = file)
+      }
+    )
   
   output$saveMainPlot <-
-    downloadHandlerFactoryPDF(metaData  = metaData(),
-                              plot      = mainPlot(),
-                              specifier = "_plot",
-                              width     = input$mainWidth,
-                              height    = input$mainHeight, 
-                              id        = input$ID)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_plot.pdf")
+      },
+      content = function(file) {
+        ggsave(file, plot = mainPlot(), width = input$mainWidth,
+               height = input$mainHeight)
+      }
+    )
   
-  output$saveMainPlotRDS <-
-    downloadHandlerFactoryRDS(metaData  = metaData(),
-                              plot      = mainPlot(),
-                              specifier = "_plot",
-                              width     = input$mainWidth,
-                              height    = input$mainHeight, 
-                              id        = input$ID)
+  output$saveMainPlotRDS <- 
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_plot.rds")
+      },
+      content = function(file) {
+        saveRDS(mainPlot(), file)
+      }
+    )
   
-  output$saveHeatmap <-
-    downloadHandlerFactoryPDF(metaData  = metaData(),
-                              plot      = heatmapPlot(),
-                              specifier = "_heatmap",
-                              width     = input$heatWidth,
-                              height    = input$heatHeight, 
-                              id        = input$ID)
+  output$saveHeatmap <- 
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_heatmap.pdf")
+      },
+      content = function(file) {
+        ggsave(file, plot = heatmapPlot(),
+               width = input$heatWidth,
+               height = input$heatHeight)
+      }
+    )
   
   output$saveHeatmapRDS <-
-    downloadHandlerFactoryRDS(metaData  = metaData(),
-                              plot      = heatmapPlot(),
-                              specifier = "_heatmap",
-                              width     = input$heatWidth,
-                              height    = input$heatHeight, 
-                              id        = input$ID)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_heatmap.rds")
+      },
+      content = function(file) {
+        saveRDS(heatmapPlot(), file)
+      }
+    )
   
   output$savePCAScores <-
-    downloadHandlerFactoryPDF(metaData  = metaData(),
-                              plot      = pcaScoresPlot(),
-                              specifier = "_pcaScoresPlot",
-                              width     = input$pcaWidth,
-                              height    = input$pcaHeight, 
-                              id        = input$ID)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_pcaScoresPlot.pdf")
+      },
+      content = function(file) {
+        ggsave(file, plot = pcaScoresPlot(),
+               width = input$pcaWidth,
+               height = input$pcaHeight)
+      }
+    )
   
   output$savePCALoadings <-
-    downloadHandlerFactoryPDF(metaData  = metaData(),
-                              plot      = pcaLoadingsPlot(),
-                              specifier = "_pcaLoadingsPlot",
-                              width     = input$pcaWidth,
-                              height    = input$pcaHeight, 
-                              id        = input$ID)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_pcaLoadingsPlot.pdf")
+      },
+      content = function(file) {
+        ggsave(file, plot = pcaLoadingsPlot(),
+               width = input$pcaWidth,
+               height = input$pcaHeight)
+      }
+    )
   
   output$savePCAScoresRDS <-
-    downloadHandlerFactoryRDS(metaData  = metaData(),
-                              plot      = pcaScoresPlot(),
-                              specifier = "_pcaScoresPlot",
-                              width     = input$pcaWidth,
-                              height    = input$pcaHeight, 
-                              id        = input$ID)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "_pcaScoresPlot.rds")
+      },
+      content = function(file) {
+        saveRDS(pcaScoresPlot(), file)
+      }
+    )
   
   output$savePCALoadingsRDS <-
-    downloadHandlerFactoryRDS(metaData  = metaData(),
-                              plot      = pcaLoadingsPlot(),
-                              specifier = "_pcaLoadingsPlot",
-                              width     = input$pcaWidth,
-                              height    = input$pcaHeight, 
-                              id        = input$ID)
+    downloadHandler(
+      filename = function() {
+        tmp <- metaData() %>% filter(id == input$ID) %>% select(title)
+        tmp <- as.character(tmp) %>% gsub("[[:space:]]", "_", .)
+        paste0(Sys.Date(), "_", tmp, "pcaScoresPlot.rds")
+      },
+      content = function(file) {
+        saveRDS(pcaLoadingsPlot(), file)
+      }
+    )
+  
   # End ####
   # End session when window is closed
   session$onSessionEnded(function() {
