@@ -53,8 +53,8 @@ createMainPlot <- function(plotData,
     plt <- plt +
       geom_text(
         data = meanPlotData,
-        aes(y = 0, label = N),
-        vjust = 1.2,
+        aes(y = -0.99, label = N),
+        vjust = 1,
         hjust = 0.5,
         color = "grey10",
         position = position_dodge(width = 0.9)

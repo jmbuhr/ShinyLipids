@@ -62,7 +62,7 @@ defaultInput <- function() {
     heatLabSize = 9,
     # Dimensionality reduction
     pcaCrossValidationMethod = "none",
-    pcaNumberPrincipalComponents = 2,
+    pcaNumberPrincipalComponents = 4,
     pcaCenter = TRUE,
     pcaScale = TRUE,
     pcaLabels = FALSE,

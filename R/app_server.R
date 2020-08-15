@@ -299,9 +299,9 @@ app_server <- function(input, output, session) {
   pcaJuice <- reactive(juice(pcaPrep()))
   
   # ** pcaInfo ####
-  output$pcaInfo <- renderPrint({
+  output$pcaInfo <- renderPlot({
     req(pcaPrep())
-    summary(pcaPrep())
+    pcaPlotPercentVariation(pcaPrep(), input)
   })
   
   # ** Scores ####
@@ -310,8 +310,9 @@ app_server <- function(input, output, session) {
     createPcaScoresPlot(pcaJuice = pcaJuice(), pcaTidy = pcaTidy(), input)
   })
   
-  output$pcaScoresPlot <- renderPlot({
-    pcaScoresPlot()
+  output$pcaScoresPlot <- plotly::renderPlotly({
+    pcaScoresPlot() %>%
+      plotly::ggplotly()
   })
   
   # ** Loadings ####

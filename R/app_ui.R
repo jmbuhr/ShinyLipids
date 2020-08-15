@@ -363,7 +363,7 @@ uiBody <- function() {
             title  = NULL,
             width  = 6,
             status = "primary",
-            plotOutput("pcaScoresPlot")
+            plotly::plotlyOutput("pcaScoresPlot")
           ),
           shinydashboard::box(
             title  = NULL,
@@ -376,7 +376,7 @@ uiBody <- function() {
           column(
             width = 6,
             shinydashboard::box(width = NULL,
-                                verbatimTextOutput("pcaInfo")
+                                plotOutput("pcaInfo")
             ),
             shinydashboard::box(width = NULL, title = "Download",
                                 downloadButton("savePCAScores", label = "Save Score Plot as .pdf"),

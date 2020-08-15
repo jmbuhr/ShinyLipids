@@ -105,10 +105,10 @@ createPcaScoresPlot <- function(pcaJuice, pcaTidy, input) {
             group = terms
         ),
         inherit.aes = FALSE,
-        arrow = arrow(),
-        alpha = .3
+        alpha = .2
       ) +
-      ggrepel::geom_label_repel(
+      # ggrepel::geom_label_repel(
+      geom_text(
         data = pcaTidyWide,
         aes(
           x = PC1,
@@ -139,4 +139,25 @@ createPcaScoresPlot <- function(pcaJuice, pcaTidy, input) {
   }
   
   plt
+}
+
+
+pcaPlotPercentVariation <- function(pcaPrep, input) {
+  sdev <- pcaPrep$steps[[3]]$res$sdev
+  sdev <- sdev[1:input$pcaNumberPrincipalComponents]
+  percentVariation <- sdev^2 / sum(sdev^2)
+  
+  tibble(
+    component = fct_inorder(paste0("PC", 1:length(sdev))),
+    percentVar = percentVariation ## use cumsum() to find cumulative, if you prefer
+  ) %>%
+  ggplot(aes(component, percentVar)) +
+    geom_col() +
+    geom_text(aes(label = scales::percent(percentVar)),
+              vjust = 1.3, color = "white",
+              size = 5,
+              fontface = "bold") +
+    labs(y = "% explained variation", x = NULL) +
+    mainTheme() +
+    scale_y_continuous(labels = scales::percent_format())
 }
