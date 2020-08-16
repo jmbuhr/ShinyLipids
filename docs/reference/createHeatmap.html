@@ -8,6 +8,13 @@
 
 <title>Create a Heatmap from data — createHeatmap • ShinyLipids</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -38,9 +45,12 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
 <meta property="og:title" content="Create a Heatmap from data — createHeatmap" />
 <meta property="og:description" content="Create a Heatmap from data" />
+<meta property="og:image" content="/logo.svg" />
 
 
 
@@ -123,14 +133,14 @@
     <p>Create a Heatmap from data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createHeatmap</span>(<span class='no'>data</span>, <span class='no'>input</span>)</pre>
+    <pre class="usage"><span class='fu'>createHeatmap</span>(<span class='no'>plotData</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>tibble. typically plotData()</p></td>
+      <th>plotData</th>
+      <td><p>tibble. typically meanPlotData()</p></td>
     </tr>
     <tr>
       <th>input</th>
@@ -143,6 +153,7 @@
 <li><p>heatLabSize :: numeric. Size of axis labels</p></li>
 <li><p>heatColor :: string. Color palette
 One of c("viridis", "magma", "plasma", "inferno", "cividis")</p></li>
+<li><p>heatLogScale :: logical.</p></li>
 </ul></td>
     </tr>
     </table>

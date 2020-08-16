@@ -6,8 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Title — createMainPlot • ShinyLipids</title>
+<title>Creat the main plot — createMainPlot • ShinyLipids</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -38,9 +45,12 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
-<meta property="og:title" content="Title — createMainPlot" />
-<meta property="og:description" content="Title" />
+<meta property="og:title" content="Creat the main plot — createMainPlot" />
+<meta property="og:description" content="Uses ggplot2." />
+<meta property="og:image" content="/logo.svg" />
 
 
 
@@ -114,50 +124,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Title</h1>
+    <h1>Creat the main plot</h1>
     <small class="dont-index">Source: <a href='https://github.com/jannikbuhr/ShinyLipids/blob/master/R/plot_main.R'><code>R/plot_main.R</code></a></small>
     <div class="hidden name"><code>createMainPlot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Title</p>
+    <p>Uses ggplot2.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>createMainPlot</span>(
-  <span class='no'>plotData</span>,
-  <span class='no'>meanPlotData</span>,
-  <span class='no'>pairwiseComparisons</span>,
-  <span class='kw'>rangeX</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>rangeY</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>input</span>
-)</pre>
+    <pre class="usage"><span class='fu'>createMainPlot</span>(<span class='no'>plotData</span>, <span class='no'>meanPlotData</span>, <span class='no'>pairwiseComparisons</span>, <span class='no'>input</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>plotData</th>
-      <td><p>tibble. Data for the plot, pass it from reactive plotData()</p></td>
+      <td><p>:: tibble. Data for the plot, pass it from reactive plotData()</p></td>
     </tr>
     <tr>
       <th>meanPlotData</th>
-      <td><p>tibble. Data of means, pass from reactive meanPlotData()</p></td>
+      <td><p>:: tibble. Data of means, pass from reactive meanPlotData()</p></td>
     </tr>
     <tr>
       <th>pairwiseComparisons</th>
-      <td><p>tibble. Pairwise t-tests from pairwiseComparisons()</p></td>
-    </tr>
-    <tr>
-      <th>rangeX</th>
-      <td><p>numeric vector | NULL. vector with min and max X</p></td>
-    </tr>
-    <tr>
-      <th>rangeY</th>
-      <td><p>numeric vector | NULL.  vector with min and max Y</p></td>
+      <td><p>:: tibble. Pairwise t-tests from pairwiseComparisons()</p></td>
     </tr>
     <tr>
       <th>input</th>
-      <td><p>list. Input list from shiny ui. Uses</p><ul>
+      <td><p>:: list. Input list from shiny ui. Uses</p><ul>
 <li><p>aesX :: string.</p></li>
 <li><p>aesColor :: string.</p></li>
 <li><p>aesFacetCol :: string.</p></li>

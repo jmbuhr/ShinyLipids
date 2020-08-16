@@ -6,14 +6,22 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Data processing in ShinyLipids • ShinyLipids</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Data processing in ShinyLipids">
+<script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="Data processing in ShinyLipids">
 <meta property="og:description" content="Learn how to your data gets processed in ShinyLipids.
 ">
+<meta property="og:image" content="/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -135,23 +143,23 @@
 <span class="co">#&gt; # A tibble: 6 x 4</span>
 <span class="co">#&gt;   class sample         sample_replicate value</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;          &lt;fct&gt;            &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 PC    1 - 0min Stim  1 - 0min Stim_A  0.575</span>
-<span class="co">#&gt; 2 PC    1 - 0min Stim  1 - 0min Stim_B  0.425</span>
-<span class="co">#&gt; 3 PC    1 - 0min Stim  1 - 0min Stim_C  0.295</span>
-<span class="co">#&gt; 4 PC    1 - 0min Stim  1 - 0min Stim_D  1.24 </span>
-<span class="co">#&gt; 5 PC    2 - 10min Stim 2 - 10min Stim_A 0.238</span>
-<span class="co">#&gt; 6 PC    2 - 10min Stim 2 - 10min Stim_B 0.338</span></pre></body></html></div>
+<span class="co">#&gt; 1 PC    1 - 0min Stim  1 - 0min Stim_A  0.567</span>
+<span class="co">#&gt; 2 PC    1 - 0min Stim  1 - 0min Stim_B  0.420</span>
+<span class="co">#&gt; 3 PC    1 - 0min Stim  1 - 0min Stim_C  0.291</span>
+<span class="co">#&gt; 4 PC    1 - 0min Stim  1 - 0min Stim_D  1.22 </span>
+<span class="co">#&gt; 5 PC    2 - 10min Stim 2 - 10min Stim_A 0.235</span>
+<span class="co">#&gt; 6 PC    2 - 10min Stim 2 - 10min Stim_B 0.333</span></pre></body></html></div>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">meanPlotData</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/summarisePlotData.html">summarisePlotData</a></span>(<span class="no">plotData</span>, <span class="no">input</span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">meanPlotData</span>)
 <span class="co">#&gt; # A tibble: 6 x 8</span>
 <span class="co">#&gt;   class sample            SD    SEM     N value CI_lower CI_upper</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;          &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 PC    1 - 0min Stim  0.418 0.104      4 0.632    0.300    0.965</span>
-<span class="co">#&gt; 2 PC    2 - 10min Stim 0.196 0.0491     4 0.430    0.274    0.587</span>
-<span class="co">#&gt; 3 PC    3 - 6h Stim    0.131 0.0328     4 0.590    0.486    0.695</span>
-<span class="co">#&gt; 4 PC    4 - 18h Stim   0.304 0.0760     4 0.737    0.496    0.979</span>
-<span class="co">#&gt; 5 PC O- 1 - 0min Stim  0.147 0.0367     4 0.337    0.220    0.454</span>
-<span class="co">#&gt; 6 PC O- 2 - 10min Stim 0.315 0.0787     4 0.434    0.184    0.685</span></pre></body></html></div>
+<span class="co">#&gt; 1 PC    1 - 0min Stim  0.412 0.103      4 0.624    0.296    0.952</span>
+<span class="co">#&gt; 2 PC    2 - 10min Stim 0.194 0.0484     4 0.425    0.271    0.579</span>
+<span class="co">#&gt; 3 PC    3 - 6h Stim    0.129 0.0324     4 0.583    0.480    0.686</span>
+<span class="co">#&gt; 4 PC    4 - 18h Stim   0.300 0.0750     4 0.728    0.489    0.967</span>
+<span class="co">#&gt; 5 PC O- 1 - 0min Stim  0.145 0.0363     4 0.333    0.218    0.448</span>
+<span class="co">#&gt; 6 PC O- 2 - 10min Stim 0.311 0.0777     4 0.429    0.181    0.676</span></pre></body></html></div>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">plt</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/createMainPlot.html">createMainPlot</a></span>(<span class="kw">plotData</span>            <span class="kw">=</span> <span class="no">plotData</span>,
                       <span class="kw">meanPlotData</span>        <span class="kw">=</span> <span class="no">meanPlotData</span>,
                       <span class="kw">pairwiseComparisons</span> <span class="kw">=</span> <span class="kw">NULL</span>,

@@ -41,9 +41,6 @@ reference:
     contents:
       - defaultInput
       - createQueryForID
-      - downloadHandlerFactoryCSV
-      - downloadHandlerFactoryRDS
-      - downloadHandlerFactoryPDF
       - updateAllRangeInputs
       - updateAllSelectizeInputs
       - mainScale

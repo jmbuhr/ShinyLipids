@@ -118,7 +118,15 @@ createMainPlot <- function(plotData,
         )
     }
   }
-  plt
+
+  # TODO
+  title <- paste("Showing", input$aesX)
+  subtitle <- paste("Filtered for:", input$filterDoubleBondsRange,
+                    input$filterLengthRange, input$filterOhRange)
+  
+  plt +
+    labs(title = title,
+         subtitle = subtitle)
 }
 
 

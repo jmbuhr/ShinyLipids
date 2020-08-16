@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# ShinyLipids
+# ShinyLipids <a href='https://jmbuhr.de/ShinyLipids/'><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
 

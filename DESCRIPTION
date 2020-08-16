@@ -51,7 +51,6 @@ Suggests:
     rmarkdown,
     DiagrammeR,
     knitr,
-    pkgload,
-    qpdf
+    pkgload
 Language: en-US
 VignetteBuilder: knitr
