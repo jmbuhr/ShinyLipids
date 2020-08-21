@@ -6,8 +6,8 @@ Authors@R: person('Jannik', 'Buhr',
     comment = c(ORCID = '0000-0002-9350-2629'))
 Description: ShinyLipids is a web-app for visualization of lipidomics
     mass spectrometry data that runs in your browser.
-BugReports: https://github.com/jannikbuhr/ShinyLipids/issues
-URL: https://jmbuhr.de/ShinyLipids/, https://github.com/jannikbuhr/ShinyLipids
+BugReports: https://github.com/jmbuhr/ShinyLipids/issues
+URL: https://jmbuhr.de/ShinyLipids/, https://github.com/jmbuhr/ShinyLipids
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

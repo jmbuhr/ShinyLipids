@@ -30,7 +30,7 @@ uiHeader <- function() {
                                        icon   = icon("book"),
                                        status = "success"),
       shinydashboard::notificationItem(text   = "Report bug",
-                                       href   = "https://github.com/jannikbuhr/ShinyLipids/issues/new",
+                                       href   = "https://github.com/jmbuhr/ShinyLipids/issues/new",
                                        status = "success",
                                        icon   = icon("bug")),
       tags$li(

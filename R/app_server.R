@@ -227,10 +227,10 @@ app_server <- function(input, output, session) {
   # ** Main Plot Object ####
   mainPlot <- reactive({
     req(plotData(), meanPlotData())
-    createMainPlot(plotData                            = plotData(),
-                   meanPlotData                        = meanPlotData(),
-                   pairwiseComparisons                 = pairwiseComparisons(),
-                   input)
+    createMainPlot(plotData             = plotData(),
+                   meanPlotData         = meanPlotData(),
+                   pairwiseComparisons  = pairwiseComparisons(),
+                   input                = input)
   })
   
   # ** Main Plot Render ####
@@ -242,8 +242,7 @@ app_server <- function(input, output, session) {
   output$mainPlot <- plotly::renderPlotly({
     plotly::ggplotly(mainPlot()) %>% 
       plotly::layout(legend = list(
-        orientation = "h"
-      ))
+        orientation = "h"))
   })
   
   # * Heatmap ####

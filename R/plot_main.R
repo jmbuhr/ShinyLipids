@@ -118,17 +118,7 @@ createMainPlot <- function(plotData,
         )
     }
   }
-
-  # TODO
-  title <- paste("Showing", input$aesX)
-  subtitle <- paste("Filtered for:", input$filterDoubleBondsRange,
-                    input$filterLengthRange, input$filterOhRange)
-  
-  plt +
-    labs(title = title,
-         subtitle = subtitle)
 }
-
 
 mainPlotAddColors <- function(plt, aesColor, plotData) {
   if (aesColor != "") {
