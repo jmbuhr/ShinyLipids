@@ -12,10 +12,10 @@ Path to where you want to save the database dump file}
 
 \item{metaData}{tibble.
 A data.frame with the information about your datasets
-See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns it needs.}
+See README on href{https://github.com/jmbuhr/ShinyLipids}{github} for the columns it needs.}
 
 \item{rawData}{tibble. Metadata of the data sets
-See README on href{https://github.com/jannikbuhr/ShinyLipids}{github} for the columns they need.}
+See README on href{https://github.com/jmbuhr/ShinyLipids}{github} for the columns they need.}
 
 \item{overwrite}{boolean.
 Overwrite existing .db file? Default is FALSE.}

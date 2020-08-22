@@ -1,7 +1,7 @@
 ---
 title: "Technical aspects"
 description: >
-  Learn how what makes ShinyLipids work behind the scenes.
+  Learn how ShinyLipids works behind the scenes.
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Technical aspects}
@@ -23,11 +23,12 @@ such as Microsoft Excel to scripting languages such as
 Python and R is reproducibility, re-usability and the idea
 that code is an important means of communication.
 
-Programming languages offer immense power. But with
-great power comes great responsibility. While analysis
-in code are less error prone to copy-and-paste errors
+Programming languages offer immense power.
+But with great power comes great responsibility.
+While analysis in code are less error prone to copy-and-paste errors
 as found in Excel and Co., or involuntary conversions
-to dates^[One study found that one 5th of screened genetics papers contained errors due to this behaviour in Excel. [Source](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1044-7)], they can of course contain mistakes nonetheless.
+to dates^[One study found that one 5th of screened genetics papers contained errors due to this behaviour in Excel. [Source](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1044-7)],
+they can of course contain mistakes nonetheless.
 
 A number of measures have been taken to ensure
 that the code presented here is safe, testable and
@@ -35,11 +36,47 @@ easy to extend.
 
 ## Functional programming
 
-TODO
+R at it's heart is a functional programming language.
+Loosely speaking, this means that functions are first
+class citizens in this language. They can, for example,
+be passed to other functions (higher order functions)
+as arguments just like variables
+However, it is not a strict functional language and
+functions are not required to be _pure_, that
+is free of side-effects. A pure function acts like
+a mathematical function: When given the same input,
+it produces the same output and does not rely
+on any external, global state. I designed the functions
+that process your data in ShinyLipids to be pure.
+That means, if you put in the same data, rain of shine you
+get the same processed data out.
+Furthermore, this can guarantee that if some other part of ShinyLipids
+changes or is being worked on, the way the pure functions
+operate doesn't change.
+Understanding and verifying one function does not require
+you to read and understand the whole source code of all
+other functions.
+Of course, mistakes can still happen,
+but the more the code aligns with conventions
+of pure functional programming, the easier they are to
+find and prevent.
+But what if we do want to change things?
+How can we make sure that `ShinyLipids` still
+works as a whole?
+This is where unit tests come into play.
 
 ## Unit tests
 
-TODO
+Because the functions mentioned above only rely on their
+input, we can also test and verify them
+as independent units.
+Furthermore, we can automate the whole process!
+Every time a code change is pushed online, a whole
+bunch of tests are run to make sure that the app
+still works, automatically.
 
-## Other conventions
+# How data flows in ShinyLipids
 
+```{r flowchart, eval=TRUE, echo=FALSE}
+DiagrammeR::grViz(diagram = "./dataflow.dot")
+```

@@ -19,7 +19,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Technical aspects">
-<meta property="og:description" content="Learn how what makes ShinyLipids work behind the scenes.
+<meta property="og:description" content="Learn how ShinyLipids works behind the scenes.
 ">
 <meta property="og:image" content="/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -64,7 +64,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jannikbuhr/ShinyLipids/">
+  <a href="https://github.com/jmbuhr/ShinyLipids/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -79,13 +79,14 @@
 
       
 
-      </header><script src="Technical-aspects_files/header-attrs-2.3/header-attrs.js"></script><script src="Technical-aspects_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="Technical-aspects_files/header-attrs-2.3/header-attrs.js"></script><script src="Technical-aspects_files/accessible-code-block-0.0.1/empty-anchor.js"></script><script src="Technical-aspects_files/htmlwidgets-1.5.1/htmlwidgets.js"></script><script src="Technical-aspects_files/viz-1.8.2/viz.js"></script><link href="Technical-aspects_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="Technical-aspects_files/grViz-binding-1.0.6.1/grViz.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Technical aspects</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/jannikbuhr/ShinyLipids/blob/master/vignettes/Technical-aspects.Rmd"><code>vignettes/Technical-aspects.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/jmbuhr/ShinyLipids/blob/master/vignettes/Technical-aspects.Rmd"><code>vignettes/Technical-aspects.Rmd</code></a></small>
       <div class="hidden name"><code>Technical-aspects.Rmd</code></div>
 
     </div>
@@ -101,17 +102,19 @@
 <div id="functional-programming" class="section level2">
 <h2 class="hasAnchor">
 <a href="#functional-programming" class="anchor"></a>Functional programming</h2>
-<p>TODO</p>
+<p>R at it’s heart is a functional programming language. Loosely speaking, this means that functions are first class citizens in this language. They can, for example, be passed to other functions (higher order functions) as arguments just like variables However, it is not a strict functional language and functions are not required to be <em>pure</em>, that is free of side-effects. A pure function acts like a mathematical function: When given the same input, it produces the same output and does not rely on any external, global state. I designed the functions that process your data in ShinyLipids to be pure. That means, if you put in the same data, rain of shine you get the same processed data out. Furthermore, this can guarantee that if some other part of ShinyLipids changes or is being worked on, the way the pure functions operate doesn’t change. Understanding and verifying one function does not require you to read and understand the whole source code of all other functions. Of course, mistakes can still happen, but the more the code aligns with conventions of pure functional programming, the easier they are to find and prevent. But what if we do want to change things? How can we make sure that <code>ShinyLipids</code> still works as a whole? This is where unit tests come into play.</p>
 </div>
 <div id="unit-tests" class="section level2">
 <h2 class="hasAnchor">
 <a href="#unit-tests" class="anchor"></a>Unit tests</h2>
-<p>TODO</p>
+<p>Because the functions mentioned above only rely on their input, we can also test and verify them as independent units. Furthermore, we can automate the whole process! Every time a code change is pushed online, a whole bunch of tests are run to make sure that the app still works, automatically.</p>
 </div>
-<div id="other-conventions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#other-conventions" class="anchor"></a>Other conventions</h2>
 </div>
+<div id="how-data-flows-in-shinylipids" class="section level1">
+<h1 class="hasAnchor">
+<a href="#how-data-flows-in-shinylipids" class="anchor"></a>How data flows in ShinyLipids</h1>
+<div id="htmlwidget-66c67e8089dae2fe6bd2" style="width:700px;height:432.632880098888px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-66c67e8089dae2fe6bd2">{"x":{"diagram":"digraph {\n\ngraph [layout = dot, rankdir = TB]\nnode [shape = rectangle, style = filled, fillcolor = cadetblue1]\nedge [color = darkslategrey]\n\ndb [label = \"Database\", shape = cylinder, fillcolor = cadetblue]\n\nui [label = \"UI\", fillcolor = darkslategrey,\n  fontcolor = white]\nip [label = \"input :: list\", shape = circle,\n  fillcolor = darkslategrey,\n  fontcolor = white]\nvoid [label = \"()\", shape = circle,\n  fillcolor = white]\ndh [label = \"downloadHandlers\", shape = invhouse,\n  fillcolor = white]\n\n\nvoid -> ui [label = \"defaultInput()\",\n  color = black]\nui -> ip [color = black, label = \"user action\"]\n\ndb -> metaData [label = \"collectMetadata\"]\ndb -> rawData [label = \"collectRawData %>% imputeMissingIf %>% addLipidProperties\"]\nrawData -> filteredData [label = \"standardizeWithinTechnicalReplicatesIf %>% filterRawDataFor\"]\n\nfilteredData -> mainData [\n  label = \"standardizeRawDataWithin\"\n]\nmainData -> plotData [\n  label = \"createPlotData\"\n]\nplotData -> meanPlotData [\n  label = \"summarisePlotData\"\n]\nplotData -> pairwiseComparisons [\n  label = \"doAllPairwiseComparisons\"\n]\npairwiseComparisons -> mainPlot\nmeanPlotData -> mainPlot\nplotData -> mainPlot [\n  label = \"createMainPlot\"\n]\nplotData -> heatmapPlot [\n  label = \"createHeatmap\"\n]\nplotData -> wideData [\n  label = \"createWideData\"\n]\nwideData -> pcaPrep [\n  label = \"createPcaPrep\"\n]\npcaPrep -> pcaTidy [color = black]\npcaPrep -> pcaJuice [color = black]\n{pcaTidy, pcaJuice} -> pcaScoresPlot\npcaTidy -> pcaLoadinsPlot\n\nmetaData -> dh\nrawData -> dh\nmainData -> dh\nmeanPlotData -> dh\nmainPlot -> dh\nheatmapPlot -> dh\npcaScoresPlot -> dh\npcaLoadinsPlot -> dh\n\n\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="footnotes">
 <hr>

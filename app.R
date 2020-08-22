@@ -1,15 +1,13 @@
-# Setup of the ShinyApp ####
-# pkgload::load_all()
+# Setup of the ShinyApp <- keep this comment for RStudio ####
 
 # Deployment ####
 # To deploy, run: rsconnect::deployApp()
 # Or use the blue button in the top right corner
 # of this file in RStudio
 
-## For installation on a server with shiny-server
-# remotes::install_github("jannikbuhr/ShinyLipids",
-# auth_token = Sys.getenv("GITHUB_PAT_SHINY"),
-# force = TRUE, dependencies = TRUE, upgrade = TRUE)
+## For installation on a server running shiny-server
+# remotes::install_github("jmbuhr/ShinyLipids", 
+#                         force = TRUE, dependencies = TRUE, upgrade = TRUE)
 
 # Database connections ####
 ## uncomment this to read from a database.

@@ -322,7 +322,7 @@ app_server <- function(input, output, session) {
   })
   
   # Download handlers ####
-  output$saveMeta <-
+  output$saveMetaCSV <-
     downloadHandler(
       filename = function() {
         paste0("datasets_info.csv")
@@ -364,7 +364,7 @@ app_server <- function(input, output, session) {
         paste0(Sys.Date(), "_", tmp, "_plot_data.csv")
       },
       content = function(file) {
-        write.csv(x = mainData(), file = file)
+        write.csv(x = plotData(), file = file)
       }
     )
   
