@@ -118,8 +118,11 @@ createMainPlot <- function(plotData,
         )
     }
   }
+  return(plt)
 }
 
+
+# subfunctions ------------------------------------------------------------
 mainPlotAddColors <- function(plt, aesColor, plotData) {
   if (aesColor != "") {
     colorCount <- plotData[[aesColor]] %>%

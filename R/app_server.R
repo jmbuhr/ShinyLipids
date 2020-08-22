@@ -240,9 +240,7 @@ app_server <- function(input, output, session) {
   
   # ** Main Plot Render with plotly ####
   output$mainPlot <- plotly::renderPlotly({
-    plotly::ggplotly(mainPlot()) %>% 
-      plotly::layout(legend = list(
-        orientation = "h"))
+    plotly::ggplotly(mainPlot()) 
   })
   
   # * Heatmap ####
