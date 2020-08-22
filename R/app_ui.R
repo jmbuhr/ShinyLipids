@@ -272,7 +272,7 @@ uiBody <- function() {
             DT::DTOutput("metaDataTable"),
             # Save buttons
             checkboxInput("showFullMeta", label = "Show all columns", value = FALSE),
-            downloadButton("saveMeta", label = "Save metadata as .csv"),
+            downloadButton("saveMetaCSV", label = "Save metadata as .csv"),
             downloadButton("saveRawCSV", label = "Save selected dataset as .csv (unfiltered)"),
             downloadButton("saveMainCSV", label = "Save selected dataset as .csv (filtered)")
           )

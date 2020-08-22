@@ -18,83 +18,76 @@ knitr::opts_chunk$set(
 # ShinyLipids <a href='https://jmbuhr.de/ShinyLipids/'><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jannikbuhr/ShinyLipids)
+[![Travis build status](https://travis-ci.com/jmbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jmkbuhr/ShinyLipids)
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![codecov](https://codecov.io/gh/jannikbuhr/ShinyLipids/branch/master/graph/badge.svg?token=1cRbNEmkjj)](https://codecov.io/gh/jannikbuhr/ShinyLipids)
+[![codecov](https://codecov.io/gh/jmbuhr/ShinyLipids/branch/master/graph/badge.svg)](https://codecov.io/gh/jmbuhr/ShinyLipids)
 <!-- badges: end -->
 
-An interactive web application for lipidomics data analysis based on
-the R programming language with the shiny framework.
+ShinyLipids is an interactive web application for lipidomics data analysis
+written in R with the [shiny](https://shiny.rstudio.com/)
+framework.
 
-## What is ShinyLipids?
-
-ShinyLipids is a visualization tool for lipidomics data built in R with
-the `shiny` package. The original version was developed in 2015
-by _Mathias Gerl_ and further enhanced by _Manuel Haußmann_
-and _Sebastian Bender_ until August, 2017.
-It serves as the primary visualization dashboard for lipidomics mass spectrometry in the
-[Brügger Lipidomics Group](https://bzh.db-engine.de/default.asp?lfn=2241&fg=4289)
-at the Heidelberg Biochemistry Center (BZH).
-
-In 2018 I started working on a new version of ShinyLipids.
-The idea is still very much based on the original,
-but the internal coding and data structure is designed
-to be more consistent and host a safer environment
-for the implementation of new features within the R code.
-You can find more information about that
-[in the documentation](https://jmbuhr.de/ShinyLipids/articles/Technical-aspects.html).
-
-## How do I use ShinyLipids?
+## Getting started 
 
 First, we need to make sure that you have the latest version of R (and optionally RStudio) installed.
-
 If you are new to R, head over to
-
 [https://cran.r-project.org/](https://cran.r-project.org/)
 and follow the download link suitable for your operating system.
-Then, head over to
-[https://rstudio.com/products/rstudio/download/#download](https://rstudio.com/products/rstudio/download/#download)
-and install RStudio. You can think of R as the engine that runs the Code for
-ShinyLipids and of RStudio
-as a car with a nice dashboard around the engine to help you control all that raw power.
-Don't worry, there won't be any coding necessary to get started with your data in ShinyLipids.
+Then install RStudio from [https://rstudio.com/products/rstudio/download/#download](https://rstudio.com/products/rstudio/download/#download).
+Don't worry, there won't be any coding necessary to get started with your
+own data in ShinyLipids.
 
-Then run this piece of R code to install ShinyLipids with all it's
-dependencies^[If you want to publish the Shiny App on RStudio-connect,
-you will need a couple of additional packages that
-are listed in `app.R`.] from github:
+Now open up RStudio and run this piece of R code to
+install `ShinyLipids` with all it's
+dependencies from github
+(To run the code, copy and paste it into the R console that pops up in the
+bottom right corner when you first open RStudio. Then hit Enter.):
 
 ```{r, eval=FALSE}
 if ( !("remotes" %in% installed.packages()) ) install.packages("remotes")
-remotes::install_github("jannikbuhr/ShinyLipids")
+remotes::install_github("jmbuhr/ShinyLipids")
 ```
 
-(To run the code, copy and paste it into the R console that pops up in the
-bottom right corner when you first open RStudio. Then hit Enter.)
+To get a first glimpse, run these lines to
+see the example data the comes with `ShinyLipids`:
 
-ShinyLipids gets the data it needs from a database.
+```{r, eval=FALSE}
+path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
+ShinyLipids::run_app(db = databaseConnection)
+```
+
+
+## Getting your own data into ShinyLipids
+
+`ShinyLipids` loads the data from a database or
+a database-dump file as in the example above (`exampleDatabase.db`).
 This database needs to contain at least the two tables **id_info** and **data2**
-^[the naming is due to back end compatibility].
+^[the naming is due to back-end compatibility].
 Of course, you might not have your data in a database or
 database-dump file. To get your tabular data (preferably _.csv_)
 into such a file, you can use a little helper
-function in ShinyLipids, which you can run from an R script.
+function in `ShinyLipids`, which you can run from an R script.
 Before you do so, make sure your tables contain the columns
 listed in section [What should my tables look like?](#tables).
 Then, read them into R and package them up with `ShinyLipids::createDatabase`.
-This could look as follows:
+This could look like this:
 
 ```{r, eval=FALSE}
 if ( !("readr" %in% installed.packages()) ) install.packages("readr")
+path <- "path/to/your/data.db"
 myMedatdata <- readr::read_csv("myMetadata.csv")
 myDataset   <- readr::read_csv("myDataset.csv")
-ShinyLipids::createDatabase("path/to/your/data.db", myMedatdata, myDataset)
+ShinyLipids::createDatabase(path = path, myMedatdata, myDataset)
 ```
 
-Now you are ready to look at your lipids! Run this code for a quick start:
+Now you are ready to look at your lipids!
+Replace `"path/to/your/data.db"` with the actual
+filepath to your database-dump file
+and run:
 
 ```{r, eval=FALSE}
-databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), "path/to/your/data.db")
+databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 ShinyLipids::run_app(db = databaseConnection)
 ```
 
@@ -144,14 +137,6 @@ lipid. If you use the nomenclature proposed by Liebisch et al.
 can extract further information about the lipid from this
 column (such as the length of the chains, the number
 of double bonds, the amount of hydroxylation etc.).
-The Lipid Maps project (https://www.lipidmaps.org/)
-aims to provide a database of known lipids. However,
-since the first mentioned nomenclature is both human- and machine-readable,
-`ShinyLipids` currently prioritizes it over LipidMaps-IDs.
-But the groundwork to read in the database of LipidMaps
-and convert LM-IDs to the Liebisch et al. format inside of ShinyLipids
-has been laid.
-
 The value is expected to be in µM. Using
 different units works but the axis labels will still
 read µM.
@@ -159,24 +144,35 @@ read µM.
 Optionally, your database can contain a table named
 "LIPID_CLASS_ORDER_COMPLETE" with
 a numeric _class_order_ column associated with a _class_ column.
-You can also reorder your lipid classes in the app on bottom of
-the main plotting page.
 
 ## For advanced use
 
-If you want to run ShinyLipids on your own server connected to a database
-or post your findings to shinyapps.io, you will have to download the source code:
-
-```{bash, eval=FALSE}
-git clone https://github.com/jannikbuhr/ShinyLipids.git
-```
+If you want to run ShinyLipids on your own server, connected to a database
+or post your findings to [shinyapps.io](https://www.shinyapps.io/),
+you will have to download the source code by
+either running `git clone https://github.com/jmbuhr/ShinyLipids.git` from
+the command line or by visiting
+[https://github.com/jmbuhr/ShinyLipids](https://github.com/jmbuhr/ShinyLipids)
 
 Open the file `app.R`, read the comments and uncomment the specified lines.
-Then you
-will be able to run the app or use the buttons in the top right corner of
+Then can to run the app or use the buttons in the top right corner of
 your RStudio code panel.
 
+You can find further information in the
+[documentation](https://jmbuhr.de/ShinyLipids/).
+
 ## Notes
+
+The first version of ShinyLipids was developed in 2015
+by _Mathias Gerl_ and further enhanced by _Manuel Haußmann_
+and _Sebastian Bender_ until August, 2017.
+The ideas and intentions of this new version by [Jannik Buhr](https://jmbuhr.de/)
+are still based on the original,
+but the code and data structure is designed
+to be more consistent and host a safer environment
+for the implementation of new features.
+You can find more information about that
+in the [documentation](https://jmbuhr.de/ShinyLipids/articles/Technical-aspects.html).
 
 Please note that the 'ShinyLipids' project is released with a
 [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md).

@@ -115,49 +115,4 @@ This is where the magic happens.
 
 The flowchart ^\@ref(fig:flowchart)^ below was created with [mermaid.js](https://mermaidjs.github.io/).
 
-```{r flowchart, eval=TRUE}
-library(DiagrammeR)
-mermaid("
-graph TB
-subgraph Datasets
-M[metaData] -->|output| MT(metaDataTable)
-MT-->|update selectInput|ID(ID)
-MT -->saveMeta(( saveMeta))
-end
-subgraph mainData
-ID-->|select ID|RD(rawData)
-RD-->SR((saveRawCSV))
-RD -->|stanndardization and filtering|MD(mainData)
-MD-->saveMainCSV((saveMainCSV))
-FI{filter_/sample_}--> |filtering| MD
-MD-->|output|mDT((mainDataTable))
-end
-subgraph main Plot
-MD-->|summarize|PD(plotData)
-AES{input$aes_}-->|define|PD
-PD-->|average replicates|mPD(meanPlotData)
-AES{input$aes_}-->|define|mP
-PD-->|ggplot|mP(mainPlt)
-mPD-->|ggplot|mP(mainPlt)
-mP-->|outout|mPL((mainPlot))
-mPL-->|click/brush|ranges
-ranges-->|update|mP
-end
-subgraph PCA
-PD-->|spread to matrix|pcaDATA
-AES-->|define|pcaDATA
-pcaDATA -->|calculate|pcaObject
-pcaObject -->|output summary|PCAI((pca_info))
-pcaObject -->|ggplot|pca_scores
-pcaObject -->|ggplot|pca_loadings
-pca_scores -->|render plot|PCAS((pca_scores))
-pca_loadings -->|render plot|PCAL((pca_loadings))
-end
-subgraph heatmap
-AES-->|define|HP(heatPlt)
-PD-->|ggplot|HP
-HP-->|output|HPO((heatPlot))
-end
-")
-```
 

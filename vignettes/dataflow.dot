@@ -1,0 +1,69 @@
+digraph {
+
+graph [layout = dot, rankdir = TB]
+node [shape = rectangle, style = filled, fillcolor = cadetblue1]
+edge [color = darkslategrey]
+
+db [label = 'Database', shape = cylinder, fillcolor = cadetblue]
+
+ui [label = 'UI', fillcolor = darkslategrey,
+  fontcolor = white]
+ip [label = 'input :: list', shape = circle,
+  fillcolor = darkslategrey,
+  fontcolor = white]
+void [label = '()', shape = circle,
+  fillcolor = white]
+dh [label = 'downloadHandlers', shape = invhouse,
+  fillcolor = white]
+
+
+void -> ui [label = 'defaultInput()',
+  color = black]
+ui -> ip [color = black, label = 'user action']
+
+db -> metaData [label = 'collectMetadata']
+db -> rawData [label = 'collectRawData %>% imputeMissingIf %>% addLipidProperties']
+rawData -> filteredData [label = 'standardizeWithinTechnicalReplicatesIf %>% filterRawDataFor']
+
+filteredData -> mainData [
+  label = 'standardizeRawDataWithin'
+]
+mainData -> plotData [
+  label = 'createPlotData'
+]
+plotData -> meanPlotData [
+  label = 'summarisePlotData'
+]
+plotData -> pairwiseComparisons [
+  label = 'doAllPairwiseComparisons'
+]
+pairwiseComparisons -> mainPlot
+meanPlotData -> mainPlot
+plotData -> mainPlot [
+  label = 'createMainPlot'
+]
+plotData -> heatmapPlot [
+  label = 'createHeatmap'
+]
+plotData -> wideData [
+  label = 'createWideData'
+]
+wideData -> pcaPrep [
+  label = 'createPcaPrep'
+]
+pcaPrep -> pcaTidy [color = black]
+pcaPrep -> pcaJuice [color = black]
+{pcaTidy, pcaJuice} -> pcaScoresPlot
+pcaTidy -> pcaLoadinsPlot
+
+metaData -> dh
+rawData -> dh
+mainData -> dh
+meanPlotData -> dh
+mainPlot -> dh
+heatmapPlot -> dh
+pcaScoresPlot -> dh
+pcaLoadinsPlot -> dh
+
+
+}

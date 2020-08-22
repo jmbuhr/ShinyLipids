@@ -64,7 +64,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/jannikbuhr/ShinyLipids/">
+  <a href="https://github.com/jmbuhr/ShinyLipids/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -79,15 +79,13 @@
 
       
 
-      </header><script src="WIP_blogpost_files/header-attrs-2.3/header-attrs.js"></script><script src="WIP_blogpost_files/accessible-code-block-0.0.1/empty-anchor.js"></script><script src="WIP_blogpost_files/htmlwidgets-1.5.1/htmlwidgets.js"></script><script src="WIP_blogpost_files/d3-3.3.8/d3.min.js"></script><script src="WIP_blogpost_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="WIP_blogpost_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-<script src="WIP_blogpost_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="WIP_blogpost_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="WIP_blogpost_files/chromatography-0.1/chromatography.js"></script><script src="WIP_blogpost_files/DiagrammeR-binding-1.0.6.1/DiagrammeR.js"></script><div class="row">
+      </header><script src="WIP_blogpost_files/header-attrs-2.3/header-attrs.js"></script><script src="WIP_blogpost_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>WIP blogpost</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/jannikbuhr/ShinyLipids/blob/master/vignettes/WIP_blogpost.Rmd"><code>vignettes/WIP_blogpost.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/jmbuhr/ShinyLipids/blob/master/vignettes/WIP_blogpost.Rmd"><code>vignettes/WIP_blogpost.Rmd</code></a></small>
       <div class="hidden name"><code>WIP_blogpost.Rmd</code></div>
 
     </div>
@@ -170,10 +168,6 @@
 <h2 class="hasAnchor">
 <a href="#reactive-dependencies" class="anchor"></a>Reactive dependencies</h2>
 <p>The flowchart <sup>@ref(fig:flowchart)</sup> below was created with <a href="https://mermaidjs.github.io/">mermaid.js</a>.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">DiagrammeR</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/DiagrammeR/man/mermaid.html">mermaid</a></span>(<span class="st">[1042 chars quoted with '"']</span>)</pre></body></html></div>
-<div id="htmlwidget-f4f51f3ff6aaae449f57" style="width:700px;height:432.632880098888px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f4f51f3ff6aaae449f57">{"x":{"diagram":"\ngraph TB\nsubgraph Datasets\nM[metaData] -->|output| MT(metaDataTable)\nMT-->|update selectInput|ID(ID)\nMT -->saveMeta(( saveMeta))\nend\nsubgraph mainData\nID-->|select ID|RD(rawData)\nRD-->SR((saveRawCSV))\nRD -->|stanndardization and filtering|MD(mainData)\nMD-->saveMainCSV((saveMainCSV))\nFI{filter_/sample_}--> |filtering| MD\nMD-->|output|mDT((mainDataTable))\nend\nsubgraph main Plot\nMD-->|summarize|PD(plotData)\nAES{input$aes_}-->|define|PD\nPD-->|average replicates|mPD(meanPlotData)\nAES{input$aes_}-->|define|mP\nPD-->|ggplot|mP(mainPlt)\nmPD-->|ggplot|mP(mainPlt)\nmP-->|outout|mPL((mainPlot))\nmPL-->|click/brush|ranges\nranges-->|update|mP\nend\nsubgraph PCA\nPD-->|spread to matrix|pcaDATA\nAES-->|define|pcaDATA\npcaDATA -->|calculate|pcaObject\npcaObject -->|output summary|PCAI((pca_info))\npcaObject -->|ggplot|pca_scores\npcaObject -->|ggplot|pca_loadings\npca_scores -->|render plot|PCAS((pca_scores))\npca_loadings -->|render plot|PCAL((pca_loadings))\nend\nsubgraph heatmap\nAES-->|define|HP(heatPlt)\nPD-->|ggplot|HP\nHP-->|output|HPO((heatPlot))\nend\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="footnotes">
 <hr>
