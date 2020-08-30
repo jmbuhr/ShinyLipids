@@ -238,9 +238,9 @@ app_server <- function(input, output, session) {
     mainPlot()
   })
   
-  # ** Main Plot Render with plotly ####
-  output$mainPlot <- plotly::renderPlotly({
-    plotly::ggplotly(mainPlot()) 
+  # ** Main Plot ####
+  output$mainPlot <- renderPlot({
+    mainPlot() 
   })
   
   # * Heatmap ####

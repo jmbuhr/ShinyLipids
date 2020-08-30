@@ -296,11 +296,11 @@ uiBody <- function() {
                                   width  = 12,
                                   status = "primary",
                                   footer = "Brush and doubleclick to zoom",
-                                  plotly::plotlyOutput(
+                                  plotOutput(
                                     "mainPlot",
-                                    height   = 600
-                                    # dblclick = "mainPlotDoubleClick",
-                                    # brush    = brushOpts(id = "mainPlotBrush", resetOnNew = TRUE)
+                                    height   = 600,
+                                    dblclick = "mainPlotDoubleClick",
+                                    brush    = brushOpts(id = "mainPlotBrush", resetOnNew = TRUE)
                                   )
                                 )
                               ),
