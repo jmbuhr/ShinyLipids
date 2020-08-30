@@ -1,6 +1,6 @@
 #' Collect metadata from database
 #'
-#' @param con database conncetion object.
+#' @param con database connection object.
 #' Create one yourself with e.g.
 #' \code{DBI::dbConnect(RPostgres::Postgres(), ...)} or
 #' \code{DBI::dbConnect(RSQLite::SQLite(), "<data/exampleDatabase.db>")}
