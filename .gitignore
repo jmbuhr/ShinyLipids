@@ -11,6 +11,7 @@ Sqlite.db
 dev
 *.Rprof
 inst/extdata/originalExampleDatabase.db
+inst/extdata/Sqlite_ML.db
 .vscode/
 rsconnect/
 inst/doc

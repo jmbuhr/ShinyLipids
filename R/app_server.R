@@ -232,15 +232,27 @@ app_server <- function(input, output, session) {
                    pairwiseComparisons  = pairwiseComparisons(),
                    input                = input)
   })
-  
-  # ** Main Plot Render ####
-  output$mainPlot <- renderPlot({
-    mainPlot()
-  })
-  
+
   # ** Main Plot Render with plotly ####
   output$mainPlot <- plotly::renderPlotly({
-    plotly::ggplotly(mainPlot()) 
+    
+      plt <- plotly::ggplotly(
+        mainPlot(),
+        tooltip = "text") %>%
+        plotly::style(
+          marker.size = 4,
+          marker.line = list(width = 0.7)) %>% 
+        plotly::layout(
+          xaxis = list(tickfont = list(size = 15)),
+          yaxis = list(tickfont = list(size = 15)))
+    
+      plt %>%
+        plotly::style(plt,
+                      showlegend = FALSE,
+                      traces = (length(unique(meanPlotData()$sample))+1):
+                        (length(unique(meanPlotData()$sample))*2)) %>%
+        plotly::config(displayModeBar = FALSE)
+    
   })
   
   # * Heatmap ####
