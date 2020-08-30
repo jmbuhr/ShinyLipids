@@ -87,30 +87,30 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>An interactive web application for lipidomics data analysis based on the R programming language with the shiny framework.</p>
-<div id="what-is-shinylipids" class="section level2">
+<p>ShinyLipids is an interactive web application for lipidomics data analysis written in R with the <a href="https://shiny.rstudio.com/">shiny</a> framework.</p>
+<div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
-<a href="#what-is-shinylipids" class="anchor"></a>What is ShinyLipids?</h2>
-<p>ShinyLipids is a visualization tool for lipidomics data built in R with the <code>shiny</code> package. The original version was developed in 2015 by <em>Mathias Gerl</em> and further enhanced by <em>Manuel Haußmann</em> and <em>Sebastian Bender</em> until August, 2017. It serves as the primary visualization dashboard for lipidomics mass spectrometry in the <a href="https://bzh.db-engine.de/default.asp?lfn=2241&amp;fg=4289">Brügger Lipidomics Group</a> at the Heidelberg Biochemistry Center (BZH).</p>
-<p>In 2018 I started working on a new version of ShinyLipids. The idea is still very much based on the original, but the internal coding and data structure is designed to be more consistent and host a safer environment for the implementation of new features within the R code. You can find more information about that <a href="https://jmbuhr.de/ShinyLipids/articles/Technical-aspects.html">in the documentation</a>.</p>
-</div>
-<div id="how-do-i-use-shinylipids" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-do-i-use-shinylipids" class="anchor"></a>How do I use ShinyLipids?</h2>
-<p>First, we need to make sure that you have the latest version of R (and optionally RStudio) installed.</p>
-<p>If you are new to R, head over to</p>
-<p><a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a> and follow the download link suitable for your operating system. Then, head over to <a href="https://rstudio.com/products/rstudio/download/#download" class="uri">https://rstudio.com/products/rstudio/download/#download</a> and install RStudio. You can think of R as the engine that runs the Code for ShinyLipids and of RStudio as a car with a nice dashboard around the engine to help you control all that raw power. Don’t worry, there won’t be any coding necessary to get started with your data in ShinyLipids.</p>
-<p>Then run this piece of R code to install ShinyLipids with all it’s dependencies<br><span class="math display">1</span><br> from github:</p>
+<a href="#getting-started" class="anchor"></a>Getting started</h2>
+<p>First, we need to make sure that you have the latest version of R (and optionally RStudio) installed. If you are new to R, head over to <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a> and follow the download link suitable for your operating system. Then install RStudio from <a href="https://rstudio.com/products/rstudio/download/#download" class="uri">https://rstudio.com/products/rstudio/download/#download</a>. Don’t worry, there won’t be any coding necessary to get started with your own data in ShinyLipids.</p>
+<p>Now open up RStudio and run this piece of R code to install <code>ShinyLipids</code> with all it’s dependencies from github (To run the code, copy and paste it into the R console that pops up in the bottom right corner when you first open RStudio. Then hit Enter.):</p>
 <div class="sourceCode" id="cb1"><pre class="r"><span class="kw">if</span> ( !(<span class="st">"remotes"</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()) ) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"jannikbuhr/ShinyLipids"</span>)</pre></div>
-<p>(To run the code, copy and paste it into the R console that pops up in the bottom right corner when you first open RStudio. Then hit Enter.)</p>
-<p>ShinyLipids gets the data it needs from a database. This database needs to contain at least the two tables <strong>id_info</strong> and <strong>data2</strong> <br><span class="math display">2</span><br>. Of course, you might not have your data in a database or database-dump file. To get your tabular data (preferably <em>.csv</em>) into such a file, you can use a little helper function in ShinyLipids, which you can run from an R script. Before you do so, make sure your tables contain the columns listed in section <a href="#tables">What should my tables look like?</a>. Then, read them into R and package them up with <code><a href="reference/createDatabase.html">ShinyLipids::createDatabase</a></code>. This could look as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="kw">if</span> ( !(<span class="st">"readr"</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()) ) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"readr"</span>)
+<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"jmbuhr/ShinyLipids"</span>)</pre></div>
+<p>To get a first glimpse, run these lines to see the example data the comes with <code>ShinyLipids</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="no">path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/exampleDatabase.db"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"ShinyLipids"</span>)
+<span class="no">databaseConnection</span> <span class="kw">&lt;-</span> <span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span>(<span class="kw pkg">RSQLite</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/RSQLite/man/SQLite.html">SQLite</a></span>(), <span class="no">path</span>)
+<span class="kw pkg">ShinyLipids</span><span class="kw ns">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span>(<span class="kw">db</span> <span class="kw">=</span> <span class="no">databaseConnection</span>)</pre></div>
+</div>
+<div id="getting-your-own-data-into-shinylipids" class="section level2">
+<h2 class="hasAnchor">
+<a href="#getting-your-own-data-into-shinylipids" class="anchor"></a>Getting your own data into ShinyLipids</h2>
+<p><code>ShinyLipids</code> loads the data from a database or a database-dump file as in the example above (<code>exampleDatabase.db</code>). This database needs to contain at least the two tables <strong>id_info</strong> and <strong>data2</strong> <br><span class="math display">1</span><br>. Of course, you might not have your data in a database or database-dump file. To get your tabular data (preferably <em>.csv</em>) into such a file, you can use a little helper function in <code>ShinyLipids</code>, which you can run from an R script. Before you do so, make sure your tables contain the columns listed in section <a href="#tables">What should my tables look like?</a>. Then, read them into R and package them up with <code><a href="reference/createDatabase.html">ShinyLipids::createDatabase</a></code>. This could look like this:</p>
+<div class="sourceCode" id="cb3"><pre class="r"><span class="kw">if</span> ( !(<span class="st">"readr"</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()) ) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"readr"</span>)
+<span class="no">path</span> <span class="kw">&lt;-</span> <span class="st">"path/to/your/data.db"</span>
 <span class="no">myMedatdata</span> <span class="kw">&lt;-</span> <span class="kw pkg">readr</span><span class="kw ns">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="st">"myMetadata.csv"</span>)
 <span class="no">myDataset</span>   <span class="kw">&lt;-</span> <span class="kw pkg">readr</span><span class="kw ns">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="st">"myDataset.csv"</span>)
-<span class="kw pkg">ShinyLipids</span><span class="kw ns">::</span><span class="fu"><a href="reference/createDatabase.html">createDatabase</a></span>(<span class="st">"path/to/your/data.db"</span>, <span class="no">myMedatdata</span>, <span class="no">myDataset</span>)</pre></div>
-<p>Now you are ready to look at your lipids! Run this code for a quick start:</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="no">databaseConnection</span> <span class="kw">&lt;-</span> <span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span>(<span class="kw pkg">RSQLite</span><span class="kw ns">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span>(), <span class="st">"path/to/your/data.db"</span>)
+<span class="kw pkg">ShinyLipids</span><span class="kw ns">::</span><span class="fu"><a href="reference/createDatabase.html">createDatabase</a></span>(<span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>, <span class="no">myMedatdata</span>, <span class="no">myDataset</span>)</pre></div>
+<p>Now you are ready to look at your lipids! Replace <code>"path/to/your/data.db"</code> with the actual filepath to your database-dump file and run:</p>
+<div class="sourceCode" id="cb4"><pre class="r"><span class="no">databaseConnection</span> <span class="kw">&lt;-</span> <span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span>(<span class="kw pkg">RSQLite</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/RSQLite/man/SQLite.html">SQLite</a></span>(), <span class="no">path</span>)
 <span class="kw pkg">ShinyLipids</span><span class="kw ns">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span>(<span class="kw">db</span> <span class="kw">=</span> <span class="no">databaseConnection</span>)</pre></div>
 <div id="what-should-my-tables-look-like" class="section level3">
 <h3 class="hasAnchor">
@@ -227,25 +227,24 @@
 </tr>
 </tbody>
 </table>
-<p>The lipid column should uniquely identify each measured lipid. If you use the nomenclature proposed by Liebisch et al. (<a href="https://www.ncbi.nlm.nih.gov/pubmed/23549332" class="uri">https://www.ncbi.nlm.nih.gov/pubmed/23549332</a>), <code>ShinyLipids</code> can extract further information about the lipid from this column (such as the length of the chains, the number of double bonds, the amount of hydroxylation etc.). The Lipid Maps project (<a href="https://www.lipidmaps.org/" class="uri">https://www.lipidmaps.org/</a>) aims to provide a database of known lipids. However, since the first mentioned nomenclature is both human- and machine-readable, <code>ShinyLipids</code> currently prioritizes it over LipidMaps-IDs. But the groundwork to read in the database of LipidMaps and convert LM-IDs to the Liebisch et al. format inside of ShinyLipids has been laid.</p>
-<p>The value is expected to be in µM. Using different units works but the axis labels will still read µM.</p>
-<p>Optionally, your database can contain a table named “LIPID_CLASS_ORDER_COMPLETE” with a numeric <em>class_order</em> column associated with a <em>class</em> column. You can also reorder your lipid classes in the app on bottom of the main plotting page.</p>
+<p>The lipid column should uniquely identify each measured lipid. If you use the nomenclature proposed by Liebisch et al. (<a href="https://www.ncbi.nlm.nih.gov/pubmed/23549332" class="uri">https://www.ncbi.nlm.nih.gov/pubmed/23549332</a>), <code>ShinyLipids</code> can extract further information about the lipid from this column (such as the length of the chains, the number of double bonds, the amount of hydroxylation etc.). The value is expected to be in µM. Using different units works but the axis labels will still read µM.</p>
+<p>Optionally, your database can contain a table named “LIPID_CLASS_ORDER_COMPLETE” with a numeric <em>class_order</em> column associated with a <em>class</em> column.</p>
 </div>
 </div>
 <div id="for-advanced-use" class="section level2">
 <h2 class="hasAnchor">
 <a href="#for-advanced-use" class="anchor"></a>For advanced use</h2>
-<p>If you want to run ShinyLipids on your own server connected to a database or post your findings to shinyapps.io, you will have to download the source code:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">git</span> clone https://github.com/jannikbuhr/ShinyLipids.git</span></code></pre></div>
-<p>Open the file <code>app.R</code>, read the comments and uncomment the specified lines. Then you will be able to run the app or use the buttons in the top right corner of your RStudio code panel.</p>
+<p>If you want to run ShinyLipids on your own server, connected to a database or post your findings to <a href="https://www.shinyapps.io/">shinyapps.io</a>, you will have to download the source code by either running <code>git clone https://github.com/jmbuhr/ShinyLipids.git</code> from the command line or by visiting <a href="https://github.com/jmbuhr/ShinyLipids" class="uri">https://github.com/jmbuhr/ShinyLipids</a></p>
+<p>Open the file <code>app.R</code>, read the comments and uncomment the specified lines. Then can to run the app or use the buttons in the top right corner of your RStudio code panel.</p>
+<p>You can find further information in the <a href="https://jmbuhr.de/ShinyLipids/">documentation</a>.</p>
 </div>
 <div id="notes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#notes" class="anchor"></a>Notes</h2>
+<p>The first version of ShinyLipids was developed in 2015 by <em>Mathias Gerl</em> and further enhanced by <em>Manuel Haußmann</em> and <em>Sebastian Bender</em> until August, 2017. The ideas and intentions of this new version by <a href="https://jmbuhr.de/">Jannik Buhr</a> are still based on the original, but the code and data structure is designed to be more consistent and host a safer environment for the implementation of new features. You can find more information about that in the <a href="https://jmbuhr.de/ShinyLipids/articles/Technical-aspects.html">documentation</a>.</p>
 <p>Please note that the ‘ShinyLipids’ project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 <ol>
-<li><p>If you want to publish the Shiny App on RStudio-connect, you will need a couple of additional packages that are listed in <code>app.R</code>.</p></li>
-<li><p>the naming is due to back end compatibility</p></li>
+<li>the naming is due to back-end compatibility</li>
 </ol>
 </div>
 </div>
@@ -285,9 +284,9 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.com/jannikbuhr/ShinyLipids"><img src="https://travis-ci.com/jannikbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&amp;branch=master" alt="Travis build status"></a></li>
+<li><a href="https://travis-ci.com/jmbuhr/ShinyLipids"><img src="https://travis-ci.com/jmbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&amp;branch=master" alt="Travis build status"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
-<li><a href="https://codecov.io/gh/jannikbuhr/ShinyLipids"><img src="https://codecov.io/gh/jannikbuhr/ShinyLipids/branch/master/graph/badge.svg?token=1cRbNEmkjj" alt="codecov"></a></li>
+<li><a href="https://codecov.io/gh/jmbuhr/ShinyLipids"><img src="https://codecov.io/gh/jmbuhr/ShinyLipids/branch/master/graph/badge.svg" alt="codecov"></a></li>
 </ul>
 </div>
 </div>
