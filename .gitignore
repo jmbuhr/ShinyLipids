@@ -10,8 +10,7 @@ tests/GeneralTest-expected
 Sqlite.db
 dev
 *.Rprof
-inst/extdata/originalExampleDatabase.db
-inst/extdata/Sqlite_ML.db
+inst/extdata/
 .vscode/
 rsconnect/
 inst/doc
