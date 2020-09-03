@@ -166,12 +166,6 @@ mainPlotAddPoints <- function(plt, mainPlotAdditionalOptions) {
   if ("points" %in% mainPlotAdditionalOptions) {
     plt +
       geom_point(
-        aes(text = map(paste('<b>amount:</b>',
-                             sprintf("%.2f %%", value),
-                             '<br>',
-                             '<b>replicate:</b>',
-                             sample_replicate),
-                       HTML)),
         position    = position_dodge(width = 0.9),
         pch         = 21,
         alpha       = 1,
