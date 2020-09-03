@@ -13,7 +13,7 @@ mainTheme <- function() {
       text             = element_text(
         color          = "black",
         face           = "bold",
-        family         = "Calibri"
+        family         = "sans"
       ),
       axis.text.x      = element_text(angle = 45, hjust = 1),
       plot.background  = element_blank(),
