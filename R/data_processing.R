@@ -229,11 +229,15 @@ filterRawDataFor <- function(rawData, input) {
 #'
 #' @return tibble. Standardized data
 #' @export
-standardizeRawDataWithin <- function(data, input) {
+standardizeWithin <- function(data, input) {
+  stdFeatures <- input$standardizationFeatures
+  if (input$standardizeWithinTechnicalReplicate) {
+    stdFeatures <- c(stdFeatures, "sample_replicate_technical")
+  }
   # Standardization
-  if (!is.null(input$standardizationFeatures)) {
+  if (!is.null(stdFeatures)) {
     data <- data %>%
-      group_by(id, !!!syms(input$standardizationFeatures)) %>%
+      group_by(id, !!!syms(stdFeatures)) %>%
       mutate(value = value / sum(value) * 100) %>%
       ungroup()
   }

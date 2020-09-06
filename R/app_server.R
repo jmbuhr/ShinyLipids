@@ -19,7 +19,6 @@ app_server <- function(input, output, session) {
   # * filteredData ####
   filteredData <- reactive({
     rawData() %>%
-      standardizeWithinTechnicalReplicatesIf(input) %>%
       filterRawDataFor(input)
   })
   
@@ -28,7 +27,7 @@ app_server <- function(input, output, session) {
     validate(need(nrow(filteredData()) > 0,
                   "The data was filtered such that there is no data left."))
     filteredData() %>%
-      standardizeRawDataWithin(input)
+      standardizeWithin(input)
   })
   
   # * plotData ####
