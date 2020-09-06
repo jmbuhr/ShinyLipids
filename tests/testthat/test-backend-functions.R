@@ -37,7 +37,7 @@ test_that(
       addLipidProperties() %>% 
       standardizeWithinTechnicalReplicatesIf(input) %>%
       filterRawDataFor(input) %>%
-      standardizeRawDataWithin(input) %>%
+      standardizeWithin(input) %>%
       createPlotData(input)
     
     meanPlotData <- summarisePlotData(plotData, input)

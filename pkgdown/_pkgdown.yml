@@ -19,7 +19,7 @@ reference:
       - imputeMissingIf
       - standardizeWithinTechnicalReplicatesIf
       - filterRawDataFor
-      - standardizeRawDataWithin
+      - standardizeWithin
       - createPlotData
       - summarisePlotData
       - doAllPairwiseComparisons

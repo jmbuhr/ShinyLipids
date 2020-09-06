@@ -27,7 +27,7 @@ createMainPlot <- function(plotData,
                            meanPlotData,
                            pairwiseComparisons,
                            input,
-                           ranges) {
+                           ranges = list(x = NULL, y = NULL)) {
   
   if ("length" %in% names(plotData)) {
     plotData <- plotData %>%

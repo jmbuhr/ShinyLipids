@@ -77,7 +77,7 @@ plotData <- rawData %>%
   addLipidProperties() %>% 
   standardizeWithinTechnicalReplicatesIf(input) %>%
   filterRawDataFor(input) %>%
-  standardizeRawDataWithin(input) %>%
+  standardizeWithin(input) %>%
   createPlotData(input)
 
 head(plotData)

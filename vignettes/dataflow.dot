@@ -26,7 +26,7 @@ db -> rawData [label = 'collectRawData %>% imputeMissingIf %>% addLipidPropertie
 rawData -> filteredData [label = 'standardizeWithinTechnicalReplicatesIf %>% filterRawDataFor']
 
 filteredData -> mainData [
-  label = 'standardizeRawDataWithin'
+  label = 'standardizeWithin'
 ]
 mainData -> plotData [
   label = 'createPlotData'

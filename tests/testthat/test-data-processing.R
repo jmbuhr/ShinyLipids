@@ -61,7 +61,7 @@ test_that("Baseline substraction works", {
     addLipidProperties() %>% 
     standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
     filterRawDataFor(tmpInput) %>% 
-    standardizeRawDataWithin(tmpInput) %>% 
+    standardizeWithin(tmpInput) %>% 
     filter(sample == tmpInput$baselineSample) %>% 
     pull(value) %>% 
     mean() %>% 
@@ -75,7 +75,7 @@ test_that("Pairwise t-tests didn't change", {
     addLipidProperties() %>% 
     standardizeWithinTechnicalReplicatesIf(input) %>%
     filterRawDataFor(input) %>%
-    standardizeRawDataWithin(input) %>%
+    standardizeWithin(input) %>%
     createPlotData(input)
   
   doAllPairwiseComparisons(plotData, input) %>% 

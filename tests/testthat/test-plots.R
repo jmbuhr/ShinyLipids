@@ -11,7 +11,7 @@ plotData <- rawData %>%
   addLipidProperties() %>% 
   standardizeWithinTechnicalReplicatesIf(input) %>%
   filterRawDataFor(input) %>%
-  standardizeRawDataWithin(input) %>%
+  standardizeWithin(input) %>%
   createPlotData(input)
 
 allPlotOptions <- list(
@@ -47,10 +47,10 @@ test_that("Main Plot works with facets", {
     addLipidProperties() %>% 
     standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
     filterRawDataFor(tmpInput) %>%
-    standardizeRawDataWithin(tmpInput)
+    standardizeWithin(tmpInput)
 
   plotData <- data %>%
-    standardizeRawDataWithin(tmpInput) %>%
+    standardizeWithin(tmpInput) %>%
     createPlotData(tmpInput)
   
   plt <- createMainPlot(plotData = plotData,
@@ -60,7 +60,7 @@ test_that("Main Plot works with facets", {
   expect_is(plt, "ggplot")
 
   plotData <- data %>%
-    standardizeRawDataWithin(tmpInput) %>%
+    standardizeWithin(tmpInput) %>%
     createPlotData(tmpInput)
   
   plt <- createMainPlot(plotData = plotData,
@@ -77,7 +77,7 @@ test_that("Main Plot works with facets", {
   )
 
   plotData <- data %>%
-    standardizeRawDataWithin(tmpInput) %>%
+    standardizeWithin(tmpInput) %>%
     createPlotData(tmpInput)
   
   plt <- createMainPlot(plotData = plotData,
@@ -100,10 +100,10 @@ test_that("Heatmap works with facets", {
     addLipidProperties() %>% 
     standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
     filterRawDataFor(tmpInput) %>%
-    standardizeRawDataWithin(tmpInput) 
+    standardizeWithin(tmpInput) 
   
   plt <- data %>%
-    standardizeRawDataWithin(tmpInput) %>%
+    standardizeWithin(tmpInput) %>%
     createPlotData(tmpInput) %>% 
     createHeatmap(tmpInput)
   expect_is(plt, "ggplot")
@@ -115,10 +115,10 @@ test_that("Heatmap works with facets", {
     addLipidProperties() %>% 
     standardizeWithinTechnicalReplicatesIf(tmpInput) %>%
     filterRawDataFor(tmpInput) %>%
-    standardizeRawDataWithin(tmpInput) 
+    standardizeWithin(tmpInput) 
   
   plt <- data %>%
-    standardizeRawDataWithin(tmpInput) %>%
+    standardizeWithin(tmpInput) %>%
     createPlotData(tmpInput) %>% 
     createHeatmap(tmpInput)
   expect_is(plt, "ggplot")

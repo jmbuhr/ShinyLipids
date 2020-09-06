@@ -136,30 +136,30 @@
   <span class="fu"><a href="../reference/addLipidProperties.html">addLipidProperties</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/standardizeWithinTechnicalReplicatesIf.html">standardizeWithinTechnicalReplicatesIf</a></span>(<span class="no">input</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/filterRawDataFor.html">filterRawDataFor</a></span>(<span class="no">input</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/standardizeRawDataWithin.html">standardizeRawDataWithin</a></span>(<span class="no">input</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/standardizeWithin.html">standardizeWithin</a></span>(<span class="no">input</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/createPlotData.html">createPlotData</a></span>(<span class="no">input</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">plotData</span>)
 <span class="co">#&gt; # A tibble: 6 x 4</span>
 <span class="co">#&gt;   class sample         sample_replicate value</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;          &lt;fct&gt;            &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 PC    1 - 0min Stim  1 - 0min Stim_A  0.567</span>
-<span class="co">#&gt; 2 PC    1 - 0min Stim  1 - 0min Stim_B  0.420</span>
-<span class="co">#&gt; 3 PC    1 - 0min Stim  1 - 0min Stim_C  0.291</span>
-<span class="co">#&gt; 4 PC    1 - 0min Stim  1 - 0min Stim_D  1.22 </span>
-<span class="co">#&gt; 5 PC    2 - 10min Stim 2 - 10min Stim_A 0.235</span>
-<span class="co">#&gt; 6 PC    2 - 10min Stim 2 - 10min Stim_B 0.333</span></pre></body></html></div>
+<span class="co">#&gt; 1 PC    1 - 0min Stim  1 - 0min Stim_A   9.08</span>
+<span class="co">#&gt; 2 PC    1 - 0min Stim  1 - 0min Stim_B   6.71</span>
+<span class="co">#&gt; 3 PC    1 - 0min Stim  1 - 0min Stim_C   4.66</span>
+<span class="co">#&gt; 4 PC    1 - 0min Stim  1 - 0min Stim_D  19.5 </span>
+<span class="co">#&gt; 5 PC    2 - 10min Stim 2 - 10min Stim_A  3.76</span>
+<span class="co">#&gt; 6 PC    2 - 10min Stim 2 - 10min Stim_B  5.34</span></pre></body></html></div>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">meanPlotData</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/summarisePlotData.html">summarisePlotData</a></span>(<span class="no">plotData</span>, <span class="no">input</span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">meanPlotData</span>)
 <span class="co">#&gt; # A tibble: 6 x 8</span>
-<span class="co">#&gt;   class sample            SD    SEM     N value CI_lower CI_upper</span>
-<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;          &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 PC    1 - 0min Stim  0.412 0.103      4 0.624    0.296    0.952</span>
-<span class="co">#&gt; 2 PC    2 - 10min Stim 0.194 0.0484     4 0.425    0.271    0.579</span>
-<span class="co">#&gt; 3 PC    3 - 6h Stim    0.129 0.0324     4 0.583    0.480    0.686</span>
-<span class="co">#&gt; 4 PC    4 - 18h Stim   0.300 0.0750     4 0.728    0.489    0.967</span>
-<span class="co">#&gt; 5 PC O- 1 - 0min Stim  0.145 0.0363     4 0.333    0.218    0.448</span>
-<span class="co">#&gt; 6 PC O- 2 - 10min Stim 0.311 0.0777     4 0.429    0.181    0.676</span></pre></body></html></div>
+<span class="co">#&gt;   class sample            SD   SEM     N value CI_lower CI_upper</span>
+<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 PC    1 - 0min Stim   6.60 1.65      4  9.99     4.74    15.2 </span>
+<span class="co">#&gt; 2 PC    2 - 10min Stim  3.10 0.775     4  6.80     4.33     9.26</span>
+<span class="co">#&gt; 3 PC    3 - 6h Stim     2.07 0.518     4  9.32     7.67    11.0 </span>
+<span class="co">#&gt; 4 PC    4 - 18h Stim    4.80 1.20      4 11.6      7.83    15.5 </span>
+<span class="co">#&gt; 5 PC O- 1 - 0min Stim   2.32 0.580     4  5.33     3.48     7.17</span>
+<span class="co">#&gt; 6 PC O- 2 - 10min Stim  4.97 1.24      4  6.86     2.90    10.8</span></pre></body></html></div>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">plt</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/createMainPlot.html">createMainPlot</a></span>(<span class="kw">plotData</span>            <span class="kw">=</span> <span class="no">plotData</span>,
                       <span class="kw">meanPlotData</span>        <span class="kw">=</span> <span class="no">meanPlotData</span>,
                       <span class="kw">pairwiseComparisons</span> <span class="kw">=</span> <span class="kw">NULL</span>,
