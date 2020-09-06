@@ -295,7 +295,7 @@ uiBody <- function() {
                                 shinydashboard::box(
                                   width  = 12,
                                   status = "primary",
-                                  footer = "Brush and doubleclick to zoom",
+                                  footer = "Draw a rectangle and doubleclick it to zoom",
                                   plotOutput(
                                     "mainPlot",
                                     height   = 600,
@@ -363,7 +363,7 @@ uiBody <- function() {
             title  = NULL,
             width  = 6,
             status = "primary",
-            plotly::plotlyOutput("pcaScoresPlot")
+            plotOutput("pcaScoresPlot")
           ),
           shinydashboard::box(
             title  = NULL,

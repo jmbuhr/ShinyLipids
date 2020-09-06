@@ -26,7 +26,8 @@
 createMainPlot <- function(plotData,
                            meanPlotData,
                            pairwiseComparisons,
-                           input) {
+                           input,
+                           ranges) {
   
   if ("length" %in% names(plotData)) {
     plotData <- plotData %>%
@@ -35,6 +36,8 @@ createMainPlot <- function(plotData,
     meanPlotData <- meanPlotData %>%
       mutate(length = factor(length))
   }
+  
+
   
   plt <- ggplot(plotData, aes(x = !!sym(input$aesX), y = value)) %>% 
     mainPlotAddColors(input$aesColor, plotData) %>% 
@@ -90,7 +93,8 @@ createMainPlot <- function(plotData,
         if_else("N" %in% input$mainPlotAdditionalOptions, 0.05, 0), 0.05)),
       name   = yAxisName,
       labels = yAxisLabels,
-      trans  = yAxisTransformation)
+      trans  = yAxisTransformation) +
+    coord_cartesian(xlim = ranges$x, ylim = ranges$y)
   
   # Swap X and Y
   if ("swap" %in% input$mainPlotAdditionalOptions) {

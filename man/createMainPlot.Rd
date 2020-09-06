@@ -4,7 +4,7 @@
 \alias{createMainPlot}
 \title{Creat the main plot}
 \usage{
-createMainPlot(plotData, meanPlotData, pairwiseComparisons, input)
+createMainPlot(plotData, meanPlotData, pairwiseComparisons, input, ranges)
 }
 \arguments{
 \item{plotData}{:: tibble. Data for the plot, pass it from reactive plotData()}

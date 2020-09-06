@@ -222,14 +222,29 @@ app_server <- function(input, output, session) {
   
   # Plots ####
   # * Main Plot ####
+  # ** Ranges for zooming by clicking on the plot  ####
+
+  
   
   # ** Main Plot Object ####
+  ranges <- reactiveValues(x = NULL, y = NULL)
+  observeEvent(input$mainPlotDoubleClick, {
+    brush <- input$mainPlotBrush
+    if (!is.null(brush)) {
+      ranges$x <- c(brush$xmin, brush$xmax)
+      ranges$y <- c(brush$ymin, brush$ymax)
+    } else {
+      ranges$x <- NULL
+      ranges$y <- NULL
+    }
+  }) 
   mainPlot <- reactive({
     req(plotData(), meanPlotData())
     createMainPlot(plotData             = plotData(),
                    meanPlotData         = meanPlotData(),
                    pairwiseComparisons  = pairwiseComparisons(),
-                   input                = input)
+                   input                = input,
+                   ranges = ranges)
   })
   
   # ** Main Plot Render ####
@@ -306,9 +321,8 @@ app_server <- function(input, output, session) {
     createPcaScoresPlot(pcaJuice = pcaJuice(), pcaTidy = pcaTidy(), input)
   })
   
-  output$pcaScoresPlot <- plotly::renderPlotly({
-    pcaScoresPlot() %>%
-      plotly::ggplotly()
+  output$pcaScoresPlot <- renderPlot({
+    pcaScoresPlot()
   })
   
   # ** Loadings ####
