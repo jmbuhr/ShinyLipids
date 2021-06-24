@@ -5,11 +5,10 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.com/jmbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jmbuhr/ShinyLipids)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![codecov](https://codecov.io/gh/jmbuhr/ShinyLipids/branch/master/graph/badge.svg)](https://codecov.io/gh/jmbuhr/ShinyLipids)
+[![R-CMD-check](https://github.com/jmbuhr/ShinyLipids/workflows/R-CMD-check/badge.svg)](https://github.com/jmbuhr/ShinyLipids/actions)
 <!-- badges: end -->
 
 ShinyLipids is an interactive web application for lipidomics data
@@ -49,7 +48,7 @@ ShinyLipids::run_app(db = databaseConnection)
 
 `ShinyLipids` loads the data from a database or a database-dump file as
 in the example above (`exampleDatabase.db`). This database needs to
-contain at least the two tables **id\_info** and **data2** \[1\]. Of
+contain at least the two tables **id\_info** and **data2** [1]. Of
 course, you might not have your data in a database or database-dump
 file. To get your tabular data (preferably *.csv*) into such a file, you
 can use a little helper function in `ShinyLipids`, which you can run
@@ -66,7 +65,7 @@ myDataset   <- readr::read_csv("myDataset.csv")
 ShinyLipids::createDatabase(path = path, myMedatdata, myDataset)
 ```
 
-Now you are ready to look at your lipids\! Replace
+Now you are ready to look at your lipids! Replace
 `"path/to/your/data.db"` with the actual filepath to your database-dump
 file and run:
 
@@ -83,7 +82,7 @@ This is `myMetadata.csv` in the previous example. Not all columns are
 needed but `id` and `title` are essential.
 
 | Column            | Description                         |
-| :---------------- | ----------------------------------- |
+|:------------------|-------------------------------------|
 | id                | whole number: unique id per dataset |
 | title             | text: title of dataset              |
 | date\_upload      | text: YYYY-MM-DD                    |
@@ -104,7 +103,7 @@ needed but `id` and `title` are essential.
 This is `myDataset.csv`.
 
 | Column                       | Description                      |
-| :--------------------------- | -------------------------------- |
+|:-----------------------------|----------------------------------|
 | id                           | whole number: matches metadata   |
 | lipid                        | text: format: “Cer 34:1;2”       |
 | value                        | number: (assumed to be µM)       |
@@ -132,9 +131,9 @@ associated with a *class* column.
 If you want to run ShinyLipids on your own server, connected to a
 database or post your findings to
 [shinyapps.io](https://www.shinyapps.io/), you will have to download the
-source code by either running `git clone
-https://github.com/jmbuhr/ShinyLipids.git` from the command line or by
-visiting <https://github.com/jmbuhr/ShinyLipids>
+source code by either running
+`git clone https://github.com/jmbuhr/ShinyLipids.git` from the command
+line or by visiting <https://github.com/jmbuhr/ShinyLipids>
 
 Open the file `app.R`, read the comments and uncomment the specified
 lines. Then can to run the app or use the buttons in the top right
@@ -158,4 +157,4 @@ Please note that the ‘ShinyLipids’ project is released with a
 [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By
 contributing to this project, you agree to abide by its terms.
 
-1.  the naming is due to back-end compatibility
+[1] the naming is due to back-end compatibility

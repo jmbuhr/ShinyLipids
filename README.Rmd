@@ -18,9 +18,9 @@ knitr::opts_chunk$set(
 # ShinyLipids <a href='https://jmbuhr.de/ShinyLipids/'><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/jmbuhr/ShinyLipids.svg?token=czApY9arsWuqNrp7yAYj&branch=master)](https://travis-ci.com/jmbuhr/ShinyLipids)
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![codecov](https://codecov.io/gh/jmbuhr/ShinyLipids/branch/master/graph/badge.svg)](https://codecov.io/gh/jmbuhr/ShinyLipids)
+[![R-CMD-check](https://github.com/jmbuhr/ShinyLipids/workflows/R-CMD-check/badge.svg)](https://github.com/jmbuhr/ShinyLipids/actions)
 <!-- badges: end -->
 
 ShinyLipids is an interactive web application for lipidomics data analysis

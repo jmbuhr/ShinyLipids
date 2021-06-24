@@ -1,7 +1,7 @@
 # TODO preserve width of single bars while not shifting points to others bars
 # TODO reduce cyclomatic complexity of createMainPlot
 
-#' Creat the main plot
+#' Create the main plot
 #' 
 #' Uses ggplot2.
 #'
@@ -9,6 +9,7 @@
 #' @param meanPlotData :: tibble. Data of means, pass from reactive meanPlotData()
 #' @param pairwiseComparisons :: tibble. Pairwise t-tests from pairwiseComparisons()
 #' @param input :: list. Input list from shiny ui. Uses
+#' @param ranges :: list(x, y). Ranges of the plot zoom
 #' - aesX :: string.
 #' - aesColor :: string.
 #' - aesFacetCol :: string.

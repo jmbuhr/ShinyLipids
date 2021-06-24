@@ -21,7 +21,8 @@
 ## Local database file
 # replace with
 # path <- "path/to/your/data.db"
-path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
+# path <- system.file("extdata/exampleDatabase.db", package = "ShinyLipids")
+path <- "inst/extdata/Sqlite.db"
 databaseConnection <- DBI::dbConnect(RSQLite::SQLite(), path)
 
 # Run App ####

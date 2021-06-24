@@ -48,7 +48,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -65,7 +65,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/jmbuhr/ShinyLipids/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -93,25 +93,29 @@
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
 <p>First, we need to make sure that you have the latest version of R (and optionally RStudio) installed. If you are new to R, head over to <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a> and follow the download link suitable for your operating system. Then install RStudio from <a href="https://rstudio.com/products/rstudio/download/#download" class="uri">https://rstudio.com/products/rstudio/download/#download</a>. Don’t worry, there won’t be any coding necessary to get started with your own data in ShinyLipids.</p>
 <p>Now open up RStudio and run this piece of R code to install <code>ShinyLipids</code> with all it’s dependencies from github (To run the code, copy and paste it into the R console that pops up in the bottom right corner when you first open RStudio. Then hit Enter.):</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="kw">if</span> ( !(<span class="st">"remotes"</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()) ) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"jmbuhr/ShinyLipids"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span> <span class="op">!</span><span class="op">(</span><span class="st">"remotes"</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"jmbuhr/ShinyLipids"</span><span class="op">)</span></code></pre></div>
 <p>To get a first glimpse, run these lines to see the example data the comes with <code>ShinyLipids</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="no">path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/exampleDatabase.db"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"ShinyLipids"</span>)
-<span class="no">databaseConnection</span> <span class="kw">&lt;-</span> <span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span>(<span class="kw pkg">RSQLite</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/RSQLite/man/SQLite.html">SQLite</a></span>(), <span class="no">path</span>)
-<span class="kw pkg">ShinyLipids</span><span class="kw ns">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span>(<span class="kw">db</span> <span class="kw">=</span> <span class="no">databaseConnection</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/exampleDatabase.db"</span>, package <span class="op">=</span> <span class="st">"ShinyLipids"</span><span class="op">)</span>
+<span class="va">databaseConnection</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">path</span><span class="op">)</span>
+<span class="fu">ShinyLipids</span><span class="fu">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span>db <span class="op">=</span> <span class="va">databaseConnection</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="getting-your-own-data-into-shinylipids" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-your-own-data-into-shinylipids" class="anchor"></a>Getting your own data into ShinyLipids</h2>
-<p><code>ShinyLipids</code> loads the data from a database or a database-dump file as in the example above (<code>exampleDatabase.db</code>). This database needs to contain at least the two tables <strong>id_info</strong> and <strong>data2</strong> <br><span class="math display">1</span><br>. Of course, you might not have your data in a database or database-dump file. To get your tabular data (preferably <em>.csv</em>) into such a file, you can use a little helper function in <code>ShinyLipids</code>, which you can run from an R script. Before you do so, make sure your tables contain the columns listed in section <a href="#tables">What should my tables look like?</a>. Then, read them into R and package them up with <code><a href="reference/createDatabase.html">ShinyLipids::createDatabase</a></code>. This could look like this:</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="kw">if</span> ( !(<span class="st">"readr"</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()) ) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"readr"</span>)
-<span class="no">path</span> <span class="kw">&lt;-</span> <span class="st">"path/to/your/data.db"</span>
-<span class="no">myMedatdata</span> <span class="kw">&lt;-</span> <span class="kw pkg">readr</span><span class="kw ns">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="st">"myMetadata.csv"</span>)
-<span class="no">myDataset</span>   <span class="kw">&lt;-</span> <span class="kw pkg">readr</span><span class="kw ns">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="st">"myDataset.csv"</span>)
-<span class="kw pkg">ShinyLipids</span><span class="kw ns">::</span><span class="fu"><a href="reference/createDatabase.html">createDatabase</a></span>(<span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>, <span class="no">myMedatdata</span>, <span class="no">myDataset</span>)</pre></div>
+<p><code>ShinyLipids</code> loads the data from a database or a database-dump file as in the example above (<code>exampleDatabase.db</code>). This database needs to contain at least the two tables <strong>id_info</strong> and <strong>data2</strong> <span class="math display">1</span>. Of course, you might not have your data in a database or database-dump file. To get your tabular data (preferably <em>.csv</em>) into such a file, you can use a little helper function in <code>ShinyLipids</code>, which you can run from an R script. Before you do so, make sure your tables contain the columns listed in section <a href="#tables">What should my tables look like?</a>. Then, read them into R and package them up with <code><a href="reference/createDatabase.html">ShinyLipids::createDatabase</a></code>. This could look like this:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span> <span class="op">!</span><span class="op">(</span><span class="st">"readr"</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"readr"</span><span class="op">)</span>
+<span class="va">path</span> <span class="op">&lt;-</span> <span class="st">"path/to/your/data.db"</span>
+<span class="va">myMedatdata</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"myMetadata.csv"</span><span class="op">)</span>
+<span class="va">myDataset</span>   <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"myDataset.csv"</span><span class="op">)</span>
+<span class="fu">ShinyLipids</span><span class="fu">::</span><span class="fu"><a href="reference/createDatabase.html">createDatabase</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">path</span>, <span class="va">myMedatdata</span>, <span class="va">myDataset</span><span class="op">)</span></code></pre></div>
 <p>Now you are ready to look at your lipids! Replace <code>"path/to/your/data.db"</code> with the actual filepath to your database-dump file and run:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="no">databaseConnection</span> <span class="kw">&lt;-</span> <span class="kw pkg">DBI</span><span class="kw ns">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span>(<span class="kw pkg">RSQLite</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/RSQLite/man/SQLite.html">SQLite</a></span>(), <span class="no">path</span>)
-<span class="kw pkg">ShinyLipids</span><span class="kw ns">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span>(<span class="kw">db</span> <span class="kw">=</span> <span class="no">databaseConnection</span>)</pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">databaseConnection</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">path</span><span class="op">)</span>
+<span class="fu">ShinyLipids</span><span class="fu">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span>db <span class="op">=</span> <span class="va">databaseConnection</span><span class="op">)</span></code></pre></div>
 <div id="what-should-my-tables-look-like" class="section level3">
 <h3 class="hasAnchor">
 <a href="#what-should-my-tables-look-like" class="anchor"></a>What should my tables look like?</h3>
@@ -298,7 +302,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

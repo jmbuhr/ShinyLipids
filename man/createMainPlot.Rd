@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_main.R
 \name{createMainPlot}
 \alias{createMainPlot}
-\title{Creat the main plot}
+\title{Create the main plot}
 \usage{
 createMainPlot(
   plotData,
@@ -19,7 +19,9 @@ createMainPlot(
 
 \item{pairwiseComparisons}{:: tibble. Pairwise t-tests from pairwiseComparisons()}
 
-\item{input}{:: list. Input list from shiny ui. Uses
+\item{input}{:: list. Input list from shiny ui. Uses}
+
+\item{ranges}{:: list(x, y). Ranges of the plot zoom
 \itemize{
 \item aesX :: string.
 \item aesColor :: string.

@@ -234,21 +234,21 @@ uiSidebar <- function() {
                          sliderInput(
                            "filterLengthRange",
                            label    = "Filter length",
-                           min      = 0L, max = 1L,
+                           min      = 0L, max = 100L,
                            step     = 1L,
                            value    = defaultInput$filterLengthRange
                          ),
                          sliderInput(
                            "filterDoubleBondsRange",
                            label    = "Filter double bonds",
-                           min      = 0L, max = 1L,
+                           min      = 0L, max = 100L,
                            step     = 1L,
                            value    = defaultInput$filterDoubleBondsRange
                          ),
                          sliderInput(
                            "filterOhRange",
                            label    = "Filter hydroxylation",
-                           min      = 0L, max = 1L,
+                           min      = 0L, max = 100L,
                            step     = 1L,
                            value    = defaultInput$filterOhRange
                          )

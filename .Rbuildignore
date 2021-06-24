@@ -8,7 +8,6 @@ $run_dev.*
 ^README\.Rmd$
 ^CODE_OF_CONDUCT\.md$
 ^app\.R$
-^\.travis\.yml$
 ^\.lintr$
 ^\.vscode
 \.Rprof$
